@@ -5,20 +5,22 @@
 ## Requirements
 
 1. Cloudflare account
-2. cloudflared cli
-3. Node.js & NPM see package.json#engines
+2. cloudflared cli `brew install cloudflared`
+3. Node.js & NPM see package.json#engines `brew install node@18`
 
-## Setup
+## Development
 
 ```sh
 cp .env .env.local # update values
 
+export $(cat .env.local | xargs)
+
 npm install
-npm run tunnel
-npm run start
+npm run dev
+# open -a Safari {cloudflared.url}
 ```
 
-## Deployment
+## Production
 
 ```sh
 npm run build
@@ -27,7 +29,8 @@ npm run deploy
 
 ## Changelog
 
-- ...
+- https://github.com/Shopify/shopify-api-js/compare/main..2e01ac6
+- https://github.com/Shopify/shopify-app-js/compare/main..2444643
 
 ## Documentation
 

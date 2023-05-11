@@ -1,0 +1,33 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"display": "ShopFlare",
+	"compilerOptions": {
+		"allowJs": true,
+		"baseUrl": "./",
+		"composite": false,
+		"declaration": true,
+		"declarationMap": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"inlineSources": false,
+		"isolatedModules": true,
+		"jsx": "react",
+		"lib": ["dom", "dom.iterable", "es2021"],
+		"module": "es2022",
+		"moduleResolution": "node",
+		"noEmit": true,
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"paths": {
+			"@/*": ["*", "./src/*"]
+		},
+		"preserveWatchOutput": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"target": "es2021",
+		"types": ["@cloudflare/workers-types", "node", "vite/client"]
+	},
+	"include": ["**/*.ts", "**/*.tsx"],
+	"exclude": ["node_modules"]
+}
