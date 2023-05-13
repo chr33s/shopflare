@@ -7,6 +7,7 @@
 1. Cloudflare account
 2. cloudflared cli `brew install cloudflared`
 3. Node.js & NPM see package.json#engines `brew install node@18`
+4. Actionlint `brew install actionlint`
 
 ## Setup
 
@@ -17,8 +18,9 @@ cp .env .env.local # update values
 export $(cat .env.local | xargs)
 ```
 
-- copy .env vars to cloudflare pages > Environment variables
-- create Workers > KV store key SHOPIFY_SESSIONS_KV & attach it to pages > Settings > KV namespace bindings using the same key
+- copy .env.cloudflare vars to Cloudflare pages > Environment variables
+- create Workers > KV store key SHOPIFY_SESSIONS_KV & attach it to pages > Settings > KV namespace bindings
+- copy .env.github vars to Github > secrets and variables
 
 ## Development
 

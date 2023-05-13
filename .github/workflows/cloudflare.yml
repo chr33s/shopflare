@@ -1,0 +1,44 @@
+name: Cloudflare
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    if: "!contains(github.event.head_commit.message, '[skip-ci]')"
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build --ignore-scripts
+        env:
+          SHOPIFY_API_KEY: ${{ env.SHOPIFY_API_KEY }}
+      - run: npm test
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist
+
+  deploy:
+    if: "!contains(github.event.head_commit.message, '[skip-ci]')"
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
+      - uses: cloudflare/pages-action@v1
+        with:
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+          apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
+          directory: dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          projectName: ${{ env.CLOUDFLARE_PROJECT }}
