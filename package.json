@@ -57,6 +57,7 @@
 		"@shopify/shopify-api": "7.1.0"
 	},
 	"optionalDependencies": {
+		"@shopify/app": "3.45.4",
 		"@shopify/cli": "3.45.4"
 	},
 	"browserslist": [
