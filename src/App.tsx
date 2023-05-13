@@ -20,7 +20,7 @@ export default function App() {
 				<AppBridgeProvider>
 					<React.Suspense fallback={<Loading />}>
 						<QueryProvider>
-							<NavigationMenu />
+							<NavigationMenu navigationLinks={[]} />
 							<Routes />
 						</QueryProvider>
 					</React.Suspense>
@@ -40,16 +40,11 @@ function Loading() {
 	return <AppBridge.Loading />;
 }
 
-function NavigationMenu() {
-	const links: string[] = [];
-	const toUrl = React.useCallback(
-		(link: string) => `/${link.toLocaleLowerCase().replace(/\s/g, "-")}`,
-		[]
-	);
-	const navigationLinks = links.map((link: any) => ({
-		label: link,
-		destination: toUrl(link),
-	}));
+function NavigationMenu({
+	navigationLinks,
+}: {
+	navigationLinks: AppBridge.NavigationMenuProps["navigationLinks"];
+}) {
 	const { pathname } = ReactRouter.useLocation();
 	const matcher = React.useCallback(
 		(link: any, location: any) => link.destination === location.pathname,
