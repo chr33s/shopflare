@@ -77,6 +77,16 @@
 			"plugin:react-hooks/recommended"
 		]
 	},
+	"prettier": {
+		"overrides": [
+			{
+				"files": "*.svg",
+				"options": {
+					"parser": "html"
+				}
+			}
+		]
+	},
 	"stylelint": {
 		"extends": [
 			"@shopify/stylelint-plugin/prettier",
