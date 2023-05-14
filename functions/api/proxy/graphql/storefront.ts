@@ -3,7 +3,7 @@ import { config, getSessionFromStorage, shopify } from "@/lib/shopify";
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
 	const sessionId = await shopify(context).session.getCurrentId({
-		isOnline: config.isOnline,
+		isOnline: true,
 		rawRequest: context.request,
 	});
 	const session = await getSessionFromStorage(context, sessionId!);

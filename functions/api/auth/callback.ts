@@ -1,4 +1,9 @@
 import {
+	InvalidOAuthError,
+	CookieNotFound,
+	BotActivityDetected,
+} from "@shopify/shopify-api";
+import {
 	addSessionToStorage,
 	config,
 	shopify,
@@ -8,52 +13,64 @@ import {
 import type { Env } from "@/functions/types";
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-	await shopify(context).logger.info(
-		"Handling request to complete OAuth process"
-	);
+	shopify(context).logger.info("Handling request to complete OAuth process");
 
-	const response = await shopify(context).auth.callback<Headers>({
-		rawRequest: context.request,
-	});
-	await shopify(context).logger.debug("Callback is valid, storing session", {
-		shop: response.session.shop,
-		isOnline: response.session.isOnline,
-	});
+	try {
+		const response = await shopify(context).auth.callback<Headers>({
+			rawRequest: context.request,
+		});
+		const session = response.session;
 
-	const session = response.session;
-	await addSessionToStorage(context, session.toObject());
+		shopify(context).logger.debug("Callback is valid, storing session", {
+			shop: session.shop,
+			isOnline: session.isOnline,
+		});
 
-	// If this is an offline OAuth process, register webhooks
-	if (!response.session.isOnline) {
-		context.waitUntil(registerWebhookHandlers(context, response.session));
+		await addSessionToStorage(context, session);
+
+		if (!session.isOnline) {
+			context.waitUntil(registerWebhookHandlers(context, session));
+
+			if (config.isOnline) {
+				shopify(context).logger.debug(
+					"Completing offline token OAuth, redirecting to online token OAuth",
+					{ shop: session.shop }
+				);
+
+				return redirectToAuth(context, true);
+			}
+		}
+
+		context.data = {
+			...context.data,
+			session,
+		};
+
+		shopify(context).logger.debug("Completed OAuth callback", {
+			shop: session.shop,
+			isOnline: session.isOnline,
+		});
+
+		const { searchParams } = new URL(context.request.url);
+		return new Response("", {
+			headers: [
+				...response.headers,
+				["Location", `/?${searchParams.toString()}`],
+			],
+			status: 302,
+		});
+	} catch (error: any) {
+		let status = 500;
+		switch (true) {
+			case error instanceof InvalidOAuthError:
+				status = 400;
+				break;
+			case error instanceof CookieNotFound:
+				return redirectToAuth(context);
+			case error instanceof BotActivityDetected:
+				status = 410;
+				break;
+		}
+		return new Response(error.message, { status });
 	}
-
-	// If we're completing an offline OAuth process, immediately kick off the online one
-	if (config.isOnline && !response.session.isOnline) {
-		await shopify(context).logger.debug(
-			"Completing offline token OAuth, redirecting to online token OAuth",
-			{ shop: response.session.shop }
-		);
-
-		return await redirectToAuth(context, true);
-	}
-
-	context.data = {
-		...context.data,
-		session: response.session,
-	};
-
-	await shopify(context).logger.debug("Completed OAuth callback", {
-		shop: response.session.shop,
-		isOnline: response.session.isOnline,
-	});
-
-	const { searchParams } = new URL(context.request.url);
-	return new Response("", {
-		headers: [
-			...response.headers,
-			["Location", `/?${searchParams.toString()}`],
-		],
-		status: 302,
-	});
 };

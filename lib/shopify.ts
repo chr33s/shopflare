@@ -6,6 +6,7 @@ import {
 	DeliveryMethod,
 	HttpResponseError,
 	InvalidJwtError,
+	LogSeverity,
 	shopifyApi,
 	Session,
 	type SessionParams,
@@ -20,17 +21,20 @@ export const config = {
 	authCallbackPath: "/api/auth/callback",
 	exitIframePath: "/exitiframe",
 	isEmbeddedApp: true,
-	isOnline: false,
-	storefrontAccessTokenTitle: "app.shopops.dev",
+	isOnline: true,
+	logger: {
+		level: LogSeverity.Info,
+	},
+	storefrontAccessTokenTitle: "shopflare",
 	webhooksPath: "/api/webhooks",
 };
 
 type Context = EventContext<Env, any, Record<string, unknown>>;
 
-export async function addSessionToStorage(context: Context, session: any) {
+export async function addSessionToStorage(context: Context, session: Session) {
 	await context.env.SHOPIFY_SESSIONS_KV.put(
 		session.id,
-		JSON.stringify(session)
+		JSON.stringify(session.toObject())
 	);
 }
 
@@ -44,7 +48,7 @@ async function embedAppIntoShopify(
 			rawRequest: context.request,
 		});
 	} catch (error) {
-		await shopify(context).logger.error(
+		shopify(context).logger.error(
 			`ensureInstalledOnShop did not receive a host query argument`,
 			{ shop }
 		);
@@ -52,7 +56,7 @@ async function embedAppIntoShopify(
 		return new Response("No host provided", { status: 400 });
 	}
 
-	await shopify(context).logger.debug(
+	shopify(context).logger.debug(
 		`Request is not embedded but app is. Redirecting to ${embeddedUrl} to embed the app`,
 		{ shop }
 	);
@@ -65,19 +69,20 @@ export async function ensureInstalledOnShop(context: Context) {
 	const response = await context.next();
 
 	const { pathname, searchParams } = new URL(context.request.url);
+	const isApiPath = pathname.startsWith("/api");
 	const excludedPaths = routes.exclude.map((v) => v.replace(/[\/\*]*$/, ""));
 	const isExcludedPath = excludedPaths.some((v) => pathname.startsWith(v));
 
 	const isWebSocket = context.request.headers.get("Upgrade") === "websocket";
 
-	if (isExcludedPath || isWebSocket) {
+	if (isApiPath || isExcludedPath || isWebSocket) {
 		return response;
 	}
 
-	await shopify(context).logger.info("Running ensureInstalledOnShop");
+	shopify(context).logger.info("Running ensureInstalledOnShop");
 
 	if (!config.isEmbeddedApp) {
-		await shopify(context).logger.warning(
+		shopify(context).logger.warning(
 			"ensureInstalledOnShop() should only be used in embedded apps; calling validateAuthenticatedSession() instead"
 		);
 
@@ -94,20 +99,19 @@ export async function ensureInstalledOnShop(context: Context) {
 			throw new Error("Invalid shop provided");
 		}
 	} catch (e: any) {
-		await shopify(context).logger.info(e.message, { shop });
+		shopify(context).logger.info(e.message, { shop });
 
 		return redirect("/shop");
 	}
 
-	await shopify(context).logger.debug(
-		"Checking if shop has installed the app",
-		{ shop }
-	);
+	shopify(context).logger.debug("Checking if shop has installed the app", {
+		shop,
+	});
 
 	const sessionId = shopify(context).session.getOfflineId(shop);
 	const session = await getSessionFromStorage(context, sessionId);
 	if (!session && context.request.url === config.exitIframePath) {
-		await shopify(context).logger.debug(
+		shopify(context).logger.debug(
 			"ensureInstalledOnShop() should only be used in embedded apps; calling validateAuthenticatedSession() instead"
 		);
 
@@ -119,7 +123,7 @@ export async function ensureInstalledOnShop(context: Context) {
 			return embedAppIntoShopify(context, shop);
 		}
 
-		await shopify(context).logger.info(
+		shopify(context).logger.info(
 			"Found a session, but it is not valid. Redirecting to auth",
 			{ shop }
 		);
@@ -138,7 +142,7 @@ export async function ensureInstalledOnShop(context: Context) {
 		response.headers.set("Content-Security-Policy", "frame-ancestors 'none';");
 	}
 
-	await shopify(context).logger.info("App is installed and ready to load", {
+	shopify(context).logger.info("App is installed and ready to load", {
 		shop,
 	});
 
@@ -198,7 +202,7 @@ export async function redirectToAuth(
 			`${appHost}/${config.authPath}?${redirectUriParams}`
 		);
 
-		await shopify(context).logger.debug(
+		shopify(context).logger.debug(
 			`Redirecting to auth while embedded, going to ${config.exitIframePath}`,
 			{ shop }
 		);
@@ -210,7 +214,7 @@ export async function redirectToAuth(
 	}
 
 	async function serverSideRedirect() {
-		await shopify(context).logger.debug(
+		shopify(context).logger.debug(
 			`Redirecting to auth at ${config.authPath}, with callback ${config.authCallbackPath}`,
 			{ shop, isOnline }
 		);
@@ -229,7 +233,7 @@ export async function registerWebhookHandlers(
 	context: Context,
 	session: Session
 ) {
-	await shopify(context).webhooks.addHandlers(webhooks);
+	shopify(context).webhooks.addHandlers(webhooks);
 	const response = await shopify(context).webhooks.register({
 		session,
 	});
@@ -238,7 +242,7 @@ export async function registerWebhookHandlers(
 	);
 	if (!success) {
 		const error = "Registering registerWebhookHandlers() failed";
-		await shopify(context).logger.error(error, { shop: session.shop });
+		shopify(context).logger.error(error, { shop: session.shop });
 		throw new Error(error);
 	}
 }
@@ -248,20 +252,22 @@ async function sessionHasValidAccessToken(
 	session: Session | undefined
 ) {
 	if (!session) {
-		await shopify(context).logger.debug("Request session not found");
+		shopify(context).logger.debug("Request session not found");
 
 		return false;
 	}
 
+	/* FIXME: bug in scopes when session.scope is string
 	const scopes = shopify(context).config.scopes;
 	const isActive = session.isActive(scopes);
 	if (!isActive) {
-		await shopify(context).logger.debug("Request session is not active", {
+		shopify(context).logger.debug("Request session is not active", {
 			shop: session.shop,
 		});
 
 		return false;
 	}
+	*/
 
 	try {
 		const client = new (shopify(context).clients.Graphql)({
@@ -275,16 +281,13 @@ async function sessionHasValidAccessToken(
 			}`,
 		});
 
-		await shopify(context).logger.debug(
-			"Request session has a valid access token",
-			{
-				shop: session.shop,
-			}
-		);
+		shopify(context).logger.debug("Request session has a valid access token", {
+			shop: session.shop,
+		});
 
 		return true;
 	} catch (error: any) {
-		await shopify(context).logger.error(
+		shopify(context).logger.error(
 			`Could not check if session was valid: ${error}`,
 			{
 				shop: session.shop,
@@ -348,13 +351,14 @@ export function shopify(context: Context) {
 		hostName,
 		hostScheme,
 		isEmbeddedApp: config.isEmbeddedApp,
+		logger: config.logger,
 		scopes: context.env.SHOPIFY_API_SCOPES.split(",")!,
 		restResources,
 	});
 }
 
 export async function validateAuthenticatedSession(context: Context) {
-	await shopify(context).logger.info("Running validateAuthenticatedSession");
+	shopify(context).logger.info("Running validateAuthenticatedSession");
 
 	const response = context.next();
 
@@ -370,7 +374,7 @@ export async function validateAuthenticatedSession(context: Context) {
 			rawRequest: context.request,
 		});
 	} catch (error: any) {
-		await shopify(context).logger.error(
+		shopify(context).logger.error(
 			`Error when loading session from storage: ${error}`
 		);
 
@@ -387,7 +391,7 @@ export async function validateAuthenticatedSession(context: Context) {
 		try {
 			session = await getSessionFromStorage(context, sessionId!);
 		} catch (error: any) {
-			await shopify(context).logger.error(
+			shopify(context).logger.error(
 				`Error when loading session from storage: ${error}`
 			);
 
@@ -396,9 +400,9 @@ export async function validateAuthenticatedSession(context: Context) {
 	}
 
 	const { searchParams } = new URL(context.request.url);
-	let shop = shopify(context).utils.sanitizeShop(searchParams.get("shop")!);
+	let shop = shopify(context).utils.sanitizeShop(searchParams.get("shop")!)!;
 	if (session && shop && session?.shop !== shop) {
-		await shopify(context).logger.debug(
+		shopify(context).logger.debug(
 			"Found a session for a different shop in the request",
 			{ currentShop: session.shop, requestShop: shop }
 		);
@@ -425,14 +429,20 @@ export async function validateAuthenticatedSession(context: Context) {
 		}
 	}
 
-	const redirectUrl = `${config.authPath}?shop=${shop}`;
+	const host = shopify(context).utils.sanitizeHost(searchParams.get("host")!)!;
+	const redirectParams = new URLSearchParams({ host, shop: shop }).toString();
+	const redirectUrl = `${config.authPath}?${redirectParams}`;
 	if (bearerPresent) {
 		return new Response("", {
-			status: 403,
 			headers: {
+				"Access-Control-Expose-Headers": [
+					"X-Shopify-Api-Request-Failure-Reauthorize",
+					"X-Shopify-Api-Request-Failure-Reauthorize-Url",
+				].join(";"),
 				"X-Shopify-API-Request-Failure-Reauthorize": "1",
 				"X-Shopify-API-Request-Failure-Reauthorize-Url": redirectUrl,
 			},
+			status: 403,
 		});
 	}
 	return redirect(redirectUrl, 302, context.request.headers);
@@ -445,11 +455,11 @@ const webhooks: AddHandlersParams = {
 		callback: async (
 			topic: string,
 			shop: string,
-			webhookRequestBody: string,
+			body: string,
 			webhookId: string,
 			apiVersion?: string
 		) => {
-			const payload = JSON.parse(webhookRequestBody);
+			const payload = JSON.parse(body);
 			console.log({ apiVersion, payload, shop, topic, webhookId });
 		},
 	},
@@ -460,11 +470,11 @@ const webhooks: AddHandlersParams = {
 		callback: async (
 			topic: string,
 			shop: string,
-			webhookRequestBody: string,
+			body: string,
 			webhookId: string,
 			apiVersion?: string
 		) => {
-			const payload = JSON.parse(webhookRequestBody);
+			const payload = JSON.parse(body);
 			console.log({ apiVersion, payload, shop, topic, webhookId });
 		},
 	},
@@ -475,11 +485,11 @@ const webhooks: AddHandlersParams = {
 		callback: async (
 			topic: string,
 			shop: string,
-			webhookRequestBody: string,
+			body: string,
 			webhookId: string,
 			apiVersion?: string
 		) => {
-			const payload = JSON.parse(webhookRequestBody);
+			const payload = JSON.parse(body);
 			console.log({ apiVersion, payload, shop, topic, webhookId });
 		},
 	},
