@@ -44,7 +44,12 @@ npm run deploy
 
 ## Documentation
 
-- ...
+| Method(s) | URL                           |
+| --------- | ----------------------------- |
+| GET       | /api/auth/callback?           |
+| POST      | /api/proxy/graphql/admin      |
+| POST      | /api/proxy/graphql/storefront |
+| ALL       | /api/proxy/rest/:path         |
 
 ## Copyright
 
