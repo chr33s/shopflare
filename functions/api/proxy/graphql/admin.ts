@@ -1,15 +1,8 @@
-import { getSessionFromStorage, shopify } from "@/lib/shopify";
+import { getSession, shopify } from "@/lib/shopify";
 import type { Env } from "@/functions/types";
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-	const sessionId = await shopify(context).session.getCurrentId({
-		isOnline: true,
-		rawRequest: context.request,
-	});
-	const session: any = await getSessionFromStorage(context, sessionId!);
-	if (!session) {
-		return new Response("No session found", { status: 401 });
-	}
+	const session: any = await getSession(context, true);
 
 	const rawBody: string = await context.request.json();
 	const response: any = await shopify(context).clients.graphqlProxy({

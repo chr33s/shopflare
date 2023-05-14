@@ -33,7 +33,7 @@ type Context = EventContext<Env, any, Record<string, unknown>>;
 
 export async function addSessionToStorage(context: Context, session: Session) {
 	await context.env.SHOPIFY_SESSIONS_KV.put(
-		session.id,
+		getSessionKey(session.id),
 		JSON.stringify(session.toObject())
 	);
 }
@@ -149,13 +149,41 @@ export async function ensureInstalledOnShop(context: Context) {
 	return response;
 }
 
+export async function getSession(
+	context: Context,
+	isOnline: boolean = config.isOnline
+) {
+	const sessionId = await shopify(context).session.getCurrentId({
+		isOnline,
+		rawRequest: context.request,
+	});
+	if (!sessionId) {
+		return new Response("No session id", { status: 401 });
+	}
+
+	const session: any = await getSessionFromStorage(context, sessionId);
+	if (!session) {
+		return new Response("No session found", { status: 401 });
+	}
+
+	return session;
+}
+
+function getSessionKey(id: string) {
+	const key = `session:${id}`;
+	return key;
+}
+
 export async function getSessionFromStorage(
 	context: Context,
 	sessionId: string
 ): Promise<Session | undefined> {
-	const params = await context.env.SHOPIFY_SESSIONS_KV.get(sessionId, {
-		type: "json",
-	});
+	const params = await context.env.SHOPIFY_SESSIONS_KV.get(
+		getSessionKey(sessionId),
+		{
+			type: "json",
+		}
+	);
 	return params ? new Session(params as SessionParams) : undefined;
 }
 
