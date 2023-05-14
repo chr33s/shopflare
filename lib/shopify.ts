@@ -253,7 +253,9 @@ async function sessionHasValidAccessToken(
 		return false;
 	}
 
-	if (session.isActive(shopify(context).config.scopes)) {
+	const scopes = shopify(context).config.scopes;
+	const isActive = session.isActive(scopes);
+	if (!isActive) {
 		await shopify(context).logger.debug("Request session is not active", {
 			shop: session.shop,
 		});
