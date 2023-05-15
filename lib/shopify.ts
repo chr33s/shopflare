@@ -3,6 +3,7 @@ import {
 	type AddHandlersParams,
 	ApiVersion,
 	BillingInterval,
+	BillingReplacementBehavior,
 	DeliveryMethod,
 	HttpResponseError,
 	InvalidJwtError,
@@ -19,9 +20,21 @@ import routes from "@/public/_routes.json";
 export const config = {
 	authPath: "/api/auth",
 	authCallbackPath: "/api/auth/callback",
+	billing: {
+		Basic: {
+			amount: 10.0,
+			currencyCode: "USD",
+			interval: BillingInterval.Annual,
+			replacementBehavior: BillingReplacementBehavior.ApplyImmediately,
+			trialDays: 30,
+			usageTerms: "...",
+		},
+	},
+	billingPlansPath: "/settings",
 	exitIframePath: "/exitiframe",
 	isEmbeddedApp: true,
 	isOnline: true,
+	isTest: true,
 	logger: {
 		level: LogSeverity.Info,
 	},
@@ -36,6 +49,26 @@ export async function addSessionToStorage(context: Context, session: Session) {
 		getSessionKey(session.id),
 		JSON.stringify(session.toObject())
 	);
+}
+
+export async function checkBillingPlan(context: Context) {
+	const plans = Object(shopify(context).config.billing).keys();
+	if (plans.length > 0) {
+		const options = await getBillingPlanConfig(context);
+		const hasPayment = await shopify(context).billing.check({
+			...options,
+			plans,
+		});
+		if (!hasPayment) {
+			let confirmationUrl = config.billingPlansPath;
+			if (plans.length === 1) {
+				confirmationUrl = await saveBillingPlan(context, plans[0]);
+			}
+			return redirect(config.billingPlansPath);
+		}
+	}
+
+	await context.next();
 }
 
 async function embedAppIntoShopify(
@@ -147,6 +180,15 @@ export async function ensureInstalledOnShop(context: Context) {
 	});
 
 	return response;
+}
+
+export async function getBillingPlanConfig(context: Context) {
+	const session: any = await getSession(context);
+	const options = {
+		isTest: config.isTest,
+		session,
+	};
+	return options;
 }
 
 export async function getSession(
@@ -272,6 +314,15 @@ export async function registerWebhookHandlers(
 	}
 }
 
+export async function saveBillingPlan(context: Context, plan: string) {
+	const options = await getBillingPlanConfig(context);
+	const confirmationUrl = await shopify(context).billing.request({
+		...options,
+		plan,
+	});
+	return confirmationUrl;
+}
+
 async function sessionHasValidAccessToken(
 	context: Context,
 	session: Session | undefined
@@ -346,33 +397,7 @@ export function shopify(context: Context) {
 		apiKey: context.env.SHOPIFY_API_KEY!,
 		apiSecretKey: context.env.SHOPIFY_API_SECRET_KEY!,
 		apiVersion: ApiVersion.January23,
-		billing: {
-			Starter: {
-				amount: 25.0,
-				currencyCode: "USD",
-				interval: BillingInterval.Annual,
-			},
-			"Basic ": {
-				amount: 25.0,
-				currencyCode: "USD",
-				interval: BillingInterval.Every30Days,
-			},
-			"Shopify ": {
-				amount: 125.0,
-				currencyCode: "USD",
-				interval: BillingInterval.Every30Days,
-			},
-			Advanced: {
-				amount: 250.0,
-				currencyCode: "USD",
-				interval: BillingInterval.Every30Days,
-			},
-			Plus: {
-				amount: 500.0,
-				currencyCode: "USD",
-				interval: BillingInterval.Every30Days,
-			},
-		},
+		billing: config.billing,
 		hostName,
 		hostScheme,
 		isEmbeddedApp: config.isEmbeddedApp,

@@ -9,8 +9,9 @@ export default function Page() {
 				title="Page"
 				secondaryActions={[
 					{
-						content: "Action",
-						url: "/",
+						content: "Uninstall",
+						target: "ADMIN_PATH",
+						url: "/settings/apps",
 					},
 				]}
 			/>

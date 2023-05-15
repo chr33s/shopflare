@@ -1,6 +1,10 @@
 import type { Env } from "@/functions/types";
 
-export { ensureInstalledOnShop, validateAuthenticatedSession } from "./shopify";
+export {
+	checkBillingPlan,
+	ensureInstalledOnShop,
+	validateAuthenticatedSession,
+} from "./shopify";
 
 export const errorHandling: PagesFunction<Env> = async (context) => {
 	try {

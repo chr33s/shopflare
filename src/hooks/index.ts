@@ -1,2 +1,2 @@
-export { useAppQuery } from "./useAppQuery";
+export { useAppQuery, useAppMutation } from "./useAppQuery";
 export { useAuthenticatedFetch } from "./useAuthenticatedFetch";

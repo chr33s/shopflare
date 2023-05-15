@@ -11,6 +11,7 @@ import {
 const HomePage = React.lazy(() => import("./pages"));
 const ExitIframePage = React.lazy(() => import("./pages/ExitIframe"));
 const NotFoundPage = React.lazy(() => import("./pages/NotFound"));
+const SettingsPage = React.lazy(() => import("./pages/Settings"));
 const ShopPage = React.lazy(() => import("./pages/Shop"));
 
 export default function App() {
@@ -20,7 +21,14 @@ export default function App() {
 				<AppBridgeProvider>
 					<React.Suspense fallback={<Loading />}>
 						<QueryProvider>
-							<NavigationMenu navigationLinks={[]} />
+							<NavigationMenu
+								navigationLinks={[
+									{
+										label: "Settings",
+										destination: "/settings",
+									},
+								]}
+							/>
 							<Routes />
 						</QueryProvider>
 					</React.Suspense>
@@ -69,6 +77,7 @@ function Routes() {
 		<ReactRouter.Routes>
 			<ReactRouter.Route element={<HomePage />} path="/" />
 			<ReactRouter.Route element={<ExitIframePage />} path="/exitiframe" />
+			<ReactRouter.Route element={<SettingsPage />} path="/settings" />
 			<ReactRouter.Route element={<ShopPage />} path="/shop" />
 			<ReactRouter.Route element={<NotFoundPage />} path="*" />
 		</ReactRouter.Routes>
