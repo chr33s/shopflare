@@ -15,7 +15,7 @@
 		"lint:actions": "actionlint",
 		"lint:css": "stylelint --allow-empty-input --quiet 'src/**/*.css'",
 		"lint:js": "eslint --cache",
-		"start": "wrangler pages dev --binding=$(cat .env.local | xargs) --compatibility-date=2023-05-11 --kv=SHOPIFY_SESSIONS_KV --port=${PORT} --proxy=1${PORT} -- vite dev --port=1${PORT}",
+		"start": "wrangler pages dev --binding=$(cat .env.local | xargs) --compatibility-date=2023-05-11 --kv=SHOPFLARE_KV --port=${PORT} --proxy=1${PORT} -- vite dev --port=1${PORT}",
 		"test": "vitest",
 		"tunnel": "cloudflared tunnel --no-autoupdate --url http://localhost:${PORT} run --token ${CLOUDFLARE_TOKEN}",
 		"typecheck": "tsc -b"

@@ -19,7 +19,7 @@ export $(cat .env.local | xargs)
 ```
 
 - copy .env.cloudflare vars to Cloudflare pages > Environment variables
-- create Workers > KV store key SHOPIFY_SESSIONS_KV & attach it to pages > Settings > KV namespace bindings
+- create Workers > KV store key SHOPFLARE_KV & attach it to pages > Settings > KV namespace bindings
 - copy .env.github vars to Github > secrets and variables
 
 ## Development

@@ -32,7 +32,7 @@ export const config = {
 type Context = EventContext<Env, any, Record<string, unknown>>;
 
 export async function addSessionToStorage(context: Context, session: Session) {
-	await context.env.SHOPIFY_SESSIONS_KV.put(
+	await context.env.SHOPFLARE_KV.put(
 		getSessionKey(session.id),
 		JSON.stringify(session.toObject())
 	);
@@ -178,12 +178,9 @@ export async function getSessionFromStorage(
 	context: Context,
 	sessionId: string
 ): Promise<Session | undefined> {
-	const params = await context.env.SHOPIFY_SESSIONS_KV.get(
-		getSessionKey(sessionId),
-		{
-			type: "json",
-		}
-	);
+	const params = await context.env.SHOPFLARE_KV.get(getSessionKey(sessionId), {
+		type: "json",
+	});
 	return params ? new Session(params as SessionParams) : undefined;
 }
 
