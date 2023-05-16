@@ -8,6 +8,7 @@
 	},
 	"scripts": {
 		"build": "tsc && vite build",
+		"checks": "npm-run-all -s format lint typecheck",
 		"deploy": "wrangler pages publish ./dist --project-name ${CLOUDFLARE_PROJECT} --branch ${CLOUDFLARE_BRANCH}",
 		"dev": "npm-run-all -p tunnel start",
 		"format": "prettier --write '**/*.{css,html,json,md,svg,ts,tsx}'",
