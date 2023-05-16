@@ -31,7 +31,6 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
 		if (!session.isOnline) {
 			context.waitUntil(registerWebhookHandlers(context, session));
-			context.waitUntil(createAppDataMetafield(context, session));
 
 			if (config.isOnline) {
 				shopify(context).logger.debug(
