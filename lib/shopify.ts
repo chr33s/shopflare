@@ -38,6 +38,10 @@ export const config = {
 	logger: {
 		level: LogSeverity.Info,
 	},
+	settings: {
+		setting1: "",
+		setting2: "",
+	},
 	storefrontAccessTokenTitle: "shopflare",
 	webhooksPath: "/api/webhooks",
 };
@@ -69,6 +73,62 @@ export async function checkBillingPlan(context: Context) {
 	}
 
 	await context.next();
+}
+
+type CurrentAppInstallation = {
+	data: {
+		currentAppInstallation: {
+			id: string;
+		};
+	};
+};
+
+export async function createAppDataMetafield(
+	context: Context,
+	session: Session
+) {
+	const client = new (shopify(context).clients.Graphql)({ session });
+
+	const appId = await client
+		.query<CurrentAppInstallation>({
+			data: {
+				query: /* graphql */ `query {
+				currentAppInstallation {
+					id
+				}
+			}`,
+			},
+		})
+		.then((res) => res.body?.data?.currentAppInstallation?.id);
+
+	await client.query({
+		data: {
+			query: /* graphql */ `mutation CreateAppDataMetafield($metafieldsSetInput: [MetafieldsSetInput!]!) {
+				metafieldsSet(metafields: $metafieldsSetInput) {
+					metafields {
+						id
+						namespace
+						key
+					}
+					userErrors {
+						field
+						message
+					}
+				}
+			}`,
+			variables: {
+				metafieldsSetInput: [
+					{
+						key: "settings",
+						namespace: "shopflare",
+						ownerId: appId,
+						type: "json",
+						value: JSON.stringify(config.settings),
+					},
+				],
+			},
+		},
+	});
 }
 
 async function embedAppIntoShopify(
