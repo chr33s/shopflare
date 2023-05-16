@@ -51,7 +51,8 @@ type Context = EventContext<Env, any, Record<string, unknown>>;
 export async function addSessionToStorage(context: Context, session: Session) {
 	await context.env.SHOPFLARE_KV.put(
 		getSessionKey(session.id),
-		JSON.stringify(session.toObject())
+		JSON.stringify(session.toObject()),
+		{ metadata: { shop: session.shop } }
 	);
 }
 
@@ -129,6 +130,21 @@ export async function createAppDataMetafield(
 			},
 		},
 	});
+}
+
+export async function deleteSessionsFromStorage(
+	context: Context,
+	shop: string
+) {
+	const sessions = await context.env.SHOPFLARE_KV.list({
+		prefix: getSessionKey(""),
+	}).then(({ keys }) =>
+		keys.filter((session) => (session.metadata as any)?.shop === shop)
+	);
+
+	return await Promise.all(
+		sessions.map((session) => context.env.SHOPFLARE_KV.delete(session.name))
+	);
 }
 
 async function embedAppIntoShopify(
@@ -559,6 +575,33 @@ export async function validateAuthenticatedSession(context: Context) {
 }
 
 const webhooks: AddHandlersParams = {
+	APP_UNINSTALLED: {
+		deliveryMethod: DeliveryMethod.Http,
+		callbackUrl: config.webhooksPath,
+		callback: async (
+			topic: string,
+			shop: string,
+			body: string,
+			webhookId: string,
+			apiVersion?: string
+		) => {
+			const payload = JSON.parse(body);
+			console.log({ apiVersion, payload, shop, topic, webhookId });
+
+			/* TODO: https://github.com/Shopify/shopify-api-js/issues/877
+			const sessionId = shopify(context).session.getOfflineId(shop);
+			const session = await getSessionFromStorage(context, sessionId);
+
+			await shopify(context).billing.cancel({
+				session,
+				subscriptionId,
+			});
+
+			await deleteSessionsFromStorage(context, shop);
+			*/
+		},
+	},
+
 	CUSTOMERS_DATA_REQUEST: {
 		deliveryMethod: DeliveryMethod.Http,
 		callbackUrl: config.webhooksPath,
