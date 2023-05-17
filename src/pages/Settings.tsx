@@ -166,38 +166,24 @@ export default function Settings() {
 function BillingPlan() {
 	const app = AppBridge.useAppBridge();
 
-	const query = useAppQuery({ url: "/api/billing" });
+	const query = useAppQuery(
+		graphql({
+			url: "/api/graphql",
+			query: /* graphql */ `{
+				billingPlans {
+					amount
+					currencyCode
+					interval
+					replacementBehavior
+					name
+					trialDays
+					usageTerms
+				}
+			}`,
+		})
+	);
 
-	const { show } = AppBridge.useToast();
-
-	const [plan, setPlan] = React.useState("");
-
-	const mutation = useAppMutation({
-		url: "/api/billing",
-		fetchInit: {
-			headers: { "Content-Type": "application/json" },
-			method: "POST",
-		},
-		reactQueryOptions: {
-			onError: (error: any) => {
-				show("Failed to update Billing plan", { isError: true });
-
-				console.error(error);
-			},
-			onSuccess: (data: any) => {
-				show("Billing plan updated, redirecting...");
-
-				setTimeout(() => {
-					const redirect = Redirect.create(app);
-					redirect.dispatch(
-						Redirect.Action.REMOTE,
-						decodeURIComponent(data.confirmationUrl)
-					);
-				}, 1500);
-			},
-		},
-	});
-
+	const [selected, setSelected] = React.useState("");
 	useAppQuery(
 		graphql({
 			url: "/api/proxy/graphql/admin",
@@ -212,37 +198,72 @@ function BillingPlan() {
 			}`,
 			reactQueryOptions: {
 				onSuccess: ({ data }: any) => {
-					setPlan(data?.app?.installation?.activeSubscriptions?.[0]?.name);
+					setSelected(data?.app?.installation?.activeSubscriptions?.[0]?.name);
 				},
 			},
 		})
 	);
 
-	const onChange = React.useCallback((_: boolean, value: string) => {
-		mutation.mutate({ plan: value } as any);
-		setPlan(value);
+	const { show } = AppBridge.useToast();
+
+	const mutation = useAppMutation(
+		graphql({
+			url: "/api/graphql",
+			query: /* graphql */ `mutation setBillingPlan($input: BillingPlanInput!) {
+				billingPlan(input: $input) {
+					confirmationUrl
+				}
+			}`,
+			reactQueryOptions: {
+				onError: (error: any) => {
+					show("Failed to update Billing plan", { isError: true });
+
+					console.error(error);
+				},
+				onSuccess: ({ data }: any) => {
+					show("Billing plan updated, redirecting...");
+
+					if (!data.billingPlan.confirmationUrl) {
+						return;
+					}
+
+					setTimeout(() => {
+						const redirect = Redirect.create(app);
+						redirect.dispatch(
+							Redirect.Action.REMOTE,
+							decodeURIComponent(data.billingPlan.confirmationUrl)
+						);
+					}, 1500);
+				},
+			},
+		})
+	);
+
+	const onChange = React.useCallback((_: boolean, plan: string) => {
+		mutation.mutate({ variables: { input: { plan } } } as any);
+		setSelected(plan);
 	}, []);
 
-	const label = React.useCallback((key: string, val: any) => {
+	const label = React.useCallback((plan: any) => {
 		const price = new Intl.NumberFormat("en-US", {
 			style: "currency",
-			currency: val.currencyCode,
-		}).format(val.amount);
-		const interval = val.interval === "ANNUAL" ? "year" : "30 days";
+			currency: plan.currencyCode,
+		}).format(plan.amount);
+		const interval = plan.interval === "ANNUAL" ? "year" : "30 days";
 
 		return (
 			<Polaris.Text variant="headingMd" as="h6">
-				{key}, {price} {interval}
+				{plan.name}, {price} {interval}
 			</Polaris.Text>
 		);
 	}, []);
 
-	const helpText = React.useCallback((key: string, val: any) => {
+	const helpText = React.useCallback((plan: any) => {
 		return (
 			<>
-				{val.trialDays} day trial
+				{plan.trialDays} day trial
 				<br />
-				{val.usageTerms}
+				{plan.usageTerms}
 			</>
 		);
 	}, []);
@@ -273,14 +294,14 @@ function BillingPlan() {
 
 	return (
 		<Polaris.LegacyStack vertical>
-			{Object.entries(query.data as any).map(([key, val]: any) => (
+			{(query.data as any).data.billingPlans.map((plan: any) => (
 				<Polaris.RadioButton
-					label={label(key, val)}
-					helpText={helpText(key, val)}
-					checked={plan === key}
-					id={key}
-					key={key}
-					name={key}
+					label={label(plan)}
+					helpText={helpText(plan)}
+					checked={plan.name === selected}
+					id={plan.name}
+					key={plan.name}
+					name={plan.name}
 					onChange={onChange}
 				/>
 			))}
