@@ -50,6 +50,7 @@ npm run deploy
 | POST      | /api/proxy/graphql/admin      |
 | POST      | /api/proxy/graphql/storefront |
 | ALL       | /api/proxy/rest/:path         |
+| POST      | /api/graphql                  |
 
 ## Copyright
 
