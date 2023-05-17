@@ -12,7 +12,7 @@ export default function Settings() {
 		setting1: "",
 		setting2: "",
 	};
-	const defaultsRef = React.useRef(defaults);
+	const [defaultData, setDefaultData] = React.useState({ ...defaults });
 	const [data, setData] = React.useReducer<React.Reducer<any, any>>(
 		(prev, next) => {
 			if (next === null) {
@@ -21,12 +21,12 @@ export default function Settings() {
 			return { ...prev, ...next };
 		},
 		{
-			...defaults,
+			...defaultData,
 		}
 	);
 	const isChanged = React.useMemo(
-		() => !isEquals(defaultsRef.current, data),
-		[data]
+		() => !isEquals(data, defaultData),
+		[data, defaultData]
 	);
 
 	const query = useAppQuery(
@@ -45,7 +45,7 @@ export default function Settings() {
 					let v = data?.currentAppInstallation?.metafield?.value;
 					if (v) {
 						v = JSON.parse(v);
-						defaultsRef.current = v;
+						setDefaultData(v);
 						setData(v);
 					}
 				},
@@ -63,7 +63,7 @@ export default function Settings() {
 			query: /* graphql */ `mutation createAppDataMetafield($metafieldsSetInput: [MetafieldsSetInput!]!) {
 				metafieldsSet(metafields: $metafieldsSetInput) {
 					metafields {
-						id
+						value
 					}
 					userErrors {
 						field
@@ -83,7 +83,13 @@ export default function Settings() {
 				onSettled: () => {
 					setSaving(false);
 				},
-				onSuccess: (data: any) => {
+				onSuccess: ({ data }: any) => {
+					let v = data?.metafieldsSet?.metafields?.[0]?.value;
+					if (v) {
+						v = JSON.parse(v);
+						setDefaultData(v);
+					}
+
 					show("Settings saved successfully");
 				},
 			},
