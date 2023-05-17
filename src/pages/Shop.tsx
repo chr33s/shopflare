@@ -2,6 +2,7 @@ import * as Polaris from "@shopify/polaris";
 import * as React from "react";
 
 import { notFoundImage } from "@/assets";
+import { useI18n } from "@/hooks";
 
 export default function Shop() {
 	const [shop, setShop] = React.useState("");
@@ -17,10 +18,15 @@ export default function Shop() {
 		[shop]
 	);
 
+	const [i18n] = useI18n();
+
 	return (
 		<Polaris.Page>
 			<Polaris.LegacyCard>
-				<Polaris.EmptyState heading="Shop not found" image={notFoundImage}>
+				<Polaris.EmptyState
+					heading={i18n.translate("app.shop.notFound")}
+					image={notFoundImage}
+				>
 					<div style={{ height: "20px" }} />
 
 					<Polaris.Form onSubmit={onSubmit}>
@@ -28,7 +34,7 @@ export default function Shop() {
 							<Polaris.TextField
 								autoComplete="off"
 								autoFocus={true}
-								label="Shop domain"
+								label={i18n.translate("app.shop.domain")}
 								labelHidden={true}
 								onChange={(v) => setShop(v)}
 								pattern="[0-9a-z\-]+"
@@ -37,7 +43,7 @@ export default function Shop() {
 								value={shop}
 							/>
 							<Polaris.Button fullWidth primary submit>
-								Continue
+								{i18n.translate("app.shop.button")}
 							</Polaris.Button>
 						</Polaris.FormLayout>
 					</Polaris.Form>

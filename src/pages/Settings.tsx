@@ -4,10 +4,12 @@ import * as Polaris from "@shopify/polaris";
 import isEquals from "fast-deep-equal/es6/react";
 import * as React from "react";
 
-import { useAppQuery, useAppMutation } from "@/hooks";
+import { useAppQuery, useAppMutation, useI18n } from "@/hooks";
 import { graphql } from "@/utils";
 
 export default function Settings() {
+	const [i18n] = useI18n();
+
 	const defaults = {
 		setting1: "",
 		setting2: "",
@@ -73,7 +75,7 @@ export default function Settings() {
 			}`,
 			reactQueryOptions: {
 				onError: (error: any) => {
-					show("Failed to update settings", { isError: true });
+					show(i18n.translate("app.settings.failure"), { isError: true });
 
 					console.error(error);
 				},
@@ -90,7 +92,7 @@ export default function Settings() {
 						setDefaultData(v);
 					}
 
-					show("Settings saved successfully");
+					show(i18n.translate("app.settings.success"));
 				},
 			},
 		})
@@ -120,7 +122,7 @@ export default function Settings() {
 
 	return (
 		<Polaris.Page>
-			<AppBridge.TitleBar title="Settings" />
+			<AppBridge.TitleBar title={i18n.translate("app.settings.title")} />
 
 			<AppBridge.ContextualSaveBar
 				discardAction={{
@@ -137,22 +139,28 @@ export default function Settings() {
 			/>
 
 			<Polaris.VerticalStack gap={{ xs: "8", sm: "4" }}>
-				<Section body="Please choose a plan" heading="Billing Plan">
+				<Section
+					body={i18n.translate("app.settings.billingPlan.body")}
+					heading={i18n.translate("app.settings.billingPlan.heading")}
+				>
 					<BillingPlan />
 				</Section>
 
 				{smUp ? <Polaris.Divider /> : null}
 
-				<Section body="..." heading="Section">
+				<Section
+					body={i18n.translate("app.settings.body")}
+					heading={i18n.translate("app.settings.heading")}
+				>
 					<Polaris.TextField
 						autoComplete="off"
-						label="Setting 1"
+						label={i18n.translate("app.settings.label", { n: 1 })}
 						onChange={(setting1) => setData({ setting1 })}
 						value={data.setting1}
 					/>
 					<Polaris.TextField
 						autoComplete="off"
-						label="Setting 2"
+						label={i18n.translate("app.settings.label", { n: 2 })}
 						multiline={4}
 						onChange={(setting2) => setData({ setting2 })}
 						value={data.setting2}
@@ -165,6 +173,8 @@ export default function Settings() {
 
 function BillingPlan() {
 	const app = AppBridge.useAppBridge();
+
+	const [i18n] = useI18n();
 
 	const query = useAppQuery(
 		graphql({
@@ -216,12 +226,14 @@ function BillingPlan() {
 			}`,
 			reactQueryOptions: {
 				onError: (error: any) => {
-					show("Failed to update Billing plan", { isError: true });
+					show(i18n.translate("app.settings.billingPlan.failed"), {
+						isError: true,
+					});
 
 					console.error(error);
 				},
 				onSuccess: ({ data }: any) => {
-					show("Billing plan updated, redirecting...");
+					show(i18n.translate("app.settings.billingPlan.success"));
 
 					if (!data.billingPlan.confirmationUrl) {
 						return;
@@ -245,11 +257,14 @@ function BillingPlan() {
 	}, []);
 
 	const label = React.useCallback((plan: any) => {
-		const price = new Intl.NumberFormat("en-US", {
+		const price = i18n.formatCurrency(plan.amount, {
 			style: "currency",
 			currency: plan.currencyCode,
-		}).format(plan.amount);
-		const interval = plan.interval === "ANNUAL" ? "year" : "30 days";
+		});
+		const interval =
+			plan.interval === "ANNUAL"
+				? i18n.translate("app.year")
+				: i18n.translate("app.30Days");
 
 		return (
 			<Polaris.Text variant="headingMd" as="h6">
@@ -261,7 +276,7 @@ function BillingPlan() {
 	const helpText = React.useCallback((plan: any) => {
 		return (
 			<>
-				{plan.trialDays} day trial
+				{plan.trialDays} {i18n.translate("app.dayTrial")}
 				<br />
 				{plan.usageTerms}
 			</>
@@ -278,18 +293,20 @@ function BillingPlan() {
 					outline={true}
 					onClick={() => query.refetch()}
 				>
-					Fetch failed, retry
+					{i18n.translate("app.fetchFailedRetry")}
 				</Polaris.Button>
 			</Polaris.LegacyStack>
 		);
 	}
 
 	if (query.isLoading) {
-		return <Polaris.Spinner accessibilityLabel="Loading..." />;
+		return (
+			<Polaris.Spinner accessibilityLabel={i18n.translate("app.loading")} />
+		);
 	}
 
 	if (!query.data) {
-		return <>none</>;
+		return <>{i18n.translate("app.none")}</>;
 	}
 
 	return (

@@ -2,19 +2,19 @@ import * as Polaris from "@shopify/polaris";
 import * as React from "react";
 
 import { notFoundImage } from "@/assets";
+import { useI18n } from "@/hooks";
 
 export default function NotFound() {
+	const [i18n] = useI18n();
+
 	return (
 		<Polaris.Page>
 			<Polaris.LegacyCard>
 				<Polaris.EmptyState
-					heading="There is no page at this address"
+					heading={i18n.translate("app.page.notFound.heading")}
 					image={notFoundImage}
 				>
-					<p>
-						Check the URL and try again, or use the search bar to find what you
-						need.
-					</p>
+					<p>{i18n.translate("app.page.notFound.content")}</p>
 				</Polaris.EmptyState>
 			</Polaris.LegacyCard>
 		</Polaris.Page>

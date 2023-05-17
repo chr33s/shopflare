@@ -1,0 +1,38 @@
+{
+	"app": {
+		"dayTrial": "day trial",
+		"fetchFailedRetry": "Fetch failed, retry",
+		"loading": "Loading...",
+		"none": "none",
+		"page": {
+			"content": "...",
+			"title": "Page",
+			"notFound": {
+				"heading": "There is no page at this address",
+				"content": "Check the URL and try again, or use the search bar to find what you need."
+			}
+		},
+		"settings": {
+			"billingPlan": {
+				"body": "Please choose a plan",
+				"failure": "Failed to update Billing plan",
+				"heading": "Billing Plan",
+				"success": "Billing plan updated, redirecting..."
+			},
+			"body": "...",
+			"failed": "Failed to update settings",
+			"heading": "Section",
+			"label": "Setting {n}",
+			"saved": "Settings saved successfully",
+			"title": "Settings"
+		},
+		"shop": {
+			"button": "Continue",
+			"domain": "Shop domain",
+			"notFound": "Shop not found"
+		},
+		"uninstall": "Uninstall",
+		"year": "year",
+		"30Days": "30 days"
+	}
+}
