@@ -5,7 +5,6 @@ import {
 } from "@shopify/shopify-api";
 import {
 	addSessionToStorage,
-	createAppDataMetafield,
 	config,
 	shopify,
 	redirectToAuth,
