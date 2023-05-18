@@ -258,7 +258,6 @@ function BillingPlan() {
 
 	const label = React.useCallback((plan: any) => {
 		const price = i18n.formatCurrency(plan.amount, {
-			style: "currency",
 			currency: plan.currencyCode,
 		});
 		const interval =
