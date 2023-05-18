@@ -17,8 +17,5 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 		query,
 	});
 
-	return new Response(JSON.stringify(response.body), {
-		headers: response.headers,
-		status: response.status,
-	});
+	return new Response(JSON.stringify(response.body), response);
 };

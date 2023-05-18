@@ -23,8 +23,5 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 	const data: string = await context.request.json();
 	const response: any = await storefront.query({ data });
 
-	return new Response(JSON.stringify(response.body), {
-		headers: response.headers,
-		status: response.status,
-	});
+	return new Response(JSON.stringify(response.body), response);
 };
