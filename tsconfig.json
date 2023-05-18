@@ -26,7 +26,13 @@
 		"skipLibCheck": true,
 		"strict": true,
 		"target": "es2021",
-		"types": ["@cloudflare/workers-types", "node", "vite/client"]
+		"types": [
+			"@cloudflare/workers-types",
+			"vitest/globals",
+			"vitest-environment-miniflare/globals",
+			"node",
+			"vite/client"
+		]
 	},
 	"include": ["**/*.ts", "**/*.tsx"],
 	"exclude": ["node_modules"]

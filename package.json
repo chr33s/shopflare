@@ -17,7 +17,7 @@
 		"lint:css": "stylelint --allow-empty-input --quiet 'src/**/*.css'",
 		"lint:js": "eslint --cache '**/*.{ts,tsx}'",
 		"start": "wrangler pages dev --binding=$(cat .env.local | xargs) --compatibility-date=2023-05-18 --kv=SHOPFLARE_KV --port=${PORT} --proxy=1${PORT} -- vite dev --port=1${PORT}",
-		"test": "vitest",
+		"test": "NODE_NO_WARNINGS=1 vitest",
 		"tunnel": "cloudflared tunnel --no-autoupdate --url http://localhost:${PORT} run --token ${CLOUDFLARE_TOKEN}",
 		"typecheck": "tsc -b"
 	},
@@ -58,6 +58,7 @@
 		"typescript": "5.0.4",
 		"vite": "4.3.7",
 		"vitest": "0.31.1",
+		"vitest-environment-miniflare": "2.14.0",
 		"wrangler": "3.0.0"
 	},
 	"dependencies": {

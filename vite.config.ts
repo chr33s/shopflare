@@ -17,7 +17,15 @@ export default defineConfig(({ mode }) => {
 			},
 		},
 		test: {
-			environment: "happy-dom",
+			environment: "node",
+			environmentMatchGlobs: [
+				["src/**/*.test.tsx", "happy-dom"],
+				["{functions,lib}/**/*.test.ts", "miniflare"],
+			],
+			environmentOptions: {
+				bindings: { ...env },
+				kvNamespaces: ["SHOPFLARE_KV"],
+			},
 			watch: false,
 		},
 	};
