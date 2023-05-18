@@ -10,10 +10,13 @@ import { graphql } from "@/utils";
 export default function Settings() {
 	const [i18n] = useI18n();
 
-	const defaults = {
-		setting1: "",
-		setting2: "",
-	};
+	const defaults = React.useMemo(
+		() => ({
+			setting1: "",
+			setting2: "",
+		}),
+		[]
+	);
 	const [defaultData, setDefaultData] = React.useState({ ...defaults });
 	const [data, setData] = React.useReducer<React.Reducer<any, any>>(
 		(prev, next) => {
@@ -112,7 +115,7 @@ export default function Settings() {
 				],
 			},
 		} as any);
-	}, [data, query.data]);
+	}, [data, query.data, mutation]);
 
 	const onDiscard = React.useCallback(() => {
 		setData(defaults);
@@ -251,36 +254,45 @@ function BillingPlan() {
 		})
 	);
 
-	const onChange = React.useCallback((_: boolean, plan: string) => {
-		mutation.mutate({ variables: { input: { plan } } } as any);
-		setSelected(plan);
-	}, []);
+	const onChange = React.useCallback(
+		(_: boolean, plan: string) => {
+			mutation.mutate({ variables: { input: { plan } } } as any);
+			setSelected(plan);
+		},
+		[mutation]
+	);
 
-	const label = React.useCallback((plan: any) => {
-		const price = i18n.formatCurrency(plan.amount, {
-			currency: plan.currencyCode,
-		});
-		const interval =
-			plan.interval === "ANNUAL"
-				? i18n.translate("app.year")
-				: i18n.translate("app.30Days");
+	const label = React.useCallback(
+		(plan: any) => {
+			const price = i18n.formatCurrency(plan.amount, {
+				currency: plan.currencyCode,
+			});
+			const interval =
+				plan.interval === "ANNUAL"
+					? i18n.translate("app.year")
+					: i18n.translate("app.30Days");
 
-		return (
-			<Polaris.Text variant="headingMd" as="h6">
-				{plan.name}, {price} {interval}
-			</Polaris.Text>
-		);
-	}, []);
+			return (
+				<Polaris.Text variant="headingMd" as="h6">
+					{plan.name}, {price} {interval}
+				</Polaris.Text>
+			);
+		},
+		[i18n]
+	);
 
-	const helpText = React.useCallback((plan: any) => {
-		return (
-			<>
-				{plan.trialDays} {i18n.translate("app.dayTrial")}
-				<br />
-				{plan.usageTerms}
-			</>
-		);
-	}, []);
+	const helpText = React.useCallback(
+		(plan: any) => {
+			return (
+				<>
+					{plan.trialDays} {i18n.translate("app.dayTrial")}
+					<br />
+					{plan.usageTerms}
+				</>
+			);
+		},
+		[i18n]
+	);
 
 	if (query.isError) {
 		return (

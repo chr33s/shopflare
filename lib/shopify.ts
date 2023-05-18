@@ -69,7 +69,7 @@ export async function checkBillingPlan(context: Context) {
 			if (plans.length === 1) {
 				confirmationUrl = await saveBillingPlan(context, plans[0]);
 			}
-			return redirect(config.billingPlansPath);
+			return redirect(confirmationUrl);
 		}
 	}
 
@@ -246,11 +246,7 @@ export async function getSessionFromStorage(
 	return params ? new Session(params as SessionParams) : undefined;
 }
 
-function redirect(
-	url: string,
-	status: number = 302,
-	headers: Headers = [] as any
-) {
+function redirect(url: string, status = 302, headers: Headers = [] as any) {
 	return new Response("", {
 		headers: [...headers, ["Location", url]],
 		status,
@@ -263,27 +259,32 @@ export async function redirectToAuth(
 ) {
 	const { searchParams } = new URL(context.request.url);
 
-	const shop = shopify(context).utils.sanitizeShop(searchParams.get("shop")!)!;
+	const shop = shopify(context).utils.sanitizeShop(
+		searchParams.get("shop") ?? ""
+	);
 	if (!shop) {
 		return new Response("No shop provided", { status: 500 });
 	}
 
 	async function clientSideRedirect() {
 		const host = shopify(context).utils.sanitizeHost(
-			searchParams.get("host")!
-		)!;
+			searchParams.get("host") ?? ""
+		);
 		if (!host) {
 			return new Response("No host provided", { status: 500 });
 		}
 
-		const redirectUriParams = new URLSearchParams({ shop, host }).toString();
+		const redirectUriParams = new URLSearchParams({
+			shop,
+			host,
+		} as any).toString();
 		const appHost = [
 			shopify(context).config.hostScheme,
 			shopify(context).config.hostName,
 		].join("://");
 
 		const queryParams = new URLSearchParams(searchParams);
-		queryParams.set("shop", shop!);
+		queryParams.set("shop", shop ?? "");
 		queryParams.set(
 			"redirectUri",
 			`${appHost}/${config.authPath}?${redirectUriParams}`
@@ -308,7 +309,7 @@ export async function redirectToAuth(
 
 		return await shopify(context).auth.begin({
 			callbackPath: config.authCallbackPath,
-			shop,
+			shop: shop ?? "",
 			isOnline,
 			rawRequest: context.request,
 		});
@@ -411,18 +412,18 @@ export function shopify(context: Context) {
 	}
 
 	const [hostScheme, hostName]: any =
-		context.env.SHOPIFY_API_HOST.split("://")!;
+		context.env.SHOPIFY_API_HOST.split("://") ?? [];
 
 	return shopifyApi({
-		apiKey: context.env.SHOPIFY_API_KEY!,
-		apiSecretKey: context.env.SHOPIFY_API_SECRET_KEY!,
+		apiKey: context.env.SHOPIFY_API_KEY ?? "",
+		apiSecretKey: context.env.SHOPIFY_API_SECRET_KEY ?? "",
 		apiVersion: ApiVersion.January23,
 		billing: config.billing,
 		hostName,
 		hostScheme,
 		isEmbeddedApp: config.isEmbeddedApp,
 		logger: config.logger,
-		scopes: context.env.SHOPIFY_API_SCOPES.split(",")!,
+		scopes: context.env.SHOPIFY_API_SCOPES.split(",") ?? [],
 		restResources,
 	});
 }
@@ -459,7 +460,7 @@ export async function validateAuthenticatedSession(context: Context) {
 	let session: Session | undefined;
 	if (sessionId) {
 		try {
-			session = await getSessionFromStorage(context, sessionId!);
+			session = await getSessionFromStorage(context, sessionId ?? "");
 		} catch (error: any) {
 			shopify(context).logger.error(
 				`Error when loading session from storage: ${error}`
@@ -470,7 +471,9 @@ export async function validateAuthenticatedSession(context: Context) {
 	}
 
 	const { searchParams } = new URL(context.request.url);
-	let shop = shopify(context).utils.sanitizeShop(searchParams.get("shop")!)!;
+	let shop = shopify(context).utils.sanitizeShop(
+		searchParams.get("shop") ?? ""
+	);
 	if (session && shop && session?.shop !== shop) {
 		shopify(context).logger.debug(
 			"Found a session for a different shop in the request",
@@ -493,14 +496,16 @@ export async function validateAuthenticatedSession(context: Context) {
 			shop = session.shop;
 		} else if (config.isEmbeddedApp) {
 			const payload = await shopify(context).session.decodeSessionToken(
-				bearerPresent?.[1]!
+				bearerPresent?.[1]
 			);
 			shop = payload.dest.replace("https://", "");
 		}
 	}
 
-	const host = shopify(context).utils.sanitizeHost(searchParams.get("host")!)!;
-	const redirectParams = new URLSearchParams({ host, shop: shop }).toString();
+	const host = shopify(context).utils.sanitizeHost(
+		searchParams.get("host") ?? ""
+	);
+	const redirectParams = new URLSearchParams({ host, shop } as any).toString();
 	const redirectUrl = `${config.authPath}?${redirectParams}`;
 	if (bearerPresent) {
 		return new Response("", {

@@ -46,14 +46,14 @@ function Loading() {
 }
 
 function NavigationMenu() {
-	const { pathname } = ReactRouter.useLocation();
 	const matcher = React.useCallback(
 		(link: any, location: any) => link.destination === location.pathname,
-		[pathname]
+		[]
 	);
 
 	const [i18n] = useI18n();
 
+	const { pathname } = ReactRouter.useLocation();
 	const isShopPage = pathname === "/shop";
 	if (isShopPage) {
 		return null;

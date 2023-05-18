@@ -16,7 +16,7 @@ function AppBridgeLink({ url, children, external, ...rest }: Props) {
 	const navigate = AppBridge.useNavigate();
 	const handleClick = React.useCallback(() => {
 		navigate(url);
-	}, [url]);
+	}, [navigate, url]);
 
 	const IS_EXTERNAL_LINK_REGEX = /^(?:[a-z][a-z\d+.-]*:|\/\/)/;
 

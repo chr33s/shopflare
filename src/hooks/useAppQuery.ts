@@ -17,7 +17,7 @@ export function useAppQuery({ url, fetchInit = {}, reactQueryOptions }: any) {
 			body: fetchInit.body ? JSON.stringify(fetchInit.body) : undefined,
 		});
 		return response.json();
-	}, [url, JSON.stringify(fetchInit)]);
+	}, [authenticatedFetch, fetchInit, url]);
 
 	return ReactQuery.useQuery({
 		queryKey: url,
@@ -44,7 +44,7 @@ export function useAppMutation({
 			});
 			return response.json();
 		},
-		[url, JSON.stringify(fetchInit)]
+		[authenticatedFetch, fetchInit, url]
 	);
 
 	return ReactQuery.useMutation({

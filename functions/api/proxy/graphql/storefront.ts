@@ -17,7 +17,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 	}
 
 	const storefront = new (shopify(context).clients.Storefront)({
-		domain: session?.shop!,
+		domain: session?.shop,
 		storefrontAccessToken,
 	});
 	const data: string = await context.request.json();
