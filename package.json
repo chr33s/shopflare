@@ -54,7 +54,6 @@
 		"stylelint": "15.6.2",
 		"stylelint-config-standard": "33.0.0",
 		"stylelint-order": "6.0.3",
-		"ts-node": "10.9.1",
 		"typescript": "5.0.4",
 		"vite": "4.3.7",
 		"vitest": "0.31.1",
@@ -66,7 +65,6 @@
 		"apollo-server-errors": "3.3.1",
 		"graphql": "16.6.0",
 		"graphql-constraint-directive": "5.1.0",
-		"graphql-type-json": "0.3.2",
 		"graphql-yoga": "3.9.1"
 	},
 	"optionalDependencies": {
