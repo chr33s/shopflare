@@ -12,7 +12,7 @@
 		"inlineSources": false,
 		"isolatedModules": true,
 		"jsx": "react",
-		"lib": ["dom", "dom.iterable", "es2021"],
+		"lib": ["dom", "dom.iterable", "es2022"],
 		"module": "es2022",
 		"moduleResolution": "node",
 		"noEmit": true,
@@ -25,7 +25,7 @@
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"strict": true,
-		"target": "es2021",
+		"target": "es2022",
 		"types": [
 			"@cloudflare/workers-types",
 			"vitest/globals",
