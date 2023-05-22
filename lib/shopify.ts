@@ -354,9 +354,8 @@ async function sessionHasValidAccessToken(
 		return false;
 	}
 
-	/* FIXME: bug in scopes when session.scope is string
 	const scopes = shopify(context).config.scopes;
-	const isActive = session.isActive(scopes);
+	const isActive = scopes.equals(session.scope); // session.isActive(scopes);
 	if (!isActive) {
 		shopify(context).logger.debug("Request session is not active", {
 			shop: session.shop,
@@ -364,7 +363,6 @@ async function sessionHasValidAccessToken(
 
 		return false;
 	}
-	*/
 
 	try {
 		const client = new (shopify(context).clients.Graphql)({
@@ -423,7 +421,7 @@ export function shopify(context: Context) {
 		hostScheme,
 		isEmbeddedApp: config.isEmbeddedApp,
 		logger: config.logger,
-		scopes: context.env.SHOPIFY_API_SCOPES.split(",") ?? [],
+		scopes: context.env.SHOPIFY_API_SCOPES?.split(",") ?? [],
 		restResources,
 	});
 }
