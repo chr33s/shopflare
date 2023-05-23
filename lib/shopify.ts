@@ -35,9 +35,6 @@ export const config = {
 	isEmbeddedApp: true,
 	isOnline: true,
 	isTest: true,
-	logger: {
-		level: LogSeverity.Info,
-	},
 	settings: {
 		setting1: "",
 		setting2: "",
@@ -417,11 +414,19 @@ export function shopify(context: Context) {
 		apiSecretKey: context.env.SHOPIFY_API_SECRET_KEY ?? "",
 		apiVersion: ApiVersion.January23,
 		billing: config.billing,
+		customShopDomains:
+			context.env.SHOPIFY_CUSTOM_DOMAINS?.split(",") ?? undefined,
 		hostName,
 		hostScheme,
+		isCustomStoreApp: !!context.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
 		isEmbeddedApp: config.isEmbeddedApp,
-		logger: config.logger,
+		logger: {
+			level: LogSeverity[context.env.DEBUG ? "Debug" : "Info"],
+		},
+		privateAppStorefrontAccessToken:
+			context.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN ?? undefined,
 		scopes: context.env.SHOPIFY_API_SCOPES?.split(",") ?? [],
+		userAgentPrefix: "shopflare",
 		restResources,
 	});
 }
