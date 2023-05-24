@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: github/codeql-action/init@v2
       - uses: actions/setup-node@v3
         with:
           node-version: "18.x"
@@ -21,6 +22,7 @@ jobs:
         env:
           SHOPIFY_API_KEY: ${{ env.SHOPIFY_API_KEY }}
       - run: npm test
+      - uses: github/codeql-action/analyze@v2
       - uses: actions/upload-artifact@v3
         with:
           name: dist
