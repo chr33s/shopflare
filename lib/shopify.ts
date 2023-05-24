@@ -31,6 +31,7 @@ export const config = {
 		},
 	},
 	billingPlansPath: "/settings",
+	billingProrate: true,
 	exitIframePath: "/exitiframe",
 	isEmbeddedApp: true,
 	isOnline: true,
@@ -544,10 +545,19 @@ const webhooks: AddHandlersParams = {
 			const sessionId = shopify(context).session.getOfflineId(shop);
 			const session = await getSessionFromStorage(context, sessionId);
 
-			await shopify(context).billing.cancel({
+			const subscriptions = await shopify(context).api.billing.subscriptions({
 				session,
-				subscriptionId,
 			});
+
+			await Promise.all(
+				subscriptions.map((subscription) =>
+					shopify(context).billing.cancel({
+						prorate: config.billingProrate,
+						session,
+						subscriptionId,
+					})
+				)
+			)
 
 			await deleteSessionsFromStorage(context, shop);
 			*/
