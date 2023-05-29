@@ -22,7 +22,7 @@ export default function Shop() {
 
 	return (
 		<Polaris.Page>
-			<Polaris.LegacyCard>
+			<Polaris.Card>
 				<Polaris.EmptyState
 					heading={i18n.translate("app.shop.notFound")}
 					image={notFoundImage}
@@ -48,7 +48,7 @@ export default function Shop() {
 						</Polaris.FormLayout>
 					</Polaris.Form>
 				</Polaris.EmptyState>
-			</Polaris.LegacyCard>
+			</Polaris.Card>
 		</Polaris.Page>
 	);
 }

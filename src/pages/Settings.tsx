@@ -296,7 +296,7 @@ function BillingPlan() {
 
 	if (query.isError) {
 		return (
-			<Polaris.LegacyStack vertical>
+			<Polaris.VerticalStack>
 				<Polaris.Button
 					destructive={true}
 					disabled={query.isRefetching}
@@ -306,7 +306,7 @@ function BillingPlan() {
 				>
 					{i18n.translate("app.fetchFailedRetry")}
 				</Polaris.Button>
-			</Polaris.LegacyStack>
+			</Polaris.VerticalStack>
 		);
 	}
 
@@ -321,7 +321,7 @@ function BillingPlan() {
 	}
 
 	return (
-		<Polaris.LegacyStack vertical>
+		<Polaris.VerticalStack>
 			{(query.data as any).data.billingPlans.map((plan: any) => (
 				<Polaris.RadioButton
 					label={label(plan)}
@@ -333,7 +333,7 @@ function BillingPlan() {
 					onChange={onChange}
 				/>
 			))}
-		</Polaris.LegacyStack>
+		</Polaris.VerticalStack>
 	);
 }
 
@@ -360,13 +360,13 @@ function Section({ body = "", children, heading = "" }: Section) {
 					</Polaris.Text>
 				</Polaris.VerticalStack>
 			</Polaris.Box>
-			<Polaris.AlphaCard
+			<Polaris.Card
 				background="bg"
 				padding={{ xs: "4", sm: "5" }}
 				roundedAbove="sm"
 			>
 				<Polaris.VerticalStack gap="4">{children}</Polaris.VerticalStack>
-			</Polaris.AlphaCard>
+			</Polaris.Card>
 		</Polaris.HorizontalGrid>
 	);
 }

@@ -22,9 +22,9 @@ export default function Page() {
 			<Polaris.Layout>
 				<Polaris.Layout.Section fullWidth>
 					<Polaris.Box padding="4">
-						<Polaris.AlphaCard padding="4">
+						<Polaris.Card padding="4">
 							<p>{i18n.translate("app.page.content")}</p>
-						</Polaris.AlphaCard>
+						</Polaris.Card>
 					</Polaris.Box>
 				</Polaris.Layout.Section>
 			</Polaris.Layout>
