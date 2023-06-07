@@ -1,7 +1,7 @@
 import "@shopify/shopify-api/adapters/cf-worker";
 import {
 	type AddHandlersParams,
-	ApiVersion,
+	LATEST_API_VERSION,
 	BillingInterval,
 	BillingReplacementBehavior,
 	DeliveryMethod,
@@ -411,9 +411,9 @@ export function shopify(context: Context) {
 		context.env.SHOPIFY_API_HOST.split("://") ?? [];
 
 	return shopifyApi({
-		apiKey: context.env.SHOPIFY_API_KEY ?? "",
+		adminApiAccessToken: context.env.SHOPIFY_API_KEY ?? undefined,
 		apiSecretKey: context.env.SHOPIFY_API_SECRET_KEY ?? "",
-		apiVersion: ApiVersion.January23,
+		apiVersion: LATEST_API_VERSION,
 		billing: config.billing,
 		customShopDomains:
 			context.env.SHOPIFY_CUSTOM_DOMAINS?.split(",") ?? undefined,
@@ -528,84 +528,32 @@ export async function validateAuthenticatedSession(context: Context) {
 }
 
 const webhooks: AddHandlersParams = {
-	APP_UNINSTALLED: {
-		deliveryMethod: DeliveryMethod.Http,
-		callbackUrl: config.webhooksPath,
-		callback: async (
-			topic: string,
-			shop: string,
-			body: string,
-			webhookId: string,
-			apiVersion?: string
-		) => {
-			const payload = JSON.parse(body);
-			console.log({ apiVersion, payload, shop, topic, webhookId });
-
-			/* TODO: https://github.com/Shopify/shopify-api-js/issues/877
-			const sessionId = shopify(context).session.getOfflineId(shop);
-			const session = await getSessionFromStorage(context, sessionId);
-
-			const subscriptions = await shopify(context).api.billing.subscriptions({
-				session,
-			});
-
-			await Promise.all(
-				subscriptions.map((subscription) =>
-					shopify(context).billing.cancel({
-						prorate: config.billingProrate,
-						session,
-						subscriptionId,
-					})
-				)
-			)
-
-			await deleteSessionsFromStorage(context, shop);
-			*/
+	// NOTE: https://shopify.dev/docs/api/admin-graphql/2023-04/enums/WebhookSubscriptionTopic
+	APP_UNINSTALLED: [
+		{
+			deliveryMethod: DeliveryMethod.Http,
+			callbackUrl: config.webhooksPath,
 		},
-	},
+	],
 
-	CUSTOMERS_DATA_REQUEST: {
-		deliveryMethod: DeliveryMethod.Http,
-		callbackUrl: config.webhooksPath,
-		callback: async (
-			topic: string,
-			shop: string,
-			body: string,
-			webhookId: string,
-			apiVersion?: string
-		) => {
-			const payload = JSON.parse(body);
-			console.log({ apiVersion, payload, shop, topic, webhookId });
+	CUSTOMERS_DATA_REQUEST: [
+		{
+			deliveryMethod: DeliveryMethod.Http,
+			callbackUrl: config.webhooksPath,
 		},
-	},
+	],
 
-	CUSTOMERS_REDACT: {
-		deliveryMethod: DeliveryMethod.Http,
-		callbackUrl: config.webhooksPath,
-		callback: async (
-			topic: string,
-			shop: string,
-			body: string,
-			webhookId: string,
-			apiVersion?: string
-		) => {
-			const payload = JSON.parse(body);
-			console.log({ apiVersion, payload, shop, topic, webhookId });
+	CUSTOMERS_REDACT: [
+		{
+			deliveryMethod: DeliveryMethod.Http,
+			callbackUrl: config.webhooksPath,
 		},
-	},
+	],
 
-	SHOP_REDACT: {
-		deliveryMethod: DeliveryMethod.Http,
-		callbackUrl: config.webhooksPath,
-		callback: async (
-			topic: string,
-			shop: string,
-			body: string,
-			webhookId: string,
-			apiVersion?: string
-		) => {
-			const payload = JSON.parse(body);
-			console.log({ apiVersion, payload, shop, topic, webhookId });
+	SHOP_REDACT: [
+		{
+			deliveryMethod: DeliveryMethod.Http,
+			callbackUrl: config.webhooksPath,
 		},
-	},
+	],
 };

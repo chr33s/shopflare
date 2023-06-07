@@ -39,8 +39,8 @@ npm run deploy
 
 ## Changelog
 
-- https://github.com/Shopify/shopify-api-js/compare/main..2e01ac6
-- https://github.com/Shopify/shopify-app-js/compare/main..2444643
+- https://github.com/Shopify/shopify-api-js/compare/3120fc7..main
+- https://github.com/Shopify/shopify-app-js/compare/9ae50b3..main
 
 ## Documentation
 
