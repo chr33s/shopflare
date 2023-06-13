@@ -5,17 +5,19 @@ import { notFoundImage } from "@/assets";
 import { useI18n } from "@/hooks";
 
 export default function Shop() {
-	const [shop, setShop] = React.useState("");
+	const [value, setValue] = React.useState("");
 
 	const onSubmit = React.useCallback(
 		(el: React.FormEvent<HTMLFormElement>) => {
 			el.preventDefault();
 
-			const params = new URLSearchParams({ shop: `${shop}.myshopify.com` });
+			const shop = `${value}.myshopify.com`;
+			const host = btoa(`${shop}/admin`);
+			const params = new URLSearchParams({ host, shop });
 			const url = `/api/auth?${params.toString()}`;
 			window.location.href = url;
 		},
-		[shop]
+		[value]
 	);
 
 	const [i18n] = useI18n();
@@ -36,11 +38,11 @@ export default function Shop() {
 								autoFocus={true}
 								label={i18n.translate("app.shop.domain")}
 								labelHidden={true}
-								onChange={(v) => setShop(v)}
+								onChange={(v) => setValue(v)}
 								pattern="[0-9a-z\-]+"
 								placeholder="shop"
 								suffix=".myshopify.com"
-								value={shop}
+								value={value}
 							/>
 							<Polaris.Button fullWidth primary submit>
 								{i18n.translate("app.shop.button")}
