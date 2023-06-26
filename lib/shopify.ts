@@ -285,7 +285,7 @@ export async function redirectToAuth(
 		queryParams.set("shop", shop ?? "");
 		queryParams.set(
 			"redirectUri",
-			`${appHost}/${config.authPath}?${redirectUriParams}`
+			`${appHost}${config.authPath}?${redirectUriParams}`
 		);
 
 		shopify(context).logger.debug(
