@@ -1,6 +1,6 @@
 {
 	"name": "@chr33s/shopflare",
-	"version": "0.6.2",
+	"version": "0.6.3",
 	"private": true,
 	"engines": {
 		"npm": ">=9.0.0",
@@ -24,21 +24,21 @@
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "4.20230518.0",
-		"@graphql-eslint/eslint-plugin": "3.19.1",
+		"@graphql-eslint/eslint-plugin": "3.19.3",
 		"@shopify/app-bridge": "3.7.8",
 		"@shopify/app-bridge-react": "3.7.8",
 		"@shopify/app-bridge-utils": "3.5.1",
-		"@shopify/polaris": "11.2.2",
+		"@shopify/polaris": "11.3.1",
 		"@shopify/react-i18n": "7.8.0",
 		"@shopify/stylelint-plugin": "12.0.1",
-		"@types/node": "20.3.2",
+		"@types/node": "20.3.3",
 		"@types/react": "18.2.14",
 		"@types/react-dom": "18.2.6",
 		"@types/react-test-renderer": "18.0.0",
-		"@typescript-eslint/eslint-plugin": "5.60.1",
-		"@typescript-eslint/parser": "5.60.1",
+		"@typescript-eslint/eslint-plugin": "5.61.0",
+		"@typescript-eslint/parser": "5.61.0",
 		"@vitejs/plugin-react": "4.0.1",
-		"eslint": "8.43.0",
+		"eslint": "8.44.0",
 		"eslint-config-prettier": "8.8.0",
 		"eslint-plugin-i18next": "6.0.3",
 		"eslint-plugin-react": "7.32.2",
@@ -51,14 +51,14 @@
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
 		"react-query": "3.39.3",
-		"react-router-dom": "6.14.0",
+		"react-router-dom": "6.14.1",
 		"react-test-renderer": "18.2.0",
 		"stylelint": "15.9.0",
 		"stylelint-config-standard": "33.0.0",
 		"stylelint-order": "6.0.3",
-		"typescript": "5.0.4",
+		"typescript": "5.1.6",
 		"vite": "4.3.9",
-		"vitest": "0.32.2",
+		"vitest": "0.32.4",
 		"vitest-environment-miniflare": "2.14.0",
 		"wrangler": "3.1.1"
 	},
@@ -67,11 +67,11 @@
 		"apollo-server-errors": "3.3.1",
 		"graphql": "16.7.1",
 		"graphql-constraint-directive": "5.1.1",
-		"graphql-yoga": "4.0.2"
+		"graphql-yoga": "4.0.3"
 	},
 	"optionalDependencies": {
-		"@shopify/app": "3.46.5",
-		"@shopify/cli": "3.46.5"
+		"@shopify/app": "3.47.3",
+		"@shopify/cli": "3.47.3"
 	},
 	"browserslist": [
 		"last 3 chrome versions",
