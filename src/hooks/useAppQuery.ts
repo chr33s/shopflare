@@ -44,7 +44,7 @@ export function useAppMutation({
 			});
 			return response.json();
 		},
-		[authenticatedFetch, fetchInit, url]
+		[authenticatedFetch, fetchInit, url],
 	);
 
 	return ReactQuery.useMutation({

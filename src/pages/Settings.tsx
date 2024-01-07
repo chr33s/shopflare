@@ -15,7 +15,7 @@ export default function Settings() {
 			setting1: "",
 			setting2: "",
 		}),
-		[]
+		[],
 	);
 	const [defaultData, setDefaultData] = React.useState({ ...defaults });
 	const [data, setData] = React.useReducer<React.Reducer<any, any>>(
@@ -27,11 +27,11 @@ export default function Settings() {
 		},
 		{
 			...defaultData,
-		}
+		},
 	);
 	const isChanged = React.useMemo(
 		() => !isEquals(data, defaultData),
-		[data, defaultData]
+		[data, defaultData],
 	);
 
 	const query = useAppQuery(
@@ -55,7 +55,7 @@ export default function Settings() {
 					}
 				},
 			},
-		})
+		}),
 	);
 
 	const { show } = AppBridge.useToast();
@@ -98,7 +98,7 @@ export default function Settings() {
 					show(i18n.translate("app.settings.success"));
 				},
 			},
-		})
+		}),
 	);
 
 	const onSave = React.useCallback(() => {
@@ -141,7 +141,7 @@ export default function Settings() {
 				visible={isChanged}
 			/>
 
-			<Polaris.VerticalStack gap={{ xs: "8", sm: "4" }}>
+			<Polaris.BlockStack gap={{ xs: "800", sm: "400" }}>
 				<Section
 					body={i18n.translate("app.settings.billingPlan.body")}
 					heading={i18n.translate("app.settings.billingPlan.heading")}
@@ -169,7 +169,7 @@ export default function Settings() {
 						value={data.setting2}
 					/>
 				</Section>
-			</Polaris.VerticalStack>
+			</Polaris.BlockStack>
 		</Polaris.Page>
 	);
 }
@@ -193,7 +193,7 @@ function BillingPlan() {
 					usageTerms
 				}
 			}`,
-		})
+		}),
 	);
 
 	const [selected, setSelected] = React.useState("");
@@ -214,7 +214,7 @@ function BillingPlan() {
 					setSelected(data?.app?.installation?.activeSubscriptions?.[0]?.name);
 				},
 			},
-		})
+		}),
 	);
 
 	const { show } = AppBridge.useToast();
@@ -246,12 +246,12 @@ function BillingPlan() {
 						const redirect = Redirect.create(app);
 						redirect.dispatch(
 							Redirect.Action.REMOTE,
-							decodeURIComponent(data.billingPlan.confirmationUrl)
+							decodeURIComponent(data.billingPlan.confirmationUrl),
 						);
 					}, 1500);
 				},
 			},
-		})
+		}),
 	);
 
 	const onChange = React.useCallback(
@@ -259,7 +259,7 @@ function BillingPlan() {
 			mutation.mutate({ variables: { input: { plan } } } as any);
 			setSelected(plan);
 		},
-		[mutation]
+		[mutation],
 	);
 
 	const label = React.useCallback(
@@ -278,7 +278,7 @@ function BillingPlan() {
 				</Polaris.Text>
 			);
 		},
-		[i18n]
+		[i18n],
 	);
 
 	const helpText = React.useCallback(
@@ -291,22 +291,22 @@ function BillingPlan() {
 				</>
 			);
 		},
-		[i18n]
+		[i18n],
 	);
 
 	if (query.isError) {
 		return (
-			<Polaris.VerticalStack>
+			<Polaris.BlockStack>
 				<Polaris.Button
-					destructive={true}
 					disabled={query.isRefetching}
 					loading={query.isRefetching}
-					outline={true}
 					onClick={() => query.refetch()}
+					tone="critical"
+					variant="plain"
 				>
 					{i18n.translate("app.fetchFailedRetry")}
 				</Polaris.Button>
-			</Polaris.VerticalStack>
+			</Polaris.BlockStack>
 		);
 	}
 
@@ -321,7 +321,7 @@ function BillingPlan() {
 	}
 
 	return (
-		<Polaris.VerticalStack>
+		<Polaris.BlockStack>
 			{(query.data as any).data.billingPlans.map((plan: any) => (
 				<Polaris.RadioButton
 					label={label(plan)}
@@ -333,7 +333,7 @@ function BillingPlan() {
 					onChange={onChange}
 				/>
 			))}
-		</Polaris.VerticalStack>
+		</Polaris.BlockStack>
 	);
 }
 
@@ -345,28 +345,28 @@ type Section = {
 
 function Section({ body = "", children, heading = "" }: Section) {
 	return (
-		<Polaris.HorizontalGrid columns={{ xs: "1fr", md: "2fr 5fr" }} gap="4">
+		<Polaris.InlineGrid columns={{ xs: "1fr", md: "2fr 5fr" }} gap="400">
 			<Polaris.Box
 				as="section"
-				paddingInlineStart={{ xs: "4", sm: "0" }}
-				paddingInlineEnd={{ xs: "4", sm: "0" }}
+				paddingInlineStart={{ xs: "400", sm: "0" }}
+				paddingInlineEnd={{ xs: "400", sm: "0" }}
 			>
-				<Polaris.VerticalStack gap="4">
+				<Polaris.BlockStack gap="400">
 					<Polaris.Text as="h3" variant="headingMd">
 						{heading}
 					</Polaris.Text>
 					<Polaris.Text as="p" variant="bodyMd">
 						{body}
 					</Polaris.Text>
-				</Polaris.VerticalStack>
+				</Polaris.BlockStack>
 			</Polaris.Box>
 			<Polaris.Card
 				background="bg"
-				padding={{ xs: "4", sm: "5" }}
+				padding={{ xs: "400", sm: "500" }}
 				roundedAbove="sm"
 			>
-				<Polaris.VerticalStack gap="4">{children}</Polaris.VerticalStack>
+				<Polaris.BlockStack gap="400">{children}</Polaris.BlockStack>
 			</Polaris.Card>
-		</Polaris.HorizontalGrid>
+		</Polaris.InlineGrid>
 	);
 }

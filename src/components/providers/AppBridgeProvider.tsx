@@ -15,12 +15,12 @@ export function AppBridgeProvider({ children }: Props) {
 				navigate(path, { replace: true });
 			},
 		}),
-		[navigate]
+		[navigate],
 	);
 
 	const routerConfig = React.useMemo(
 		() => ({ history, location }),
-		[history, location]
+		[history, location],
 	);
 
 	const [appBridgeConfig] = React.useState(() => {
@@ -49,18 +49,18 @@ export function AppBridgeProvider({ children }: Props) {
 			? {
 					title: i18n.translate("app.bridge.missingApiKey.title"),
 					children: i18n.translate("app.bridge.missingApiKey.children"),
-			  }
+				}
 			: {
 					title: i18n.translate("app.bridge.missingHost.title"),
 					children: i18n.translate("app.bridge.missingHost.children"),
-			  };
+				};
 
 		return (
 			<Polaris.Page narrowWidth>
 				<Polaris.Layout>
 					<Polaris.Layout.Section>
 						<div style={{ marginTop: "100px" }}>
-							<Polaris.Banner {...bannerProps} status="critical" />
+							<Polaris.Banner {...bannerProps} tone="critical" />
 						</div>
 					</Polaris.Layout.Section>
 				</Polaris.Layout>

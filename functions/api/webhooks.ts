@@ -54,8 +54,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 							prorate: config.billingProrate,
 							session,
 							subscriptionId: subscription.id,
-						})
-					)
+						}),
+					),
 				);
 
 				await deleteSessionsFromStorage(context, shop);

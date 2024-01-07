@@ -50,7 +50,7 @@ export async function addSessionToStorage(context: Context, session: Session) {
 	await context.env.SHOPFLARE_KV.put(
 		getSessionKey(session.id),
 		JSON.stringify(session.toObject()),
-		{ metadata: { shop: session.shop } }
+		{ metadata: { shop: session.shop } },
 	);
 }
 
@@ -76,22 +76,22 @@ export async function checkBillingPlan(context: Context) {
 
 export async function deleteSessionsFromStorage(
 	context: Context,
-	shop: string
+	shop: string,
 ) {
 	const sessions = await context.env.SHOPFLARE_KV.list({
 		prefix: getSessionKey(""),
 	}).then(({ keys }) =>
-		keys.filter((session) => (session.metadata as any)?.shop === shop)
+		keys.filter((session) => (session.metadata as any)?.shop === shop),
 	);
 
 	return await Promise.all(
-		sessions.map((session) => context.env.SHOPFLARE_KV.delete(session.name))
+		sessions.map((session) => context.env.SHOPFLARE_KV.delete(session.name)),
 	);
 }
 
 async function embedAppIntoShopify(
 	context: Context,
-	shop: string
+	shop: string,
 ): Promise<Response> {
 	let embeddedUrl: string;
 	try {
@@ -101,7 +101,7 @@ async function embedAppIntoShopify(
 	} catch (error) {
 		shopify(context).logger.error(
 			`ensureInstalledOnShop did not receive a host query argument`,
-			{ shop }
+			{ shop },
 		);
 
 		return new Response("No host provided", { status: 400 });
@@ -109,7 +109,7 @@ async function embedAppIntoShopify(
 
 	shopify(context).logger.debug(
 		`Request is not embedded but app is. Redirecting to ${embeddedUrl} to embed the app`,
-		{ shop }
+		{ shop },
 	);
 
 	const { pathname } = new URL(context.request.url);
@@ -134,7 +134,7 @@ export async function ensureInstalledOnShop(context: Context) {
 
 	if (!config.isEmbeddedApp) {
 		shopify(context).logger.warning(
-			"ensureInstalledOnShop() should only be used in embedded apps; calling validateAuthenticatedSession() instead"
+			"ensureInstalledOnShop() should only be used in embedded apps; calling validateAuthenticatedSession() instead",
 		);
 
 		return validateAuthenticatedSession(context);
@@ -163,7 +163,7 @@ export async function ensureInstalledOnShop(context: Context) {
 	const session = await getSessionFromStorage(context, sessionId);
 	if (!session && context.request.url === config.exitIframePath) {
 		shopify(context).logger.debug(
-			"ensureInstalledOnShop() should only be used in embedded apps; calling validateAuthenticatedSession() instead"
+			"ensureInstalledOnShop() should only be used in embedded apps; calling validateAuthenticatedSession() instead",
 		);
 
 		return redirectToAuth(context);
@@ -176,7 +176,7 @@ export async function ensureInstalledOnShop(context: Context) {
 
 		shopify(context).logger.info(
 			"Found a session, but it is not valid. Redirecting to auth",
-			{ shop }
+			{ shop },
 		);
 
 		return redirectToAuth(context);
@@ -186,8 +186,8 @@ export async function ensureInstalledOnShop(context: Context) {
 		response.headers.set(
 			"Content-Security-Policy",
 			`frame-ancestors https://${encodeURIComponent(
-				shop
-			)} https://admin.shopify.com;`
+				shop,
+			)} https://admin.shopify.com;`,
 		);
 	} else {
 		response.headers.set("Content-Security-Policy", "frame-ancestors 'none';");
@@ -211,7 +211,7 @@ export async function getBillingPlanConfig(context: Context) {
 
 export async function getSession(
 	context: Context,
-	isOnline: boolean = config.isOnline
+	isOnline: boolean = config.isOnline,
 ) {
 	const sessionId = await shopify(context).session.getCurrentId({
 		isOnline,
@@ -236,7 +236,7 @@ function getSessionKey(id: string) {
 
 export async function getSessionFromStorage(
 	context: Context,
-	sessionId: string
+	sessionId: string,
 ): Promise<Session | undefined> {
 	const params = await context.env.SHOPFLARE_KV.get(getSessionKey(sessionId), {
 		type: "json",
@@ -253,12 +253,12 @@ function redirect(url: string, status = 302, headers: Headers = [] as any) {
 
 export async function redirectToAuth(
 	context: Context,
-	isOnline: boolean = config.isOnline
+	isOnline: boolean = config.isOnline,
 ) {
 	const { searchParams } = new URL(context.request.url);
 
 	const shop = shopify(context).utils.sanitizeShop(
-		searchParams.get("shop") ?? ""
+		searchParams.get("shop") ?? "",
 	);
 	if (!shop) {
 		return new Response("No shop provided", { status: 500 });
@@ -266,7 +266,7 @@ export async function redirectToAuth(
 
 	async function clientSideRedirect() {
 		const host = shopify(context).utils.sanitizeHost(
-			searchParams.get("host") ?? ""
+			searchParams.get("host") ?? "",
 		);
 		if (!host) {
 			return new Response("No host provided", { status: 500 });
@@ -285,12 +285,12 @@ export async function redirectToAuth(
 		queryParams.set("shop", shop ?? "");
 		queryParams.set(
 			"redirectUri",
-			`${appHost}${config.authPath}?${redirectUriParams}`
+			`${appHost}${config.authPath}?${redirectUriParams}`,
 		);
 
 		shopify(context).logger.debug(
 			`Redirecting to auth while embedded, going to ${config.exitIframePath}`,
-			{ shop }
+			{ shop },
 		);
 
 		return redirect(`${config.exitIframePath}?${queryParams.toString()}`);
@@ -302,7 +302,7 @@ export async function redirectToAuth(
 	async function serverSideRedirect() {
 		shopify(context).logger.debug(
 			`Redirecting to auth at ${config.authPath}, with callback ${config.authCallbackPath}`,
-			{ shop, isOnline }
+			{ shop, isOnline },
 		);
 
 		return await shopify(context).auth.begin({
@@ -317,14 +317,14 @@ export async function redirectToAuth(
 
 export async function registerWebhookHandlers(
 	context: Context,
-	session: Session
+	session: Session,
 ) {
 	shopify(context).webhooks.addHandlers(webhooks);
 	const response = await shopify(context).webhooks.register({
 		session,
 	});
 	const success = Object.values(response).every((res: any) =>
-		res.every((v: any) => v.success)
+		res.every((v: any) => v.success),
 	);
 	if (!success) {
 		const error = "Registering registerWebhookHandlers() failed";
@@ -344,7 +344,7 @@ export async function saveBillingPlan(context: Context, plan: string) {
 
 async function sessionHasValidAccessToken(
 	context: Context,
-	session: Session | undefined
+	session: Session | undefined,
 ) {
 	if (!session) {
 		shopify(context).logger.debug("Request session not found");
@@ -384,7 +384,7 @@ async function sessionHasValidAccessToken(
 			`Could not check if session was valid: ${error}`,
 			{
 				shop: session.shop,
-			}
+			},
 		);
 
 		if (error instanceof HttpResponseError && error.response.code === 401) {
@@ -450,7 +450,7 @@ export async function validateAuthenticatedSession(context: Context) {
 		});
 	} catch (error: any) {
 		shopify(context).logger.error(
-			`Error when loading session from storage: ${error}`
+			`Error when loading session from storage: ${error}`,
 		);
 
 		switch (true) {
@@ -467,7 +467,7 @@ export async function validateAuthenticatedSession(context: Context) {
 			session = await getSessionFromStorage(context, sessionId ?? "");
 		} catch (error: any) {
 			shopify(context).logger.error(
-				`Error when loading session from storage: ${error}`
+				`Error when loading session from storage: ${error}`,
 			);
 
 			return new Response(error.message, { status: 500 });
@@ -476,12 +476,12 @@ export async function validateAuthenticatedSession(context: Context) {
 
 	const { searchParams } = new URL(context.request.url);
 	let shop = shopify(context).utils.sanitizeShop(
-		searchParams.get("shop") ?? ""
+		searchParams.get("shop") ?? "",
 	);
 	if (session && shop && session?.shop !== shop) {
 		shopify(context).logger.debug(
 			"Found a session for a different shop in the request",
-			{ currentShop: session.shop, requestShop: shop }
+			{ currentShop: session.shop, requestShop: shop },
 		);
 
 		return redirectToAuth(context);
@@ -500,14 +500,14 @@ export async function validateAuthenticatedSession(context: Context) {
 			shop = session.shop;
 		} else if (config.isEmbeddedApp) {
 			const payload = await shopify(context).session.decodeSessionToken(
-				bearerPresent?.[1]
+				bearerPresent?.[1],
 			);
 			shop = payload.dest.replace("https://", "");
 		}
 	}
 
 	const host = shopify(context).utils.sanitizeHost(
-		searchParams.get("host") ?? ""
+		searchParams.get("host") ?? "",
 	);
 	const redirectParams = new URLSearchParams({ host, shop } as any).toString();
 	const redirectUrl = `${config.authPath}?${redirectParams}`;

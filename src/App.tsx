@@ -48,7 +48,7 @@ function Loading() {
 function NavigationMenu() {
 	const matcher = React.useCallback(
 		(link: any, location: any) => link.destination === location.pathname,
-		[]
+		[],
 	);
 
 	const [i18n] = useI18n();

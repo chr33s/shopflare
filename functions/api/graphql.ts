@@ -16,7 +16,7 @@ const resolvers = {
 					plan: string;
 				};
 			},
-			context: any
+			context: any,
 		) => {
 			const confirmationUrl = await saveBillingPlan(context, args.input.plan);
 			return { confirmationUrl };
@@ -30,7 +30,7 @@ const resolvers = {
 					...(v as any),
 					name: k,
 				}),
-				[]
+				[],
 			);
 			return billingPlans;
 		},

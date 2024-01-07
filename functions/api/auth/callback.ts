@@ -34,7 +34,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 			if (config.isOnline) {
 				shopify(context).logger.debug(
 					"Completing offline token OAuth, redirecting to online token OAuth",
-					{ shop: session.shop }
+					{ shop: session.shop },
 				);
 
 				return redirectToAuth(context, true);

@@ -17,7 +17,7 @@ export default function Shop() {
 			const url = `/api/auth?${params.toString()}`;
 			window.location.href = url;
 		},
-		[value]
+		[value],
 	);
 
 	const [i18n] = useI18n();
@@ -44,7 +44,7 @@ export default function Shop() {
 								suffix=".myshopify.com"
 								value={value}
 							/>
-							<Polaris.Button fullWidth primary submit>
+							<Polaris.Button fullWidth submit variant="primary">
 								{i18n.translate("app.shop.button")}
 							</Polaris.Button>
 						</Polaris.FormLayout>

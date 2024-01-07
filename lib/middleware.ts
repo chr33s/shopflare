@@ -16,7 +16,7 @@ export const errorHandling: PagesFunction<Env> = async (context) => {
 				stack: err.stack,
 				status: "nok",
 			}),
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 };

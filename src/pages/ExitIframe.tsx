@@ -17,7 +17,7 @@ export default function ExitIframe() {
 				const redirect = Redirect.create(app);
 				redirect.dispatch(
 					Redirect.Action.REMOTE,
-					decodeURIComponent(redirectUri)
+					decodeURIComponent(redirectUri),
 				);
 			}
 		}
