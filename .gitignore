@@ -1,5 +1,10 @@
-.eslintcache
-.env.*
-.wrangler
-dist
-node_modules
+.DS_Store
+/node_modules/
+
+# Cloudflare
+/.wrangler
+.env*
+
+# React Router
+/.react-router/
+/dist/

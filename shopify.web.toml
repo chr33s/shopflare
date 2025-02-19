@@ -1,0 +1,7 @@
+name = "app"
+port = 8080
+webhooks_path = "/shopify/webhooks"
+
+[commands]
+build = "npm run build"
+dev = "npm run dev"

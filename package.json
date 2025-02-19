@@ -1,157 +1,58 @@
 {
 	"name": "@chr33s/shopflare",
-	"version": "0.8.1",
+	"version": "2.0.0",
 	"private": true,
+	"type": "module",
 	"engines": {
-		"npm": ">=9.0.0",
-		"node": "^20.0.0"
-	},
-	"scripts": {
-		"build": "tsc && vite build",
-		"checks": "npm-run-all -s format lint typecheck",
-		"deploy": "wrangler pages deploy ./dist --project-name ${CLOUDFLARE_PROJECT} --branch ${CLOUDFLARE_BRANCH}",
-		"dev": "npm-run-all -p tunnel start",
-		"format": "prettier --write '**/*.{css,html,json,md,svg,ts,tsx}'",
-		"lint": "npm-run-all -p lint:*",
-		"lint:actions": "actionlint",
-		"lint:css": "stylelint --allow-empty-input --quiet 'src/**/*.css'",
-		"lint:js": "eslint --cache '**/*.{ts,tsx}'",
-		"start": "wrangler pages dev --binding=$(cat .env.local | xargs) --compatibility-date=2023-05-18 --kv=SHOPFLARE_KV --port=${PORT} --proxy=1${PORT} -- vite dev --port=1${PORT}",
-		"test": "NODE_NO_WARNINGS=1 vitest",
-		"tunnel": "cloudflared tunnel --no-autoupdate --url http://localhost:${PORT} run --token ${CLOUDFLARE_TOKEN}",
-		"typecheck": "tsc -b",
-		"upgrade": "npm-check-updates --upgrade && npm install && (npm audit fix || true) && npm run checks"
-	},
-	"devDependencies": {
-		"@cloudflare/workers-types": "4.20231218.0",
-		"@graphql-eslint/eslint-plugin": "3.20.1",
-		"@shopify/app-bridge": "3.7.9",
-		"@shopify/app-bridge-react": "3.7.9",
-		"@shopify/app-bridge-utils": "3.5.1",
-		"@shopify/polaris": "12.6.0",
-		"@shopify/react-i18n": "7.8.0",
-		"@shopify/stylelint-plugin": "13.0.0",
-		"@types/node": "20.10.6",
-		"@types/react": "18.2.47",
-		"@types/react-dom": "18.2.18",
-		"@types/react-test-renderer": "18.0.7",
-		"@typescript-eslint/eslint-plugin": "6.18.0",
-		"@typescript-eslint/parser": "6.18.0",
-		"@vitejs/plugin-react": "4.2.1",
-		"eslint": "8.56.0",
-		"eslint-config-prettier": "9.1.0",
-		"eslint-plugin-i18next": "6.0.3",
-		"eslint-plugin-react": "7.33.2",
-		"eslint-plugin-react-hooks": "4.6.0",
-		"eslint-plugin-react-refresh": "0.4.5",
-		"fast-deep-equal": "3.1.3",
-		"happy-dom": "12.10.3",
-		"npm-check-updates": "16.14.12",
-		"npm-run-all": "4.1.5",
-		"prettier": "3.1.1",
-		"react": "18.2.0",
-		"react-dom": "18.2.0",
-		"react-query": "3.39.3",
-		"react-router-dom": "6.21.1",
-		"react-test-renderer": "18.2.0",
-		"stylelint": "16.1.0",
-		"stylelint-config-standard": "36.0.0",
-		"stylelint-order": "6.0.4",
-		"typescript": "5.3.3",
-		"vite": "5.0.11",
-		"vitest": "1.1.3",
-		"vitest-environment-miniflare": "2.14.1",
-		"wrangler": "3.22.3"
+		"npm": ">=9.6.4",
+		"node": "^22.13.1"
 	},
 	"dependencies": {
-		"@shopify/shopify-api": "8.1.1",
-		"apollo-server-errors": "3.3.1",
-		"graphql": "16.8.1",
-		"graphql-constraint-directive": "5.3.0",
-		"graphql-yoga": "5.1.1"
+		"@react-router/serve": "7.1.5",
+		"i18next": "24.2.2",
+		"i18next-fetch-backend": "6.0.0",
+		"isbot": "5.1.22",
+		"react": "18.3.1",
+		"react-dom": "18.3.1",
+		"react-i18next": "15.4.1",
+		"react-router": "7.1.5",
+		"remix-i18next": "7.0.2"
+	},
+	"devDependencies": {
+		"@cloudflare/vite-plugin": "0.1.0",
+		"@cloudflare/workers-types": "4.20250204.0",
+		"@react-router/dev": "7.1.5",
+		"@shopify/admin-api-client": "1.0.5",
+		"@shopify/api-codegen-preset": "1.1.4",
+		"@shopify/app-bridge-react": "4.1.6",
+		"@shopify/app-bridge-types": "0.0.16",
+		"@shopify/polaris": "13.9.2",
+		"@shopify/polaris-icons": "9.3.0",
+		"@shopify/shopify-api": "11.8.1",
+		"@shopify/storefront-api-client": "1.0.4",
+		"@types/node": "22.13.4",
+		"@types/react": "18.3.18",
+		"@types/react-dom": "18.3.5",
+		"react-router-dom": "7.1.5",
+		"typescript": "5.7.3",
+		"vite": "6.1.0",
+		"vite-tsconfig-paths": "5.1.4",
+		"wrangler": "3.109.0"
 	},
 	"optionalDependencies": {
-		"@shopify/app": "3.53.0",
-		"@shopify/cli": "3.53.0"
+		"@shopify/cli": "3.75.0"
 	},
-	"browserslist": [
-		"last 3 chrome versions",
-		"last 3 firefox versions",
-		"last 3 opera versions",
-		"last 3 edge versions",
-		"last 3 safari versions",
-		"last 3 chromeandroid versions",
-		"last 1 firefoxandroid versions",
-		"ios >= 13.4"
-	],
-	"eslintConfig": {
-		"extends": [
-			"prettier",
-			"plugin:@typescript-eslint/recommended",
-			"plugin:react/recommended",
-			"plugin:react-hooks/recommended",
-			"plugin:i18next/recommended"
-		],
-		"overrides": [
-			{
-				"files": [
-					"*.ts",
-					"*.tsx"
-				],
-				"processor": "@graphql-eslint/graphql"
-			},
-			{
-				"files": [
-					"*.graphql"
-				],
-				"parser": "@graphql-eslint/eslint-plugin",
-				"plugins": [
-					"@graphql-eslint"
-				]
-			}
-		],
-		"parser": "@typescript-eslint/parser",
-		"plugins": [
-			"@typescript-eslint",
-			"react-refresh"
-		],
-		"root": true,
-		"rules": {
-			"@typescript-eslint/no-explicit-any": "off",
-			"react-refresh/only-export-components": "warn"
-		},
-		"settings": {
-			"react": {
-				"version": "detect"
-			}
-		}
-	},
-	"prettier": {
-		"overrides": [
-			{
-				"files": "*.svg",
-				"options": {
-					"parser": "html"
-				}
-			}
-		]
-	},
-	"stylelint": {
-		"extends": [
-			"@shopify/stylelint-plugin/prettier",
-			"@shopify/stylelint-plugin"
-		],
-		"plugins": [
-			"stylelint-order"
-		],
-		"rules": {
-			"no-descending-specificity": null,
-			"no-unknown-animations": null,
-			"order/order": [
-				"custom-properties",
-				"declarations"
-			],
-			"order/properties-alphabetical-order": true
-		}
+	"scripts": {
+		"build": "react-router build",
+		"codegen": "graphql-codegen",
+		"deploy": "react-router build && wrangler deploy",
+		"deploy:shopify": "shopify app deploy --message=$(git rev-parse --abbrev-ref HEAD):$npm_package_version --version=$(git rev-parse HEAD)",
+		"dev": "react-router dev --host",
+		"dev:shopify": "shopify app dev",
+		"preview": "react-router build && wrangler dev",
+		"start": "wrangler dev",
+		"tunnel": "source .env && cloudflared tunnel --no-autoupdate --url ${SHOPIFY_APP_URL}:8080 run --token ${CLOUDFLARE_API_TOKEN}",
+		"typecheck": "tsc",
+		"typegen": "wrangler types && react-router typegen"
 	}
 }

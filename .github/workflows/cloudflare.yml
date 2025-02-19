@@ -15,7 +15,7 @@ jobs:
       - uses: github/codeql-action/init@v2
       - uses: actions/setup-node@v3
         with:
-          node-version: "20.x"
+          node-version: "22.x"
           cache: "npm"
       - run: npm ci
       - run: npm run build --ignore-scripts
@@ -37,10 +37,6 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: dist
-      - uses: cloudflare/pages-action@v1
+      - uses: cloudflare/wrangler-action@v3
         with:
-          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
-          apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
-          directory: dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          projectName: ${{ env.CLOUDFLARE_PROJECT }}
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

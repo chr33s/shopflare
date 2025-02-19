@@ -1,39 +1,27 @@
 {
-	"$schema": "https://json.schemastore.org/tsconfig",
-	"display": "ShopFlare",
-	"compilerOptions": {
-		"allowJs": true,
-		"baseUrl": "./",
-		"composite": false,
-		"declaration": true,
-		"declarationMap": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"inlineSources": false,
-		"isolatedModules": true,
-		"jsx": "react",
-		"lib": ["dom", "dom.iterable", "es2022"],
-		"module": "es2022",
-		"moduleResolution": "node",
-		"noEmit": true,
-		"noUnusedLocals": false,
-		"noUnusedParameters": false,
-		"paths": {
-			"@/*": ["*", "./src/*"]
-		},
-		"preserveWatchOutput": true,
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
-		"strict": true,
-		"target": "es2022",
-		"types": [
-			"@cloudflare/workers-types",
-			"vitest/globals",
-			"vitest-environment-miniflare/globals",
-			"node",
-			"vite/client"
-		]
-	},
-	"include": ["**/*.ts", "**/*.tsx"],
-	"exclude": ["node_modules"]
+  "include": [
+    "**/*",
+    "**/.server/**/*",
+    "**/.client/**/*",
+    ".react-router/types/**/*"
+  ],
+  "compilerOptions": {
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "types": ["@cloudflare/workers-types", "vite/client"],
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "rootDirs": [".", "./.react-router/types"],
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./app/*"]
+    },
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true
+  }
 }
