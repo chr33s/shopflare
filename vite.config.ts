@@ -20,7 +20,11 @@ export default defineConfig(({ mode }) => {
 			minify: true,
 		},
 		clearScreen: false,
-		plugins: [cloudflare(), reactRouterPlugins, tsconfigPaths()],
+		plugins: [
+			!env.VITEST && cloudflare(),
+			!env.VITEST && reactRouterPlugins,
+			tsconfigPaths(),
+		],
 		resolve: {
 			mainFields: ["browser", "module", "main"],
 		},
@@ -32,6 +36,10 @@ export default defineConfig(({ mode }) => {
 			resolve: {
 				conditions: ["workerd", "worker", "browser"],
 			},
+		},
+		test: {
+			env: env,
+			watch: false,
 		},
 	};
 });

@@ -15,6 +15,7 @@
 		"prettier": "prettier --cache .",
 		"preview": "react-router build && wrangler dev",
 		"start": "wrangler dev",
+		"test": "vitest --run",
 		"tunnel": "source .env && cloudflared tunnel --no-autoupdate --url ${SHOPIFY_APP_URL}:8080 run --token ${CLOUDFLARE_API_TOKEN}",
 		"typecheck": "tsc",
 		"typegen": "wrangler types && react-router typegen"
@@ -32,6 +33,7 @@
 	},
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "0.1.0",
+		"@cloudflare/vitest-pool-workers": "0.7.0",
 		"@cloudflare/workers-types": "4.20250204.0",
 		"@eslint/css": "0.4.0",
 		"@eslint/js": "9.20.0",
@@ -56,6 +58,7 @@
 		"eslint-plugin-react-hooks": "5.1.0",
 		"eslint-plugin-regexp": "2.7.0",
 		"globals": "15.15.0",
+		"happy-dom": "17.1.1",
 		"prettier": "3.5.1",
 		"prettier-plugin-packagejson": "2.5.8",
 		"react-router-dom": "7.1.5",
@@ -63,6 +66,7 @@
 		"typescript-eslint": "8.24.1",
 		"vite": "6.1.0",
 		"vite-tsconfig-paths": "5.1.4",
+		"vitest": "3.0.6",
 		"wrangler": "3.109.0"
 	},
 	"optionalDependencies": {
