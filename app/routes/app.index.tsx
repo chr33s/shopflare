@@ -33,7 +33,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 		}
 
 		const t = await i18n.getFixedT(request);
-		return data({ errors: [{ message: t("error") } ]}, 500);
+		return data({ errors: [{ message: t("error") }] }, 500);
 	}
 }
 
@@ -67,16 +67,18 @@ export default function AppIndex() {
 
 	return (
 		<Page title={t("app")}>
-			<Text as="p">{errors?.length ? JSON.stringify(errors, null, 2) : data?.shop?.name}</Text>
+			<Text as="p">
+				{errors?.length ? JSON.stringify(errors, null, 2) : data?.shop?.name}
+			</Text>
 		</Page>
-	)
+	);
 }
 
 export async function action(_: Route.ActionArgs) {
 	const data = {};
-	return { data }
+	return { data };
 }
 
-export let handle = {
-  i18n: "app",
+export const handle = {
+	i18n: "app",
 };

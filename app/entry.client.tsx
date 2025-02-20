@@ -9,16 +9,16 @@ import { HydratedRouter } from "react-router/dom";
 import i18n from "./i18n";
 
 async function hydrate() {
-  await i18next
-    .use(initReactI18next)
-    .use(Backend)
-    .init({
-      ...i18n,
-      ns: getInitialNamespaces(),
-      detection: {
-        caches: [],
-      },
-    });
+	await i18next // eslint-disable-line import-x/no-named-as-default-member
+		.use(initReactI18next)
+		.use(Backend)
+		.init({
+			...i18n,
+			ns: getInitialNamespaces(),
+			detection: {
+				caches: [],
+			},
+		});
 
 	startTransition(() => {
 		hydrateRoot(
@@ -33,7 +33,7 @@ async function hydrate() {
 }
 
 if (window.requestIdleCallback) {
-  window.requestIdleCallback(hydrate);
+	window.requestIdleCallback(hydrate);
 } else {
-  window.setTimeout(hydrate, 1);
+	window.setTimeout(hydrate, 1);
 }

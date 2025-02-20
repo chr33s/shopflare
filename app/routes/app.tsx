@@ -1,15 +1,15 @@
-import { NavMenu } from '@shopify/app-bridge-react';
-import { AppProvider } from '@shopify/polaris';
+import { NavMenu } from "@shopify/app-bridge-react";
+import { AppProvider, type AppProviderProps } from "@shopify/polaris";
 import type {
-  LinkLikeComponent,
-  LinkLikeComponentProps,
-} from '@shopify/polaris/build/ts/src/utilities/link';
+	LinkLikeComponent,
+	LinkLikeComponentProps,
+} from "@shopify/polaris/build/ts/src/utilities/link";
 import { forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Outlet, useLoaderData } from "react-router";
 
 import type { Route } from "./+types/app";
-import { APP_BRIDGE_URL } from '~/const';
+import { APP_BRIDGE_URL } from "~/const";
 import { createShopify } from "~/shopify.server";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
@@ -25,11 +25,13 @@ export default function App() {
 	const { apiKey } = useLoaderData<typeof loader>();
 
 	const { t } = useTranslation("polaris");
-	const i18n = { Polaris: t("Polaris", { returnObjects: true }) } as any;
+	const i18n = {
+		Polaris: t("Polaris", { returnObjects: true }),
+	} as AppProviderProps["i18n"];
 
 	return (
 		<>
-    	<script src={APP_BRIDGE_URL} data-api-key={apiKey} />
+			<script data-api-key={apiKey} src={APP_BRIDGE_URL} />
 
 			<AppProvider i18n={i18n} linkComponent={ReactRouterPolarisLink}>
 				<NavMenu>
@@ -41,39 +43,46 @@ export default function App() {
 				<Outlet />
 			</AppProvider>
 		</>
-	)
+	);
 }
 
 export function ErrorBoundary(error: Route.ErrorBoundaryProps) {
-  if (
-    error.constructor.name === 'ErrorResponse' ||
-    error.constructor.name === 'ErrorResponseImpl'
-  ) {
-    return (
-      <div
-        dangerouslySetInnerHTML={{__html: error.data || 'Handling response'}}
-      />
-    );
-  }
+	if (
+		error.constructor.name === "ErrorResponse" ||
+		error.constructor.name === "ErrorResponseImpl"
+	) {
+		return (
+			<div
+				dangerouslySetInnerHTML={{ __html: error.data || "Handling response" }}
+			/>
+		);
+	}
 
-  throw error;
+	throw error;
 }
+ErrorBoundary.displayName = "AppErrorBoundary";
 
-export function headers({ parentHeaders, loaderHeaders, actionHeaders, errorHeaders }: Route.HeadersArgs) {
-  if (errorHeaders && Array.from(errorHeaders.entries()).length > 0) {
-    return errorHeaders;
-  }
+export function headers({
+	parentHeaders,
+	loaderHeaders,
+	actionHeaders,
+	errorHeaders,
+}: Route.HeadersArgs) {
+	if (errorHeaders && Array.from(errorHeaders.entries()).length > 0) {
+		return errorHeaders;
+	}
 
-  return new Headers([
-    ...(parentHeaders ? Array.from(parentHeaders.entries()) : []),
-    ...(loaderHeaders ? Array.from(loaderHeaders.entries()) : []),
-    ...(actionHeaders ? Array.from(actionHeaders.entries()) : []),
-  ]);
+	return new Headers([
+		...(parentHeaders ? Array.from(parentHeaders.entries()) : []),
+		...(loaderHeaders ? Array.from(loaderHeaders.entries()) : []),
+		...(actionHeaders ? Array.from(actionHeaders.entries()) : []),
+	]);
 }
 
 export const ReactRouterPolarisLink = forwardRef<
-  HTMLAnchorElement,
-  LinkLikeComponentProps
+	HTMLAnchorElement,
+	LinkLikeComponentProps
 >((props, ref) => (
-  <Link {...props} to={props.url ?? props.to} ref={ref} />
+	<Link {...props} ref={ref} to={props.url ?? props.to} />
 )) as LinkLikeComponent;
+ReactRouterPolarisLink.displayName = "ReactRouterPolarisLink";

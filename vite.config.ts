@@ -7,12 +7,12 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 // configuration to use the dev server provided by Vite + Workerd.
 const reactRouterPlugins = reactRouter();
 const reactRouterPlugin = reactRouterPlugins.find(
-  (plugin) => plugin.name === "react-router",
+	(plugin) => plugin.name === "react-router",
 )!;
 reactRouterPlugin.configureServer = undefined;
 
 export default defineConfig(({ mode }) => {
-	const env = loadEnv(mode, process.cwd(), '');
+	const env = loadEnv(mode, process.cwd(), "");
 	const shopifyApp = new URL(env.SHOPIFY_APP_URL);
 
 	return {

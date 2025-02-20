@@ -1,8 +1,8 @@
 export default {
 	backend: {
-		loadPath: '/i18n/{{lng}}.{{ns}}.json',
+		loadPath: "/i18n/{{lng}}.{{ns}}.json",
 	},
 	defaultNS: "app",
-  fallbackLng: "en",
-  supportedLngs: ["en"],
+	fallbackLng: "en",
+	supportedLngs: ["en"],
 };

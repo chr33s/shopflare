@@ -10,12 +10,12 @@ import {
 import { useTranslation } from "react-i18next";
 
 import i18nConfig from "~/i18n";
-import i18n from "~/i18n.server"
+import i18n from "~/i18n.server";
 
 import type { Route } from "./+types/root";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const locale = await i18n.getLocale(request);
+	const locale = await i18n.getLocale(request);
 	return { locale };
 }
 
@@ -51,9 +51,10 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 		</main>
 	);
 }
+ErrorBoundary.displayName = "RootErrorBoundary";
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { i18n } = useTranslation();
+	const { i18n } = useTranslation();
 
 	const data = useRouteLoaderData<typeof loader>("root");
 	const locale = data?.locale ?? i18nConfig.fallbackLng;
@@ -62,7 +63,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 		<html dir={i18n.dir()} lang={locale}>
 			<head>
 				<meta charSet="utf-8" />
-				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<meta content="initial-scale=1, width=device-width" name="viewport" />
 				<Meta />
 				<Links />
 			</head>
@@ -87,6 +88,6 @@ export const links: Route.LinksFunction = () => [
 	},
 ];
 
-export let handle = {
-  i18n: "app",
+export const handle = {
+	i18n: "app",
 };

@@ -1,111 +1,122 @@
-import { type AnchorHTMLAttributes, createContext, type DetailedHTMLProps, type ReactNode, useContext, useEffect, useState } from 'react';
-import { Form as ReactRouterForm, type FormProps as ReactRouterFormProps } from 'react-router';
+import {
+	type AnchorHTMLAttributes,
+	createContext,
+	type DetailedHTMLProps,
+	type ReactNode,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
+import {
+	Form as ReactRouterForm,
+	type FormProps as ReactRouterFormProps,
+} from "react-router";
 
 export interface FormProps extends ReactRouterFormProps {
-  action: string;
+	action: string;
 }
 
 export function Form(props: FormProps) {
-  const context = useContext(Context);
+	const context = useContext(Context);
 
-  if (!context) {
-    throw new Error(
-      'Proxy.Form must be used within an Proxy.Provider component',
-    );
-  }
+	if (!context) {
+		throw new Error(
+			"Proxy.Form must be used within an Proxy.Provider component",
+		);
+	}
 
-  const {children, action, ...otherProps} = props;
+	const { children, action, ...otherProps } = props;
 
-  return (
-    <ReactRouterForm action={context.formatUrl(action, false)} {...otherProps}>
-      {children}
-    </ReactRouterForm>
-  );
+	return (
+		<ReactRouterForm action={context.formatUrl(action, false)} {...otherProps}>
+			{children}
+		</ReactRouterForm>
+	);
 }
 
 type FormatUrlFunction = (
-  url: string | undefined,
-  addOrigin?: boolean,
+	url: string | undefined,
+	addOrigin?: boolean,
 ) => string | undefined;
 
 interface ContextProps {
-  appUrl: string;
-  formatUrl: FormatUrlFunction;
-  requestUrl?: URL;
+	appUrl: string;
+	formatUrl: FormatUrlFunction;
+	requestUrl?: URL;
 }
 
 export const Context = createContext<ContextProps | null>(null);
 
 export interface LinkProps
-  extends DetailedHTMLProps<
-    AnchorHTMLAttributes<HTMLAnchorElement>,
-    HTMLAnchorElement
-  > {
-  href: string;
+	extends DetailedHTMLProps<
+		AnchorHTMLAttributes<HTMLAnchorElement>,
+		HTMLAnchorElement
+	> {
+	href: string;
 }
 
 export function Link(props: LinkProps) {
-  const context = useContext(Context);
+	const context = useContext(Context);
 
-  if (!context) {
-    throw new Error(
-      'Proxy.Link must be used within an Proxy.Provider component',
-    );
-  }
+	if (!context) {
+		throw new Error(
+			"Proxy.Link must be used within an Proxy.Provider component",
+		);
+	}
 
-  const {children, href, ...otherProps} = props;
+	const { children, href, ...otherProps } = props;
 
-  return (
-    <a href={context.formatUrl(href)} {...otherProps}>
-      {children}
-    </a>
-  );
+	return (
+		<a href={context.formatUrl(href)} {...otherProps}>
+			{children}
+		</a>
+	);
 }
 
 export interface ProviderProps {
-  appUrl: string;
-  children?: ReactNode;
+	appUrl: string;
+	children?: ReactNode;
 }
 
 export function Provider(props: ProviderProps) {
-  const { children, appUrl } = props;
-  const [requestUrl, setRequestUrl] = useState<URL | undefined>();
+	const { children, appUrl } = props;
+	const [requestUrl, setRequestUrl] = useState<URL | undefined>();
 
-  useEffect(
-    () => setRequestUrl(new URL(window.location.href)),
-    [setRequestUrl],
-  );
+	useEffect(
+		() => setRequestUrl(new URL(window.location.href)),
+		[setRequestUrl],
+	);
 
-  return (
-    <Context.Provider
-      value={{
+	return (
+		<Context.Provider
+			value={{
 				appUrl,
 				requestUrl,
-				formatUrl: formatProxyUrl(requestUrl)
+				formatUrl: formatProxyUrl(requestUrl),
 			}}
-    >
-      <base href={appUrl} />
+		>
+			<base href={appUrl} />
 
-      {children}
-    </Context.Provider>
-  );
+			{children}
+		</Context.Provider>
+	);
 }
 
 function formatProxyUrl(requestUrl: URL | undefined): FormatUrlFunction {
-  return (url: string | undefined, addOrigin = true) => {
-    if (!url) {
-      return url;
-    }
+	return (url: string | undefined, addOrigin = true) => {
+		if (!url) {
+			return url;
+		}
 
-    let finalUrl = url;
+		let finalUrl = url;
 
-    if (addOrigin && requestUrl && finalUrl.startsWith('/')) {
-      finalUrl = new URL(`${requestUrl.origin}${url}`).href;
-    }
-    if (!finalUrl.endsWith('/')) {
-      finalUrl = `${finalUrl}/`;
-    }
+		if (addOrigin && requestUrl && finalUrl.startsWith("/")) {
+			finalUrl = new URL(`${requestUrl.origin}${url}`).href;
+		}
+		if (!finalUrl.endsWith("/")) {
+			finalUrl = `${finalUrl}/`;
+		}
 
-    return finalUrl;
-  };
+		return finalUrl;
+	};
 }

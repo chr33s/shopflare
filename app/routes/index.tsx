@@ -8,8 +8,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 		return redirect(`/app?${url.searchParams.toString()}`);
 	}
 
-	const data = {};
-	return { data }
+	const data = { ok: true };
+	return { data };
 }
 
 export default function Index() {
@@ -25,17 +25,14 @@ export default function Index() {
 		>
 			<h1>ShopFlare</h1>
 		</div>
-	)
+	);
 }
 
 export async function action(_: Route.ActionArgs) {
-	const data = {};
-	return { data }
+	const data = { ok: true };
+	return { data };
 }
 
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "ShopFlare" },
-    { name: "description", content: "..." },
-  ];
+export function meta(_: Route.MetaArgs) {
+	return [{ title: "ShopFlare" }, { name: "description", content: "..." }];
 }

@@ -2,7 +2,7 @@ import type { Route } from "./+types/app.index";
 
 export async function loader(_: Route.LoaderArgs) {
 	const data = {};
-	return { data }
+	return { data };
 }
 
 export default function ProxyIndex() {
@@ -11,5 +11,5 @@ export default function ProxyIndex() {
 
 export async function action(_: Route.ActionArgs) {
 	const data = {};
-	return { data }
+	return { data };
 }

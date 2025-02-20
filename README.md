@@ -7,9 +7,9 @@
 - @shopify/shopify-app-remix to complex (to much abstraction)
 - Needed simple boilerplate, than only does the basics with minimal abstraction
 - Minimally opinionated, by supporting only:
-	1. Embedded app use-case
-	2. New Embedded Auth Strategy
-	3. Managed Pricing
+  1.  Embedded app use-case
+  2.  New Embedded Auth Strategy
+  3.  Managed Pricing
 
 ## Requirements
 
@@ -25,7 +25,7 @@ cp .env.example .env # update values
 ```
 
 - copy .env.example vars to Cloudflare workers > Environment variables
-- create Workers > KV store key _SESSION_STORAGE & attach it to workers > Settings > KV namespace bindings
+- create Workers > KV store key \_SESSION_STORAGE & attach it to workers > Settings > KV namespace bindings
 - copy .env{ SHOPIFY_API_KEY, CLOUDFLARE_API_TOKEN } vars to Github > secrets (and variables)
 
 ## Development

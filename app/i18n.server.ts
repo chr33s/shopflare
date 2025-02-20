@@ -7,7 +7,8 @@ const i18next = new RemixI18Next({
 		fallbackLanguage: i18n.fallbackLng,
 		async findLocale(request) {
 			const url = new URL(request.url);
-			const locale = url.searchParams.get("locale")?.split("-").at(0) ?? i18n.fallbackLng;
+			const locale =
+				url.searchParams.get("locale")?.split("-").at(0) ?? i18n.fallbackLng;
 			return locale;
 		},
 		supportedLanguages: i18n.supportedLngs,
