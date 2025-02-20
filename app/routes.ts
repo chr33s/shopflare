@@ -8,10 +8,7 @@ export default [
   layout("routes/proxy.tsx", [
     route("apps/shopflare", "routes/proxy.index.tsx"), // NOTE: route path must match proxy path
   ]),
-  route("shopify/auth", "routes/shopify.auth.tsx"),
-  route("shopify/auth/callback", "routes/shopify.auth.callback.tsx"),
-  route("shopify/auth/exitiframe", "routes/shopify.auth.exitiframe.tsx"),
   route("shopify/auth/login", "routes/shopify.auth.login.tsx"),
-  route("shopify/auth/session-token", "routes/shopify.auth.session-token.tsx"),
+  route("shopify/auth/session-token-bounce", "routes/shopify.auth.session-token-bounce.tsx"),
   route("shopify/webhooks", "routes/shopify.webhooks.tsx"),
 ] satisfies RouteConfig;

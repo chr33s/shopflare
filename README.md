@@ -5,8 +5,11 @@
 ## Rationale
 
 - @shopify/shopify-app-remix to complex (to much abstraction)
-- @shopify/shopify-app-remix no tests (unit, e2e, ...)
 - Needed simple boilerplate, than only does the basics with minimal abstraction
+- Minimally opinionated, by supporting only:
+	1. Embedded app use-case
+	2. New Embedded Auth Strategy
+	3. Managed Pricing
 
 ## Requirements
 

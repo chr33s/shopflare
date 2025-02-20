@@ -13,10 +13,12 @@ import { APP_BRIDGE_URL } from '~/const';
 import { createShopify } from "~/shopify.server";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
-	const auth = await createShopify(context).authenticate(request);
-	if (auth instanceof Response) return auth;
+	const shopify = createShopify(context);
+	const response = await shopify.authorize(request);
+	shopify.api.logger.debug("app", response);
+	if (response instanceof Response) throw response;
 
-  return { apiKey: context.cloudflare.env.SHOPIFY_API_KEY };
+	return { apiKey: shopify.api.config.apiKey };
 }
 
 export default function App() {

@@ -8,3 +8,4 @@
 # React Router
 /.react-router/
 /dist/
+.shopify

@@ -13,7 +13,19 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function Index() {
-  return <h1>ShopFlare</h1>;
+	return (
+		<div
+			style={{
+				alignItems: "center",
+				display: "flex",
+				height: "100vh",
+				justifyContent: "center",
+				width: "100vw",
+			}}
+		>
+			<h1>ShopFlare</h1>
+		</div>
+	)
 }
 
 export async function action(_: Route.ActionArgs) {

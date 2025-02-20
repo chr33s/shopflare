@@ -13,7 +13,7 @@ embedded_app_direct_api_access = true
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
 scopes = "read_products"
-optional_scopes = ["write_products"]
+optional_scopes = [ "write_products" ]
 use_legacy_install_flow = false
 
 [app_proxy]
@@ -35,7 +35,7 @@ api_version = "2025-01"
   [[webhooks.subscriptions]]
   uri = "/shopify/webhooks"
   compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
-	topics = [ "app/uninstalled" ]
+  topics = [ "app/uninstalled" ]
 
 [pos]
 embedded = false

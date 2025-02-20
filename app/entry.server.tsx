@@ -16,16 +16,13 @@ export default async function handleRequest(
   _loadContext: AppLoadContext,
 ) {
   let instance = createInstance();
-  let lng = await i18n.getLocale(request);
-  let ns = i18n.getRouteNamespaces(routerContext);
-
   await instance
     .use(initReactI18next)
     .use(Backend)
     .init({
       ...i18nConfig,
-      lng,
-      ns,
+      lng: await i18n.getLocale(request),
+      ns: i18n.getRouteNamespaces(routerContext),
     });
 
 	let userAgent = request.headers.get("User-Agent");

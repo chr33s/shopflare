@@ -7,7 +7,6 @@ import {
 	ScrollRestoration,
 	useRouteLoaderData,
 } from "react-router";
-import { useChangeLanguage } from "remix-i18next/react";
 import { useTranslation } from "react-i18next";
 
 import i18nConfig from "~/i18n";
@@ -58,7 +57,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 	const data = useRouteLoaderData<typeof loader>("root");
 	const locale = data?.locale ?? i18nConfig.fallbackLng;
-  useChangeLanguage(locale);
 
 	return (
 		<html dir={i18n.dir()} lang={locale}>

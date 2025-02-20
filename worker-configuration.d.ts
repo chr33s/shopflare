@@ -6,7 +6,6 @@ interface Env {
 	NODE_VERSION: string;
 	SHOPIFY_API_KEY: string;
 	SHOPIFY_API_SECRET_KEY: string;
-	SHOPIFY_API_SCOPES: string;
 	SHOPIFY_APP_ENV: string;
 	SHOPIFY_APP_URL: string;
 }

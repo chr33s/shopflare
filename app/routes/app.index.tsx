@@ -10,10 +10,13 @@ import { createShopify } from "~/shopify.server";
 import type { ShopQuery } from "~/types/admin.generated";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
-	const shopify = await createShopify(context).authenticate(request);
+	const shopify = createShopify(context);
+	shopify.api.logger.debug("app.index");
+
+	const client = await shopify.authorize(request);
 
 	try {
-		const { data } = await shopify.client.request(/* GraphQL */ `
+		const { data } = await client.request(/* GraphQL */ `
 			#graphql
 			query Shop {
 				shop {
@@ -23,14 +26,14 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 		`);
 		return { data: data as ShopQuery };
 	} catch (error) {
-		console.error(error);
+		console.error("app.index.error", error);
 
 		if (error instanceof GraphqlQueryError) {
 			return { errors: error.body?.errors };
 		}
 
 		const t = await i18n.getFixedT(request);
-		return data({ message: t("error") }, 500);
+		return data({ errors: [{ message: t("error") } ]}, 500);
 	}
 }
 

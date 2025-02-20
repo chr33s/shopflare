@@ -4,6 +4,5 @@ export default {
 	},
 	defaultNS: "app",
   fallbackLng: "en",
-	preload: ["en"],
   supportedLngs: ["en"],
 };

@@ -16,7 +16,6 @@ async function hydrate() {
       ...i18n,
       ns: getInitialNamespaces(),
       detection: {
-        order: ["htmlTag"],
         caches: [],
       },
     });

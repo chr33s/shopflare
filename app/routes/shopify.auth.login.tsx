@@ -9,7 +9,7 @@ import {
 import { useState } from "react";
 import { Form, redirect, useActionData, useLoaderData } from "react-router";
 
-import type { Route } from "./+types/shopify.auth";
+import type { Route } from "./+types/shopify.auth.login";
 import { createShopify } from "~/shopify.server";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
@@ -65,14 +65,16 @@ export async function action({ context, request }: Route.ActionArgs) {
 	const shopify = createShopify(context);
 
 	const url = new URL(request.url);
-	const shopParam = url.searchParams.get('shop');
-	if (request.method === 'GET' && !shopParam) {
-		return { errors: { shop: undefined } };
+	let shop = url.searchParams.get('shop');
+	if (request.method === 'GET' && !shop) {
+		return {};
 	}
 
-	const shop: string | null = shopParam || ((await request.formData()).get('shop') as string);
 	if (!shop) {
-		return { shop: 'MISSING_SHOP' };
+		shop = (await request.formData()).get('shop') as string;
+	}
+	if (!shop) {
+		return { errors: { shop: "MISSING_SHOP" } };
 	}
 
 	const shopWithoutProtocol = shop
@@ -84,15 +86,10 @@ export async function action({ context, request }: Route.ActionArgs) {
 			: shopWithoutProtocol;
 	const sanitizedShop = shopify.api.utils.sanitizeShop(shopWithDomain);
 	if (!sanitizedShop) {
-		return { shop: 'INVALID_SHOP' };
+		return { errors: { shop: "INVALID_SHOP" } };
 	}
 
-	const appUrl = `${shopify.api.config.hostScheme}://${shopify.api.config.hostName}`;
-	const authPath = `${appUrl}/shopify/auth?shop=${sanitizedShop}`;
 	const adminPath = shopify.api.utils.legacyUrlToShopAdminUrl(sanitizedShop);
-	const installPath = `https://${adminPath}/oauth/install?client_id=${shopify.api.config.apiKey}`;
-
-	const shouldInstall = shopify.api.config.isEmbeddedApp && shopify.api.config.future.unstable_newEmbeddedAuthStrategy;
-	const redirectUrl = shouldInstall ? installPath : authPath;
+	const redirectUrl = `https://${adminPath}/oauth/install?client_id=${shopify.api.config.apiKey}`;
 	throw redirect(redirectUrl);
 }

@@ -8,14 +8,9 @@ export type ShopQueryVariables = AdminTypes.Exact<{ [key: string]: never; }>;
 
 export type ShopQuery = { shop: Pick<AdminTypes.Shop, 'name'> };
 
-export type ShopifyAppShopNameQueryVariables = AdminTypes.Exact<{ [key: string]: never; }>;
-
-
-export type ShopifyAppShopNameQuery = { shop: Pick<AdminTypes.Shop, 'name'> };
-
 interface GeneratedQueryTypes {
-  "\n      #graphql\n      query Shop {\n        shop {\n          name\n        }\n      }\n    ": {return: ShopQuery, variables: ShopQueryVariables},
-  "#graphql\n\t\t\t\t\t\t\tquery ShopifyAppShopName {\n\t\t\t\t\t\t\t\tshop {\n\t\t\t\t\t\t\t\t\tname\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t": {return: ShopifyAppShopNameQuery, variables: ShopifyAppShopNameQueryVariables},
+  "\n\t\t\t#graphql\n\t\t\tquery Shop {\n\t\t\t\tshop {\n\t\t\t\t\tname\n\t\t\t\t}\n\t\t\t}\n\t\t": {return: ShopQuery, variables: ShopQueryVariables},
+  "\n\t\t\t\t\t#graphql\n\t\t\t\t\tquery Shop {\n\t\t\t\t\t\tshop {\n\t\t\t\t\t\t\tname\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t": {return: ShopQuery, variables: ShopQueryVariables},
 }
 
 interface GeneratedMutationTypes {

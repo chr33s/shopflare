@@ -8,7 +8,7 @@ export async function action({ context, request }: Route.ActionArgs) {
 		rawBody: await request.text(),
 		rawRequest: request,
 	});
-	console.log({ ...webhook });
+	shopify.api.logger.debug("shopify.webhooks", { ...webhook });
 
 	if (!webhook.admin && webhook.topic !== "SHOP_REDACT") {
 		// The admin context isn't returned if the webhook fired after a shop was uninstalled.
