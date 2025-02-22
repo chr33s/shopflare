@@ -1,11 +1,12 @@
 import { createGraphQLClient } from "@shopify/graphql-client";
 import { jwtVerify, type JWTPayload } from "jose";
 import { type AppLoadContext, redirect } from "react-router";
+import * as v from "valibot";
 
 export const apiVersion = "2025-01";
 
 export function createShopify(context: AppLoadContext) {
-	const env = context.cloudflare.env; // TODO: validate
+	const env = v.parse(schema, context.cloudflare.env);
 	const config = {
 		apiHost: env.SHOPIFY_APP_URL,
 		apiKey: env.SHOPIFY_API_KEY,
@@ -201,7 +202,7 @@ export function createShopify(context: AppLoadContext) {
 		return client;
 	}
 
-	const session = new ShopifySession(env.SESSION_STORAGE);
+	const session = new ShopifySession(context.cloudflare.env.SESSION_STORAGE);
 
 	const utils = {
 		allowedDomains: ["myshopify.com", "shopify.com", "myshopify.io"]
@@ -271,6 +272,12 @@ export function createShopify(context: AppLoadContext) {
 		utils,
 	};
 }
+
+const schema = v.object({
+	SHOPIFY_API_KEY: v.pipe(v.string(), v.minLength(32)),
+	SHOPIFY_API_SECRET_KEY: v.pipe(v.string(), v.minLength(32)),
+	SHOPIFY_APP_URL: v.pipe(v.string(), v.url()),
+});
 
 export class ShopifyException extends Error {
 	errors?: unknown[];
