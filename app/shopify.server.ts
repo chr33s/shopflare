@@ -315,16 +315,6 @@ interface ShopifyJWTPayload extends Required<JWTPayload> {
 	dest: string;
 }
 
-interface Session {
-	id: string;
-	shop: string;
-	scope: string;
-	expires?: Date;
-	accessToken: string;
-}
-
-type SerializedSession = [string, string | number | boolean][];
-
 export class ShopifySession {
 	#namespace: KVNamespace;
 	#properties = ["accessToken", "expires", "id", "scope", "shop"];
@@ -343,7 +333,7 @@ export class ShopifySession {
 		return true;
 	}
 
-	deserialize(data: SerializedSession): Session {
+	deserialize(data: ShopifySessionSerialized): ShopifySessionObject {
 		const obj = Object.fromEntries(
 			data
 				.filter(([_key, value]) => value !== null && value !== undefined)
@@ -370,7 +360,7 @@ export class ShopifySession {
 					break;
 			}
 			return session;
-		}, {} as Session);
+		}, {} as ShopifySessionObject);
 	}
 
 	async get(id: string | undefined) {
@@ -383,14 +373,14 @@ export class ShopifySession {
 		return data ? this.deserialize(data) : undefined;
 	}
 
-	async set(session: Session) {
+	async set(session: ShopifySessionObject) {
 		return this.#namespace.put(
 			session.id,
 			JSON.stringify(this.serialize(session)),
 		);
 	}
 
-	serialize(session: Session): SerializedSession {
+	serialize(session: ShopifySessionObject): ShopifySessionSerialized {
 		return Object.entries(session)
 			.filter(
 				([key, value]) =>
@@ -409,3 +399,11 @@ export class ShopifySession {
 			.filter(([_key, value]) => value !== undefined);
 	}
 }
+interface ShopifySessionObject {
+	id: string;
+	shop: string;
+	scope: string;
+	expires?: Date;
+	accessToken: string;
+}
+type ShopifySessionSerialized = [string, string | number | boolean][];
