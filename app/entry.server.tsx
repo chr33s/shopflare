@@ -19,6 +19,17 @@ export default async function handleRequest(
 	routerContext: EntryContext,
 	_loadContext: AppLoadContext,
 ) {
+	const namespaces = ["app", "polaris"];
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const en: any = await Promise.all(
+		namespaces.map((ns) =>
+			fetch(new URL(`/i18n/en.${ns}.json`, request.url)) // loadContext.cloudflare.env.fetch
+				.then((res) => res.json()),
+		),
+	)
+		.then(([app, polaris]) => ({ app, polaris }))
+		.catch(() => namespaces.reduce((acc, ns) => ({ ...acc, [ns]: {} }), {}));
+
 	const instance = createInstance();
 	await instance
 		.use(initReactI18next)
@@ -27,11 +38,12 @@ export default async function handleRequest(
 			...i18nConfig,
 			lng: await i18n.getLocale(request),
 			ns: i18n.getRouteNamespaces(routerContext),
+			resources: { en },
 		});
 
 	const userAgent = request.headers.get("User-Agent");
 	const stream = await renderToReadableStream(
-		<I18nextProvider i18n={instance}>
+		<I18nextProvider defaultNS={["app", "polaris"]} i18n={instance}>
 			<ServerRouter context={routerContext} url={request.url} />
 		</I18nextProvider>,
 		{

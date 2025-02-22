@@ -6,14 +6,14 @@ import { createShopify } from "~/shopify.server";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	const shopify = createShopify(context);
-	shopify.api.logger.debug("shopify.auth.session-token-bounce");
+	console.debug("shopify.auth.session-token-bounce");
 
 	const url = new URL(request.url);
 	const headers = new Headers({
 		"content-type": "text/html;charset=utf-8",
 	});
 
-	const shop = shopify.api.utils.sanitizeShop(url.searchParams.get("shop")!);
+	const shop = shopify.utils.sanitizeShop(url.searchParams.get("shop")!);
 	if (!shop) {
 		return redirect("/shopify/auth/login");
 	}
@@ -25,7 +25,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 
 	return new Response(
 		/* html */ `<head>
-			<meta name="shopify-api-key" content="${shopify.api.config.apiKey}" />
+			<meta name="shopify-api-key" content="${shopify.config.apiKey}" />
 			<script src="${APP_BRIDGE_URL}"></script>
 		</head>`,
 		{ headers },

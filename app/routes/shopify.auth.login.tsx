@@ -84,12 +84,12 @@ export async function action({ context, request }: Route.ActionArgs) {
 		shop?.indexOf(".") === -1
 			? `${shopWithoutProtocol}.myshopify.com`
 			: shopWithoutProtocol;
-	const sanitizedShop = shopify.api.utils.sanitizeShop(shopWithDomain);
+	const sanitizedShop = shopify.utils.sanitizeShop(shopWithDomain);
 	if (!sanitizedShop) {
 		return { errors: { shop: "INVALID_SHOP" } };
 	}
 
-	const adminPath = shopify.api.utils.legacyUrlToShopAdminUrl(sanitizedShop);
-	const redirectUrl = `https://${adminPath}/oauth/install?client_id=${shopify.api.config.apiKey}`;
+	const adminPath = shopify.utils.legacyUrlToShopAdminUrl(sanitizedShop);
+	const redirectUrl = `https://${adminPath}/oauth/install?client_id=${shopify.config.apiKey}`;
 	throw redirect(redirectUrl);
 }

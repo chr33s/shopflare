@@ -4,6 +4,7 @@
 	"compatibility_date": "2024-11-01",
 	"main": "./server.ts",
 	"assets": {
+		"binding": "ASSETS",
 		"directory": "./dist/client"
 	},
 	"dev": {

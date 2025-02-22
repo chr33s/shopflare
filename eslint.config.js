@@ -94,7 +94,7 @@ export default config(
 			"**/dist/*",
 			"**/generated/*",
 			"**/node_modules/*",
-			"app/types/*",
+			"**/types/*",
 		],
 	},
 	{

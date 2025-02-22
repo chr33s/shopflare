@@ -13,9 +13,7 @@ const i18next = new RemixI18Next({
 		},
 		supportedLanguages: i18n.supportedLngs,
 	},
-	i18next: {
-		...i18n,
-	},
+	i18next: { ...i18n },
 	plugins: [Backend],
 });
 

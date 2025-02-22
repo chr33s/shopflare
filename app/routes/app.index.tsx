@@ -1,22 +1,21 @@
 import { Page, Text } from "@shopify/polaris";
-import { GraphqlQueryError } from "@shopify/shopify-api";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { data, useActionData, useLoaderData } from "react-router";
 
 import type { Route } from "./+types/app.index";
 import i18n from "~/i18n.server";
-import { createShopify } from "~/shopify.server";
+import { createShopify, ShopifyException } from "~/shopify.server";
 import type { ShopQuery } from "~/types/admin.generated";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	const shopify = createShopify(context);
-	shopify.api.logger.debug("app.index");
+	console.debug("app.index.loader");
 
 	const client = await shopify.authorize(request);
 
 	try {
-		const { data } = await client.request(/* GraphQL */ `
+		const { data, errors } = await client.request(/* GraphQL */ `
 			#graphql
 			query Shop {
 				shop {
@@ -24,16 +23,25 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 				}
 			}
 		`);
-		return { data: data as ShopQuery };
+		return {
+			data: data as ShopQuery,
+			errors,
+		};
 	} catch (error) {
-		console.error("app.index.error", error);
+		console.error("app.index.loader.error", error);
 
-		if (error instanceof GraphqlQueryError) {
-			return { errors: error.body?.errors };
+		if (error instanceof ShopifyException && error?.type === "GRAPHQL") {
+			return { errors: error.errors };
 		}
 
 		const t = await i18n.getFixedT(request);
-		return data({ errors: [{ message: t("error") }] }, 500);
+		return data(
+			{
+				data: undefined,
+				errors: [{ message: t("error") }],
+			},
+			500,
+		);
 	}
 }
 
@@ -61,14 +69,14 @@ export default function AppIndex() {
 			method: "POST",
 		})
 			.then((res) => res.json())
-			.then(console.log)
-			.catch(console.error);
+			.then((res) => console.log("app.index.useEffect", res))
+			.catch((err) => console.error("app.index.useEffect.error", err));
 	}, []);
 
 	return (
 		<Page title={t("app")}>
 			<Text as="p">
-				{errors?.length ? JSON.stringify(errors, null, 2) : data?.shop?.name}
+				{errors ? JSON.stringify(errors, null, 2) : data?.shop?.name}
 			</Text>
 		</Page>
 	);

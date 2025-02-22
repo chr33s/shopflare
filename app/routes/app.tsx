@@ -14,11 +14,12 @@ import { createShopify } from "~/shopify.server";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	const shopify = createShopify(context);
+	console.debug("app");
+
 	const response = await shopify.authorize(request);
-	shopify.api.logger.debug("app", response);
 	if (response instanceof Response) throw response;
 
-	return { apiKey: shopify.api.config.apiKey };
+	return { apiKey: shopify.config.apiKey };
 }
 
 export default function App() {
@@ -53,7 +54,9 @@ export function ErrorBoundary(error: Route.ErrorBoundaryProps) {
 	) {
 		return (
 			<div
-				dangerouslySetInnerHTML={{ __html: error.data || "Handling response" }}
+				dangerouslySetInnerHTML={{
+					__html: (error as any).data || "Handling response", // eslint-disable-line @typescript-eslint/no-explicit-any
+				}}
 			/>
 		);
 	}
