@@ -7,8 +7,13 @@ const i18next = new RemixI18Next({
 		fallbackLanguage: i18n.fallbackLng,
 		async findLocale(request) {
 			const url = new URL(request.url);
-			const locale =
-				url.searchParams.get("locale")?.split("-").at(0) ?? i18n.fallbackLng;
+			let locale = url.searchParams.get("locale")?.split("-").at(0); // shopify admin
+			if (!locale) {
+				locale = request.headers.get("accept-language")?.split(",").at(0); // shopify storefront proxy
+			}
+			if (!locale) {
+				locale = i18n.fallbackLng;
+			}
 			return locale;
 		},
 		supportedLanguages: i18n.supportedLngs,
