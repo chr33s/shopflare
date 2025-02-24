@@ -38,7 +38,10 @@ export default defineConfig(({ mode }) => {
 			},
 		},
 		test: {
-			env: env,
+			env: {
+				...env,
+				SHOPIFY_APP_LOG_LEVEL: "error",
+			},
 			watch: false,
 		},
 	};

@@ -6,7 +6,7 @@ import { createShopify } from "~/shopify.server";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	const shopify = createShopify(context);
-	console.debug("shopify.auth.session-token-bounce");
+	shopify.utils.log.debug("shopify.auth.session-token-bounce");
 
 	const url = new URL(request.url);
 	const headers = new Headers({

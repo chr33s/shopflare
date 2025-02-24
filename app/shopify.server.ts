@@ -8,10 +8,12 @@ export const apiVersion = "2025-01";
 export function createShopify(context: AppLoadContext) {
 	const env = v.parse(schema, context.cloudflare.env);
 	const config = {
-		apiHost: env.SHOPIFY_APP_URL,
 		apiKey: env.SHOPIFY_API_KEY,
 		apiSecretKey: env.SHOPIFY_API_SECRET_KEY,
 		apiVersion,
+		appUrl: env.SHOPIFY_APP_URL,
+		appLogLevel: env.SHOPIFY_APP_LOG_LEVEL,
+		appTest: env.SHOPIFY_APP_TEST === "1",
 	};
 
 	async function authorize(request: Request) {
@@ -202,6 +204,34 @@ export function createShopify(context: AppLoadContext) {
 		return client;
 	}
 
+	function createLogger() {
+		const levels = ["error", "info", "debug"];
+		const level = levels.findIndex((level) => level === config.appLogLevel);
+
+		return {
+			debug(...args: unknown[]) {
+				if (level >= 2) {
+					return console.debug(...args);
+				}
+				return function noop() {};
+			},
+
+			info(...args: unknown[]) {
+				if (level >= 1) {
+					return console.info(...args);
+				}
+				return function noop() {};
+			},
+
+			error(...args: unknown[]) {
+				if (level >= 0) {
+					return console.error(...args);
+				}
+				return function noop() {};
+			},
+		};
+	}
+
 	const session = new ShopifySession(context.cloudflare.env.SESSION_STORAGE);
 
 	const utils = {
@@ -220,6 +250,8 @@ export function createShopify(context: AppLoadContext) {
 			}
 			return null;
 		},
+
+		log: createLogger(),
 
 		sanitizeHost(host: string) {
 			const base64regex = /^[0-9a-z+/]+={0,2}$/i;
@@ -276,6 +308,11 @@ export function createShopify(context: AppLoadContext) {
 const schema = v.object({
 	SHOPIFY_API_KEY: v.pipe(v.string(), v.minLength(32)),
 	SHOPIFY_API_SECRET_KEY: v.pipe(v.string(), v.minLength(32)),
+	SHOPIFY_APP_LOG_LEVEL: v.optional(
+		v.picklist(["debug", "info", "error"]),
+		"error",
+	),
+	SHOPIFY_APP_TEST: v.optional(v.picklist(["0", "1"]), "0"),
 	SHOPIFY_APP_URL: v.pipe(v.string(), v.url()),
 });
 

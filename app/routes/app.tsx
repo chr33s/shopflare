@@ -14,7 +14,7 @@ import { createShopify } from "~/shopify.server";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	const shopify = createShopify(context);
-	console.debug("app");
+	shopify.utils.log.debug("app");
 
 	const response = await shopify.authorize(request);
 	if (response instanceof Response) throw response;

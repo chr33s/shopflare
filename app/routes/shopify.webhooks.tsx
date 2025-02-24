@@ -68,7 +68,7 @@ export async function action({ context, request }: Route.ActionArgs) {
 		}),
 		{} as typeof headers,
 	);
-	console.debug("shopify.webhooks", { ...webhook });
+	shopify.utils.log.debug("shopify.webhooks", { ...webhook });
 
 	const session = await shopify.session.get(webhook.domain);
 

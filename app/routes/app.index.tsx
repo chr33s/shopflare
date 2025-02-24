@@ -10,7 +10,7 @@ import type { ShopQuery } from "~/types/admin.generated";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	const shopify = createShopify(context);
-	console.debug("app.index.loader");
+	shopify.utils.log.debug("app.index.loader");
 
 	const client = await shopify.authorize(request);
 
@@ -28,7 +28,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 			errors,
 		};
 	} catch (error) {
-		console.error("app.index.loader.error", error);
+		shopify.utils.log.error("app.index.loader.error", error);
 
 		if (error instanceof ShopifyException && error?.type === "GRAPHQL") {
 			return { errors: error.errors };
