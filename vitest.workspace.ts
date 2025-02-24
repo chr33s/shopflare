@@ -12,8 +12,25 @@ export default defineWorkspace([
 			viteConfig(config),
 			defineConfig({
 				test: {
+					browser: {
+						headless: true,
+						enabled: true,
+						instances: [{ browser: "webkit" }],
+						provider: "playwright",
+					},
+					include: ["app/**/*.browser.test.tsx"],
+					name: "browser",
+				},
+			}),
+		),
+	),
+	defineConfig((config) =>
+		mergeConfig(
+			viteConfig(config),
+			defineConfig({
+				test: {
 					environment: "happy-dom",
-					include: ["app/**/*.test.tsx"],
+					include: ["app/**/*.client.test.tsx"],
 					name: "app/client",
 				},
 			}),
@@ -36,8 +53,8 @@ export default defineWorkspace([
 			viteConfig(config),
 			defineWorkersProject({
 				test: {
-					include: ["server.test.ts"],
-					name: "server",
+					include: ["server.test.ts", "app/**/*.worker.test.ts"],
+					name: "worker",
 					poolOptions: {
 						workers: {
 							main: "./server.ts",
