@@ -23,7 +23,8 @@ export default function Index() {
 				width: "100vw",
 			}}
 		>
-			<h1>ShopFlare</h1>
+			{/* eslint-disable-next-line i18next/no-literal-string */}
+			<h1 data-testid="h1">ShopFlare</h1>
 		</div>
 	);
 }

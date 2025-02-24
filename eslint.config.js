@@ -1,6 +1,7 @@
 import css from "@eslint/css";
 import eslint from "@eslint/js";
 import prettier from "eslint-config-prettier";
+import i18next from "eslint-plugin-i18next";
 import importPlugin from "eslint-plugin-import-x";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import react from "eslint-plugin-react";
@@ -19,6 +20,7 @@ export default config(
 	react.configs.flat.recommended,
 	react.configs.flat["jsx-runtime"],
 	regexp.configs["flat/recommended"],
+	i18next.configs["flat/recommended"],
 	{
 		languageOptions: {
 			ecmaVersion: "latest",

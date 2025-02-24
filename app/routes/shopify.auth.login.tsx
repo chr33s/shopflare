@@ -7,6 +7,7 @@ import {
 	TextField,
 } from "@shopify/polaris";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Form, redirect, useActionData, useLoaderData } from "react-router";
 
 import type { Route } from "./+types/shopify.auth.login";
@@ -21,6 +22,8 @@ export default function AuthLogin() {
 	const loaderData = useLoaderData<typeof loader>();
 	const { errors } = actionData ?? loaderData ?? {};
 	const [shop, setShop] = useState("");
+
+	const { t } = useTranslation();
 
 	return (
 		<div
@@ -37,7 +40,7 @@ export default function AuthLogin() {
 					<Form method="post">
 						<FormLayout>
 							<Text as="h2" variant="headingMd">
-								Log in
+								{t("login")}
 							</Text>
 							<TextField
 								autoComplete="on"
@@ -51,7 +54,7 @@ export default function AuthLogin() {
 								value={shop}
 							/>
 							<Button submit variant="primary">
-								Log in
+								{t("login")}
 							</Button>
 						</FormLayout>
 					</Form>
@@ -93,3 +96,7 @@ export async function action({ context, request }: Route.ActionArgs) {
 	const redirectUrl = `https://${adminPath}/oauth/install?client_id=${shopify.config.apiKey}`;
 	throw redirect(redirectUrl);
 }
+
+export const handle = {
+	i18n: "app",
+};

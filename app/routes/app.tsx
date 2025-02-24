@@ -57,7 +57,7 @@ export default function App() {
 			<AppProvider i18n={i18n} linkComponent={ReactRouterPolarisLink}>
 				<NavMenu>
 					<Link rel="home" to="/app">
-						ShopFlare
+						{t("app")}
 					</Link>
 				</NavMenu>
 

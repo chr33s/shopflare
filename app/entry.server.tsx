@@ -17,28 +17,20 @@ export default async function handleRequest(
 	status: number,
 	headers: Headers,
 	routerContext: EntryContext,
-	_loadContext: AppLoadContext,
+	loadContext: AppLoadContext,
 ) {
-	const namespaces = ["app", "polaris"];
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const en: any = await Promise.all(
-		namespaces.map((ns) =>
-			fetch(new URL(`/i18n/en.${ns}.json`, request.url)) // loadContext.cloudflare.env.fetch
-				.then((res) => res.json()),
-		),
-	)
-		.then(([app, polaris]) => ({ app, polaris }))
-		.catch(() => namespaces.reduce((acc, ns) => ({ ...acc, [ns]: {} }), {}));
-
 	const instance = createInstance();
 	await instance
 		.use(initReactI18next)
 		.use(Backend)
 		.init({
 			...i18nConfig,
+			backend: {
+				...i18nConfig.backend,
+				loadPath: `${loadContext.cloudflare.env.SHOPIFY_APP_URL}/i18n/{{lng}}.{{ns}}.json`,
+			},
 			lng: await i18n.getLocale(request),
 			ns: i18n.getRouteNamespaces(routerContext),
-			resources: { en },
 		});
 
 	const userAgent = request.headers.get("User-Agent");
