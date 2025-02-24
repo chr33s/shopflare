@@ -17,4 +17,5 @@ export default [
 		"routes/shopify.auth.session-token-bounce.tsx",
 	),
 	route("shopify/webhooks", "routes/shopify.webhooks.tsx"),
+	route("shopify/web-vitals", "routes/shopify.web-vitals.tsx"),
 ] satisfies RouteConfig;
