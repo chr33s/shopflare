@@ -56,12 +56,16 @@ export async function action({ context, request }: Route.ActionArgs) {
 		topic: "X-Shopify-Topic",
 		webhookId: "X-Shopify-Webhook-Id",
 	};
-	if (!Object.values(requiredHeaders).some(request.headers.has)) {
+	if (
+		!Object.values(requiredHeaders).every((header) =>
+			request.headers.has(header),
+		)
+	) {
 		return new Response("Webhook headers are missing", { status: 400 });
 	}
 	const optionalHeaders = { subTopic: "X-Shopify-Sub-Topic" };
 	const headers = { ...requiredHeaders, ...optionalHeaders };
-	const webhook = Object.keys(headers).reduce(
+	const webhook = Object.values(headers).reduce(
 		(headers, header) => ({
 			...headers,
 			[header]: request.headers.get(header),
@@ -93,5 +97,5 @@ export async function action({ context, request }: Route.ActionArgs) {
 			break;
 	}
 
-	throw new Response(undefined, { status: 204 });
+	return new Response(undefined, { status: 204 });
 }
