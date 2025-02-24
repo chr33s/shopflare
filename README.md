@@ -1,11 +1,13 @@
 # ShopFlare
 
-> Shopify app using React Router (v7) running on cloudflare worker
+> Minimalist Shopify app using React Router (v7) running on cloudflare (worker). Only required features, no future changes other than core upgrades & platform alignment.
 
 ## Rationale
 
 - @shopify/shopify-app-remix to complex (to much abstraction)
 - Needed simple boilerplate, than only does the basics with minimal abstraction
+- Small code surface, easier audit
+- Stability over feature completeness
 - Minimally opinionated, by supporting only:
   1.  Embedded app use-case
   2.  New Embedded Auth Strategy
