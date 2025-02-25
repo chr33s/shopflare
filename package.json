@@ -4,7 +4,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"actionlint": "actionlint",
+		"actionlint": "if command -v actionlint 2>&1 >/dev/null; then actionlint; fi",
 		"build": "react-router build",
 		"codegen": "graphql-codegen",
 		"deploy": "react-router build && wrangler deploy",

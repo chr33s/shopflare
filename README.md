@@ -18,7 +18,6 @@
 1. Cloudflare account
 2. cloudflared cli `brew install cloudflared`
 3. Node.js & NPM see package.json#engines `brew install node@22`
-4. Actionlint `brew install actionlint`
 
 ## Setup
 
