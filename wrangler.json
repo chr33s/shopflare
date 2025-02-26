@@ -34,6 +34,8 @@
 		"mode": "smart"
 	},
 	"vars": {
-		"NODE_VERSION": 22
+		"NODE_VERSION": 22,
+		"SHOPIFY_API_KEY": "",
+		"SHOPIFY_APP_URL": ""
 	}
 }

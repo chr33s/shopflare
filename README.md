@@ -1,11 +1,11 @@
 # ShopFlare
 
-> Minimalist Shopify app using React Router (v7) running on cloudflare (worker). Only required features, no future changes other than core upgrades & platform alignment.
+> Minimalist Shopify app using React Router (v7) running on cloudflare (worker, kv, analytics). Only essential features, no future changes other than core upgrades & platform alignment.
 
 ## Rationale
 
-- @shopify/shopify-app-remix to complex (to much abstraction)
-- Needed simple boilerplate, than only does the basics with minimal abstraction
+- @shopify/shopify-[api,app-remix] to complex (to much abstraction)
+- Needed a simple starter, than only does the basics
 - Small code surface, easier audit
 - Stability over feature completeness
 - Minimally opinionated, by supporting only:
@@ -18,23 +18,24 @@
 1. Cloudflare account
 2. cloudflared cli `brew install cloudflared`
 3. Node.js & NPM see package.json#engines `brew install node@22`
+4. Github cli `brew install gh` (optional)
 
 ## Setup
 
 ```sh
-cp .env.example .env # update values
+npm install
+cp .env.example .env 																							# update vars to match your env
+# vi [wrangler.json, shopify.app.toml] 														# update vars[SHOPIFY_API_KEY, SHOPIFY_APP_URL]
+npx wrangler secret put SHOPIFY_API_SECRET_KEY 										# value from shopify partners
+gh secret set --app=actions CLOUDFLARE_API_TOKEN									# value from cloudflare
+gh variable set SHOPIFY_API_KEY
 ```
-
-- copy .env.example vars to Cloudflare workers > Environment variables
-- create Workers > KV store key \_SESSION_STORAGE & attach it to workers > Settings > KV namespace bindings
-- copy .env{ SHOPIFY_API_KEY, CLOUDFLARE_API_TOKEN } vars to Github > secrets (and variables)
 
 ## Development
 
 ```sh
-npm install
 npm run dev
-# open -a Safari {cloudflared.url}
+# open -a Safari ${SHOPIFY_APP_URL}
 ```
 
 ## Production

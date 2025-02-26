@@ -2,7 +2,6 @@
 
 interface Env {
 	SESSION_STORAGE: KVNamespace;
-	CLOUDFLARE_API_TOKEN: string;
 	NODE_VERSION: string;
 	SHOPIFY_API_KEY: string;
 	SHOPIFY_API_SECRET_KEY: string;
