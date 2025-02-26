@@ -1,4 +1,8 @@
-name: Release
+name: Github
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
 
 on:
   push:

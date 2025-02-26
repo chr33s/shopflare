@@ -1,5 +1,9 @@
 name: Cloudflare
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
@@ -20,7 +24,7 @@ jobs:
       - run: npm ci
       - run: npm run build --ignore-scripts
         env:
-          SHOPIFY_API_KEY: ${{ env.SHOPIFY_API_KEY }}
+          SHOPIFY_API_KEY: ${{ vars.SHOPIFY_API_KEY }}
       - run: npm test
       - uses: github/codeql-action/analyze@v3
       - uses: actions/upload-artifact@v4
@@ -29,7 +33,6 @@ jobs:
           path: dist
 
   deploy:
-    if: "!contains(github.event.head_commit.message, '[skip-ci]')"
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
