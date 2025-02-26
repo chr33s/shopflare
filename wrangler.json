@@ -2,6 +2,7 @@
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "shopflare",
 	"compatibility_date": "2025-03-11",
+	"compatibility_flags": ["nodejs_compat"],
 	"main": "./worker.ts",
 	"analytics_engine_datasets": [
 		{
