@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react-router";
 import type { PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -30,6 +31,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 		details = error.message;
 		stack = error.stack;
 	}
+
+	Sentry.captureException(error);
 
 	return (
 		<main

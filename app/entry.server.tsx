@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react-router";
 import { createInstance } from "i18next";
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
@@ -10,6 +11,12 @@ import {
 
 import i18n, { LanguageDetector } from "./i18n";
 import { createShopify } from "./shopify.server";
+
+Sentry.init({
+	dsn: import.meta.env.SENTRY_DSN,
+	environment: import.meta.env.ENVIRONMENT,
+	release: import.meta.env.VERSION,
+});
 
 export default async function handleRequest(
 	request: Request,
@@ -44,6 +51,7 @@ export default async function handleRequest(
 				if (!request.signal.aborted) {
 					// Log streaming rendering errors from inside the shell
 					console.error("entry.server.onError", error);
+					Sentry.captureException(error);
 				}
 			},
 		},

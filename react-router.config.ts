@@ -1,6 +1,11 @@
 import type { Config } from "@react-router/dev/config";
+import * as Sentry from "@sentry/react-router";
 
 export default {
+	// biome-ignore lint/suspicious/noExplicitAny: upstream
+	buildEnd: async (args: any) => {
+		await Sentry.sentryOnBuildEnd(args);
+	},
 	// Config options...
 	future: {
 		unstable_optimizeDeps: true,

@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react-router";
 import i18next from "i18next";
 import { StrictMode, startTransition } from "react";
 import { hydrateRoot } from "react-dom/client";
@@ -5,6 +6,12 @@ import { I18nextProvider, initReactI18next } from "react-i18next";
 import { HydratedRouter } from "react-router/dom";
 
 import i18n, { LanguageDetector } from "./i18n";
+
+Sentry.init({
+	dsn: import.meta.env.SENTRY_DSN,
+	environment: import.meta.env.ENVIRONMENT,
+	release: import.meta.env.VERSION,
+});
 
 async function hydrate() {
 	await i18next

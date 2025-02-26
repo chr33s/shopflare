@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/cloudflare";
 import { createRequestHandler } from "react-router";
 
 import type { WebhookQueueMessage } from "~/types/app";
@@ -16,18 +17,25 @@ const requestHandler = createRequestHandler(
 	import.meta.env.MODE,
 );
 
-export default {
-	async fetch(request, env, ctx) {
-		return requestHandler(request, {
-			cloudflare: { env, ctx },
-		});
-	},
+export default Sentry.withSentry(
+	(env: Env) => ({
+		dsn: env.SENTRY_DSN,
+		environment: env.ENVIRONMENT,
+		release: env.VERSION,
+	}),
+	{
+		async fetch(request, env, ctx) {
+			return requestHandler(request, {
+				cloudflare: { env, ctx },
+			});
+		},
 
-	async queue(batch, _env, _ctx): Promise<void> {
-		console.log(`server.queue: ${JSON.stringify(batch.messages)}`);
+		async queue(batch, _env, _ctx): Promise<void> {
+			console.log(`server.queue: ${JSON.stringify(batch.messages)}`);
 
-		for (const message of batch.messages) {
-			message.ack();
-		}
-	},
-} satisfies ExportedHandler<Env, WebhookQueueMessage>;
+			for (const message of batch.messages) {
+				message.ack();
+			}
+		},
+	} satisfies ExportedHandler<Env, WebhookQueueMessage>,
+);
