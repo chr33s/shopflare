@@ -45,6 +45,8 @@
 		"@cloudflare/vitest-pool-workers": "0.8.27",
 		"@playwright/test": "1.52.0",
 		"@react-router/dev": "7.6.0",
+		"@sentry/cloudflare": "9.18.0",
+		"@sentry/react-router": "9.18.0",
 		"@shopify/api-codegen-preset": "1.1.7",
 		"@shopify/app-bridge-types": "0.0.18",
 		"@shopify/polaris": "13.9.5",
