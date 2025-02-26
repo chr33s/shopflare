@@ -1,3 +1,4 @@
+import { withSentry } from "@sentry/cloudflare";
 import { createRequestHandler } from "react-router";
 
 import type { WebhookQueueMessage } from "~/types/app";
@@ -16,7 +17,7 @@ const requestHandler = createRequestHandler(
 	import.meta.env.MODE,
 );
 
-export default {
+export default withSentry((env) => ({ dsn: (env as Env).SENTRY_DSN }), {
 	async fetch(request, env, ctx) {
 		return requestHandler(request, {
 			cloudflare: { env, ctx },
@@ -30,4 +31,4 @@ export default {
 			message.ack();
 		}
 	},
-} satisfies ExportedHandler<Env, WebhookQueueMessage>;
+} satisfies ExportedHandler<Env, WebhookQueueMessage>);

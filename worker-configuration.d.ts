@@ -5,6 +5,10 @@ declare namespace Cloudflare {
 	interface Env {
 		SESSION_STORAGE: KVNamespace;
 		NODE_VERSION: string;
+		SENTRY_AUTH_TOKEN: string;
+		SENTRY_DSN: string;
+		SENTRY_ORG: string;
+		SENTRY_PROJECT: string;
 		SHOPIFY_API_KEY: string;
 		SHOPIFY_API_SECRET_KEY: string;
 		SHOPIFY_APP_ENV: string;
