@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import i18next from "i18next";
 import Backend from "i18next-fetch-backend";
 import { startTransition, StrictMode } from "react";
@@ -7,6 +8,15 @@ import { getInitialNamespaces } from "remix-i18next/client";
 import { HydratedRouter } from "react-router/dom";
 
 import i18n from "./i18n";
+
+const appUrl = import.meta.env.SHOPIFY_APP_URL.replace(/\//g, "//");
+Sentry.init({
+	dsn: import.meta.env.SENTRY_DSN,
+	replaysOnErrorSampleRate: 1.0,
+	replaysSessionSampleRate: 0.1,
+	tracePropagationTargets: [/^\//, new RegExp(`^${appUrl}`)],
+	tracesSampleRate: 1.0,
+});
 
 async function hydrate() {
 	await i18next // eslint-disable-line import-x/no-named-as-default-member

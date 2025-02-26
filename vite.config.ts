@@ -1,7 +1,8 @@
-import tsconfigPaths from "vite-tsconfig-paths";
-import { reactRouter } from "@react-router/dev/vite";
-import { defineConfig, loadEnv } from "vite";
 import { cloudflare } from "@cloudflare/vite-plugin";
+import { reactRouter } from "@react-router/dev/vite";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
+import { defineConfig, loadEnv } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 // By default react-router's dev server uses Node.js, so we want to remove their server
 // configuration to use the dev server provided by Vite + Workerd.
@@ -18,11 +19,22 @@ export default defineConfig(({ mode }) => {
 	return {
 		build: {
 			minify: true,
+			sourcemap: mode !== "test",
 		},
 		clearScreen: false,
+		define: {
+			SENTRY_DSN: JSON.stringify(env.SENTRY_DSN),
+			SHOPIFY_APP_URL: JSON.stringify(env.SHOPIFY_APP_URL),
+		},
 		plugins: [
 			!env.VITEST && cloudflare(),
 			!env.VITEST && reactRouterPlugins,
+			!env.VITEST &&
+				sentryVitePlugin({
+					authToken: env.SENTRY_AUTH_TOKEN,
+					org: env.SENTRY_ORG,
+					project: env.SENTRY_PROJECT,
+				}),
 			tsconfigPaths(),
 		],
 		resolve: {
