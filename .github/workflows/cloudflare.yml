@@ -6,12 +6,12 @@ concurrency:
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    tags: [releases/*]
 
 jobs:
   build:
-    if: "!contains(github.event.head_commit.message, '[skip-ci]')"
+    if: ${{ !contains(github.event.head_commit.message, '[skip-ci]') }}
     name: Build
     runs-on: ubuntu-latest
     permissions:
@@ -34,10 +34,11 @@ jobs:
           name: dist
           path: dist
 
-  deploy:
-    name: Deploy
+  preview:
+    name: Preview
     needs: build
     runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'branch' }}
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -45,3 +46,18 @@ jobs:
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: versions upload --message=${{ github.ref_name }} --tag=${{ github.sha }}
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'tag' }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy
