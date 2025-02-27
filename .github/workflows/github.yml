@@ -13,7 +13,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: ${{ github.event.repository == 'chr33s/shopflare' }}
+    if: ${{ github.repository == 'chr33s/shopflare' }}
     permissions:
       contents: write
     steps:
