@@ -38,4 +38,12 @@ export default {
 			return new Response("An unexpected error occurred", { status: 500 });
 		}
 	},
+
+	async queue(batch, _env, _ctx): Promise<void> {
+		console.log(`server.queue: ${JSON.stringify(batch.messages)}`);
+
+		for (const message of batch.messages) {
+			message.ack();
+		}
+	},
 } satisfies ExportedHandler<Env>;

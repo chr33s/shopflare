@@ -33,6 +33,19 @@
 	"placement": {
 		"mode": "smart"
 	},
+	"queues": {
+		"consumers": [
+			{
+				"queue": "shopflare"
+			}
+		],
+		"producers": [
+			{
+				"queue": "shopflare",
+				"binding": "WEBHOOK_QUEUE"
+			}
+		]
+	},
 	"vars": {
 		"NODE_VERSION": 22,
 		"SHOPIFY_API_KEY": "",

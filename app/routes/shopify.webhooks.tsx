@@ -11,26 +11,20 @@ export async function action({ context, request }: Route.ActionArgs) {
 
 		const session = await shopify.session.get(webhook.domain);
 
-		switch (webhook.topic) {
-			// app
-			case "APP_UNINSTALLED": {
-				if (!session) {
-					break;
-				}
+		if (webhook.topic === "APP_UNINSTALLED") {
+			if (session) {
 				await shopify.session.delete(session.id);
-
-				break;
 			}
-			case "APP_PURCHASES_ONE_TIME_UPDATE":
-			case "APP_SUBSCRIPTIONS_APPROACHING_CAPPED_AMOUNT":
-			case "APP_SUBSCRIPTIONS_UPDATE":
-
-			// compliance
-			case "CUSTOMERS_DATA_REQUEST": // eslint-disable-line no-fallthrough
-			case "CUSTOMERS_REDACT":
-			case "SHOP_REDACT":
-				break;
 		}
+
+		const payload = await request.json();
+		await context.cloudflare.env.WEBHOOK_QUEUE.send(
+			{
+				payload,
+				webhook,
+			},
+			{ contentType: "json" },
+		);
 
 		return new Response(undefined, { status: 204 });
 	} catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {

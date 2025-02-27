@@ -9,5 +9,6 @@ interface Env {
 	SHOPIFY_APP_LOG_LEVEL: string;
 	SHOPIFY_APP_URL: string;
 	WEB_VITALS: AnalyticsEngineDataset;
+	WEBHOOK_QUEUE: Queue;
 	ASSETS: Fetcher;
 }
