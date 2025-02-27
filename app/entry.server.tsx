@@ -40,13 +40,14 @@ export default async function handleRequest(
 		</I18nextProvider>,
 		{
 			signal: request.signal,
-			onError(error: unknown) {
+			onError(
+				error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */,
+			) {
 				if (!request.signal.aborted) {
 					// Log streaming rendering errors from inside the shell
-					console.error(error);
+					console.error("entry.server.onError", error);
 				}
-				// biome-ignore lint/style/noParameterAssign: It's ok
-				status = 500;
+				status = Number.isNaN(error.error?.status) ? 500 : error.error.status;
 			},
 		},
 	);

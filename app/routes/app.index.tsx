@@ -1,7 +1,7 @@
 import { Page, Text } from "@shopify/polaris";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { data, useActionData, useLoaderData } from "react-router";
+import { data } from "react-router";
 
 import type { Route } from "./+types/app.index";
 import i18n from "~/i18n.server";
@@ -12,7 +12,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	const shopify = createShopify(context);
 	shopify.utils.log.debug("app.index.loader");
 
-	const client = await shopify.authorize(request);
+	const client = await shopify.admin(request);
 
 	try {
 		const { data, errors } = await client.request(/* GraphQL */ `
@@ -30,8 +30,16 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	} catch (error) {
 		shopify.utils.log.error("app.index.loader.error", error);
 
-		if (error instanceof ShopifyException && error?.type === "GRAPHQL") {
-			return { errors: error.errors };
+		if (error instanceof ShopifyException) {
+			switch (error.type) {
+				case "GRAPHQL":
+					return { errors: error.errors };
+
+				default:
+					return new Response(error.message, {
+						status: error.status,
+					});
+			}
 		}
 
 		const t = await i18n.getFixedT(request);
@@ -45,9 +53,10 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	}
 }
 
-export default function AppIndex() {
-	const loaderData = useLoaderData<typeof loader>();
-	const actionData = useActionData<typeof action>();
+export default function AppIndex({
+	actionData,
+	loaderData,
+}: Route.ComponentProps) {
 	const { data, errors } = loaderData ?? actionData ?? {};
 	console.log("app.index", data);
 

@@ -13,17 +13,25 @@ import { APP_BRIDGE_URL } from "~/const";
 import { createShopify } from "~/shopify.server";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
-	const shopify = createShopify(context);
-	shopify.utils.log.debug("app");
+	try {
+		const shopify = createShopify(context);
+		shopify.utils.log.debug("app");
 
-	const response = await shopify.authorize(request);
-	if (response instanceof Response) throw response;
+		await shopify.admin(request);
 
-	return {
-		apiKey: shopify.config.apiKey,
-		appDebug: shopify.config.appLogLevel === "debug",
-		appUrl: shopify.config.appUrl,
-	};
+		return {
+			apiKey: shopify.config.apiKey,
+			appDebug: shopify.config.appLogLevel === "debug",
+			appUrl: shopify.config.appUrl,
+		};
+	} catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+		if (error instanceof Response) return error;
+
+		return new Response(error.message, {
+			status: error.status,
+			statusText: "Unauthorized",
+		});
+	}
 }
 
 export default function App() {

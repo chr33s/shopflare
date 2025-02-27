@@ -8,5 +8,5 @@ const context = { cloudflare: { env } } as unknown as AppLoadContext;
 
 test("createShopify", () => {
 	const shopify = createShopify(context);
-	expect(shopify.authorize).toBeDefined();
+	expect(shopify.admin).toBeDefined();
 });

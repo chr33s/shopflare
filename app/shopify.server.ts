@@ -1,3 +1,4 @@
+import type { Crypto } from "@cloudflare/workers-types/experimental";
 import { createGraphQLClient } from "@shopify/graphql-client";
 import { jwtVerify, type JWTPayload } from "jose";
 import { type AppLoadContext, redirect } from "react-router";
@@ -16,7 +17,7 @@ export function createShopify(context: AppLoadContext) {
 		appTest: env.SHOPIFY_APP_TEST === "1",
 	};
 
-	async function authorize(request: Request) {
+	async function admin(request: Request) {
 		const url = new URL(request.url);
 
 		let encodedSessionToken = null;
@@ -105,7 +106,7 @@ export function createShopify(context: AppLoadContext) {
 					`Http request error, no response available: ${message}`,
 					{
 						status: 400,
-						type: "HTTP-REQUEST",
+						type: "REQUEST",
 					},
 				);
 			}
@@ -149,14 +150,14 @@ export function createShopify(context: AppLoadContext) {
 				case response.status >= 500:
 					throw new ShopifyException(`Shopify internal error${errorMessage}`, {
 						status: response.status,
-						type: "INTERNAL",
+						type: "SERVER",
 					});
 				default:
 					throw new ShopifyException(
 						`Received an error response (${response.status} ${response.statusText}) from Shopify${errorMessage}`,
 						{
 							status: response.status,
-							type: "HTTP-RESPONSE",
+							type: "RESPONSE",
 						},
 					);
 			}
@@ -211,25 +212,80 @@ export function createShopify(context: AppLoadContext) {
 		return {
 			debug(...args: unknown[]) {
 				if (level >= 2) {
-					return console.debug(...args);
+					return console.debug("logger.debug", ...args);
 				}
 				return function noop() {};
 			},
 
 			info(...args: unknown[]) {
 				if (level >= 1) {
-					return console.info(...args);
+					return console.info("logger.info", ...args);
 				}
 				return function noop() {};
 			},
 
 			error(...args: unknown[]) {
 				if (level >= 0) {
-					return console.error(...args);
+					return console.error("logger.error", ...args);
 				}
 				return function noop() {};
 			},
 		};
+	}
+
+	async function proxy(request: Request) {
+		const url = new URL(request.url);
+
+		const param = url.searchParams.get("signature");
+		if (param === null) {
+			throw new ShopifyException("Proxy param is missing", {
+				status: 400,
+				type: "REQUEST",
+			});
+		}
+
+		url.searchParams.delete("signature");
+		url.searchParams.sort();
+		const params = url.searchParams.toString();
+
+		const encoder = new TextEncoder();
+		const encodedKey = encoder.encode(config.apiSecretKey);
+		const encodedData = encoder.encode(params);
+		const hmacKey = await crypto.subtle.importKey(
+			"raw",
+			encodedKey,
+			{
+				name: "HMAC",
+				hash: "SHA-256",
+			},
+			true,
+			["sign", "verify"],
+		);
+		const signature = await crypto.subtle.sign("HMAC", hmacKey, encodedData);
+		const hmac = btoa(String.fromCharCode(...new Uint8Array(signature))); // base64
+
+		const encodedBody = encoder.encode(hmac);
+		const encodedParam = encoder.encode(param);
+		if (encodedBody.byteLength !== encodedParam.byteLength) {
+			throw new ShopifyException("Encoded byte length mismatch", {
+				status: 401,
+				type: "HMAC",
+			});
+		}
+
+		const valid = (crypto as Crypto).subtle.timingSafeEqual(
+			encodedBody,
+			encodedParam,
+		);
+		if (!valid) {
+			throw new ShopifyException("Invalid hmac", {
+				status: 401,
+				type: "HMAC",
+			});
+		}
+
+		const proxy = Object.fromEntries(url.searchParams);
+		return proxy;
 	}
 
 	const session = new ShopifySession(context.cloudflare.env.SESSION_STORAGE);
@@ -297,11 +353,98 @@ export function createShopify(context: AppLoadContext) {
 		},
 	};
 
+	async function webhook(request: Request) {
+		// validate.body
+		const body = await request.text();
+		if (body.length === 0) {
+			throw new ShopifyException("Webhook body is missing", {
+				status: 400,
+				type: "REQUEST",
+			});
+		}
+
+		// validate.hmac
+		const header = request.headers.get("X-Shopify-Hmac-Sha256");
+		if (header === null) {
+			throw new ShopifyException("Webhook header is missing", {
+				status: 400,
+				type: "REQUEST",
+			});
+		}
+
+		const encoder = new TextEncoder();
+		const encodedKey = encoder.encode(config.apiSecretKey);
+		const encodedData = encoder.encode(body);
+		const hmacKey = await crypto.subtle.importKey(
+			"raw",
+			encodedKey,
+			{
+				name: "HMAC",
+				hash: "SHA-256",
+			},
+			true,
+			["sign", "verify"],
+		);
+		const signature = await crypto.subtle.sign("HMAC", hmacKey, encodedData);
+		const hmac = btoa(String.fromCharCode(...new Uint8Array(signature))); // base64
+
+		const encodedBody = encoder.encode(hmac);
+		const encodedHeader = encoder.encode(header);
+		if (encodedBody.byteLength !== encodedHeader.byteLength) {
+			throw new ShopifyException("Encoded byte length mismatch", {
+				status: 401,
+				type: "HMAC",
+			});
+		}
+
+		const valid = (crypto as Crypto).subtle.timingSafeEqual(
+			encodedBody,
+			encodedHeader,
+		);
+		if (!valid) {
+			throw new ShopifyException("Invalid hmac", {
+				status: 401,
+				type: "HMAC",
+			});
+		}
+
+		// validate.headers
+		const requiredHeaders = {
+			apiVersion: "X-Shopify-API-Version",
+			domain: "X-Shopify-Shop-Domain",
+			hmac: "X-Shopify-Hmac-Sha256",
+			topic: "X-Shopify-Topic",
+			webhookId: "X-Shopify-Webhook-Id",
+		};
+		if (
+			!Object.values(requiredHeaders).every((header) =>
+				request.headers.has(header),
+			)
+		) {
+			throw new ShopifyException("Webhook headers are missing", {
+				status: 400,
+				type: "REQUEST",
+			});
+		}
+		const optionalHeaders = { subTopic: "X-Shopify-Sub-Topic" };
+		const headers = { ...requiredHeaders, ...optionalHeaders };
+		const webhook = Object.values(headers).reduce(
+			(headers, header) => ({
+				...headers,
+				[header]: request.headers.get(header),
+			}),
+			{} as typeof headers,
+		);
+		return webhook;
+	}
+
 	return {
-		authorize,
+		admin,
 		config,
+		proxy,
 		session,
 		utils,
+		webhook,
 	};
 }
 
@@ -321,10 +464,10 @@ export class ShopifyException extends Error {
 	status = 500;
 	type:
 		| "GRAPHQL"
-		| "HTTP-REQUEST"
-		| "HTTP-RESPONSE"
-		| "INTERNAL"
+		| "HMAC"
 		| "JWT"
+		| "REQUEST"
+		| "RESPONSE"
 		| "SERVER"
 		| "SHOP"
 		| "THROTTLING" = "SERVER";

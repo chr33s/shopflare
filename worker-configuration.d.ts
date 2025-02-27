@@ -6,6 +6,7 @@ interface Env {
 	SHOPIFY_API_KEY: string;
 	SHOPIFY_API_SECRET_KEY: string;
 	SHOPIFY_APP_ENV: string;
+	SHOPIFY_APP_LOG_LEVEL: string;
 	SHOPIFY_APP_URL: string;
 	WEB_VITALS: AnalyticsEngineDataset;
 	ASSETS: Fetcher;
