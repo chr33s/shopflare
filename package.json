@@ -1,6 +1,6 @@
 {
 	"name": "@chr33s/shopflare",
-	"version": "2.2.6",
+	"version": "2.2.7",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -16,7 +16,7 @@
 		"preview": "react-router build && wrangler dev",
 		"start": "wrangler dev",
 		"test": "vitest --run",
-		"tunnel": "source .env && cloudflared tunnel --no-autoupdate --url ${SHOPIFY_APP_URL}:8080 run --token ${CLOUDFLARE_API_TOKEN}",
+		"tunnel": "source .env && cloudflared tunnel --no-autoupdate --url ${SHOPIFY_APP_URL}:8080 run --token ${_CLOUDFLARE_API_TOKEN}",
 		"typecheck": "tsc",
 		"typegen": "wrangler types && react-router typegen"
 	},
@@ -34,8 +34,8 @@
 		"valibot": "1.0.0-rc.2"
 	},
 	"devDependencies": {
-		"@cloudflare/vite-plugin": "0.1.6",
-		"@cloudflare/vitest-pool-workers": "0.7.3",
+		"@cloudflare/vite-plugin": "0.1.7",
+		"@cloudflare/vitest-pool-workers": "0.7.4",
 		"@cloudflare/workers-types": "4.20250224.0",
 		"@eslint/css": "0.4.0",
 		"@eslint/js": "9.21.0",
@@ -62,7 +62,7 @@
 		"happy-dom": "17.1.8",
 		"playwright": "1.50.1",
 		"prettier": "3.5.2",
-		"prettier-plugin-packagejson": "2.5.8",
+		"prettier-plugin-packagejson": "2.5.9",
 		"react-router-dom": "7.2.0",
 		"typescript": "5.7.3",
 		"typescript-eslint": "8.25.0",
@@ -70,7 +70,7 @@
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.0.7",
 		"vitest-browser-react": "0.1.1",
-		"wrangler": "3.110.0"
+		"wrangler": "3.111.0"
 	},
 	"optionalDependencies": {
 		"@shopify/cli": "3.76.0"
