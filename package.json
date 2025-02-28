@@ -16,7 +16,7 @@
 		"preview": "react-router build && wrangler dev",
 		"start": "wrangler dev",
 		"test": "vitest --run",
-		"tunnel": "source .env && cloudflared tunnel --no-autoupdate --url ${SHOPIFY_APP_URL}:8080 run --token ${_CLOUDFLARE_API_TOKEN}",
+		"tunnel": "source .env && cloudflared tunnel --no-autoupdate --url ${SHOPIFY_APP_URL}:8080 run --token ${CLOUDFLARE_API_TOKEN}",
 		"typecheck": "tsc",
 		"typegen": "wrangler types && react-router typegen"
 	},
