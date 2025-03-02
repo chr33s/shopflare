@@ -5,7 +5,7 @@ import i18next from "eslint-plugin-i18next";
 import importPlugin from "eslint-plugin-import-x";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import react from "eslint-plugin-react";
-import reactHooks from "eslint-plugin-react-hooks";
+import * as reactHooks from "eslint-plugin-react-hooks";
 import * as regexp from "eslint-plugin-regexp";
 import globals from "globals";
 import { config, configs } from "typescript-eslint";
@@ -19,6 +19,7 @@ export default config(
 	jsxA11y.flatConfigs.recommended,
 	react.configs.flat.recommended,
 	react.configs.flat["jsx-runtime"],
+	reactHooks.configs["recommended-latest"],
 	regexp.configs["flat/recommended"],
 	i18next.configs["flat/recommended"],
 	{
@@ -37,12 +38,8 @@ export default config(
 			},
 			sourceType: "module",
 		},
-		plugins: {
-			"react-hooks": reactHooks,
-		},
 		rules: {
 			...react.configs["jsx-runtime"].rules,
-			...reactHooks.configs.recommended.rules,
 			"@typescript-eslint/no-explicit-any": ["warn"],
 			"@typescript-eslint/no-unused-vars": [
 				"warn", // or "error"
