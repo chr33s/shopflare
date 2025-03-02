@@ -1,7 +1,7 @@
-import tsconfigPaths from "vite-tsconfig-paths";
+import { cloudflare } from "@cloudflare/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig, loadEnv } from "vite";
-import { cloudflare } from "@cloudflare/vite-plugin";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 // By default react-router's dev server uses Node.js, so we want to remove their server
 // configuration to use the dev server provided by Vite + Workerd.

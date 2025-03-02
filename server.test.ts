@@ -3,7 +3,8 @@ import {
 	createExecutionContext,
 	SELF,
 	waitOnExecutionContext,
-} from "cloudflare:test"; // eslint-disable-line import-x/no-unresolved
+	// eslint-disable-next-line import-x/no-unresolved
+} from "cloudflare:test";
 import { afterEach, expect, test, vi } from "vitest";
 
 import worker from "./server";

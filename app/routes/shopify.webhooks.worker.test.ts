@@ -1,9 +1,9 @@
-import { env } from "node:process"; // eslint-disable-line import-x/no-nodejs-modules
+import { env } from "node:process";
 import type { AppLoadContext } from "react-router";
 import { describe, expect, test } from "vitest";
 
-import type { Route } from "./+types/shopify.webhooks";
 import { apiVersion } from "../shopify.server";
+import type { Route } from "./+types/shopify.webhooks";
 import { action } from "./shopify.webhooks";
 
 const context = { cloudflare: { env } } as unknown as AppLoadContext;

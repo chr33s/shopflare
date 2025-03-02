@@ -50,7 +50,6 @@ export default config(
 				},
 			],
 			"import-x/no-dynamic-require": "warn",
-			"import-x/no-nodejs-modules": "warn",
 			"no-unused-vars": "off",
 			"react/no-unknown-property": [
 				"error",

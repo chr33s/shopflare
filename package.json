@@ -1,6 +1,6 @@
 {
 	"name": "@chr33s/shopflare",
-	"version": "2.2.8",
+	"version": "2.2.9",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -46,6 +46,7 @@
 		"@shopify/app-bridge-types": "0.0.16",
 		"@shopify/polaris": "13.9.3",
 		"@shopify/polaris-icons": "9.3.0",
+		"@trivago/prettier-plugin-sort-imports": "5.2.2",
 		"@types/react": "18.3.18",
 		"@types/react-dom": "18.3.5",
 		"@vitest/browser": "3.0.7",

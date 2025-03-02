@@ -1,4 +1,4 @@
-import { env } from "node:process"; // eslint-disable-line import-x/no-nodejs-modules
+import { env } from "node:process";
 import type { AppLoadContext } from "react-router";
 import { expect, test } from "vitest";
 

@@ -1,5 +1,6 @@
 import Backend from "i18next-fetch-backend";
 import { RemixI18Next } from "remix-i18next/server";
+
 import i18n from "~/i18n";
 
 const i18next = new RemixI18Next({

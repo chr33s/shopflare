@@ -1,6 +1,6 @@
 import { shopifyApiProject, ApiType } from "@shopify/api-codegen-preset";
 import type { IGraphQLConfig } from "graphql-config";
-import fs from "node:fs"; // eslint-disable-line import-x/no-nodejs-modules
+import fs from "node:fs";
 
 import { apiVersion } from "./app/shopify.server";
 
