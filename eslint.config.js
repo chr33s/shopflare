@@ -1,5 +1,6 @@
 import css from "@eslint/css";
 import eslint from "@eslint/js";
+import graphql from "@graphql-eslint/eslint-plugin";
 import prettier from "eslint-config-prettier";
 import i18next from "eslint-plugin-i18next";
 import importPlugin from "eslint-plugin-import-x";
@@ -99,6 +100,30 @@ export default config(
 		files: ["**/*.css"],
 		language: "css/css",
 		...css.configs.recommended,
+	},
+	{
+		files: ["**/*.ts", "**/*.tsx"],
+		languageOptions: {
+			parserOptions: {
+				ecmaFeatures: {
+					jsx: true,
+				},
+			},
+		},
+		processor: graphql.processor,
+	},
+	{
+		files: ["**/*.graphql"],
+		languageOptions: {
+			parser: graphql.parser,
+		},
+		plugins: {
+			"@graphql-eslint": graphql,
+		},
+		rules: {
+			"@graphql-eslint/no-anonymous-operations": "error",
+			"@graphql-eslint/no-duplicate-fields": "error",
+		},
 	},
 	prettier,
 );

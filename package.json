@@ -1,6 +1,6 @@
 {
 	"name": "@chr33s/shopflare",
-	"version": "2.2.9",
+	"version": "2.2.10",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -39,6 +39,7 @@
 		"@cloudflare/workers-types": "4.20250224.0",
 		"@eslint/css": "0.4.0",
 		"@eslint/js": "9.21.0",
+		"@graphql-eslint/eslint-plugin": "4.3.0",
 		"@react-router/dev": "7.2.0",
 		"@react-router/serve": "7.2.0",
 		"@shopify/api-codegen-preset": "1.1.4",

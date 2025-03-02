@@ -6,6 +6,7 @@ import { apiVersion } from "./app/shopify.server";
 
 function getConfig() {
 	const config: IGraphQLConfig = {
+		documents: ["./app/**/*.{js,ts,jsx,tsx}"],
 		projects: {
 			default: shopifyApiProject({
 				apiType: ApiType.Admin,
@@ -14,6 +15,7 @@ function getConfig() {
 				outputDir: "./app/types",
 			}),
 		},
+		schema: `https://shopify.dev/admin-graphql-direct-proxy/${apiVersion}`,
 	};
 
 	let extensions: string[] = [];
