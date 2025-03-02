@@ -1,7 +1,8 @@
 import tsconfigPaths from "vite-tsconfig-paths";
 import { reactRouter } from "@react-router/dev/vite";
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig, loadEnv, type PluginOption } from "vite";
 import { cloudflare } from "@cloudflare/vite-plugin";
+import { visualizer } from "rollup-plugin-visualizer";
 
 // By default react-router's dev server uses Node.js, so we want to remove their server
 // configuration to use the dev server provided by Vite + Workerd.
@@ -24,6 +25,7 @@ export default defineConfig(({ mode }) => {
 			!env.VITEST && cloudflare(),
 			!env.VITEST && reactRouterPlugins,
 			tsconfigPaths(),
+			visualizer({ filename: "./dist/stats.html" }) as PluginOption,
 		],
 		resolve: {
 			mainFields: ["browser", "module", "main"],
