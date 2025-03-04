@@ -1,11 +1,13 @@
 import { shopifyApiProject, ApiType } from "@shopify/api-codegen-preset";
-import type { IGraphQLConfig } from "graphql-config";
+import type { IGraphQLProject, IGraphQLProjects } from "graphql-config";
 import fs from "node:fs";
+
+type Config = IGraphQLProject & IGraphQLProjects;
 
 import { apiVersion } from "./app/shopify.server";
 
 function getConfig() {
-	const config: IGraphQLConfig = {
+	const config: Config = {
 		documents: ["./app/**/*.{js,ts,jsx,tsx}"],
 		projects: {
 			default: shopifyApiProject({
