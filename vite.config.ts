@@ -1,6 +1,7 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig, loadEnv } from "vite";
+import graphqlLoader from "vite-plugin-graphql-loader";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 // By default react-router's dev server uses Node.js, so we want to remove their server
@@ -21,6 +22,7 @@ export default defineConfig(({ mode }) => {
 		},
 		clearScreen: false,
 		plugins: [
+			graphqlLoader(),
 			!env.VITEST && cloudflare(),
 			!env.VITEST && reactRouterPlugins,
 			tsconfigPaths(),
