@@ -1,6 +1,6 @@
 {
 	"name": "@chr33s/shopflare",
-	"version": "2.2.12",
+	"version": "2.2.13",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -34,8 +34,8 @@
 		"valibot": "1.0.0-rc.3"
 	},
 	"devDependencies": {
-		"@cloudflare/vite-plugin": "0.1.8",
-		"@cloudflare/vitest-pool-workers": "0.7.5",
+		"@cloudflare/vite-plugin": "0.1.9",
+		"@cloudflare/vitest-pool-workers": "0.7.6",
 		"@cloudflare/workers-types": "4.20250303.0",
 		"@eslint/css": "0.4.0",
 		"@eslint/js": "9.21.0",
@@ -72,10 +72,10 @@
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.0.7",
 		"vitest-browser-react": "0.1.1",
-		"wrangler": "3.112.0"
+		"wrangler": "3.113.0"
 	},
 	"optionalDependencies": {
-		"@shopify/cli": "3.76.1"
+		"@shopify/cli": "3.76.2"
 	},
 	"engines": {
 		"node": "^22.14.0",
