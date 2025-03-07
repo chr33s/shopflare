@@ -1,8 +1,8 @@
 import {
 	type AnchorHTMLAttributes,
-	createContext,
 	type DetailedHTMLProps,
 	type ReactNode,
+	createContext,
 	useContext,
 	useEffect,
 	useState,
@@ -82,10 +82,7 @@ export function Provider(props: ProviderProps) {
 	const { children, appUrl } = props;
 	const [requestUrl, setRequestUrl] = useState<URL | undefined>();
 
-	useEffect(
-		() => setRequestUrl(new URL(window.location.href)),
-		[setRequestUrl],
-	);
+	useEffect(() => setRequestUrl(new URL(window.location.href)), []);
 
 	return (
 		<Context.Provider

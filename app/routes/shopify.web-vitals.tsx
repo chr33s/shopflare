@@ -1,5 +1,5 @@
-import type { Route } from "./+types/shopify.web-vitals";
 import { createShopify } from "~/shopify.server";
+import type { Route } from "./+types/shopify.web-vitals";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	const shopify = createShopify(context);

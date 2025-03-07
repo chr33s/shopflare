@@ -10,8 +10,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Form, redirect, useActionData, useLoaderData } from "react-router";
 
-import type { Route } from "./+types/shopify.auth.login";
 import { createShopify } from "~/shopify.server";
+import type { Route } from "./+types/shopify.auth.login";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	return action({ context, request } as Route.ActionArgs);

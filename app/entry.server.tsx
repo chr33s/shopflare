@@ -41,7 +41,8 @@ export default async function handleRequest(
 		{
 			signal: request.signal,
 			onError(
-				error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */,
+				// biome-ignore lint/suspicious/noExplicitAny: upstream
+				error: any,
 			) {
 				if (!request.signal.aborted) {
 					// Log streaming rendering errors from inside the shell

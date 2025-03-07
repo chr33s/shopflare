@@ -1,7 +1,7 @@
 import { Outlet } from "react-router";
 
-import type { Route } from "./+types/proxy";
 import { createShopify } from "~/shopify.server";
+import type { Route } from "./+types/proxy";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	try {
@@ -12,7 +12,8 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 		shopify.utils.log.debug("proxy", { ...proxy });
 
 		return new Response(null, { status: 204 });
-	} catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+		// biome-ignore lint/suspicious/noExplicitAny: catch(err)
+	} catch (error: any) {
 		return new Response(error.message, {
 			status: error.status,
 			statusText: "Unauthorized",
@@ -20,6 +21,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	}
 }
 
+// biome-ignore lint/suspicious/noShadowRestrictedNames: upstream
 export default function Proxy() {
 	return <Outlet />;
 }

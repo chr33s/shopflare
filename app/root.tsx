@@ -1,17 +1,17 @@
 import { useTranslation } from "react-i18next";
 import {
-	isRouteErrorResponse,
 	Links,
 	Meta,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	isRouteErrorResponse,
 	useRouteLoaderData,
 } from "react-router";
 
-import type { Route } from "./+types/root";
 import i18nConfig from "~/i18n";
 import i18n from "~/i18n.server";
+import type { Route } from "./+types/root";
 
 export async function loader({ request }: Route.LoaderArgs) {
 	const locale = await i18n.getLocale(request);

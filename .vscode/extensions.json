@@ -1,0 +1,8 @@
+{
+	"recommendations": [
+		"bierner.comment-tagged-templates",
+		"biomejs.biome",
+		"EditorConfig.EditorConfig",
+		"GraphQL.vscode-graphql-syntax"
+	]
+}

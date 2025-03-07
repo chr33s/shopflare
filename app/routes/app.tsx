@@ -8,9 +8,9 @@ import { forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Outlet, useLoaderData } from "react-router";
 
-import type { Route } from "./+types/app";
 import { APP_BRIDGE_URL } from "~/const";
 import { createShopify } from "~/shopify.server";
+import type { Route } from "./+types/app";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	try {
@@ -24,7 +24,8 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 			appDebug: shopify.config.appLogLevel === "debug",
 			appUrl: shopify.config.appUrl,
 		};
-	} catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+		// biome-ignore lint/suspicious/noExplicitAny: catch(err)
+	} catch (error: any) {
 		if (error instanceof Response) return error;
 
 		return new Response(error.message, {
@@ -83,7 +84,8 @@ export function ErrorBoundary(error: Route.ErrorBoundaryProps) {
 		return (
 			<div
 				dangerouslySetInnerHTML={{
-					__html: (error as any).data || "Handling response", // eslint-disable-line @typescript-eslint/no-explicit-any
+					// biome-ignore lint/suspicious/noExplicitAny: upsteam
+					__html: (error as any).data || "Handling response",
 				}}
 			/>
 		);

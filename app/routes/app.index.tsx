@@ -3,10 +3,10 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { data } from "react-router";
 
-import type { Route } from "./+types/app.index";
 import i18n from "~/i18n.server";
-import { createShopify, ShopifyException } from "~/shopify.server";
+import { ShopifyException, createShopify } from "~/shopify.server";
 import type { ShopQuery } from "~/types/admin.generated";
+import type { Route } from "./+types/app.index";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	const shopify = createShopify(context);

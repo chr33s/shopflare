@@ -1,5 +1,5 @@
-import type { Route } from "./+types/shopify.webhooks";
 import { createShopify } from "~/shopify.server";
+import type { Route } from "./+types/shopify.webhooks";
 
 export async function action({ context, request }: Route.ActionArgs) {
 	try {
@@ -27,7 +27,8 @@ export async function action({ context, request }: Route.ActionArgs) {
 		);
 
 		return new Response(undefined, { status: 204 });
-	} catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+		// biome-ignore lint/suspicious/noExplicitAny: catch(err)
+	} catch (error: any) {
 		return new Response(error.message, {
 			status: error.status,
 			statusText: "Unauthorized",

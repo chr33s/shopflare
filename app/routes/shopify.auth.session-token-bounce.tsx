@@ -1,8 +1,8 @@
 import { redirect } from "react-router";
 
-import type { Route } from "./+types/shopify.auth.session-token-bounce";
 import { APP_BRIDGE_URL } from "~/const";
 import { createShopify } from "~/shopify.server";
+import type { Route } from "./+types/shopify.auth.session-token-bounce";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	const shopify = createShopify(context);

@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
-import type { Route } from "./+types/proxy.index";
 import { createShopify } from "~/shopify.server";
+import type { Route } from "./+types/proxy.index";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	const shopify = createShopify(context);

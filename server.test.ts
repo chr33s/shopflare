@@ -1,9 +1,8 @@
 import {
-	env,
-	createExecutionContext,
 	SELF,
+	createExecutionContext,
+	env,
 	waitOnExecutionContext,
-	// eslint-disable-next-line import-x/no-unresolved
 } from "cloudflare:test";
 import { afterEach, expect, test, vi } from "vitest";
 
@@ -22,7 +21,8 @@ test("fetch", async () => {
 test("worker", async () => {
 	const request = new Request("http://example.com");
 	const ctx = createExecutionContext();
-	const response = await worker.fetch(request as any, env as any, ctx); // eslint-disable-line @typescript-eslint/no-explicit-any
+	// biome-ignore lint/suspicious/noExplicitAny: upstream
+	const response = await worker.fetch(request as any, env as Env, ctx);
 	await waitOnExecutionContext(ctx);
 	expect(await response.text()).toContain("<title>ShopFlare</title>");
 	expect(response.status).toBe(200);

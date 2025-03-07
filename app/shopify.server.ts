@@ -1,6 +1,6 @@
 import type { Crypto } from "@cloudflare/workers-types/experimental";
 import { createGraphQLClient } from "@shopify/graphql-client";
-import { jwtVerify, type JWTPayload } from "jose";
+import { type JWTPayload, jwtVerify } from "jose";
 import { type AppLoadContext, redirect } from "react-router";
 import * as v from "valibot";
 
@@ -99,7 +99,8 @@ export function createShopify(context: AppLoadContext) {
 			},
 		});
 		if (!response.ok) {
-			const body: any = await response.json(); // eslint-disable-line @typescript-eslint/no-explicit-any
+			// biome-ignore lint/suspicious/noExplicitAny: upstream
+			const body: any = await response.json();
 			if (typeof response === "undefined") {
 				const message = body?.errors?.message ?? "";
 				throw new ShopifyException(
@@ -209,26 +210,29 @@ export function createShopify(context: AppLoadContext) {
 		const levels = ["error", "info", "debug"];
 		const level = levels.findIndex((level) => level === config.appLogLevel);
 
+		// biome-ignore lint/suspicious/noEmptyBlockStatements: ...
+		function noop() {}
+
 		return {
 			debug(...args: unknown[]) {
 				if (level >= 2) {
 					return console.debug("logger.debug", ...args);
 				}
-				return function noop() {};
+				return noop;
 			},
 
 			info(...args: unknown[]) {
 				if (level >= 1) {
 					return console.info("logger.info", ...args);
 				}
-				return function noop() {};
+				return noop;
 			},
 
 			error(...args: unknown[]) {
 				if (level >= 0) {
 					return console.error("logger.error", ...args);
 				}
-				return function noop() {};
+				return noop;
 			},
 		};
 	}
@@ -536,7 +540,8 @@ export class ShopifySession {
 					session[key] = value ? new Date(Number(value)) : undefined;
 					break;
 				default:
-					(session as any)[key] = value; // eslint-disable-line @typescript-eslint/no-explicit-any
+					// biome-ignore lint/suspicious/noExplicitAny: upstream
+					(session as any)[key] = value;
 					break;
 			}
 			return session;
