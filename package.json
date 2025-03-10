@@ -5,10 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"actionlint": "if command -v actionlint 2>&1 >/dev/null; then actionlint; fi",
-		"biome:check": "biome check --write",
-		"biome:format": "biome format --write",
-		"biome:lint": "biome lint --write",
 		"build": "react-router build",
+		"check": "biome check --write",
 		"codegen": "graphql-codegen",
 		"deploy": "react-router build && wrangler deploy",
 		"deploy:shopify": "shopify app deploy --message=$(git rev-parse --abbrev-ref HEAD):$npm_package_version --version=$(git rev-parse HEAD)",
