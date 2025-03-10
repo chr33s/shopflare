@@ -1,10 +1,15 @@
 {
+	"editor.bracketPairColorization.enabled": true,
 	"editor.codeActionsOnSave": {
 		"quickfix.biome": "explicit",
 		"source.fixAll.biome": "explicit",
 		"source.organizeImports.biome": "explicit"
 	},
 	"editor.defaultFormatter": "biomejs.biome",
+	"editor.guides.bracketPairs": "active",
+	"files.associations": {
+		".env*": "properties"
+	},
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"typescript.enablePromptUseWorkspaceTsdk": true
 }
