@@ -48,7 +48,7 @@ export default async function handleRequest(
 					// Log streaming rendering errors from inside the shell
 					console.error("entry.server.onError", error);
 				}
-				status = Number.isNaN(error.error?.status) ? 500 : error.error.status;
+				status = Number.isNaN(error?.error?.status) ? 500 : error.error.status;
 			},
 		},
 	);
