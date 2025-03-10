@@ -91,10 +91,10 @@ export const links: Route.LinksFunction = () => [
 		rel: "stylesheet",
 		href: "https://cdn.shopify.com/static/fonts/inter/v4/styles.css",
 	},
-	{ rel: "preconnect", href: "https://cdn.jsdelivr.net" },
+	{ rel: "preconnect", href: "https://unpkg.com" },
 	{
 		rel: "stylesheet",
-		href: "https://cdn.jsdelivr.net/npm/@shopify/polaris@13.9.2/build/esm/styles.css",
+		href: "https://unpkg.com/@shopify/polaris@13.9.2/build/esm/styles.css",
 	},
 ];
 
