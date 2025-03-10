@@ -1,0 +1,21 @@
+{
+	"name": "@chr33s/shopflare",
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:22",
+	"features": {
+		"ghcr.io/devcontainers-extra/features/actionlint:1": {},
+		"ghcr.io/devcontainers-extra/features/cloudflare-wrangler:1": {},
+		"ghcr.io/devcontainers-extra/features/cloudflared:1": {},
+		"ghcr.io/devcontainers-extra/features/tailscale:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {}
+	},
+	"customizations": {
+		"codespaces": {
+			"openFiles": ["README.md"]
+		}
+	},
+	"postCreateCommand": "npm install",
+	"remoteEnv": {
+		"GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
+	},
+	"runArgs": ["--env-file", ".devcontainer/devcontainer.env"]
+}
