@@ -29,7 +29,7 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm install -g @shopify/cli@latest
-      - run: npx shopify app build --path=./extensions
+      - run: npx shopify app build
       - run: npx shopify app deploy --force --message="${{ github.ref_name }}" --no-release --source-control-url="$COMMIT_URL" --version="deploy:${{ github.sha }}"
         env:
           COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
