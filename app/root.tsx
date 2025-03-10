@@ -13,9 +13,12 @@ import i18nConfig from "~/i18n";
 import i18n from "~/i18n.server";
 import type { Route } from "./+types/root";
 
-export async function loader({ request }: Route.LoaderArgs) {
+export async function loader({ context, request }: Route.LoaderArgs) {
 	const locale = await i18n.getLocale(request);
-	return { locale };
+	return {
+		appEnv: context.cloudflare.env.SHOPIFY_APP_ENV,
+		locale,
+	};
 }
 
 export default function App() {
@@ -73,6 +76,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 			<head>
 				<meta charSet="utf-8" />
 				<meta content="initial-scale=1, width=device-width" name="viewport" />
+				{data?.appEnv === "development" && (
+					<script src="https://unpkg.com/react-scan/dist/auto.global.js"></script>
+				)}
 				<Meta />
 				<Links />
 			</head>
