@@ -248,9 +248,22 @@ export function createShopify(context: AppLoadContext) {
 			});
 		}
 
-		url.searchParams.delete("signature");
-		url.searchParams.sort();
-		const params = url.searchParams.toString();
+		const timestamp = Number(url.searchParams.get("timestamp"));
+		if (
+			Math.abs(Math.trunc(Date.now() / 1000) - timestamp) > 90 // HMAC_TIMESTAMP_PERMITTED_CLOCK_TOLERANCE_SEC
+		) {
+			throw new ShopifyException("Proxy timestamp is expired", {
+				status: 400,
+				type: "REQUEST",
+			});
+		}
+
+		const params = Object.entries(Object.fromEntries(url.searchParams))
+			.filter(([key]) => key !== "signature")
+			.sort(([a], [b]) => a.localeCompare(b))
+			.reduce((acc, [key, value]) => {
+				return `${acc}${key}=${Array.isArray(value) ? value.join(",") : value}`;
+			}, "");
 
 		const encoder = new TextEncoder();
 		const encodedKey = encoder.encode(config.apiSecretKey);
@@ -262,11 +275,14 @@ export function createShopify(context: AppLoadContext) {
 				name: "HMAC",
 				hash: "SHA-256",
 			},
-			true,
-			["sign", "verify"],
+			false,
+			["sign"],
 		);
 		const signature = await crypto.subtle.sign("HMAC", hmacKey, encodedData);
-		const hmac = btoa(String.fromCharCode(...new Uint8Array(signature))); // base64
+		const hmac = [...new Uint8Array(signature)].reduce(
+			(a, b) => a + b.toString(16).padStart(2, "0"),
+			"",
+		); // hex
 
 		const encodedBody = encoder.encode(hmac);
 		const encodedParam = encoder.encode(param);
