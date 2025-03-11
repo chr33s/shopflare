@@ -35,6 +35,7 @@ gh variable set SHOPIFY_API_KEY
 ## Development
 
 ```sh
+npm run deploy:shopify
 npm run dev
 # open -a Safari ${SHOPIFY_APP_URL}
 ```
