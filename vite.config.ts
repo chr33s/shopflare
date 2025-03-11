@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
 	const shopifyApp = new URL(env.SHOPIFY_APP_URL);
 
 	return {
+		base: shopifyApp.href,
 		build: {
 			minify: true,
 		},
@@ -30,6 +31,7 @@ export default defineConfig(({ mode }) => {
 		},
 		server: {
 			allowedHosts: [shopifyApp.hostname],
+			cors: true,
 			port: 8080,
 		},
 		ssr: {
