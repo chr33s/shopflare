@@ -258,7 +258,8 @@ export function createShopify(context: AppLoadContext) {
 			});
 		}
 
-		const params = Object.entries(Object.fromEntries(url.searchParams))
+		const proxy = Object.fromEntries(url.searchParams);
+		const params = Object.entries(proxy)
 			.filter(([key]) => key !== "signature")
 			.sort(([a], [b]) => a.localeCompare(b))
 			.reduce((acc, [key, value]) => {
@@ -304,7 +305,6 @@ export function createShopify(context: AppLoadContext) {
 			});
 		}
 
-		const proxy = Object.fromEntries(url.searchParams);
 		return proxy;
 	}
 
