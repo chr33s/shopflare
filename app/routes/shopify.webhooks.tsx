@@ -18,7 +18,7 @@ export async function action({ context, request }: Route.ActionArgs) {
 		}
 
 		const payload = await request.json();
-		await context.cloudflare.env.WEBHOOK_QUEUE.send(
+		await context.cloudflare.env.WEBHOOK_QUEUE?.send(
 			{
 				payload,
 				webhook,

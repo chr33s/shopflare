@@ -375,7 +375,7 @@ export function createShopify(context: AppLoadContext) {
 
 	async function webhook(request: Request) {
 		// validate.body
-		const body = await request.text();
+		const body = await request.clone().text();
 		if (body.length === 0) {
 			throw new ShopifyException("Webhook body is missing", {
 				status: 400,

@@ -61,6 +61,8 @@ export default defineWorkspace([
 							miniflare: {
 								compatibilityFlags: ["service_binding_extra_handlers"],
 								kvNamespaces: ["SESSION_STORAGE"],
+								queueConsumers: ["shopflare"],
+								queueProducers: { WEBHOOK_QUEUE: "shopflare" },
 							},
 							singleWorker: true,
 							wrangler: { configPath: "./wrangler.json" },
