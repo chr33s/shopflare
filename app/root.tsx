@@ -75,9 +75,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 			<head>
 				<meta charSet="utf-8" />
 				<meta content="initial-scale=1, width=device-width" name="viewport" />
-				{data?.appEnv === "development" && (
-					<script src="https://unpkg.com/react-scan/dist/auto.global.js"></script>
-				)}
 				<Meta />
 				<Links />
 			</head>

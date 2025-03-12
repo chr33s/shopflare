@@ -1,6 +1,6 @@
 {
 	"name": "@chr33s/shopflare",
-	"version": "2.2.21",
+	"version": "2.3.0",
 	"private": true,
 	"type": "module",
 	"scripts": {
