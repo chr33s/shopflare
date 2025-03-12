@@ -41,7 +41,3 @@ export async function action(_: Route.ActionArgs) {
 	const data = {};
 	return { data };
 }
-
-export const handle = {
-	i18n: "proxy",
-};

@@ -24,6 +24,7 @@ export default defineConfig(({ isSsrBuild, mode }) => {
 		plugins: [
 			!env.VITEST &&
 				cloudflareDevProxy({
+					// biome-ignore lint/suspicious/noExplicitAny: upstream
 					getLoadContext({ context }: any) {
 						return { cloudflare: context.cloudflare };
 					},

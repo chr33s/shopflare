@@ -96,7 +96,3 @@ export async function action({ context, request }: Route.ActionArgs) {
 	const redirectUrl = `https://${adminPath}/oauth/install?client_id=${shopify.config.apiKey}`;
 	throw redirect(redirectUrl);
 }
-
-export const handle = {
-	i18n: "app",
-};

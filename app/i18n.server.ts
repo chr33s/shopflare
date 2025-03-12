@@ -1,26 +1,31 @@
-import Backend from "i18next-fetch-backend";
-import { RemixI18Next } from "remix-i18next/server";
+import { createInstance } from "i18next";
 
-import i18n from "~/i18n";
+import i18n, { Backend } from "~/i18n";
 
-const i18next = new RemixI18Next({
-	detection: {
-		fallbackLanguage: i18n.fallbackLng,
-		async findLocale(request) {
-			const url = new URL(request.url);
-			let locale = url.searchParams.get("locale")?.split("-").at(0); // shopify admin
-			if (!locale) {
-				locale = request.headers.get("accept-language")?.split(",").at(0); // shopify storefront proxy
-			}
-			if (!locale) {
-				locale = i18n.fallbackLng;
-			}
-			return locale;
-		},
-		supportedLanguages: i18n.supportedLngs,
-	},
-	i18next: { ...i18n },
-	plugins: [Backend],
-});
+export async function getFixedT(
+	request: Request,
+	namespaces: string[] = i18n.defaultNS,
+) {
+	const instance = createInstance();
+	instance.use(Backend);
+	await instance.init();
 
-export default i18next;
+	const locale = getLocale(request);
+	await instance.changeLanguage(locale);
+
+	await instance.loadNamespaces(namespaces);
+
+	return instance.getFixedT(locale, namespaces);
+}
+
+export function getLocale(request: Request) {
+	const url = new URL(request.url);
+	let locale = url.searchParams.get("locale"); // shopify admin
+	if (!locale) {
+		locale = request.headers.get("accept-language")?.split(",").at(0) ?? null; // shopify storefront proxy
+	}
+	if (!locale) {
+		locale = i18n.fallbackLng;
+	}
+	return locale;
+}

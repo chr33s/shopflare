@@ -1,5 +1,4 @@
 import { createInstance } from "i18next";
-import Backend from "i18next-fetch-backend";
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
 import { I18nextProvider, initReactI18next } from "react-i18next";
@@ -9,8 +8,8 @@ import {
 	ServerRouter,
 } from "react-router";
 
-import i18nConfig from "./i18n";
-import i18n from "./i18n.server";
+import i18n, { Backend } from "./i18n";
+import { getLocale } from "./i18n.server";
 
 export default async function handleRequest(
 	request: Request,
@@ -21,21 +20,19 @@ export default async function handleRequest(
 ) {
 	const instance = createInstance();
 	await instance
-		.use(initReactI18next)
 		.use(Backend)
+		.use(initReactI18next)
 		.init({
-			...i18nConfig,
+			...i18n,
 			backend: {
-				...i18nConfig.backend,
 				loadPath: `${loadContext.cloudflare.env.SHOPIFY_APP_URL}/i18n/{{lng}}.{{ns}}.json`,
 			},
-			lng: await i18n.getLocale(request),
-			ns: i18n.getRouteNamespaces(routerContext),
+			lng: getLocale(request),
 		});
 
 	const userAgent = request.headers.get("User-Agent");
 	const body = await renderToReadableStream(
-		<I18nextProvider defaultNS={["app", "polaris"]} i18n={instance}>
+		<I18nextProvider defaultNS={i18n.defaultNS} i18n={instance}>
 			<ServerRouter context={routerContext} url={request.url} />
 		</I18nextProvider>,
 		{

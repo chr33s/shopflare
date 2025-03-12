@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { data } from "react-router";
 
-import i18n from "~/i18n.server";
+import { getFixedT } from "~/i18n.server";
 import { ShopifyException, createShopify } from "~/shopify.server";
 import type { ShopQuery } from "~/types/admin.generated";
 import type { Route } from "./+types/app.index";
@@ -42,7 +42,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 			}
 		}
 
-		const t = await i18n.getFixedT(request);
+		const t = await getFixedT(request);
 		return data(
 			{
 				data: undefined,
@@ -96,7 +96,3 @@ export async function action(_: Route.ActionArgs) {
 	const data = {};
 	return { data };
 }
-
-export const handle = {
-	i18n: "app",
-};

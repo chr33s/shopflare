@@ -10,12 +10,11 @@ import {
 	useRouteLoaderData,
 } from "react-router";
 
-import i18nConfig from "~/i18n";
-import i18n from "~/i18n.server";
+import { getLocale } from "~/i18n.server";
 import type { Route } from "./+types/root";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
-	const locale = await i18n.getLocale(request);
+	const locale = getLocale(request);
 	return {
 		appEnv: context.cloudflare.env.SHOPIFY_APP_ENV,
 		locale,
@@ -70,10 +69,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 	const { i18n } = useTranslation();
 
 	const data = useRouteLoaderData<typeof loader>("root");
-	const locale = data?.locale ?? i18nConfig.fallbackLng;
 
 	return (
-		<html dir={i18n.dir()} lang={locale}>
+		<html dir={i18n.dir()} lang={data?.locale}>
 			<head>
 				<meta charSet="utf-8" />
 				<meta content="initial-scale=1, width=device-width" name="viewport" />
@@ -100,7 +98,3 @@ export const links: Route.LinksFunction = () => [
 	},
 	{ rel: "preconnect", href: "https://unpkg.com" },
 ];
-
-export const handle = {
-	i18n: "app",
-};
