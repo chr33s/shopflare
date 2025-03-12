@@ -57,7 +57,6 @@ export default defineWorkspace([
 					name: "worker",
 					poolOptions: {
 						workers: {
-							main: "./server.ts",
 							miniflare: {
 								compatibilityFlags: ["service_binding_extra_handlers"],
 								kvNamespaces: ["SESSION_STORAGE"],

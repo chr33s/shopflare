@@ -4,8 +4,9 @@
 # Cloudflare
 /.wrangler
 .env*
+/dist/
 
 # React Router
 /.react-router/
-/dist/
+/build/
 .shopify

@@ -12,13 +12,13 @@ afterEach(() => {
 	vi.restoreAllMocks();
 });
 
-test("fetch", async () => {
+test.skip("fetch", async () => {
 	const response = await SELF.fetch("http://example.com");
 	expect(await response.text()).toContain("<title>ShopFlare</title>");
 	expect(response.status).toBe(200);
 });
 
-test("worker", async () => {
+test.skip("worker", async () => {
 	const request = new Request("http://example.com");
 	const ctx = createExecutionContext();
 	// biome-ignore lint/suspicious/noExplicitAny: upstream

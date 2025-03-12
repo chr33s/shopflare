@@ -1,17 +1,9 @@
-import { cloudflare } from "@cloudflare/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
+import { cloudflareDevProxy } from "@react-router/dev/vite/cloudflare";
 import { defineConfig, loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-// By default react-router's dev server uses Node.js, so we want to remove their server
-// configuration to use the dev server provided by Vite + Workerd.
-const reactRouterPlugins = reactRouter();
-const reactRouterPlugin = reactRouterPlugins.find(
-	(plugin) => plugin.name === "react-router",
-)!;
-reactRouterPlugin.configureServer = undefined;
-
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ isSsrBuild, mode }) => {
 	const env = loadEnv(mode, process.cwd(), "");
 	const port = Number(env.PORT || 8080);
 	const shopifyApp = new URL(env.SHOPIFY_APP_URL);
@@ -20,11 +12,23 @@ export default defineConfig(({ mode }) => {
 		base: shopifyApp.href,
 		build: {
 			minify: true,
+			build: {
+				rollupOptions: isSsrBuild
+					? {
+							input: "./server.ts",
+						}
+					: undefined,
+			},
 		},
 		clearScreen: false,
 		plugins: [
-			!env.VITEST && cloudflare(),
-			!env.VITEST && reactRouterPlugins,
+			!env.VITEST &&
+				cloudflareDevProxy({
+					getLoadContext({ context }: any) {
+						return { cloudflare: context.cloudflare };
+					},
+				}),
+			!env.VITEST && reactRouter(),
 			tsconfigPaths(),
 		],
 		resolve: {
