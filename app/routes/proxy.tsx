@@ -1,5 +1,6 @@
 import { Outlet } from "react-router";
 
+import { Provider } from "~/components/Proxy";
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/proxy";
 
@@ -10,6 +11,8 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 
 		const proxy = await shopify.proxy(request);
 		shopify.utils.log.debug("proxy", { ...proxy });
+
+		return { appUrl: shopify.config.appUrl };
 		// biome-ignore lint/suspicious/noExplicitAny: catch(err)
 	} catch (error: any) {
 		return new Response(error.message, {
@@ -19,7 +22,12 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	}
 }
 
-// biome-ignore lint/suspicious/noShadowRestrictedNames: upstream
-export default function Proxy() {
-	return <Outlet />;
+export default function ProxyRoute({ loaderData }: Route.ComponentProps) {
+	const { appUrl } = loaderData ?? {};
+
+	return (
+		<Provider appUrl={appUrl}>
+			<Outlet />
+		</Provider>
+	);
 }

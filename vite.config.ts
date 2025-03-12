@@ -13,6 +13,7 @@ reactRouterPlugin.configureServer = undefined;
 
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), "");
+	const port = Number(env.PORT || 8080);
 	const shopifyApp = new URL(env.SHOPIFY_APP_URL);
 
 	return {
@@ -32,7 +33,14 @@ export default defineConfig(({ mode }) => {
 		server: {
 			allowedHosts: [shopifyApp.hostname],
 			cors: true,
-			port: 8080,
+			hmr: {
+				protocol: "wss",
+				host: shopifyApp.hostname,
+				port,
+				clientPort: 443,
+			},
+			origin: shopifyApp.origin,
+			port,
 		},
 		ssr: {
 			resolve: {

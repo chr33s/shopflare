@@ -101,6 +101,8 @@ describe("loader", () => {
 		const request = new Request(url, { body: "{}", method: "POST" });
 		const response = await loader({ context, request } as Route.LoaderArgs);
 
-		expect(response).toBe(undefined);
+		expect(response).toStrictEqual({
+			appUrl: context.cloudflare.env.SHOPIFY_APP_URL,
+		});
 	});
 });

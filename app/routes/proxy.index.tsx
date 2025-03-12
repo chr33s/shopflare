@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 
+import { Form } from "~/components/Proxy";
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/proxy.index";
 
@@ -27,6 +28,11 @@ export default function ProxyIndex() {
 			}}
 		>
 			<h1>{t("proxy")}</h1>
+			<Form action="">
+				<button onClick={() => console.log("proxy.click")} type="button">
+					click
+				</button>
+			</Form>
 		</div>
 	);
 }

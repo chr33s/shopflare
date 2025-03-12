@@ -1,8 +1,12 @@
-import type { Crypto } from "@cloudflare/workers-types/experimental";
 import { createGraphQLClient } from "@shopify/graphql-client";
 import { type JWTPayload, jwtVerify } from "jose";
 import { type AppLoadContext, redirect } from "react-router";
 import * as v from "valibot";
+
+const algorithm = {
+	name: "HMAC",
+	hash: "SHA-256",
+};
 
 export const apiVersion = "2025-01";
 
@@ -272,12 +276,9 @@ export function createShopify(context: AppLoadContext) {
 		const hmacKey = await crypto.subtle.importKey(
 			"raw",
 			encodedKey,
-			{
-				name: "HMAC",
-				hash: "SHA-256",
-			},
+			algorithm,
 			false,
-			["sign"],
+			["sign", "verify"],
 		);
 		const signature = await crypto.subtle.sign("HMAC", hmacKey, encodedData);
 		const hmac = [...new Uint8Array(signature)].reduce(
@@ -294,10 +295,7 @@ export function createShopify(context: AppLoadContext) {
 			});
 		}
 
-		const valid = (crypto as Crypto).subtle.timingSafeEqual(
-			encodedBody,
-			encodedParam,
-		);
+		const valid = timingSafeEqual(encodedBody, encodedParam);
 		if (!valid) {
 			throw new ShopifyException("Invalid hmac", {
 				status: 401,
@@ -398,11 +396,8 @@ export function createShopify(context: AppLoadContext) {
 		const hmacKey = await crypto.subtle.importKey(
 			"raw",
 			encodedKey,
-			{
-				name: "HMAC",
-				hash: "SHA-256",
-			},
-			true,
+			algorithm,
+			false,
 			["sign", "verify"],
 		);
 		const signature = await crypto.subtle.sign("HMAC", hmacKey, encodedData);
@@ -417,10 +412,7 @@ export function createShopify(context: AppLoadContext) {
 			});
 		}
 
-		const valid = (crypto as Crypto).subtle.timingSafeEqual(
-			encodedBody,
-			encodedHeader,
-		);
+		const valid = timingSafeEqual(encodedBody, encodedHeader);
 		if (!valid) {
 			throw new ShopifyException("Invalid hmac", {
 				status: 401,
@@ -608,3 +600,13 @@ interface ShopifySessionObject {
 	accessToken: string;
 }
 type ShopifySessionSerialized = [string, string | number | boolean][];
+
+function timingSafeEqual(bufA: ArrayBuffer, bufB: ArrayBuffer): boolean {
+	const viewA = new Uint8Array(bufA);
+	const viewB = new Uint8Array(bufB);
+	let out = 0;
+	for (let i = 0; i < viewA.length; i++) {
+		out |= viewA[i] ^ viewB[i];
+	}
+	return out === 0;
+}

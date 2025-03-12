@@ -86,6 +86,7 @@ export default function AppIndex({
 		<Page title={t("app")}>
 			<Text as="p">
 				{errors ? JSON.stringify(errors, null, 2) : data?.shop?.name}
+				<button onClick={() => console.log("app.click")}>click</button>
 			</Text>
 		</Page>
 	);

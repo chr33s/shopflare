@@ -45,7 +45,7 @@ export default function AuthLogin() {
 							<TextField
 								autoComplete="on"
 								error={errors?.shop}
-								label="Shop domain"
+								label={t("shopDomain")}
 								name="shop"
 								onChange={setShop}
 								pattern="^[a-zA-Z0-9][a-zA-Z0-9-]*\.myshopify\.com$"
