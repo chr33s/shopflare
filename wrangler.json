@@ -3,7 +3,7 @@
 	"name": "shopflare",
 	"compatibility_date": "2024-11-01",
 	"compatibility_flags": ["nodejs_compat"],
-	"main": "./dist/server/index.js",
+	"main": "./build/server/index.js",
 	"analytics_engine_datasets": [
 		{
 			"binding": "WEB_VITALS",
@@ -12,7 +12,7 @@
 	],
 	"assets": {
 		"binding": "ASSETS",
-		"directory": "./dist/client"
+		"directory": "./build/client"
 	},
 	"dev": {
 		"ip": "0.0.0.0",
