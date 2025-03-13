@@ -13,12 +13,9 @@ import {
 import { getLocale } from "~/i18n.server";
 import type { Route } from "./+types/root";
 
-export async function loader({ context, request }: Route.LoaderArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
 	const locale = getLocale(request);
-	return {
-		appEnv: context.cloudflare.env.SHOPIFY_APP_ENV,
-		locale,
-	};
+	return { locale };
 }
 
 export default function App() {
