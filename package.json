@@ -1,6 +1,6 @@
 {
 	"name": "@chr33s/shopflare",
-	"version": "2.3.0",
+	"version": "2.3.1",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -34,7 +34,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@cloudflare/vitest-pool-workers": "0.7.8",
-		"@cloudflare/workers-types": "4.20250311.0",
+		"@cloudflare/workers-types": "4.20250312.0",
 		"@react-router/dev": "7.3.0",
 		"@react-router/serve": "7.3.0",
 		"@shopify/api-codegen-preset": "1.1.5",
