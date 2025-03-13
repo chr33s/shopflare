@@ -59,7 +59,7 @@ export default defineWorkspace([
 						workers: {
 							miniflare: {
 								compatibilityFlags: ["service_binding_extra_handlers"],
-								kvNamespaces: ["SESSION_STORAGE"],
+								kvNamespaces: ["shopflare"],
 								queueConsumers: ["shopflare"],
 								queueProducers: { WEBHOOK_QUEUE: "shopflare" },
 							},

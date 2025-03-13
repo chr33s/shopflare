@@ -27,6 +27,7 @@ npm install
 cp .env.example .env                                    # update vars to match your env values from partners.shopify.com (Apps > All Apps > Create App)
 # vi [wrangler.json, shopify.app.toml]                  # update vars[SHOPIFY_API_KEY, SHOPIFY_APP_URL], SHOPIFY_APP_URL is the cloudflare tunnel url (e.g. https://shopflare.trycloudflare.com) in development and the cloudflare worker url (e.g. https://shopflare.workers.dev) in other environments.
 npx wrangler secret put SHOPIFY_API_SECRET_KEY
+npx wrangler kv namespace create shopflare              # update wranglers.json#kv_namespaces[0].id 
 gh secret set --app=actions CLOUDFLARE_API_TOKEN        # value from dash.cloudflare.com (Manage Account > Account API Tokens > Create Token)
 gh secret set --app=actions SHOPIFY_CLI_PARTNERS_TOKEN  # value from partners.shopify.com (Settings > CLI Token > Manage Tokens > Generate Token)
 gh variable set SHOPIFY_API_KEY
@@ -35,6 +36,7 @@ gh variable set SHOPIFY_API_KEY
 ## Development
 
 ```sh
+# vi .env               # update vars[SHOPIFY_APP_LOG_LEVEL] sets logging verbosity.
 npm run deploy:shopify
 npm run dev
 # open -a Safari ${SHOPIFY_APP_URL}
