@@ -3,11 +3,6 @@ import { type JWTPayload, jwtVerify } from "jose";
 import { type AppLoadContext, redirect } from "react-router";
 import * as v from "valibot";
 
-const algorithm = {
-	name: "HMAC",
-	hash: "SHA-256",
-};
-
 export const apiVersion = "2025-01";
 
 export function createShopify(context: AppLoadContext) {
@@ -262,48 +257,33 @@ export function createShopify(context: AppLoadContext) {
 			});
 		}
 
-		const proxy = Object.fromEntries(url.searchParams);
-		const params = Object.entries(proxy)
+		// NOTE: https://shopify.dev/docs/apps/build/online-store/display-dynamic-data#calculate-a-digital-signature
+		const params = Object.entries(Object.fromEntries(url.searchParams))
 			.filter(([key]) => key !== "signature")
-			.sort(([a], [b]) => a.localeCompare(b))
-			.reduce((acc, [key, value]) => {
-				return `${acc}${key}=${Array.isArray(value) ? value.join(",") : value}`;
-			}, "");
+			.map(
+				([key, value]) =>
+					`${key}=${Array.isArray(value) ? value.join(",") : value}`,
+			)
+			.sort((a, b) => a.localeCompare(b))
+			.join("");
 
-		const encoder = new TextEncoder();
-		const encodedKey = encoder.encode(config.apiSecretKey);
-		const encodedData = encoder.encode(params);
-		const hmacKey = await crypto.subtle.importKey(
-			"raw",
-			encodedKey,
-			algorithm,
-			false,
-			["sign", "verify"],
-		);
-		const signature = await crypto.subtle.sign("HMAC", hmacKey, encodedData);
-		const hmac = [...new Uint8Array(signature)].reduce(
-			(a, b) => a + b.toString(16).padStart(2, "0"),
-			"",
-		); // hex
+		await validateHmac(params, param, "hex");
 
-		const encodedBody = encoder.encode(hmac);
-		const encodedParam = encoder.encode(param);
-		if (encodedBody.byteLength !== encodedParam.byteLength) {
-			throw new ShopifyException("Encoded byte length mismatch", {
+		const shop = utils.sanitizeShop(url.searchParams.get("shop")!)!; // shop is value due to hmac validation
+		const shopify = await session.get(shop);
+		if (!shopify?.accessToken) {
+			throw new ShopifyException("No session access token", {
 				status: 401,
-				type: "HMAC",
+				type: "SESSION",
 			});
 		}
 
-		const valid = timingSafeEqual(encodedBody, encodedParam);
-		if (!valid) {
-			throw new ShopifyException("Invalid hmac", {
-				status: 401,
-				type: "HMAC",
-			});
-		}
+		const client = createClient({
+			headers: { "X-Shopify-Access-Token": shopify.accessToken },
+			shop,
+		});
 
-		return proxy;
+		return client;
 	}
 
 	const session = new ShopifySession(context.cloudflare.env.SESSION_STORAGE);
@@ -371,6 +351,70 @@ export function createShopify(context: AppLoadContext) {
 		},
 	};
 
+	async function validateHmac(
+		data: string,
+		hmac: string,
+		encoding: "hex" | "base64",
+	) {
+		const encoder = new TextEncoder();
+		const key = await crypto.subtle.importKey(
+			"raw",
+			encoder.encode(config.apiSecretKey),
+			{
+				name: "HMAC",
+				hash: "SHA-256",
+			},
+			false,
+			["sign"],
+		);
+		const signature = await crypto.subtle.sign(
+			"HMAC",
+			key,
+			encoder.encode(data),
+		);
+		let computed;
+		switch (encoding) {
+			case "base64":
+				computed = btoa(String.fromCharCode(...new Uint8Array(signature)));
+				break;
+
+			case "hex":
+				computed = [...new Uint8Array(signature)].reduce(
+					(a, b) => a + b.toString(16).padStart(2, "0"),
+					"",
+				);
+				break;
+		}
+
+		const bufA = encoder.encode(computed);
+		const bufB = encoder.encode(hmac);
+		if (bufA.byteLength !== bufB.byteLength) {
+			throw new ShopifyException("Encoded byte length mismatch", {
+				status: 401,
+				type: "HMAC",
+			});
+		}
+
+		const viewA = new Uint8Array(bufA);
+		const viewB = new Uint8Array(bufB);
+		let out = 0;
+		for (let i = 0; i < viewA.length; i++) {
+			out |= viewA[i] ^ viewB[i];
+		}
+		const valid = out === 0; // timing safe equal
+		utils.log.debug("validateHmac", {
+			hmac,
+			computed,
+			valid,
+		});
+		if (!valid) {
+			throw new ShopifyException("Invalid hmac", {
+				status: 401,
+				type: "HMAC",
+			});
+		}
+	}
+
 	async function webhook(request: Request) {
 		// validate.body
 		const body = await request.clone().text();
@@ -390,35 +434,7 @@ export function createShopify(context: AppLoadContext) {
 			});
 		}
 
-		const encoder = new TextEncoder();
-		const encodedKey = encoder.encode(config.apiSecretKey);
-		const encodedData = encoder.encode(body);
-		const hmacKey = await crypto.subtle.importKey(
-			"raw",
-			encodedKey,
-			algorithm,
-			false,
-			["sign", "verify"],
-		);
-		const signature = await crypto.subtle.sign("HMAC", hmacKey, encodedData);
-		const hmac = btoa(String.fromCharCode(...new Uint8Array(signature))); // base64
-
-		const encodedBody = encoder.encode(hmac);
-		const encodedHeader = encoder.encode(header);
-		if (encodedBody.byteLength !== encodedHeader.byteLength) {
-			throw new ShopifyException("Encoded byte length mismatch", {
-				status: 401,
-				type: "HMAC",
-			});
-		}
-
-		const valid = timingSafeEqual(encodedBody, encodedHeader);
-		if (!valid) {
-			throw new ShopifyException("Invalid hmac", {
-				status: 401,
-				type: "HMAC",
-			});
-		}
+		await validateHmac(body, header, "base64");
 
 		// validate.headers
 		const requiredHeaders = {
@@ -480,6 +496,7 @@ export class ShopifyException extends Error {
 		| "JWT"
 		| "REQUEST"
 		| "RESPONSE"
+		| "SESSION"
 		| "SERVER"
 		| "SHOP"
 		| "THROTTLING" = "SERVER";
@@ -600,13 +617,3 @@ interface ShopifySessionObject {
 	accessToken: string;
 }
 type ShopifySessionSerialized = [string, string | number | boolean][];
-
-function timingSafeEqual(bufA: ArrayBuffer, bufB: ArrayBuffer): boolean {
-	const viewA = new Uint8Array(bufA);
-	const viewB = new Uint8Array(bufB);
-	let out = 0;
-	for (let i = 0; i < viewA.length; i++) {
-		out |= viewA[i] ^ viewB[i];
-	}
-	return out === 0;
-}
