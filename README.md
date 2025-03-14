@@ -44,6 +44,8 @@ npm run dev
 
 ## Production
 
+See [Cloudflare docs](https://developers.cloudflare.com/workers/wrangler/environments/) for environments.
+
 ```sh
 npm run deploy
 ```
