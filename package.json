@@ -1,6 +1,6 @@
 {
 	"name": "@chr33s/shopflare",
-	"version": "2.3.2",
+	"version": "2.3.3",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -33,7 +33,6 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@cloudflare/vitest-pool-workers": "0.8.0",
-		"@cloudflare/workers-types": "4.20250312.0",
 		"@react-router/dev": "7.3.0",
 		"@react-router/serve": "7.3.0",
 		"@shopify/api-codegen-preset": "1.1.5",
@@ -41,6 +40,7 @@
 		"@shopify/app-bridge-types": "0.0.17",
 		"@shopify/polaris": "13.9.3",
 		"@shopify/polaris-icons": "9.3.0",
+		"@testing-library/dom": "10.4.0",
 		"@types/react": "18.3.18",
 		"@types/react-dom": "18.3.5",
 		"@vitest/browser": "3.0.8",
@@ -49,11 +49,11 @@
 		"playwright": "1.51.0",
 		"react-router-dom": "7.3.0",
 		"typescript": "5.8.2",
-		"vite": "6.2.1",
+		"vite": "6.2.2",
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.0.8",
 		"vitest-browser-react": "0.1.1",
-		"wrangler": "3.114.1"
+		"wrangler": "4.0.0"
 	},
 	"optionalDependencies": {
 		"@shopify/cli": "3.76.2"

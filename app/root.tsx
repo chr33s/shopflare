@@ -1,4 +1,4 @@
-import "@shopify/polaris/build/esm/styles.css";
+import polaris from "@shopify/polaris/build/esm/styles.css?url";
 import { useTranslation } from "react-i18next";
 import {
 	Links,
@@ -90,4 +90,5 @@ export const links: Route.LinksFunction = () => [
 		rel: "stylesheet",
 		href: "https://cdn.shopify.com/static/fonts/inter/v4/styles.css",
 	},
+	{ rel: "stylesheet", href: polaris },
 ];

@@ -9,7 +9,6 @@
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],
 		"types": [
 			"@cloudflare/vitest-pool-workers",
-			"@cloudflare/workers-types",
 			"@vitest/browser/providers/playwright",
 			"vite/client"
 		],

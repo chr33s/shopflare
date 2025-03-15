@@ -6,13 +6,13 @@ import {
 } from "cloudflare:test";
 import { afterEach, expect, test, vi } from "vitest";
 
-import worker from "./server";
+import worker from "./worker";
 
 afterEach(() => {
 	vi.restoreAllMocks();
 });
 
-test.skip("fetch", async () => {
+test("fetch", async () => {
 	const response = await SELF.fetch("http://example.com");
 	expect(await response.text()).toContain("<title>ShopFlare</title>");
 	expect(response.status).toBe(200);

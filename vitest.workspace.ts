@@ -53,8 +53,8 @@ export default defineWorkspace([
 			viteConfig(config),
 			defineWorkersProject({
 				test: {
-					include: ["server.test.ts", "app/**/*.worker.test.ts"],
-					name: "worker",
+					include: ["workers/**/*.test.ts", "app/**/*.worker.test.ts"],
+					name: "workers",
 					poolOptions: {
 						workers: {
 							miniflare: {

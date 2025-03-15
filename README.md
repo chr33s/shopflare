@@ -44,7 +44,9 @@ npm run dev
 
 ## Production
 
-See [Cloudflare docs](https://developers.cloudflare.com/workers/wrangler/environments/) for environments.
+For environments see:
+- [Cloudflare docs](https://developers.cloudflare.com/workers/wrangler/environments/)
+- [Shopify docs](https://shopify.dev/docs/apps/build/cli-for-apps/app-configuration)
 
 ```sh
 npm run deploy

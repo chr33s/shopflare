@@ -12,11 +12,7 @@ export default defineConfig(({ isSsrBuild, mode }) => {
 		base: shopifyApp.href,
 		build: {
 			minify: true,
-			rollupOptions: isSsrBuild
-				? {
-						input: "./server.ts",
-					}
-				: undefined,
+			rollupOptions: isSsrBuild ? { input: "./worker.ts" } : undefined,
 		},
 		clearScreen: false,
 		plugins: [
