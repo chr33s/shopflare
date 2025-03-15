@@ -7,22 +7,20 @@ concurrency:
 on:
   push:
     branches: [main]
+    tags: [releases/*]
 
 env:
-  SHOPIFY_API_KEY: ${{ vars.SHOPIFY_API_KEY }}
   SHOPIFY_CLI_NO_ANALYTICS: true
-  SHOPIFY_CLI_PARTNERS_TOKEN: ${{ secrets.SHOPIFY_CLI_PARTNERS_TOKEN }}
 
 jobs:
-  deploy:
+  build:
+    name: Build
     if: ${{ !contains(github.event.head_commit.message, '[skip-ci]') }}
-    name: Deploy
     runs-on: ubuntu-latest
     permissions:
-      security-events: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v3
       - uses: actions/setup-node@v4
         with:
           node-version-file: "package.json"
@@ -30,19 +28,41 @@ jobs:
       - run: npm ci
       - run: npm install -g @shopify/cli@latest
       - run: npx shopify app build
-      - run: npx shopify app deploy --force --message="${{ github.ref_name }}" --no-release --source-control-url="$COMMIT_URL" --version="deploy:${{ github.sha }}"
         env:
-          COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
-      - uses: github/codeql-action/analyze@v3
+          SHOPIFY_API_KEY: ${{ vars.SHOPIFY_API_KEY }}
       - uses: actions/upload-artifact@v4
         with:
           name: extensions
           path: extensions
 
+  deploy:
+    name: Deploy
+    if: ${{ github.ref_type == 'branch' }}
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: extensions
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: "package.json"
+          cache: "npm"
+      - run: npm install -g @shopify/cli@latest
+      - run: npx shopify app deploy --force --message="${{ github.ref_name }}" --no-release --source-control-url="$COMMIT_URL" --version="deploy:${{ github.sha }}"
+        env:
+          COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+          SHOPIFY_CLI_PARTNERS_TOKEN: ${{ secrets.SHOPIFY_CLI_PARTNERS_TOKEN }}
+
   release:
     name: Release
-    needs: deploy
+    if: ${{ github.ref_type == 'tag' }}
+    needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -53,3 +73,6 @@ jobs:
           cache: "npm"
       - run: npm install -g @shopify/cli@latest
       - run: npx shopify app release --force --version="release:${{ github.sha }}"
+        env:
+          SHOPIFY_CLI_PARTNERS_TOKEN: ${{ secrets.SHOPIFY_CLI_PARTNERS_TOKEN }}
+

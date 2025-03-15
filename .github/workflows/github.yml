@@ -11,8 +11,8 @@ on:
 jobs:
   release:
     name: Release
-    runs-on: ubuntu-latest
     if: ${{ github.repository == 'chr33s/shopflare' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
@@ -24,7 +24,7 @@ jobs:
           script: |
             const tag_name = context.ref;
             const name = tag_name.replace(/^refs\/tags\/releases\//, '');
-            const prerelease = name.startsWith("0.");
+            const prerelease = name.startsWith("0.") || name.includes("-");
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 

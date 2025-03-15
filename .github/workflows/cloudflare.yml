@@ -9,16 +9,18 @@ on:
     branches: [main]
     tags: [releases/*]
 
+env:
+  WRANGLER_SEND_METRICS: false
+
 jobs:
   build:
-    if: ${{ !contains(github.event.head_commit.message, '[skip-ci]') }}
     name: Build
+    if: ${{ !contains(github.event.head_commit.message, '[skip-ci]') }}
     runs-on: ubuntu-latest
     permissions:
-      security-events: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v3
       - uses: actions/setup-node@v4
         with:
           node-version-file: "package.json"
@@ -28,7 +30,6 @@ jobs:
         env:
           SHOPIFY_API_KEY: ${{ vars.SHOPIFY_API_KEY }}
       - run: npm test
-      - uses: github/codeql-action/analyze@v3
       - uses: actions/upload-artifact@v4
         with:
           name: build
@@ -36,9 +37,11 @@ jobs:
 
   preview:
     name: Preview
+    if: ${{ github.ref_type == 'branch' }}
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ github.ref_type == 'branch' }}
+    permissions:
+      contents: read
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -50,9 +53,11 @@ jobs:
 
   deploy:
     name: Deploy
+    if: ${{ github.ref_type == 'tag' }}
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ github.ref_type == 'tag' }}
+    permissions:
+      contents: read
     steps:
       - uses: actions/download-artifact@v4
         with:
