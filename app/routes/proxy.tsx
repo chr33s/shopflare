@@ -9,8 +9,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 		const shopify = createShopify(context);
 		shopify.utils.log.debug("proxy");
 
-		const proxy = await shopify.proxy(request);
-		shopify.utils.log.debug("proxy", { ...proxy });
+		await shopify.proxy(request);
 
 		return { appUrl: shopify.config.appUrl };
 		// biome-ignore lint/suspicious/noExplicitAny: catch(err)
