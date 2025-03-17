@@ -63,5 +63,8 @@
 	"engines": {
 		"node": "^22.14.0",
 		"npm": ">=9.6.4"
+	},
+	"bin": {
+		"shopflare": "./bin.sh"
 	}
 }
