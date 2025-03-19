@@ -29,11 +29,11 @@
 		"react-dom": "19.0.0",
 		"react-i18next": "15.4.1",
 		"react-router": "7.3.0",
-		"valibot": "1.0.0-rc.4"
+		"valibot": "1.0.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@cloudflare/vitest-pool-workers": "0.8.1",
+		"@cloudflare/vitest-pool-workers": "0.8.2",
 		"@react-router/dev": "7.3.0",
 		"@react-router/serve": "7.3.0",
 		"@shopify/api-codegen-preset": "1.1.6",
@@ -55,7 +55,7 @@
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.0.9",
 		"vitest-browser-react": "0.1.1",
-		"wrangler": "4.1.0"
+		"wrangler": "4.2.0"
 	},
 	"optionalDependencies": {
 		"@shopify/cli": "3.76.2"
