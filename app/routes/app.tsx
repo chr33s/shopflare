@@ -4,7 +4,7 @@ import type {
 	LinkLikeComponent,
 	LinkLikeComponentProps,
 } from "@shopify/polaris/build/ts/src/utilities/link";
-import { forwardRef } from "react";
+import type { Ref } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Outlet, useLoaderData } from "react-router";
 
@@ -112,10 +112,13 @@ export function headers({
 	]);
 }
 
-export const ReactRouterPolarisLink = forwardRef<
-	HTMLAnchorElement,
-	LinkLikeComponentProps
->((props, ref) => (
-	<Link {...props} ref={ref} to={props.url ?? props.to} />
-)) as LinkLikeComponent;
+interface ReactRouterPolarisLinkProps extends LinkLikeComponentProps {
+	ref?: Ref<HTMLAnchorElement | null>;
+}
+
+export function ReactRouterPolarisLink(props: ReactRouterPolarisLinkProps) {
+	return (
+		<Link {...props} to={props.url ?? props.to} />
+	) as unknown as LinkLikeComponent;
+}
 ReactRouterPolarisLink.displayName = "ReactRouterPolarisLink";
