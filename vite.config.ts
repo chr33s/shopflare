@@ -1,28 +1,18 @@
+import { cloudflare } from "@cloudflare/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
-import { cloudflareDevProxy } from "@react-router/dev/vite/cloudflare";
 import { defineConfig, loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig(({ isSsrBuild, mode }) => {
+export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), "");
 	const port = Number(env.PORT || 8080);
 	const shopifyApp = new URL(env.SHOPIFY_APP_URL);
 
 	return {
 		base: shopifyApp.href,
-		build: {
-			minify: true,
-			rollupOptions: isSsrBuild ? { input: "./worker.ts" } : undefined,
-		},
 		clearScreen: false,
 		plugins: [
-			!env.VITEST &&
-				cloudflareDevProxy({
-					// biome-ignore lint/suspicious/noExplicitAny: upstream
-					getLoadContext({ context }: any) {
-						return { cloudflare: context.cloudflare };
-					},
-				}),
+			cloudflare({ viteEnvironment: { name: "ssr" } }),
 			!env.VITEST && reactRouter(),
 			tsconfigPaths(),
 		],

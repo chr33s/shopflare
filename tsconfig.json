@@ -10,6 +10,7 @@
 		"types": [
 			"@cloudflare/vitest-pool-workers",
 			"@vitest/browser/providers/playwright",
+			"node",
 			"vite/client"
 		],
 		"target": "ES2022",

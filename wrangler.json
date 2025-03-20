@@ -1,9 +1,8 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "shopflare",
-	"compatibility_date": "2025-03-10",
-	"compatibility_flags": ["nodejs_compat"],
-	"main": "./build/server/index.js",
+	"compatibility_date": "2025-03-11",
+	"main": "./worker.ts",
 	"analytics_engine_datasets": [
 		{
 			"binding": "WEB_VITALS",
@@ -11,8 +10,7 @@
 		}
 	],
 	"assets": {
-		"binding": "ASSETS",
-		"directory": "./build/client"
+		"binding": "ASSETS"
 	},
 	"dev": {
 		"ip": "0.0.0.0",
