@@ -1,9 +1,6 @@
 import { NavMenu } from "@shopify/app-bridge-react";
 import { AppProvider, type AppProviderProps } from "@shopify/polaris";
-import type {
-	LinkLikeComponent,
-	LinkLikeComponentProps,
-} from "@shopify/polaris/build/ts/src/utilities/link";
+import type { LinkLikeComponentProps } from "@shopify/polaris/build/ts/src/utilities/link";
 import type { Ref } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Outlet, useLoaderData } from "react-router";
@@ -117,8 +114,6 @@ interface ReactRouterPolarisLinkProps extends LinkLikeComponentProps {
 }
 
 export function ReactRouterPolarisLink(props: ReactRouterPolarisLinkProps) {
-	return (
-		<Link {...props} to={props.url ?? props.to} />
-	) as unknown as LinkLikeComponent;
+	return <Link {...props} to={props.url ?? props.to} />;
 }
 ReactRouterPolarisLink.displayName = "ReactRouterPolarisLink";
