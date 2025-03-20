@@ -13,6 +13,10 @@
   2.  New Embedded Auth Strategy
   3.  Managed Pricing
 
+## Assumptions
+
+Familiarity with React, ReactRouter, Cloudflare, Shopify conventions.
+
 ## Requirements
 
 1. Cloudflare account
@@ -44,13 +48,18 @@ npm run dev
 
 ## Production
 
-For environments see:
-- [Cloudflare docs](https://developers.cloudflare.com/workers/wrangler/environments/)
-- [Shopify docs](https://shopify.dev/docs/apps/build/cli-for-apps/app-configuration)
-
 ```sh
 npm run deploy
 ```
+
+To split environments see [Cloudflare](https://developers.cloudflare.com/workers/wrangler/environments/) and [Shopify](https://shopify.dev/docs/apps/build/cli-for-apps/app-configuration) docs.
+
+## Documentation
+
+- [React](https://react.dev/reference/react)
+- [React Router](https://reactrouter.com/home)
+- [Shopify](http://shopify.dev/)
+- [Cloudflare](https://developers.cloudflare.com)
 
 ## Copyright
 
