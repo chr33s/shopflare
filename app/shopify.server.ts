@@ -395,13 +395,8 @@ export function createShopify(context: AppLoadContext) {
 			});
 		}
 
-		const viewA = new Uint8Array(bufA);
-		const viewB = new Uint8Array(bufB);
-		let out = 0;
-		for (let i = 0; i < viewA.length; i++) {
-			out |= viewA[i] ^ viewB[i];
-		}
-		const valid = out === 0; // timing safe equal
+		// biome-ignore lint/suspicious/noExplicitAny: upstream - "@cloudflare/workers-types";
+		const valid = (crypto.subtle as any).timingSafeEqual(bufA, bufB);
 		utils.log.debug("validateHmac", {
 			hmac,
 			computed,
