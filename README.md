@@ -49,6 +49,7 @@ npm run dev
 ## Production
 
 ```sh
+npm run build
 npm run deploy
 ```
 

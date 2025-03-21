@@ -10,7 +10,8 @@
 		}
 	],
 	"assets": {
-		"binding": "ASSETS"
+		"binding": "ASSETS",
+		"directory": "./build/client"
 	},
 	"dev": {
 		"ip": "0.0.0.0",
