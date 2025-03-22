@@ -8,8 +8,10 @@ import {
 	ServerRouter,
 } from "react-router";
 
+import { APP_BRIDGE_URL } from "~/const";
 import i18n, { Backend } from "./i18n";
 import { getLocale } from "./i18n.server";
+import { createShopify } from "./shopify.server";
 
 export default async function handleRequest(
 	request: Request,
@@ -18,15 +20,45 @@ export default async function handleRequest(
 	routerContext: EntryContext,
 	loadContext: AppLoadContext,
 ) {
+	responseHeaders.set("Content-Type", "text/html");
+	responseHeaders.set("X-Content-Type-Options", "nosniff");
+	responseHeaders.set("X-Download-Options", "noopen");
+	responseHeaders.set("X-Permitted-Cross-Domain-Policies", "none");
+	responseHeaders.set("Referrer-Policy", "origin-when-cross-origin");
+	responseHeaders.set(
+		"Content-Security-Policy",
+		"default-src 'self'; \
+		script-src 'self' 'unsafe-inline' https://cdn.shopify.com; \
+		style-src 'self' 'unsafe-inline' https://cdn.shopify.com https://unpkg.com; \
+		font-src 'self' https://cdn.shopify.com; \
+		img-src 'self' data: https://cdn.shopify.com; \
+		connect-src 'self' https://atlas.shopifysvc.com https://extensions.shopifycdn.com; \
+		upgrade-insecure-requests",
+	);
+	responseHeaders.set(
+		"Strict-Transport-Security",
+		"max-age=631138519; includeSubDomains",
+	);
+	responseHeaders.set(
+		"Link",
+		`<${APP_BRIDGE_URL}>; rel="preload"; as="script";`,
+	);
+	const shop = createShopify(loadContext).utils.sanitizeShop(
+		new URL(request.url).searchParams.get("shop")!,
+	);
+	if (shop) {
+		responseHeaders.set(
+			"Content-Security-Policy",
+			`frame-ancestors https://${shop} https://admin.shopify.com;`,
+		);
+	}
+
 	const instance = createInstance();
 	await instance
 		.use(Backend)
 		.use(initReactI18next)
 		.init({
 			...i18n,
-			backend: {
-				loadPath: `${loadContext.cloudflare.env.SHOPIFY_APP_URL}/i18n/{{lng}}.{{ns}}.json`,
-			},
 			lng: getLocale(request),
 		});
 
@@ -37,10 +69,7 @@ export default async function handleRequest(
 		</I18nextProvider>,
 		{
 			signal: request.signal,
-			onError(
-				// biome-ignore lint/suspicious/noExplicitAny: upstream
-				error: any,
-			) {
+			onError(error: unknown) {
 				responseStatus = 500;
 				if (!request.signal.aborted) {
 					// Log streaming rendering errors from inside the shell
