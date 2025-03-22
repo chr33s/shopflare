@@ -67,7 +67,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 	const data = useRouteLoaderData<typeof loader>("root");
 
 	return (
-		<html dir={i18n.dir()} lang={data?.locale}>
+		<html dir={i18n.dir()} lang={data?.locale} suppressHydrationWarning={true}>
 			<head>
 				<meta charSet="utf-8" />
 				<meta content="initial-scale=1, width=device-width" name="viewport" />
