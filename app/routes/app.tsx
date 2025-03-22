@@ -35,9 +35,12 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 export default function App() {
 	const { appUrl, apiKey, appDebug } = useLoaderData<typeof loader>();
 
-	const { t } = useTranslation("polaris");
+	const { t } = useTranslation(["app", "polaris"]);
 	const i18n = {
-		Polaris: t("Polaris", { returnObjects: true }),
+		Polaris: t("Polaris", {
+			ns: "polaris",
+			returnObjects: true,
+		}),
 	} as AppProviderProps["i18n"];
 
 	return (
