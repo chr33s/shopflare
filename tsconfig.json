@@ -11,8 +11,7 @@
 		"types": [
 			"@cloudflare/vitest-pool-workers",
 			"@vitest/browser/providers/playwright",
-			"vite/client",
-			"worker-configuration.d.ts"
+			"vite/client"
 		],
 		"target": "ES2022",
 		"module": "ES2022",
