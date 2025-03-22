@@ -8,7 +8,7 @@ import {
 } from "@shopify/polaris";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Form, redirect, useActionData, useLoaderData } from "react-router";
+import { Form, redirect } from "react-router";
 
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/shopify.auth.login";
@@ -17,9 +17,10 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	return action({ context, request } as Route.ActionArgs);
 }
 
-export default function AuthLogin() {
-	const actionData = useActionData<typeof action>();
-	const loaderData = useLoaderData<typeof loader>();
+export default function AuthLogin({
+	actionData,
+	loaderData,
+}: Route.ComponentProps) {
 	const { errors } = actionData ?? loaderData ?? {};
 	const [shop, setShop] = useState("");
 

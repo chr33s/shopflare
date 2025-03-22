@@ -3,7 +3,7 @@ import { AppProvider, type AppProviderProps } from "@shopify/polaris";
 import type { LinkLikeComponentProps } from "@shopify/polaris/build/ts/src/utilities/link";
 import type { Ref } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Outlet, useLoaderData } from "react-router";
+import { Link, Outlet } from "react-router";
 
 import { APP_BRIDGE_URL } from "~/const";
 import { createShopify } from "~/shopify.server";
@@ -32,8 +32,8 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	}
 }
 
-export default function App() {
-	const { appUrl, apiKey, appDebug } = useLoaderData<typeof loader>();
+export default function App({ loaderData }: Route.ComponentProps) {
+	const { appUrl, apiKey, appDebug } = loaderData;
 
 	const { t } = useTranslation(["app", "polaris"]);
 	const i18n = {
