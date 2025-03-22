@@ -4,7 +4,7 @@ import i18n, { Backend } from "~/i18n";
 
 export async function getFixedT(
 	request: Request,
-	namespaces: string[] = i18n.defaultNS,
+	namespaces: string | string[] = i18n.defaultNS,
 ) {
 	const instance = createInstance();
 	instance.use(Backend);
