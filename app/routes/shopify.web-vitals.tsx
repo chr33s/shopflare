@@ -1,7 +1,7 @@
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/shopify.web-vitals";
 
-export async function loader({ context, request }: Route.LoaderArgs) {
+export async function action({ context, request }: Route.ActionArgs) {
 	const shopify = createShopify(context);
 
 	const body = await request.json<Body>();
@@ -9,7 +9,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 
 	await Promise.all([
 		body.metrics.map((metric) => {
-			return context.cloudflare.env.WEB_VITALS.writeDataPoint({
+			return context.cloudflare.env.WEB_VITALS?.writeDataPoint({
 				blobs: [metric.name, body.appLoadId, body.shopId, body.userId],
 				doubles: [metric.value],
 				indexes: [metric.id],
