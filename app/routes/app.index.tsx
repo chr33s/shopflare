@@ -53,6 +53,11 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	}
 }
 
+export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
+	const data = await serverLoader();
+	return data;
+}
+
 export default function AppIndex({
 	actionData,
 	loaderData,
@@ -90,6 +95,11 @@ export default function AppIndex({
 			</Text>
 		</Page>
 	);
+}
+
+export async function clientAction({ serverAction }: Route.ClientActionArgs) {
+	const data = await serverAction();
+	return data;
 }
 
 export async function action(_: Route.ActionArgs) {
