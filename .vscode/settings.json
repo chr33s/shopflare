@@ -10,6 +10,9 @@
 	"files.associations": {
 		".env*": "properties"
 	},
+	"github.copilot.chat.codeGeneration.useInstructionFiles": true,
+	"github.copilot.chat.codesearch.enabled": true,
+	"github.copilot.selectedCompletionModel": "gpt-4o-copilot",
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"typescript.enablePromptUseWorkspaceTsdk": true
 }
