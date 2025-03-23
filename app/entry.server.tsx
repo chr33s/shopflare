@@ -89,7 +89,6 @@ export default async function handleRequest(
 		responseHeaders.set("Transfer-Encoding", "chunked");
 	}
 
-	responseHeaders.set("Content-Type", "text/html");
 	return new Response(body, {
 		headers: responseHeaders,
 		status: responseStatus,
