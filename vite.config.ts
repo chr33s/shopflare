@@ -5,11 +5,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), "");
-	const port = Number(env.PORT || 8080);
 	const shopifyApp = new URL(env.SHOPIFY_APP_URL);
 
 	return {
-		base: shopifyApp.href,
 		clearScreen: false,
 		plugins: [
 			cloudflare({ viteEnvironment: { name: "ssr" } }),
@@ -21,15 +19,7 @@ export default defineConfig(({ mode }) => {
 		},
 		server: {
 			allowedHosts: [shopifyApp.hostname],
-			cors: true,
-			hmr: {
-				protocol: "wss",
-				host: shopifyApp.hostname,
-				port,
-				clientPort: 443,
-			},
-			origin: shopifyApp.origin,
-			port,
+			port: Number(env.PORT || 8080),
 		},
 		ssr: {
 			resolve: {
