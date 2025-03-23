@@ -35,7 +35,7 @@ api_version = "2025-01"
   [[webhooks.subscriptions]]
   uri = "/shopify/webhooks"
   compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
-  topics = [ "app/uninstalled" ]
+  topics = [ "app/scopes_update", "app/uninstalled" ]
 
 [pos]
 embedded = false

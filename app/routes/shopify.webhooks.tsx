@@ -11,14 +11,25 @@ export async function action({ context, request }: Route.ActionArgs) {
 		shopify.utils.log.debug("shopify.webhooks", { ...webhook });
 
 		const session = await shopify.session.get(webhook.domain);
+		const payload = await request.json();
 
-		if (webhook.topic === "APP_UNINSTALLED") {
-			if (session) {
-				await shopify.session.delete(session.id);
-			}
+		switch (webhook.topic) {
+			case "APP_UNINSTALLED":
+				if (session) {
+					await shopify.session.delete(session.id);
+				}
+				break;
+
+			case "APP_SCOPES_UPDATE":
+				if (session) {
+					await shopify.session.set({
+						...session,
+						scope: (payload as { current: string[] }).current.toString(),
+					});
+				}
+				break;
 		}
 
-		const payload = await request.json();
 		await context.cloudflare.env.WEBHOOK_QUEUE?.send(
 			{
 				payload,
