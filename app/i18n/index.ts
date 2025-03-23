@@ -1,63 +1,19 @@
-import type {
-	BackendModule,
-	InitOptions,
-	LanguageDetectorModule,
-	Services,
-} from "i18next";
+import resources from "virtual:i18next-loader";
+import type { InitOptions, LanguageDetectorModule, Services } from "i18next";
 
 const i18n = {
 	debug: false,
-	backend: {
-		url: "/i18n/{{lng}}.{{ns}}.json",
-		base: undefined,
-	},
 	defaultNS: "app",
 	fallbackLng: "en",
 	interpolation: {
 		escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
 	},
 	ns: ["app", "polaris", "proxy"],
+	resources,
 	supportedLngs: ["en"],
 } satisfies InitOptions;
 
 export default i18n;
-
-type BackendOptions = {
-	base: string;
-	url: string;
-};
-
-export class Backend implements BackendModule {
-	public type = "backend" as const;
-	static type = "backend" as const;
-
-	#options: BackendOptions | undefined;
-
-	constructor(
-		services: Services,
-		backendOptions: BackendOptions,
-		initOptions: InitOptions,
-	) {
-		this.init(services, backendOptions, initOptions);
-	}
-
-	init(
-		_services: Services,
-		backendOptions: BackendOptions,
-		_initOptions: InitOptions,
-	) {
-		this.#options = backendOptions;
-	}
-
-	async read(language: string, namespace: string) {
-		const uri = (this.#options?.url ?? i18n.backend.url)
-			.replace("{{lng}}", language)
-			.replace("{{ns}}", namespace);
-		const base = this.#options?.base ?? i18n.backend.base;
-		const url = new URL(uri, base);
-		return fetch(url).then((res) => res.json());
-	}
-}
 
 type DetectorOptions = {
 	headers: Headers;

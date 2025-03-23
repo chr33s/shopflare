@@ -9,7 +9,7 @@ import {
 } from "react-router";
 
 import { APP_BRIDGE_URL } from "~/const";
-import i18n, { Backend, LanguageDetector } from "./i18n";
+import i18n, { LanguageDetector } from "./i18n";
 import { createShopify } from "./shopify.server";
 
 export default async function handleRequest(
@@ -56,13 +56,8 @@ export default async function handleRequest(
 	await instance
 		.use(initReactI18next)
 		.use(LanguageDetector)
-		.use(Backend)
 		.init({
 			...i18n,
-			backend: {
-				...i18n.backend,
-				base: loadContext.cloudflare.env.SHOPIFY_APP_URL,
-			},
 			detection: {
 				headers: request.headers,
 				searchParams: new URL(request.url).searchParams,

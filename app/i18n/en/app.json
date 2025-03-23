@@ -3,5 +3,6 @@
 	"error": "An error occurred",
 	"errorUnauthorized": "Unauthorized",
 	"login": "Log in",
+	"page": "Page",
 	"shopDomain": "Shop domain"
 }

@@ -4,19 +4,14 @@ import { hydrateRoot } from "react-dom/client";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 import { HydratedRouter } from "react-router/dom";
 
-import i18n, { Backend, LanguageDetector } from "./i18n";
+import i18n, { LanguageDetector } from "./i18n";
 
 async function hydrate() {
 	await i18next
 		.use(initReactI18next)
 		.use(LanguageDetector)
-		.use(Backend)
 		.init({
 			...i18n,
-			backend: {
-				...i18n.backend,
-				base: window.location.origin,
-			},
 			detection: {
 				searchParams: new URL(window.location.href).searchParams,
 			},

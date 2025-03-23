@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { Link, Outlet } from "react-router";
 
 import { APP_BRIDGE_URL } from "~/const";
-import { getFixedT } from "~/i18n.server";
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/app";
 
@@ -26,10 +25,9 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	} catch (error: any) {
 		if (error instanceof Response) return error;
 
-		const t = await getFixedT(request, "app");
 		return new Response(error.message, {
 			status: error.status,
-			statusText: t("errorUnauthorized"),
+			statusText: "Unauthorized",
 		});
 	}
 }

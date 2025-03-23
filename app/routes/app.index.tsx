@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { data } from "react-router";
 
-import { getFixedT } from "~/i18n.server";
 import { ShopifyException, createShopify } from "~/shopify.server";
 import type { ShopQuery } from "~/types/admin.generated";
 import type { Route } from "./+types/app.index";
@@ -42,11 +41,10 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 			}
 		}
 
-		const t = await getFixedT(request, "app");
 		return data(
 			{
 				data: undefined,
-				errors: [{ message: t("error") }],
+				errors: [{ message: "Unknown Error" }],
 			},
 			500,
 		);
