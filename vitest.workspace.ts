@@ -53,12 +53,16 @@ export default defineWorkspace([
 			viteConfig(config),
 			defineWorkersProject({
 				test: {
-					include: ["workers/**/*.test.ts", "app/**/*.worker.test.ts"],
+					include: ["worker.test.ts", "app/**/*.worker.test.ts"],
 					name: "workers",
 					poolOptions: {
 						workers: {
+							main: "./build/server/index.js",
 							miniflare: {
-								compatibilityFlags: ["service_binding_extra_handlers"],
+								compatibilityFlags: [
+									"nodejs_compat",
+									"service_binding_extra_handlers",
+								],
 								kvNamespaces: ["shopflare"],
 								queueConsumers: ["shopflare"],
 								queueProducers: { WEBHOOK_QUEUE: "shopflare" },

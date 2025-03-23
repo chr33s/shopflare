@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
 	return {
 		clearScreen: false,
 		plugins: [
-			cloudflare({ viteEnvironment: { name: "ssr" } }),
+			!env.VITEST && cloudflare({ viteEnvironment: { name: "ssr" } }),
 			!env.VITEST && reactRouter(),
 			tsconfigPaths(),
 		],
