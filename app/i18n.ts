@@ -92,11 +92,14 @@ export class LanguageDetector implements LanguageDetectorModule {
 			locale = this.#options.searchParams.get("locale"); // shopify admin
 		}
 		if (!locale && this.#options?.headers?.has("accept-language")) {
-			locale = this.#options?.headers.get("accept-language")?.split(",").at(0); // shopify storefront proxy
+			locale = this.#options?.headers
+				.get("accept-language")
+				?.match(/[a-z-_]{2,5}/i)
+				?.at(0); // shopify storefront proxy
 		}
 		if (!locale) {
 			locale = i18n.fallbackLng;
 		}
-		return locale;
+		return locale.split("-").at(0);
 	}
 }
