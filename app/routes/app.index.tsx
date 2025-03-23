@@ -42,7 +42,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 			}
 		}
 
-		const t = await getFixedT(request);
+		const t = await getFixedT(request, "app");
 		return data(
 			{
 				data: undefined,

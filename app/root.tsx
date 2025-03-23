@@ -6,16 +6,9 @@ import {
 	Scripts,
 	ScrollRestoration,
 	isRouteErrorResponse,
-	useRouteLoaderData,
 } from "react-router";
 
-import { getLocale } from "~/i18n.server";
 import type { Route } from "./+types/root";
-
-export async function loader({ request }: Route.LoaderArgs) {
-	const locale = getLocale(request);
-	return { locale };
-}
 
 export default function App() {
 	return <Outlet />;
@@ -64,10 +57,8 @@ ErrorBoundary.displayName = "RootErrorBoundary";
 export function Layout({ children }: { children: React.ReactNode }) {
 	const { i18n } = useTranslation();
 
-	const data = useRouteLoaderData<typeof loader>("root");
-
 	return (
-		<html dir={i18n.dir()} lang={data?.locale} suppressHydrationWarning={true}>
+		<html dir={i18n.dir()} lang={i18n.language} suppressHydrationWarning>
 			<head>
 				<meta charSet="utf-8" />
 				<meta content="initial-scale=1, width=device-width" name="viewport" />

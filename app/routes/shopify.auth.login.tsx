@@ -1,5 +1,6 @@
 import {
 	AppProvider,
+	type AppProviderProps,
 	Button,
 	FormLayout,
 	Page,
@@ -24,7 +25,13 @@ export default function AuthLogin({
 	const { errors } = actionData ?? loaderData ?? {};
 	const [shop, setShop] = useState("");
 
-	const { t } = useTranslation();
+	const { t } = useTranslation(["app", "polaris"]);
+	const i18n = {
+		Polaris: t("Polaris", {
+			ns: "polaris",
+			returnObjects: true,
+		}),
+	} as AppProviderProps["i18n"];
 
 	return (
 		<div
@@ -36,7 +43,7 @@ export default function AuthLogin({
 				width: "100vw",
 			}}
 		>
-			<AppProvider i18n={{}}>
+			<AppProvider i18n={i18n}>
 				<Page narrowWidth>
 					<Form method="post">
 						<FormLayout>

@@ -1,6 +1,7 @@
 {
 	"app": "App",
 	"error": "An error occurred",
+	"errorUnauthorized": "Unauthorized",
 	"login": "Log in",
 	"shopDomain": "Shop domain"
 }

@@ -1,3 +1,4 @@
+import { getFixedT } from "~/i18n.server";
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/shopify.webhooks";
 
@@ -29,9 +30,10 @@ export async function action({ context, request }: Route.ActionArgs) {
 		return new Response(undefined, { status: 204 });
 		// biome-ignore lint/suspicious/noExplicitAny: catch(err)
 	} catch (error: any) {
+		const t = await getFixedT(request, "app");
 		return new Response(error.message, {
 			status: error.status,
-			statusText: "Unauthorized",
+			statusText: t("errorUnauthorized"),
 		});
 	}
 }

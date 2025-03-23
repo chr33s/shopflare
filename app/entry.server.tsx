@@ -9,8 +9,7 @@ import {
 } from "react-router";
 
 import { APP_BRIDGE_URL } from "~/const";
-import i18n, { Backend } from "./i18n";
-import { getLocale } from "./i18n.server";
+import i18n, { Backend, LanguageDetector } from "./i18n";
 import { createShopify } from "./shopify.server";
 
 export default async function handleRequest(
@@ -55,11 +54,19 @@ export default async function handleRequest(
 
 	const instance = createInstance();
 	await instance
-		.use(Backend)
 		.use(initReactI18next)
+		.use(LanguageDetector)
+		.use(Backend)
 		.init({
 			...i18n,
-			lng: getLocale(request),
+			backend: {
+				...i18n.backend,
+				base: loadContext.cloudflare.env.SHOPIFY_APP_URL,
+			},
+			detection: {
+				headers: request.headers,
+				searchParams: new URL(request.url).searchParams,
+			},
 		});
 
 	const userAgent = request.headers.get("User-Agent");
