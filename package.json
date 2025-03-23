@@ -7,7 +7,7 @@
 		"actionlint": "if command -v actionlint 2>&1 >/dev/null; then actionlint; fi",
 		"build": "react-router build",
 		"check": "biome check --write",
-		"clean": "rm -rf .{react-router,wrangler} node_modules/.{mf,vite,vite-temp}",
+		"clean": "rm -rf .{react-router,wrangler} build node_modules/.{mf,vite,vite-temp}",
 		"codegen": "graphql-codegen",
 		"deploy": "wrangler deploy",
 		"deploy:preview": "wrangler versions upload --env preview",
