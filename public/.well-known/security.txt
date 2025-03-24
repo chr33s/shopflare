@@ -1,0 +1,3 @@
+Contact: chr33s@icloud.com
+Encryption: /.well-known/publickey.txt
+Preferred-Languages: en
