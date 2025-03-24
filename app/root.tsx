@@ -86,3 +86,8 @@ export const links: Route.LinksFunction = () => [
 		href: "https://unpkg.com/@shopify/polaris@13.9.2/build/esm/styles.css",
 	},
 ];
+
+export const meta: Route.MetaFunction = () => [
+	{ title: "ShopFlare" },
+	{ name: "description", content: "..." },
+];

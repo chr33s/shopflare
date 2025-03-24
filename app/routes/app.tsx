@@ -36,7 +36,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 }
 
 export default function App({ loaderData }: Route.ComponentProps) {
-	const { appUrl, apiKey, appDebug } = loaderData;
+	const { appUrl, apiKey } = loaderData;
 
 	const { t } = useTranslation(["app", "polaris"]);
 	const i18n = {
@@ -48,7 +48,6 @@ export default function App({ loaderData }: Route.ComponentProps) {
 
 	return (
 		<>
-			{appDebug && <meta content="web-vitals" name="shopify-debug" />}
 			<script data-api-key={apiKey} src={APP_BRIDGE_URL} />
 			<script
 				dangerouslySetInnerHTML={{
@@ -114,6 +113,11 @@ export function headers({
 		...(actionHeaders ? Array.from(actionHeaders.entries()) : []),
 	]);
 }
+
+export const meta: Route.MetaFunction = ({ data }: Route.MetaArgs) => [
+	data.appDebug ? { name: "shopify-debug", content: "web-vitals" } : {},
+	{ name: "shopify-experimental-features", content: "keepAlive" },
+];
 
 export const ReactRouterPolarisLink = forwardRef<
 	HTMLAnchorElement,

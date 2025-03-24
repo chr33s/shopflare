@@ -32,7 +32,3 @@ export async function action(_: Route.ActionArgs) {
 	const data = { ok: true };
 	return { data };
 }
-
-export function meta(_: Route.MetaArgs) {
-	return [{ title: "ShopFlare" }, { name: "description", content: "..." }];
-}
