@@ -16,6 +16,17 @@ const requestHandler = createRequestHandler(
 
 export default {
 	async fetch(request, env, ctx) {
+		const url = new URL(request.url);
+		const { success } = await env.RATE_LIMITER.limit({
+			key:
+				url.searchParams.get("shop") ??
+				request.headers.get("cf-connecting-ip") ??
+				"unknown",
+		});
+		if (!success) {
+			return new Response(`429 Failure – rate limit exceeded`, { status: 429 });
+		}
+
 		return requestHandler(request, {
 			cloudflare: { env, ctx },
 		});
