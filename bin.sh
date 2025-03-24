@@ -36,6 +36,23 @@ function triggerWorkflow() {
 		--workflows=.github/workflows/${workflow}.yml
 }
 
+function update() {
+	if [[ $(git status --porcelain) ]]; then
+		echo "ERROR: Please commit or stash your changes first"
+		exit 1
+	fi
+
+	curl \
+		--location \
+		--silent https://api.github.com/repos/chr33s/shopflare/tarball \
+		| tar \
+		--directory=. \
+		--exclude={.dev.vars,.gitignore,extensions,public,LICENSE.md,package-lock.json,README.md} \
+		--extract \
+		--strip-components=1 \
+		--gzip
+}
+
 function version() {
 	echo ${npm_package_version}
 }
