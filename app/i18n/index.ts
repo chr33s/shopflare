@@ -53,9 +53,13 @@ export class LanguageDetector implements LanguageDetectorModule {
 				?.match(/[a-z-_]{2,5}/i)
 				?.at(0); // shopify storefront proxy
 		}
+		locale = locale?.split("-").at(0);
+		if (locale && !i18n.supportedLngs.includes(locale)) {
+			locale = null;
+		}
 		if (!locale) {
 			locale = i18n.fallbackLng;
 		}
-		return locale.split("-").at(0);
+		return locale;
 	}
 }
