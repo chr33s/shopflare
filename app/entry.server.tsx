@@ -19,20 +19,26 @@ export default async function handleRequest(
 	routerContext: EntryContext,
 	loadContext: AppLoadContext,
 ) {
-	responseHeaders.set("Content-Type", "text/html");
 	responseHeaders.set("X-Content-Type-Options", "nosniff");
 	responseHeaders.set("X-Download-Options", "noopen");
 	responseHeaders.set("X-Permitted-Cross-Domain-Policies", "none");
 	responseHeaders.set("Referrer-Policy", "origin-when-cross-origin");
+	const url = new URL(request.url);
+	const shop = createShopify(loadContext).utils.sanitizeShop(
+		url.searchParams.get("shop")!,
+	);
 	responseHeaders.set(
 		"Content-Security-Policy",
-		"default-src 'self'; \
-		script-src 'self' 'unsafe-inline' https://cdn.shopify.com; \
-		style-src 'self' 'unsafe-inline' https://cdn.shopify.com https://unpkg.com; \
-		font-src 'self' https://cdn.shopify.com; \
-		img-src 'self' data: https://cdn.shopify.com; \
-		connect-src 'self' https://atlas.shopifysvc.com https://extensions.shopifycdn.com; \
-		upgrade-insecure-requests",
+		[
+			"default-src 'self';",
+			"script-src 'self' 'unsafe-inline' https://cdn.shopify.com;",
+			"style-src 'self' 'unsafe-inline' https://cdn.shopify.com https://unpkg.com;",
+			"font-src 'self' https://cdn.shopify.com;",
+			"img-src 'self' data: https://cdn.shopify.com;",
+			"connect-src 'self' https://atlas.shopifysvc.com https://extensions.shopifycdn.com;",
+			`frame-ancestors ${shop ? `https://${shop}` : ""} https://admin.shopify.com;`,
+			url.hostname !== "localhost" ? "upgrade-insecure-requests" : "",
+		].join(" "),
 	);
 	responseHeaders.set(
 		"Strict-Transport-Security",
@@ -42,15 +48,6 @@ export default async function handleRequest(
 		"Link",
 		`<${APP_BRIDGE_URL}>; rel="preload"; as="script";`,
 	);
-	const shop = createShopify(loadContext).utils.sanitizeShop(
-		new URL(request.url).searchParams.get("shop")!,
-	);
-	if (shop) {
-		responseHeaders.set(
-			"Content-Security-Policy",
-			`frame-ancestors https://${shop} https://admin.shopify.com;`,
-		);
-	}
 
 	const instance = createInstance();
 	await instance
@@ -89,6 +86,7 @@ export default async function handleRequest(
 		responseHeaders.set("Transfer-Encoding", "chunked");
 	}
 
+	responseHeaders.set("Content-Type", "text/html");
 	return new Response(body, {
 		headers: responseHeaders,
 		status: responseStatus,
