@@ -6,7 +6,7 @@ shopt -s nullglob
 source .env
 
 function help() {
-	echo "npx shopflare [releaseVersion,triggerWebhook,triggerWorkflow,version]"
+	echo "npx shopflare [releaseVersion,triggerWebhook,triggerWorkflow,update,version]"
 }
 
 function releaseVersion() {
@@ -51,6 +51,9 @@ function update() {
 		--extract \
 		--strip-components=1 \
 		--gzip
+
+	npm install
+	npm run typegen
 }
 
 function version() {
