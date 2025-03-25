@@ -49,7 +49,7 @@
 		"happy-dom": "17.4.4",
 		"playwright": "1.51.1",
 		"typescript": "5.8.2",
-		"vite": "6.2.2",
+		"vite": "6.2.3",
 		"vite-plugin-i18next-loader": "3.1.2",
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.0.9",
@@ -57,7 +57,7 @@
 		"wrangler": "4.4.0"
 	},
 	"optionalDependencies": {
-		"@shopify/cli": "3.76.2"
+		"@shopify/cli": "3.77.0"
 	},
 	"engines": {
 		"node": "^22.14.0",
