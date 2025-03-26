@@ -83,7 +83,7 @@ export const links: Route.LinksFunction = () => [
 	{ rel: "preconnect", href: "https://unpkg.com" },
 	{
 		rel: "stylesheet",
-		href: "https://unpkg.com/@shopify/polaris@13.9.2/build/esm/styles.css",
+		href: "https://unpkg.com/@shopify/polaris@13.9.4/build/esm/styles.css",
 	},
 ];
 
