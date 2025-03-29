@@ -14,6 +14,7 @@
 		"deploy:shopify": "shopify app deploy --message=$(git rev-parse --abbrev-ref HEAD):$npm_package_version --version=$(git rev-parse HEAD)",
 		"dev": "react-router dev --host",
 		"dev:shopify": "shopify app dev",
+		"optimize": "socket optimize && npm run check",
 		"preview": "vite preview",
 		"start": "wrangler dev",
 		"test": "vitest --run",
@@ -56,7 +57,23 @@
 		"wrangler": "4.6.0"
 	},
 	"optionalDependencies": {
-		"@shopify/cli": "3.77.1"
+		"@shopify/cli": "3.77.1",
+		"socket": "0.14.57"
+	},
+	"overrides": {
+		"aggregate-error": "npm:@socketregistry/aggregate-error@^1",
+		"function-bind": "npm:@socketregistry/function-bind@^1",
+		"hasown": "npm:@socketregistry/hasown@^1",
+		"indent-string": "npm:@socketregistry/indent-string@^1",
+		"is-core-module": "npm:@socketregistry/is-core-module@^1",
+		"is-interactive": "npm:@socketregistry/is-interactive@^1",
+		"is-unicode-supported": "npm:@socketregistry/is-unicode-supported@^1",
+		"isarray": "npm:@socketregistry/isarray@^1",
+		"object-assign": "npm:@socketregistry/object-assign@^1",
+		"querystringify": "npm:@socketregistry/querystringify@^1",
+		"safe-buffer": "npm:@socketregistry/safe-buffer@^1",
+		"safer-buffer": "npm:@socketregistry/safer-buffer@^1",
+		"shell-quote": "npm:shell-quote@^1"
 	},
 	"engines": {
 		"node": "^22.14.0",
