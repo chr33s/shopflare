@@ -10,6 +10,15 @@ import {
 
 import type { Route } from "./+types/root";
 
+if (import.meta.env.DEV) {
+	const { scan, Store } = await import("react-scan");
+	Store.isInIframe.value = false;
+	scan({
+		enabled: true,
+		log: false,
+	});
+}
+
 export default function App() {
 	return <Outlet />;
 }

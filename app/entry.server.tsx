@@ -31,7 +31,7 @@ export default async function handleRequest(
 		"Content-Security-Policy",
 		[
 			"default-src 'self';",
-			"script-src 'self' 'unsafe-inline' https://cdn.shopify.com;",
+			"script-src blob: 'self' 'unsafe-inline' https://cdn.shopify.com;",
 			"style-src 'self' 'unsafe-inline' https://cdn.shopify.com https://unpkg.com;",
 			"font-src 'self' https://cdn.shopify.com;",
 			"img-src 'self' data: https://cdn.shopify.com;",
