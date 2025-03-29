@@ -1,4 +1,5 @@
 {
+	"biome.lspBin": "node_modules/@biomejs/biome/bin/biome",
 	"editor.bracketPairColorization.enabled": true,
 	"editor.codeActionsOnSave": {
 		"quickfix.biome": "explicit",
@@ -13,6 +14,7 @@
 	"github.copilot.chat.codeGeneration.useInstructionFiles": true,
 	"github.copilot.chat.codesearch.enabled": true,
 	"github.copilot.selectedCompletionModel": "gpt-4o-copilot",
+	"terminal.integrated.suggest.enabled": true,
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"typescript.enablePromptUseWorkspaceTsdk": true
 }
