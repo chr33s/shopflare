@@ -74,19 +74,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 	);
 }
 
-export const links: Route.LinksFunction = () => [
-	{ rel: "preconnect", href: "https://cdn.shopify.com" },
-	{
-		rel: "stylesheet",
-		href: "https://cdn.shopify.com/static/fonts/inter/v4/styles.css",
-	},
-	{ rel: "preconnect", href: "https://unpkg.com" },
-	{
-		rel: "stylesheet",
-		href: "https://unpkg.com/@shopify/polaris@13.9.5/build/esm/styles.css",
-	},
-];
-
 export const meta: Route.MetaFunction = () => [
 	{ title: "ShopFlare" },
 	{ name: "description", content: "..." },

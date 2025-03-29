@@ -1,7 +1,7 @@
 import { Button, Page, Text } from "@shopify/polaris";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, data } from "react-router";
+import { data } from "react-router";
 
 import {
 	Modal,
