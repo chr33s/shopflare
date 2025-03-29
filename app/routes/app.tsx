@@ -17,6 +17,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 		await shopify.admin(request);
 
 		return {
+			appHandle: shopify.config.appHandle,
 			apiKey: shopify.config.apiKey,
 			appDebug: shopify.config.appLogLevel === "debug",
 			appUrl: shopify.config.appUrl,
@@ -33,7 +34,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 }
 
 export default function App({ loaderData }: Route.ComponentProps) {
-	const { appUrl, apiKey } = loaderData;
+	const { appHandle, appUrl, apiKey } = loaderData;
 
 	const { t } = useTranslation(["app", "polaris"]);
 	const i18n = {
@@ -66,6 +67,12 @@ export default function App({ loaderData }: Route.ComponentProps) {
 				<NavMenu>
 					<AppLink rel="home" to="/app">
 						{t("app")}
+					</AppLink>
+					<AppLink
+						target="_top"
+						to={`shopify://admin/charges/${appHandle}/pricing_plans`}
+					>
+						Pricing plans
 					</AppLink>
 					<AppLink to="/app/page">{t("page")}</AppLink>
 				</NavMenu>

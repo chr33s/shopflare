@@ -11,6 +11,7 @@ export function createShopify(context: AppLoadContext) {
 		apiKey: env.SHOPIFY_API_KEY,
 		apiSecretKey: env.SHOPIFY_API_SECRET_KEY,
 		apiVersion,
+		appHandle: env.SHOPIFY_APP_HANDLE,
 		appUrl: env.SHOPIFY_APP_URL,
 		appLogLevel: env.SHOPIFY_APP_LOG_LEVEL,
 		appTest: env.SHOPIFY_APP_TEST === "1",
@@ -474,6 +475,7 @@ export function createShopify(context: AppLoadContext) {
 const schema = v.object({
 	SHOPIFY_API_KEY: v.pipe(v.string(), v.minLength(32)),
 	SHOPIFY_API_SECRET_KEY: v.pipe(v.string(), v.minLength(32)),
+	SHOPIFY_APP_HANDLE: v.string(),
 	SHOPIFY_APP_LOG_LEVEL: v.optional(
 		v.picklist(["debug", "info", "error"]),
 		"error",
