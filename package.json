@@ -29,14 +29,14 @@
 		"react": "18.3.1",
 		"react-dom": "18.3.1",
 		"react-i18next": "15.4.1",
-		"react-router": "7.4.0",
+		"react-router": "7.4.1",
 		"valibot": "1.0.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@cloudflare/vite-plugin": "0.1.17",
-		"@cloudflare/vitest-pool-workers": "0.8.6",
-		"@react-router/dev": "7.4.0",
+		"@cloudflare/vite-plugin": "0.1.19",
+		"@cloudflare/vitest-pool-workers": "0.8.8",
+		"@react-router/dev": "7.4.1",
 		"@shopify/api-codegen-preset": "1.1.6",
 		"@shopify/app-bridge-react": "4.1.8",
 		"@shopify/app-bridge-types": "0.0.18",
@@ -54,10 +54,10 @@
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.0.9",
 		"vitest-browser-react": "0.1.1",
-		"wrangler": "4.5.0"
+		"wrangler": "4.6.0"
 	},
 	"optionalDependencies": {
-		"@shopify/cli": "3.77.0"
+		"@shopify/cli": "3.77.1"
 	},
 	"engines": {
 		"node": "^22.14.0",
