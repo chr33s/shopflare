@@ -1,6 +1,6 @@
 import { Outlet } from "react-router";
 
-import { Provider } from "~/components/Proxy";
+import { Provider } from "~/components/proxy";
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/proxy";
 

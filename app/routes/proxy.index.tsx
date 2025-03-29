@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { Form } from "~/components/Proxy";
+import { Form } from "~/components/proxy";
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/proxy.index";
 
