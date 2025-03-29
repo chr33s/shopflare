@@ -1,7 +1,9 @@
 import { Button, Page, Text } from "@shopify/polaris";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, data } from "react-router";
+import { data } from "react-router";
+
+import Shop from "./app.index.graphql";
 
 import {
 	Modal,
@@ -20,14 +22,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	const client = await shopify.admin(request);
 
 	try {
-		const { data, errors } = await client.request(/* GraphQL */ `
-			#graphql
-			query Shop {
-				shop {
-					name
-				}
-			}
-		`);
+		const { data, errors } = await client.request(Shop);
 		return {
 			data: data as ShopQuery,
 			errors,
@@ -74,14 +69,7 @@ export default function AppIndex({
 	useEffect(() => {
 		fetch("shopify:admin/api/graphql.json", {
 			body: JSON.stringify({
-				query: /* GraphQL */ `
-					#graphql
-					query Shop {
-						shop {
-							name
-						}
-					}
-				`,
+				query: Shop,
 				variables: {},
 			}),
 			method: "POST",

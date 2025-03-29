@@ -1,6 +1,7 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig, loadEnv } from "vite";
+import graphqlLoader from "vite-plugin-graphql-loader";
 import i18nextLoader from "vite-plugin-i18next-loader";
 import tsconfigPaths from "vite-tsconfig-paths";
 
@@ -11,6 +12,7 @@ export default defineConfig(({ mode }) => {
 	return {
 		clearScreen: false,
 		plugins: [
+			graphqlLoader(),
 			i18nextLoader({
 				include: ["**/*.json"],
 				logLevel: "warn",

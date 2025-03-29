@@ -49,6 +49,7 @@
 		"playwright": "1.51.1",
 		"typescript": "5.8.2",
 		"vite": "6.2.3",
+		"vite-plugin-graphql-loader": "4.0.4",
 		"vite-plugin-i18next-loader": "3.1.2",
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.0.9",
