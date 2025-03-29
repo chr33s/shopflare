@@ -1,4 +1,3 @@
-import { NavMenu } from "@shopify/app-bridge-react";
 import { AppProvider, type AppProviderProps } from "@shopify/polaris";
 import type {
 	LinkLikeComponent,
@@ -8,6 +7,7 @@ import { forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Outlet } from "react-router";
 
+import { NavMenu } from "~/components/app-bridge";
 import { APP_BRIDGE_URL } from "~/const";
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/app";

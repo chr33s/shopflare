@@ -1,8 +1,14 @@
-import { Page, Text } from "@shopify/polaris";
+import { Button, Page, Text } from "@shopify/polaris";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { data } from "react-router";
+import { Link, data } from "react-router";
 
+import {
+	Modal,
+	SaveBar,
+	TitleBar,
+	useAppBridge,
+} from "~/components/app-bridge";
 import { ShopifyException, createShopify } from "~/shopify.server";
 import type { ShopQuery } from "~/types/admin.generated";
 import type { Route } from "./+types/app.index";
@@ -85,12 +91,35 @@ export default function AppIndex({
 			.catch((err) => console.error("app.index.useEffect.error", err));
 	}, []);
 
+	const shopify = useAppBridge();
+
 	return (
 		<Page title={t("app")}>
+			<SaveBar id="savebar" open={true}>
+				<button
+					onClick={() => console.log("savebar.click.primary")}
+					variant="primary"
+				/>
+				<button onClick={() => shopify.saveBar.hide("savebar")} />
+			</SaveBar>
+
+			<Modal id="modal" onShow={() => console.log("modal.onShow")} open={true}>
+				<TitleBar title="Modal">
+					<button onClick={() => shopify.modal.hide("modal")}>Discard</button>
+					<button
+						onClick={() => console.log("modal.click.primary")}
+						variant="primary"
+					>
+						Save
+					</button>
+				</TitleBar>
+				<p>Modal message</p>
+			</Modal>
+
 			<Text as="p">
 				{errors ? JSON.stringify(errors, null, 2) : data?.shop?.name}
-				<button onClick={() => console.log("app.click")}>click</button>
 			</Text>
+			<Button onClick={() => console.log("app.button.click")}>click</Button>
 		</Page>
 	);
 }
