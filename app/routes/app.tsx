@@ -1,9 +1,6 @@
 import { AppProvider, type AppProviderProps } from "@shopify/polaris";
-import type {
-	LinkLikeComponent,
-	LinkLikeComponentProps,
-} from "@shopify/polaris/build/ts/src/utilities/link";
-import { forwardRef } from "react";
+import type { LinkLikeComponentProps } from "@shopify/polaris/build/ts/src/utilities/link";
+import type { Ref } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Outlet } from "react-router";
 
@@ -65,11 +62,12 @@ export default function App({ loaderData }: Route.ComponentProps) {
 				type="text/javascript"
 			/>
 
-			<AppProvider i18n={i18n} linkComponent={ReactRouterPolarisLink}>
+			<AppProvider i18n={i18n} linkComponent={AppLink}>
 				<NavMenu>
-					<Link rel="home" to="/app">
+					<AppLink rel="home" to="/app">
 						{t("app")}
-					</Link>
+					</AppLink>
+					<AppLink to="/app/page">{t("page")}</AppLink>
 				</NavMenu>
 
 				<Outlet />
@@ -119,10 +117,11 @@ export const meta: Route.MetaFunction = ({ data }: Route.MetaArgs) => [
 	{ name: "shopify-experimental-features", content: "keepAlive" },
 ];
 
-export const ReactRouterPolarisLink = forwardRef<
-	HTMLAnchorElement,
-	LinkLikeComponentProps
->((props, ref) => (
-	<Link {...props} ref={ref} to={props.url ?? props.to} />
-)) as LinkLikeComponent;
-ReactRouterPolarisLink.displayName = "ReactRouterPolarisLink";
+export function AppLink(
+	props: Omit<LinkLikeComponentProps, "url"> & {
+		ref?: Ref<HTMLAnchorElement | null>;
+	} & ({ to: string } | { url: string }),
+) {
+	return <Link {...props} to={props.url ?? props.to} />;
+}
+AppLink.displayName = "AppLink";
