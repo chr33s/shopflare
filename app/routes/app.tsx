@@ -17,9 +17,9 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 		await shopify.admin(request);
 
 		return {
+			appDebug: shopify.config.appLogLevel === "debug",
 			appHandle: shopify.config.appHandle,
 			apiKey: shopify.config.apiKey,
-			appDebug: shopify.config.appLogLevel === "debug",
 			appUrl: shopify.config.appUrl,
 		};
 		// biome-ignore lint/suspicious/noExplicitAny: catch(err)
@@ -34,7 +34,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 }
 
 export default function App({ loaderData }: Route.ComponentProps) {
-	const { appHandle, appUrl, apiKey } = loaderData;
+	const { appHandle, apiKey, appUrl } = loaderData;
 
 	const { t } = useTranslation(["app", "polaris"]);
 	const i18n = {
