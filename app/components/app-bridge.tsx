@@ -5,7 +5,8 @@ import type {
 	UISaveBarAttributes,
 	UITitleBarAttributes,
 } from "@shopify/app-bridge-types";
-import { useEffect, useState } from "react";
+import { Children, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 declare module "react" {
 	// biome-ignore lint/style/noNamespace: upstream
@@ -60,9 +61,39 @@ export function Modal({
 		return () => component.removeEventListener("show", onShow);
 	}, [component, onShow]);
 
+	const { modalContent, saveBar, titleBar } = Children.toArray(children).reduce(
+		(acc, node) => {
+			const displayName = (
+				(node as React.ReactElement)?.type as React.FunctionComponent
+			)?.displayName;
+			switch (displayName) {
+				default:
+					acc.modalContent.push(node);
+					break;
+				case "ui-save-bar":
+					acc.saveBar = node;
+					break;
+				case "ui-title-bar":
+					acc.titleBar = node;
+					break;
+			}
+			return acc;
+		},
+		{ modalContent: [] } as {
+			modalContent: React.ReactNode[];
+			saveBar?: React.ReactNode;
+			titleBar?: React.ReactNode;
+		},
+	);
+	const modalContentPortal = component?.content
+		? createPortal(modalContent, component.content, props.id)
+		: null;
+
 	return (
 		<ui-modal {...props} ref={setComponent}>
-			{children}
+			{saveBar}
+			{titleBar}
+			<div>{modalContentPortal}</div>
 		</ui-modal>
 	);
 }
@@ -102,14 +133,14 @@ export function SaveBar({
 		if (!component || !onHide) return;
 
 		component.addEventListener("hide", onHide);
-		return () => component?.removeEventListener("hide", onHide);
+		return () => component.removeEventListener("hide", onHide);
 	}, [component, onHide]);
 
 	useEffect(() => {
 		if (!component || !onShow) return;
 
 		component.addEventListener("show", onShow);
-		return () => component?.removeEventListener("show", onShow);
+		return () => component.removeEventListener("show", onShow);
 	}, [component, onShow]);
 
 	return (
@@ -118,14 +149,16 @@ export function SaveBar({
 		</ui-save-bar>
 	);
 }
+SaveBar.displayName = "ui-save-bar";
 
-interface TitleBarProps extends React.PropsWithChildren<UINavMenuAttributes> {
+interface TitleBarProps extends React.PropsWithChildren<UITitleBarAttributes> {
 	title?: string;
 }
 
 export function TitleBar({ children, ...props }: TitleBarProps) {
 	return <ui-title-bar {...props}>{children}</ui-title-bar>;
 }
+TitleBar.displayName = "ui-title-bar";
 
 export function useAppBridge() {
 	if (typeof window === "undefined") {
