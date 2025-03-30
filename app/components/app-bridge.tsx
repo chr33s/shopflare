@@ -23,7 +23,7 @@ declare module "react" {
 	}
 }
 
-export interface ModalProps extends React.PropsWithChildren<UIModalAttributes> {
+interface ModalProps extends React.PropsWithChildren<UIModalAttributes> {
 	onHide?(): void;
 	onShow?(): void;
 	open?: boolean;
@@ -104,8 +104,7 @@ export function NavMenu({ children }: NavMenuProps) {
 	return <ui-nav-menu>{children}</ui-nav-menu>;
 }
 
-export interface SaveBarProps
-	extends React.PropsWithChildren<UISaveBarAttributes> {
+interface SaveBarProps extends React.PropsWithChildren<UISaveBarAttributes> {
 	onHide?(): void;
 	onShow?(): void;
 	open?: boolean;
