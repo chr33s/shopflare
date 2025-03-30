@@ -6,14 +6,7 @@ shopt -s nullglob
 source .env
 
 function help() {
-	echo "npx shopflare [releaseVersion,triggerWebhook,triggerWorkflow,update,version]"
-}
-
-function releaseVersion() {
-	version=$(node -p -e "require('./package.json').version")
-	release="releases/${version}"
-	git tag ${release} -m ""
-	git push github tag ${release}
+	echo "npx shopflare [triggerWebhook,triggerWorkflow,update,version]"
 }
 
 function triggerWebhook() {
