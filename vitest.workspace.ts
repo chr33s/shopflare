@@ -2,55 +2,41 @@ import {
 	defineWorkersConfig,
 	defineWorkersProject,
 } from "@cloudflare/vitest-pool-workers/config";
-import { defineConfig, defineWorkspace, mergeConfig } from "vitest/config";
-
-import viteConfig from "./vite.config";
+import { defineWorkspace, mergeConfig } from "vitest/config";
 
 export default defineWorkspace([
-	defineConfig((config) =>
+	{
+		extends: "./vitest.config.ts",
+		test: {
+			browser: {
+				headless: true,
+				enabled: true,
+				instances: [{ browser: "webkit" }],
+				provider: "playwright",
+			},
+			include: ["app/**/*.browser.test.tsx"],
+			name: "browser",
+		},
+	},
+	{
+		extends: "./vitest.config.ts",
+		test: {
+			environment: "happy-dom",
+			include: ["app/**/*.client.test.tsx"],
+			name: "app/client",
+		},
+	},
+	{
+		extends: "./vitest.config.ts",
+		test: {
+			environment: "node",
+			include: ["app/**/*.server.test.ts"],
+			name: "app/server",
+		},
+	},
+	defineWorkersConfig(
 		mergeConfig(
-			viteConfig(config),
-			defineConfig({
-				test: {
-					browser: {
-						headless: true,
-						enabled: true,
-						instances: [{ browser: "webkit" }],
-						provider: "playwright",
-					},
-					include: ["app/**/*.browser.test.tsx"],
-					name: "browser",
-				},
-			}),
-		),
-	),
-	defineConfig((config) =>
-		mergeConfig(
-			viteConfig(config),
-			defineConfig({
-				test: {
-					environment: "happy-dom",
-					include: ["app/**/*.client.test.tsx"],
-					name: "app/client",
-				},
-			}),
-		),
-	),
-	defineConfig((config) =>
-		mergeConfig(
-			viteConfig(config),
-			defineConfig({
-				test: {
-					environment: "node",
-					include: ["app/**/*.server.test.ts"],
-					name: "app/server",
-				},
-			}),
-		),
-	),
-	defineWorkersConfig((config) =>
-		mergeConfig(
-			viteConfig(config),
+			{ extends: "./vitest.config.ts" },
 			defineWorkersProject({
 				test: {
 					include: ["worker.test.ts", "app/**/*.worker.test.ts"],

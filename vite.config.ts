@@ -17,8 +17,8 @@ export default defineConfig(({ mode }) => {
 				namespaceResolution: "basename",
 				paths: ["./app/i18n"],
 			}),
-			!env.VITEST && cloudflare({ viteEnvironment: { name: "ssr" } }),
-			!env.VITEST && reactRouter(),
+			cloudflare({ viteEnvironment: { name: "ssr" } }),
+			reactRouter(),
 			tsconfigPaths(),
 		],
 		resolve: {
@@ -32,13 +32,6 @@ export default defineConfig(({ mode }) => {
 			resolve: {
 				conditions: ["workerd", "worker", "browser"],
 			},
-		},
-		test: {
-			env: {
-				...env,
-				SHOPIFY_APP_LOG_LEVEL: "error",
-			},
-			watch: false,
 		},
 	};
 });
