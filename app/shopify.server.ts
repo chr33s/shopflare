@@ -210,7 +210,6 @@ export function createShopify(context: AppLoadContext) {
 		const levels = ["error", "info", "debug"];
 		const level = levels.findIndex((level) => level === config.appLogLevel);
 
-		// biome-ignore lint/suspicious/noEmptyBlockStatements: ...
 		function noop() {}
 
 		return {
@@ -373,7 +372,7 @@ export function createShopify(context: AppLoadContext) {
 			key,
 			encoder.encode(data),
 		);
-		let computed;
+		let computed: string;
 		switch (encoding) {
 			case "base64":
 				computed = btoa(String.fromCharCode(...new Uint8Array(signature)));
@@ -396,7 +395,7 @@ export function createShopify(context: AppLoadContext) {
 			});
 		}
 
-		// biome-ignore lint/suspicious/noExplicitAny: upstream - "@cloudflare/workers-types";
+		// biome-ignore lint/suspicious/noExplicitAny: lib: [DOM] overrides worker-configuration.d.ts
 		const valid = (crypto.subtle as any).timingSafeEqual(bufA, bufB);
 		utils.log.debug("validateHmac", {
 			hmac,
@@ -454,6 +453,7 @@ export function createShopify(context: AppLoadContext) {
 		const headers = { ...requiredHeaders, ...optionalHeaders };
 		const webhook = Object.values(headers).reduce(
 			(headers, header) => ({
+				// biome-ignore lint/performance/noAccumulatingSpread: upstream
 				...headers,
 				[header]: request.headers.get(header),
 			}),

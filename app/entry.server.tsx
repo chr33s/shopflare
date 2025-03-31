@@ -69,6 +69,7 @@ export default async function handleRequest(
 		{
 			signal: request.signal,
 			onError(error: unknown) {
+				// biome-ignore lint/style/noParameterAssign: upstream
 				responseStatus = 500;
 				if (!request.signal.aborted) {
 					// Log streaming rendering errors from inside the shell

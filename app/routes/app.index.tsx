@@ -98,16 +98,20 @@ export default function AppIndex({
 			<SaveBar id="savebar" open={true}>
 				<button
 					onClick={() => console.log("savebar.click.primary")}
+					type="button"
 					variant="primary"
 				/>
-				<button onClick={() => shopify.saveBar.hide("savebar")} />
+				<button onClick={() => shopify.saveBar.hide("savebar")} type="button" />
 			</SaveBar>
 
 			<Modal id="modal" onShow={() => console.log("modal.onShow")} open={true}>
 				<TitleBar title="Modal">
-					<button onClick={() => shopify.modal.hide("modal")}>Discard</button>
+					<button onClick={() => shopify.modal.hide("modal")} type="button">
+						Discard
+					</button>
 					<button
 						onClick={() => console.log("modal.click.primary")}
+						type="button"
 						variant="primary"
 					>
 						Save

@@ -19,7 +19,6 @@ import {
 import { createPortal } from "react-dom";
 
 declare module "react" {
-	// biome-ignore lint/style/noNamespace: upstream
 	namespace JSX {
 		interface IntrinsicElements {
 			"ui-modal": UIModalAttributes & ReactRefAttributes<UIModalElement>;
@@ -75,14 +74,14 @@ export function Modal({
 			const displayName = ((node as ReactElement)?.type as FunctionComponent)
 				?.displayName;
 			switch (displayName) {
-				default:
-					acc.modalContent.push(node);
-					break;
 				case "ui-save-bar":
 					acc.saveBar = node;
 					break;
 				case "ui-title-bar":
 					acc.titleBar = node;
+					break;
+				default:
+					acc.modalContent.push(node);
 					break;
 			}
 			return acc;

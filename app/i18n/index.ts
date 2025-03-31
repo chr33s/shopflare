@@ -43,7 +43,7 @@ export class LanguageDetector implements LanguageDetectorModule {
 	}
 
 	public detect() {
-		let locale;
+		let locale: string | null | undefined;
 		if (this.#options?.searchParams?.has("locale")) {
 			locale = this.#options.searchParams.get("locale"); // shopify admin
 		}

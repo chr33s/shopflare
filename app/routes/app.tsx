@@ -48,6 +48,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
 		<>
 			<script data-api-key={apiKey} src={APP_BRIDGE_URL} />
 			<script
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: framework
 				dangerouslySetInnerHTML={{
 					__html: /* javascript */ `
 						function processWebVitals(metrics) {
@@ -90,6 +91,7 @@ export function ErrorBoundary(error: Route.ErrorBoundaryProps) {
 	) {
 		return (
 			<div
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: framework
 				dangerouslySetInnerHTML={{
 					// biome-ignore lint/suspicious/noExplicitAny: upsteam
 					__html: (error as any).data || "Handling response",
