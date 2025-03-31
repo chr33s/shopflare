@@ -9,6 +9,7 @@
 		"check": "biome check --write",
 		"clean": "rm -rf .{react-router,wrangler} build node_modules/.{mf,vite,vite-temp}",
 		"codegen": "graphql-codegen",
+		"cspell": "if command -v cspell 2>&1 >/dev/null; then cspell --gitignore .; fi",
 		"deploy": "wrangler deploy",
 		"deploy:preview": "wrangler versions upload --env preview",
 		"deploy:shopify": "shopify app deploy --message=$(git rev-parse --abbrev-ref HEAD):$npm_package_version --version=$(git rev-parse HEAD)",
