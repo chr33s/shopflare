@@ -1,3 +1,4 @@
+import type { PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	Links,
@@ -54,7 +55,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 }
 ErrorBoundary.displayName = "RootErrorBoundary";
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: PropsWithChildren) {
 	const { i18n } = useTranslation();
 
 	return (

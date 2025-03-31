@@ -5,29 +5,37 @@ import type {
 	UISaveBarAttributes,
 	UITitleBarAttributes,
 } from "@shopify/app-bridge-types";
-import { Children, useEffect, useState } from "react";
+import {
+	Children,
+	type FunctionComponent,
+	type PropsWithChildren,
+	type ReactElement,
+	type ReactNode,
+	type RefAttributes as ReactRefAttributes,
+	type Ref,
+	useEffect,
+	useState,
+} from "react";
 import { createPortal } from "react-dom";
 
 declare module "react" {
 	// biome-ignore lint/style/noNamespace: upstream
 	namespace JSX {
 		interface IntrinsicElements {
-			"ui-modal": UIModalAttributes & React.RefAttributes<UIModalElement>;
+			"ui-modal": UIModalAttributes & ReactRefAttributes<UIModalElement>;
 			"ui-title-bar": UITitleBarAttributes &
-				React.RefAttributes<UITitleBarElement>;
-			"ui-save-bar": UISaveBarAttributes &
-				React.RefAttributes<UISaveBarElement>;
-			"ui-nav-menu": UINavMenuAttributes &
-				React.RefAttributes<UINavMenuElement>;
+				ReactRefAttributes<UITitleBarElement>;
+			"ui-save-bar": UISaveBarAttributes & ReactRefAttributes<UISaveBarElement>;
+			"ui-nav-menu": UINavMenuAttributes & ReactRefAttributes<UINavMenuElement>;
 		}
 	}
 }
 
-interface ModalProps extends React.PropsWithChildren<UIModalAttributes> {
+interface ModalProps extends PropsWithChildren<UIModalAttributes> {
 	onHide?(): void;
 	onShow?(): void;
 	open?: boolean;
-	ref?: React.Ref<UIModalElement>;
+	ref?: Ref<UIModalElement>;
 }
 
 export function Modal({
@@ -64,9 +72,8 @@ export function Modal({
 
 	const { modalContent, saveBar, titleBar } = Children.toArray(children).reduce(
 		(acc, node) => {
-			const displayName = (
-				(node as React.ReactElement)?.type as React.FunctionComponent
-			)?.displayName;
+			const displayName = ((node as ReactElement)?.type as FunctionComponent)
+				?.displayName;
 			switch (displayName) {
 				default:
 					acc.modalContent.push(node);
@@ -81,9 +88,9 @@ export function Modal({
 			return acc;
 		},
 		{ modalContent: [] } as {
-			modalContent: React.ReactNode[];
-			saveBar?: React.ReactNode;
-			titleBar?: React.ReactNode;
+			modalContent: ReactNode[];
+			saveBar?: ReactNode;
+			titleBar?: ReactNode;
 		},
 	);
 	const modalContentPortal = component?.content
@@ -111,17 +118,17 @@ export function Modal({
 	);
 }
 
-interface NavMenuProps extends React.PropsWithChildren<UINavMenuAttributes> {}
+interface NavMenuProps extends PropsWithChildren<UINavMenuAttributes> {}
 
 export function NavMenu({ children }: NavMenuProps) {
 	return <ui-nav-menu>{children}</ui-nav-menu>;
 }
 
-interface SaveBarProps extends React.PropsWithChildren<UISaveBarAttributes> {
+interface SaveBarProps extends PropsWithChildren<UISaveBarAttributes> {
 	onHide?(): void;
 	onShow?(): void;
 	open?: boolean;
-	ref?: React.Ref<UISaveBarElement>;
+	ref?: Ref<UISaveBarElement>;
 }
 
 export function SaveBar({
@@ -176,7 +183,7 @@ export function SaveBar({
 }
 SaveBar.displayName = "ui-save-bar";
 
-interface TitleBarProps extends React.PropsWithChildren<UITitleBarAttributes> {
+interface TitleBarProps extends PropsWithChildren<UITitleBarAttributes> {
 	title?: string;
 }
 
