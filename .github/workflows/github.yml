@@ -6,6 +6,7 @@ concurrency:
 
 on:
   push:
+    branches: [main]
     tags: [releases/*]
 
   workflow_dispatch:
@@ -15,10 +16,33 @@ on:
         required: true
         type: string
 
+  schedule:
+    - cron: '0 0 * * 0'
+
 jobs:
+  codeql:
+    name: CodeQL
+    if: ${{ github.repository == 'chr33s/shopflare' && (github.ref_type == 'branch' || github.event_name == 'schedule') }}
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          build-mode: none
+          languages: actions, javascript-typescript
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: "package.json"
+          cache: "npm"
+      - run: npm ci
+      - uses: github/codeql-action/analyze@v3
+
   release:
     name: Release
-    if: ${{ github.repository == 'chr33s/shopflare' }}
+    if: ${{ github.repository == 'chr33s/shopflare' && (github.ref_type == 'tag' || github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
