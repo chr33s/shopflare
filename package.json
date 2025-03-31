@@ -41,7 +41,6 @@
 		"@shopify/app-bridge-types": "0.0.18",
 		"@shopify/polaris": "13.9.5",
 		"@shopify/polaris-icons": "9.3.1",
-		"@testing-library/dom": "10.4.0",
 		"@types/react": "19.0.12",
 		"@types/react-dom": "19.0.4",
 		"@vitest/browser": "3.0.9",
