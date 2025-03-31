@@ -27,6 +27,7 @@ interface ModalProps extends React.PropsWithChildren<UIModalAttributes> {
 	onHide?(): void;
 	onShow?(): void;
 	open?: boolean;
+	ref?: React.Ref<UIModalElement>;
 }
 
 export function Modal({
@@ -90,7 +91,19 @@ export function Modal({
 		: null;
 
 	return (
-		<ui-modal {...props} ref={setComponent}>
+		<ui-modal
+			{...props}
+			ref={(ref) => {
+				setComponent(ref);
+				if (props.ref) {
+					if (typeof props.ref === "function") {
+						props.ref(ref);
+					} else {
+						props.ref.current = ref;
+					}
+				}
+			}}
+		>
 			{saveBar}
 			{titleBar}
 			<div>{modalContentPortal}</div>
@@ -108,6 +121,7 @@ interface SaveBarProps extends React.PropsWithChildren<UISaveBarAttributes> {
 	onHide?(): void;
 	onShow?(): void;
 	open?: boolean;
+	ref?: React.Ref<UISaveBarElement>;
 }
 
 export function SaveBar({
@@ -143,7 +157,19 @@ export function SaveBar({
 	}, [component, onShow]);
 
 	return (
-		<ui-save-bar {...props} ref={setComponent}>
+		<ui-save-bar
+			{...props}
+			ref={(ref) => {
+				setComponent(ref);
+				if (props.ref) {
+					if (typeof props.ref === "function") {
+						props.ref(ref);
+					} else {
+						props.ref.current = ref;
+					}
+				}
+			}}
+		>
 			{children}
 		</ui-save-bar>
 	);
