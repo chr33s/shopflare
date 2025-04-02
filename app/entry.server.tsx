@@ -32,7 +32,7 @@ export default async function handleRequest(
 		[
 			"default-src 'self';",
 			"script-src 'self' 'unsafe-inline' https://cdn.shopify.com;",
-			"style-src 'self' 'unsafe-inline' https://cdn.shopify.com https://unpkg.com;",
+			"style-src 'self' 'unsafe-inline' https://cdn.shopify.com;",
 			"font-src 'self' https://cdn.shopify.com;",
 			"img-src 'self' data: https://cdn.shopify.com;",
 			"connect-src 'self' https://atlas.shopifysvc.com https://extensions.shopifycdn.com;",

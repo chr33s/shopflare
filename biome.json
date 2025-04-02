@@ -16,7 +16,8 @@
 			".react-router/*",
 			".shopify/*",
 			".wrangler/*",
-			"worker-configuration.d.ts"
+			"worker-configuration.d.ts",
+			"app/components/polaris.css"
 		]
 	},
 	"formatter": {

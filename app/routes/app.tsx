@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Link, Outlet } from "react-router";
 
 import { NavMenu } from "~/components/app-bridge";
+import polarisCss from "~/components/polaris.css?url";
 import { APP_BRIDGE_URL } from "~/const";
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/app";
@@ -127,11 +128,7 @@ export const links: Route.LinksFunction = () => [
 		rel: "stylesheet",
 		href: "https://cdn.shopify.com/static/fonts/inter/v4/styles.css",
 	},
-	{ rel: "preconnect", href: "https://unpkg.com" },
-	{
-		rel: "stylesheet",
-		href: "https://unpkg.com/@shopify/polaris@13.9.5/build/esm/styles.css",
-	},
+	{ rel: "stylesheet", href: polarisCss },
 ];
 
 export const meta: Route.MetaFunction = ({ data }: Route.MetaArgs) => [
