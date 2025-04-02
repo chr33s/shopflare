@@ -1,19 +1,11 @@
 import * as Polaris from "@shopify/polaris";
-import type {
-	LinkLikeComponent,
-	LinkLikeComponentProps,
-} from "@shopify/polaris/build/ts/src/utilities/link";
-import {
-	type ComponentPropsWithRef,
-	type FunctionComponent,
-	useCallback,
-	useState,
-} from "react";
+import type { LinkLikeComponentProps } from "@shopify/polaris/build/ts/src/utilities/link";
+import { type Ref, useCallback, useState } from "react";
 import { Link as ReactRouterLink } from "react-router";
 
 export * from "@shopify/polaris";
 
-// TODO: [Combobox, DropZone]
+// TODO: [Combobox, Dropzone] : -> source components !pass [name] attribute
 
 export function AppProvider({ children, ...props }: Polaris.AppProviderProps) {
 	return (
@@ -23,17 +15,10 @@ export function AppProvider({ children, ...props }: Polaris.AppProviderProps) {
 	);
 }
 
-type UncontrolledType<
-	Props,
-	Component extends FunctionComponent<Props>,
-> = Props & {
-	name: string;
-} & ComponentPropsWithRef<Component>;
-
-export type CheckboxProps = UncontrolledType<
-	Polaris.CheckboxProps,
-	typeof Polaris.Checkbox
->;
+export interface CheckboxProps extends Omit<Polaris.CheckboxProps, "name"> {
+	name: Polaris.CheckboxProps["name"];
+	ref?: Ref<Polaris.CheckboxHandles>;
+}
 
 export function Checkbox(props: CheckboxProps) {
 	const [checked, setChecked] = useState(!!props.checked);
@@ -55,10 +40,49 @@ export function Checkbox(props: CheckboxProps) {
 	);
 }
 
-export type DatePickerProps = UncontrolledType<
-	Polaris.DatePickerProps,
-	typeof Polaris.DatePicker
->;
+export interface ColorPickerProps
+	extends Omit<Polaris.ColorPickerProps, "color" | "onChange"> {
+	color?: Polaris.HSBAColor;
+	name: string;
+	onChange?: Polaris.ColorPickerProps["onChange"];
+	ref?: Ref<Polaris.ColorPicker>;
+}
+
+export function ColorPicker(props: ColorPickerProps) {
+	const [value, setValue] = useState(
+		props.color ?? {
+			alpha: 1,
+			brightness: 0,
+			hue: 1,
+			saturation: 0,
+		},
+	);
+	const onChange = useCallback(
+		(value: Polaris.HSBAColor) => {
+			props.onChange?.(value);
+			setValue(value);
+		},
+		[props.onChange],
+	);
+
+	return (
+		<>
+			<input type="hidden" name={props.name} value={JSON.stringify(value)} />
+
+			<Polaris.ColorPicker
+				{...props}
+				color={value}
+				id={props.name}
+				onChange={onChange}
+			/>
+		</>
+	);
+}
+
+export interface DatePickerProps extends Polaris.DatePickerProps {
+	name: string;
+	ref?: Ref<typeof Polaris.DatePicker>;
+}
 
 export function DatePicker(props: DatePickerProps) {
 	const date = new Date();
@@ -144,17 +168,19 @@ export function DatePicker(props: DatePickerProps) {
 	);
 }
 
-export type LinkProps = LinkLikeComponentProps &
-	ComponentPropsWithRef<LinkLikeComponent>;
+export interface LinkProps extends LinkLikeComponentProps {
+	ref?: Ref<HTMLAnchorElement>;
+}
 
 export function Link({ url, ...props }: LinkProps) {
 	return <ReactRouterLink {...props} to={url} />;
 }
 
-export type RadioButtonProps = UncontrolledType<
-	Polaris.RadioButtonProps,
-	typeof Polaris.RadioButton
->;
+export interface RadioButtonProps
+	extends Omit<Polaris.RadioButtonProps, "name"> {
+	name: Polaris.RadioButtonProps["name"];
+	ref?: Ref<typeof Polaris.RadioButton>;
+}
 
 export function RadioButton(props: RadioButtonProps) {
 	const [checked, setChecked] = useState(!!props.checked);
@@ -176,10 +202,13 @@ export function RadioButton(props: RadioButtonProps) {
 	);
 }
 
-export type RangeSliderProps = UncontrolledType<
-	Polaris.RangeSliderProps,
-	typeof Polaris.RangeSlider
->;
+export interface RangeSliderProps
+	extends Omit<Polaris.RangeSliderProps, "onChange" | "value"> {
+	name: string;
+	onChange?: Polaris.RangeSliderProps["onChange"];
+	ref?: Ref<typeof Polaris.RangeSlider>;
+	value?: Polaris.RangeSliderProps["value"];
+}
 
 export function RangeSlider(props: RangeSliderProps) {
 	const [value, setValue] = useState(props.value ?? 0);
@@ -201,10 +230,10 @@ export function RangeSlider(props: RangeSliderProps) {
 	);
 }
 
-export type SelectProps = UncontrolledType<
-	Polaris.SelectProps,
-	typeof Polaris.Select
->;
+export interface SelectProps extends Omit<Polaris.SelectProps, "name"> {
+	name: Polaris.SelectProps["name"];
+	ref?: Ref<typeof Polaris.Select>;
+}
 
 export function Select(props: SelectProps) {
 	const [value, setValue] = useState(props.value ?? "");
@@ -226,10 +255,10 @@ export function Select(props: SelectProps) {
 	);
 }
 
-export type TextFieldProps = UncontrolledType<
-	Polaris.TextFieldProps,
-	typeof Polaris.TextField
->;
+export interface TextFieldProps extends Omit<Polaris.TextFieldProps, "name"> {
+	name: Polaris.TextFieldProps["name"];
+	ref?: Ref<typeof Polaris.TextField>;
+}
 
 export function TextField(props: TextFieldProps) {
 	const [value, setValue] = useState(props.value ?? "");
