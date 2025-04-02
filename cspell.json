@@ -1,5 +1,10 @@
 {
-	"ignorePaths": ["**/types", "**/node_modules", "worker-configuration.d.ts"],
+	"ignorePaths": [
+		"**/types",
+		"**/node_modules",
+		"app/components/polaris.css",
+		"worker-configuration.d.ts"
+	],
 	"ignoreWords": [
 		"accesstoken",
 		"autoupdate",
@@ -7,6 +12,7 @@
 		"codegen",
 		"evenodd",
 		"eventpath",
+		"HSBA",
 		"isbot",
 		"logpush",
 		"miniflare",
