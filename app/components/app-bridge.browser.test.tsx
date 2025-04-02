@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { render } from "vitest-browser-react";
+import { render, renderHook } from "vitest-browser-react";
 
 import { Modal, NavMenu, SaveBar, TitleBar, useAppBridge } from "./app-bridge";
 
@@ -65,12 +65,6 @@ test("useAppBridge", async () => {
 	const origin = "https://example.com";
 	// biome-ignore lint/suspicious/noExplicitAny: tmp
 	(window as any).shopify = { origin };
-	const Component = () => {
-		const appBridge = useAppBridge();
-		return <div id="test">{appBridge.origin}</div>;
-	};
-	const screen = render(<Component />);
-	const fragment = screen.asFragment();
-	const el = fragment.getElementById("test")!;
-	await expect.element(el).toHaveTextContent(origin);
+	const { result } = renderHook(() => useAppBridge());
+	expect(result.current.origin).toBe(origin);
 });
