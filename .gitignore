@@ -10,3 +10,6 @@
 /.react-router/
 /build/
 .shopify
+
+# Vitest
+**/__screenshots__/*
