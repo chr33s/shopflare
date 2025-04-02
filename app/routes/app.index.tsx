@@ -1,14 +1,9 @@
-import { Button, Page, Text } from "@shopify/polaris";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { data } from "react-router";
 
-import {
-	Modal,
-	SaveBar,
-	TitleBar,
-	useAppBridge,
-} from "~/components/app-bridge";
+import { SaveBar, useAppBridge } from "~/components/app-bridge";
+import { Button, Page, Text } from "~/components/polaris";
 import { ShopifyException, createShopify } from "~/shopify.server";
 import type { ShopQuery } from "~/types/admin.generated";
 import type { Route } from "./+types/app.index";
@@ -95,35 +90,19 @@ export default function AppIndex({
 
 	return (
 		<Page title={t("app")}>
-			<SaveBar id="savebar" open={true}>
+			<SaveBar id="savebar">
+				<button onClick={() => shopify.saveBar.hide("savebar")} type="reset" />
 				<button
 					onClick={() => console.log("savebar.click.primary")}
-					type="button"
+					type="submit"
 					variant="primary"
 				/>
-				<button onClick={() => shopify.saveBar.hide("savebar")} type="button" />
 			</SaveBar>
-
-			<Modal id="modal" onShow={() => console.log("modal.onShow")} open={true}>
-				<TitleBar title="Modal">
-					<button onClick={() => shopify.modal.hide("modal")} type="button">
-						Discard
-					</button>
-					<button
-						onClick={() => console.log("modal.click.primary")}
-						type="button"
-						variant="primary"
-					>
-						Save
-					</button>
-				</TitleBar>
-				<p>Modal message</p>
-			</Modal>
 
 			<Text as="p">
 				{errors ? JSON.stringify(errors, null, 2) : data?.shop?.name}
 			</Text>
-			<Button onClick={() => console.log("app.button.click")}>click</Button>
+			<Button onClick={() => shopify.saveBar.show("savebar")}>click</Button>
 		</Page>
 	);
 }

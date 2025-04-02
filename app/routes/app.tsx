@@ -1,10 +1,8 @@
-import { AppProvider, type AppProviderProps } from "@shopify/polaris";
-import type { LinkLikeComponentProps } from "@shopify/polaris/build/ts/src/utilities/link";
-import type { Ref } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Outlet } from "react-router";
+import { Outlet } from "react-router";
 
 import { NavMenu } from "~/components/app-bridge";
+import { AppProvider, type AppProviderProps, Link } from "~/components/polaris";
 import polarisCss from "~/components/polaris.css?url";
 import { APP_BRIDGE_URL } from "~/const";
 import { createShopify } from "~/shopify.server";
@@ -65,18 +63,18 @@ export default function App({ loaderData }: Route.ComponentProps) {
 				type="text/javascript"
 			/>
 
-			<AppProvider i18n={i18n} linkComponent={AppLink}>
+			<AppProvider i18n={i18n}>
 				<NavMenu>
-					<AppLink rel="home" to="/app">
+					<Link rel="home" url="/app">
 						{t("app")}
-					</AppLink>
-					<AppLink
+					</Link>
+					<Link
 						target="_top"
-						to={`shopify://admin/charges/${appHandle}/pricing_plans`}
+						url={`shopify://admin/charges/${appHandle}/pricing_plans`}
 					>
 						Pricing plans
-					</AppLink>
-					<AppLink to="/app/page">{t("page")}</AppLink>
+					</Link>
+					<Link url="/app/page">{t("page")}</Link>
 				</NavMenu>
 
 				<Outlet />
@@ -135,12 +133,3 @@ export const meta: Route.MetaFunction = ({ data }: Route.MetaArgs) => [
 	data.appDebug ? { name: "shopify-debug", content: "web-vitals" } : {},
 	{ name: "shopify-experimental-features", content: "keepAlive" },
 ];
-
-export function AppLink(
-	props: Omit<LinkLikeComponentProps, "url"> & {
-		ref?: Ref<HTMLAnchorElement | null>;
-	} & ({ to: string } | { url: string }),
-) {
-	return <Link {...props} to={props.url ?? props.to} />;
-}
-AppLink.displayName = "AppLink";
