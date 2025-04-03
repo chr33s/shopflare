@@ -1,9 +1,9 @@
+import polarisCss from "@shopify/polaris/build/esm/styles.css?url";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router";
 
 import { NavMenu } from "~/components/app-bridge";
 import { AppProvider, type AppProviderProps, Link } from "~/components/polaris";
-import polarisCss from "~/components/polaris.css?url";
 import { APP_BRIDGE_URL } from "~/const";
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/app";
