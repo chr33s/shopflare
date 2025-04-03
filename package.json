@@ -10,7 +10,7 @@
 		"check:code": "biome check --write",
 		"check:spell": "if command -v cspell 2>&1 >/dev/null; then cspell --gitignore --quiet .; fi",
 		"check:types": "tsc",
-		"clean": "rm -rf .{react-router,wrangler} build node_modules/.{mf,vite,vite-temp}",
+		"clean": "rm -rf .{react-router,wrangler} build node_modules/.{mf,vite,vite-temp} && find . -type d -name __screenshots__ -exec rm -rf {} \\;",
 		"deploy": "wrangler deploy",
 		"deploy:preview": "wrangler versions upload --env preview",
 		"deploy:shopify": "shopify app deploy --message=$(git rev-parse --abbrev-ref HEAD):$npm_package_version --version=$(git rev-parse HEAD)",
