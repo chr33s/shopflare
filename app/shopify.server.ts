@@ -97,6 +97,7 @@ export function createShopify(context: AppLoadContext) {
 				"Content-Type": "application/json",
 				Accept: "application/json",
 			},
+			signal: AbortSignal.timeout(1_000),
 		});
 		if (!response.ok) {
 			// biome-ignore lint/suspicious/noExplicitAny: upstream

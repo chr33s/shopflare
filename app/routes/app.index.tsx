@@ -67,6 +67,8 @@ export default function AppIndex({
 	const { t } = useTranslation();
 
 	useEffect(() => {
+		const controller = new AbortController();
+
 		fetch("shopify:admin/api/graphql.json", {
 			body: JSON.stringify({
 				query: /* GraphQL */ `
@@ -80,10 +82,13 @@ export default function AppIndex({
 				variables: {},
 			}),
 			method: "POST",
+			signal: controller.signal,
 		})
 			.then((res) => res.json())
 			.then((res) => console.log("app.index.useEffect", res))
 			.catch((err) => console.error("app.index.useEffect.error", err));
+
+		return () => controller.abort();
 	}, []);
 
 	const shopify = useAppBridge();
