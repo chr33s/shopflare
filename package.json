@@ -17,7 +17,7 @@
 		"dev": "react-router dev --host",
 		"dev:shopify": "shopify app dev",
 		"gen": "concurrently 'npm:gen:*'",
-		"gen:code": "graphql-codegen",
+		"gen:code": "graphql-codegen --errors-only",
 		"gen:types": "wrangler types && react-router typegen",
 		"preview": "vite preview",
 		"start": "wrangler dev",
