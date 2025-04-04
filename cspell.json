@@ -3,6 +3,7 @@
 	"ignoreWords": [
 		"accesstoken",
 		"autoupdate",
+		"biomejs",
 		"cloudflared",
 		"codegen",
 		"evenodd",

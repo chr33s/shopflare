@@ -5,8 +5,19 @@ shopt -s nullglob
 
 source .env
 
+function addGitHook() {
+	printf '%s\n' \
+		"#!/usr/bin/env sh" \
+		"set -eu" \
+		"" \
+		"npx @biomejs/biome check --staged --files-ignore-unknown=true --no-errors-on-unmatched" \
+		"npx tsc --noEmit" \
+		> .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
+}
+
 function help() {
-	echo "npx shopflare [triggerWebhook,triggerWorkflow,update,version]"
+	echo "npx shopflare [addGitHook,triggerWebhook,triggerWorkflow,update,version]"
 }
 
 function triggerWebhook() {
