@@ -121,12 +121,14 @@ export function headers({
 }
 
 export const links: Route.LinksFunction = () => [
-	{ rel: "preconnect", href: "https://cdn.shopify.com" },
+	{ href: "https://cdn.shopify.com", rel: "preconnect" },
+	{ as: "script", href: APP_BRIDGE_URL, rel: "preload" },
 	{
-		rel: "stylesheet",
 		href: "https://cdn.shopify.com/static/fonts/inter/v4/styles.css",
+		precedence: "default",
+		rel: "stylesheet",
 	},
-	{ rel: "stylesheet", href: polarisCss },
+	{ href: polarisCss, precedence: "high", rel: "stylesheet" },
 ];
 
 export const meta: Route.MetaFunction = ({ data }: Route.MetaArgs) => [
