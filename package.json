@@ -26,7 +26,7 @@
 		"tunnel": "source .env && cloudflared tunnel --no-autoupdate --url ${SHOPIFY_APP_URL}:8080 run --token ${CLOUDFLARE_API_TOKEN}"
 	},
 	"dependencies": {
-		"@shopify/graphql-client": "1.3.1",
+		"@shopify/graphql-client": "1.3.2",
 		"i18next": "24.2.3",
 		"isbot": "5.1.25",
 		"jose": "6.0.10",
@@ -41,7 +41,7 @@
 		"@cloudflare/vite-plugin": "0.1.20",
 		"@cloudflare/vitest-pool-workers": "0.8.9",
 		"@react-router/dev": "7.4.1",
-		"@shopify/api-codegen-preset": "1.1.6",
+		"@shopify/api-codegen-preset": "1.1.7",
 		"@shopify/app-bridge-types": "0.0.18",
 		"@shopify/polaris": "13.9.5",
 		"@shopify/polaris-icons": "9.3.1",
@@ -52,7 +52,7 @@
 		"happy-dom": "17.4.4",
 		"playwright": "1.51.1",
 		"typescript": "5.8.2",
-		"vite": "6.2.4",
+		"vite": "6.2.5",
 		"vite-plugin-i18next-loader": "3.1.2",
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.1.1",
