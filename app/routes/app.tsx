@@ -1,9 +1,9 @@
 import polarisCss from "@shopify/polaris/build/esm/styles.css?url";
 import { useTranslation } from "react-i18next";
-import { Outlet } from "react-router";
+import { Link, Outlet } from "react-router";
 
 import { NavMenu } from "~/components/app-bridge";
-import { AppProvider, type AppProviderProps, Link } from "~/components/polaris";
+import { AppProvider, type AppProviderProps } from "~/components/polaris";
 import { APP_BRIDGE_URL } from "~/const";
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/app";
@@ -65,16 +65,16 @@ export default function App({ loaderData }: Route.ComponentProps) {
 
 			<AppProvider i18n={i18n}>
 				<NavMenu>
-					<Link rel="home" url="/app">
+					<Link rel="home" to="/app">
 						{t("app")}
 					</Link>
 					<Link
 						target="_top"
-						url={`shopify://admin/charges/${appHandle}/pricing_plans`}
+						to={`shopify://admin/charges/${appHandle}/pricing_plans`}
 					>
 						Pricing plans
 					</Link>
-					<Link url="/app/page">{t("page")}</Link>
+					<Link to="/app/page">{t("page")}</Link>
 				</NavMenu>
 
 				<Outlet />
