@@ -58,10 +58,18 @@ To split environments see [Cloudflare](https://developers.cloudflare.com/workers
 
 ## Documentation
 
+- [App Bridge](https://shopify.dev/docs/api/app-bridge-library/react-components)
+- [Cloudflare](https://developers.cloudflare.com)
+- [Polaris](https://polaris.shopify.com)
 - [React](https://react.dev/reference/react)
 - [React Router](https://reactrouter.com/home)
 - [Shopify](http://shopify.dev/)
-- [Cloudflare](https://developers.cloudflare.com)
+
+### Components
+
+- **[app-bridge.tsx](./app/components/app-bridge.tsx)** as per App Bridge docs but import `~/components/polaris` instead of `@shopify/polaris`
+- **[polaris.tsx](./app/components/polaris.tsx)** as per Polaris docs but import `~/components/app-bridge` instead of `@shopify/app-bridge-react`
+- **[proxy.tsx](./app/components/proxy.tsx)** as per [Shopify App Proxy](https://shopify.dev/docs/api/shopify-app-remix/v3/app-proxy-components) docs but import from `~/components/proxy` instead of `@shopify/shopify-app-remix/react`
 
 ## Copyright
 
