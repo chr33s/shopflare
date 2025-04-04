@@ -3,14 +3,14 @@ import { type JWTPayload, jwtVerify } from "jose";
 import { type AppLoadContext, redirect } from "react-router";
 import * as v from "valibot";
 
-export const apiVersion = "2025-01";
+import { API_VERSION } from "./const";
 
 export function createShopify(context: AppLoadContext) {
 	const env = v.parse(schema, context.cloudflare.env);
 	const config = {
 		apiKey: env.SHOPIFY_API_KEY,
 		apiSecretKey: env.SHOPIFY_API_SECRET_KEY,
-		apiVersion,
+		apiVersion: API_VERSION,
 		appHandle: env.SHOPIFY_APP_HANDLE,
 		appUrl: env.SHOPIFY_APP_URL,
 		appLogLevel: env.SHOPIFY_APP_LOG_LEVEL,

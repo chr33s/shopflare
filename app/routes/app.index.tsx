@@ -4,6 +4,7 @@ import { data } from "react-router";
 
 import { SaveBar, useAppBridge } from "~/components/app-bridge";
 import { Button, Page, Text } from "~/components/polaris";
+import { API_VERSION } from "~/const";
 import { ShopifyException, createShopify } from "~/shopify.server";
 import type { ShopQuery } from "~/types/admin.generated";
 import type { Route } from "./+types/app.index";
@@ -69,7 +70,7 @@ export default function AppIndex({
 	useEffect(() => {
 		const controller = new AbortController();
 
-		fetch("shopify:admin/api/graphql.json", {
+		fetch(`shopify:admin/api/${API_VERSION}/graphql.json`, {
 			body: JSON.stringify({
 				query: /* GraphQL */ `
 					#graphql

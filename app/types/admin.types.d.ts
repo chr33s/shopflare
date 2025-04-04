@@ -512,11 +512,6 @@ export type AdjustmentSale = Sale & {
 export enum AdjustmentsSortKeys {
   /** Sort by the `id` value. */
   Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `time` value. */
   Time = 'TIME'
 }
@@ -771,8 +766,14 @@ export type AppDiscountType = {
   /**
    * The [discount class](https://help.shopify.com/manual/discounts/combining-discounts/discount-combinations)
    * that's used to control how discounts can be combined.
+   * @deprecated Use `discountClasses` instead.
    */
   discountClass: DiscountClass;
+  /**
+   * The list of [discount classes](https://help.shopify.com/manual/discounts/combining-discounts/discount-combinations)
+   * that this app extension supports.
+   */
+  discountClasses: Array<DiscountClass>;
   /**
    * The
    * [function ID](https://shopify.dev/docs/apps/build/functions/input-output/metafields-for-input-queries)
@@ -784,6 +785,7 @@ export type AppDiscountType = {
    * The type of line item on an order that the
    * [discount type](https://help.shopify.com/manual/discounts/discount-types) applies to.
    * Valid values: `SHIPPING_LINE` and `LINE_ITEM`.
+   * @deprecated Use `discountClasses` instead.
    */
   targetType: DiscountApplicationTargetType;
   /**
@@ -791,6 +793,26 @@ export type AppDiscountType = {
    * that the app extension is providing.
    */
   title: Scalars['String']['output'];
+};
+
+/** An auto-generated type for paginating through multiple AppDiscountTypes. */
+export type AppDiscountTypeConnection = {
+  __typename?: 'AppDiscountTypeConnection';
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
+  edges: Array<AppDiscountTypeEdge>;
+  /** A list of nodes that are contained in AppDiscountTypeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
+  nodes: Array<AppDiscountType>;
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
+  pageInfo: PageInfo;
+};
+
+/** An auto-generated type which holds one AppDiscountType and a cursor during pagination. */
+export type AppDiscountTypeEdge = {
+  __typename?: 'AppDiscountTypeEdge';
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of AppDiscountTypeEdge. */
+  node: AppDiscountType;
 };
 
 /** An auto-generated type which holds one App and a cursor during pagination. */
@@ -976,12 +998,7 @@ export enum AppInstallationSortKeys {
   /** Sort by the `id` value. */
   Id = 'ID',
   /** Sort by the `installed_at` value. */
-  InstalledAt = 'INSTALLED_AT',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  InstalledAt = 'INSTALLED_AT'
 }
 
 /**
@@ -1133,6 +1150,8 @@ export type AppRecurringPricing = {
   discount?: Maybe<AppSubscriptionDiscount>;
   /** The frequency at which the subscribing shop is billed for an app subscription. */
   interval: AppPricingInterval;
+  /** The app store pricing plan handle. */
+  planHandle?: Maybe<Scalars['String']['output']>;
   /** The amount and currency to be charged to the subscribing shop every billing interval. */
   price: MoneyV2;
 };
@@ -1195,12 +1214,7 @@ export enum AppRevenueAttributionRecordSortKeys {
   /** Sort by the `created_at` value. */
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /** Represents the billing types of revenue attribution. */
@@ -1428,12 +1442,7 @@ export enum AppSubscriptionSortKeys {
   /** Sort by the `created_at` value. */
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /** The status of the app subscription. */
@@ -1492,12 +1501,7 @@ export enum AppTransactionSortKeys {
   /** Sort by the `created_at` value. */
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /**
@@ -1583,12 +1587,7 @@ export enum AppUsageRecordSortKeys {
   /** Sort by the `created_at` value. */
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /** The Apple mobile platform application. */
@@ -1758,6 +1757,26 @@ export type ArticleAuthor = {
   name: Scalars['String']['output'];
 };
 
+/** An auto-generated type for paginating through multiple ArticleAuthors. */
+export type ArticleAuthorConnection = {
+  __typename?: 'ArticleAuthorConnection';
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
+  edges: Array<ArticleAuthorEdge>;
+  /** A list of nodes that are contained in ArticleAuthorEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
+  nodes: Array<ArticleAuthor>;
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
+  pageInfo: PageInfo;
+};
+
+/** An auto-generated type which holds one ArticleAuthor and a cursor during pagination. */
+export type ArticleAuthorEdge = {
+  __typename?: 'ArticleAuthorEdge';
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of ArticleAuthorEdge. */
+  node: ArticleAuthor;
+};
+
 /** The input fields of a blog when an article is created or updated. */
 export type ArticleBlogInput = {
   /** The title of the blog. */
@@ -1920,11 +1939,6 @@ export enum ArticleSortKeys {
   Id = 'ID',
   /** Sort by the `published_at` value. */
   PublishedAt = 'PUBLISHED_AT',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `title` value. */
   Title = 'TITLE',
   /** Sort by the `updated_at` value. */
@@ -2078,12 +2092,7 @@ export enum AutomaticDiscountSortKeys {
   /** Sort by the `created_at` value. */
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /** Represents an object containing all information for channels available to a shop. */
@@ -2093,6 +2102,21 @@ export type AvailableChannelDefinitionsByChannel = {
   channelDefinitions: Array<ChannelDefinition>;
   /** The name of the channel. */
   channelName: Scalars['String']['output'];
+};
+
+/** The input fields for updating a backup region with exactly one required option. */
+export type BackupRegionUpdateInput = {
+  /** A country code for the backup region. */
+  countryCode: CountryCode;
+};
+
+/** Return type for `backupRegionUpdate` mutation. */
+export type BackupRegionUpdatePayload = {
+  __typename?: 'BackupRegionUpdatePayload';
+  /** Returns the updated backup region. */
+  backupRegion?: Maybe<MarketRegion>;
+  /** The list of errors that occurred from executing the mutation. */
+  userErrors: Array<MarketUserError>;
 };
 
 /** The possible types for a badge. */
@@ -2131,13 +2155,20 @@ export enum BalanceTransactionSortKeys {
   PayoutStatus = 'PAYOUT_STATUS',
   /** Sort by the `processed_at` value. */
   ProcessedAt = 'PROCESSED_AT',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `transaction_type` value. */
   TransactionType = 'TRANSACTION_TYPE'
+}
+
+/** The valid types of actions a user should be able to perform in an financial app. */
+export enum BankingFinanceAppAccess {
+  /** Indication that the user has blocked money movement due to MFA disabled. */
+  MoneyMovementBlockedMfa = 'MONEY_MOVEMENT_BLOCKED_MFA',
+  /** Indication that the user has restricted money movement. */
+  MoneyMovementRestricted = 'MONEY_MOVEMENT_RESTRICTED',
+  /** Ability to perform actions that moves money. */
+  MoveMoney = 'MOVE_MONEY',
+  /** Read access in the financial app. */
+  ReadAccess = 'READ_ACCESS'
 }
 
 /** Generic payment details that are related to a transaction. */
@@ -2533,11 +2564,6 @@ export enum BlogSortKeys {
   Handle = 'HANDLE',
   /** Sort by the `id` value. */
   Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `title` value. */
   Title = 'TITLE'
 }
@@ -3181,8 +3207,13 @@ export type CalculatedDraftOrderLineItem = {
    * This value doesn't include discounts applied to the entire draft order.
    */
   approximateDiscountedUnitPriceSet: MoneyBag;
-  /** The bundle components of the draft order line item. */
+  /**
+   * The bundle components of the draft order line item.
+   * @deprecated Use `components` instead.
+   */
   bundleComponents: Array<CalculatedDraftOrderLineItem>;
+  /** The components of the draft order line item. */
+  components: Array<CalculatedDraftOrderLineItem>;
   /** Whether the line item is custom (`true`) or contains a product variant (`false`). */
   custom: Scalars['Boolean']['output'];
   /** A list of attributes that represent custom features or special requests. */
@@ -3652,11 +3683,6 @@ export enum CarrierServiceSortKeys {
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
   Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `updated_at` value. */
   UpdatedAt = 'UPDATED_AT'
 }
@@ -3969,12 +3995,7 @@ export enum CashTrackingSessionTransactionsSortKeys {
   /** Sort by the `id` value. */
   Id = 'ID',
   /** Sort by the `processed_at` value. */
-  ProcessedAt = 'PROCESSED_AT',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  ProcessedAt = 'PROCESSED_AT'
 }
 
 /** The set of valid sort keys for the CashTrackingSessions query. */
@@ -3989,11 +4010,6 @@ export enum CashTrackingSessionsSortKeys {
   OpeningTimeAsc = 'OPENING_TIME_ASC',
   /** Sort by the `opening_time_desc` value. */
   OpeningTimeDesc = 'OPENING_TIME_DESC',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `total_discrepancy_asc` value. */
   TotalDiscrepancyAsc = 'TOTAL_DISCREPANCY_ASC',
   /** Sort by the `total_discrepancy_desc` value. */
@@ -4034,6 +4050,8 @@ export type CatalogConnection = {
 export type CatalogContextInput = {
   /** The IDs of the company locations to associate to the catalog. */
   companyLocationIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** The IDs of the markets to associate to the catalog. */
+  marketIds?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 /** Return type for `catalogContextUpdate` mutation. */
@@ -4109,7 +4127,9 @@ export enum CatalogSortKeys {
    */
   Relevance = 'RELEVANCE',
   /** Sort by the `title` value. */
-  Title = 'TITLE'
+  Title = 'TITLE',
+  /** Sort by the `type` value. */
+  Type = 'TYPE'
 }
 
 /** The state of a catalog. */
@@ -4188,9 +4208,9 @@ export enum CatalogUserErrorCode {
   CannotModifyAppCatalog = 'CANNOT_MODIFY_APP_CATALOG',
   /** Cannot modify a catalog for a market. */
   CannotModifyMarketCatalog = 'CANNOT_MODIFY_MARKET_CATALOG',
-  /** Quantity price breaks can be associated only with company location catalogs. */
+  /** Quantity price breaks can be associated only with company location catalogs or catalogs associated with compatible markets. */
   CatalogContextDoesNotSupportQuantityPriceBreaks = 'CATALOG_CONTEXT_DOES_NOT_SUPPORT_QUANTITY_PRICE_BREAKS',
-  /** Quantity rules can be associated only with company location catalogs. */
+  /** Quantity rules can be associated only with company location catalogs or catalogs associated with compatible markets. */
   CatalogContextDoesNotSupportQuantityRules = 'CATALOG_CONTEXT_DOES_NOT_SUPPORT_QUANTITY_RULES',
   /** Catalog failed to save. */
   CatalogFailedToSave = 'CATALOG_FAILED_TO_SAVE',
@@ -4212,6 +4232,8 @@ export enum CatalogUserErrorCode {
   Invalid = 'INVALID',
   /** The catalog context type is invalid. */
   InvalidCatalogContextType = 'INVALID_CATALOG_CONTEXT_TYPE',
+  /** Cannot change context to specified type. */
+  InvalidContextChange = 'INVALID_CONTEXT_CHANGE',
   /** The catalog's market and price list currencies do not match. */
   MarketAndPriceListCurrencyMismatch = 'MARKET_AND_PRICE_LIST_CURRENCY_MISMATCH',
   /** A market catalog must have an active status. */
@@ -4240,6 +4262,8 @@ export enum CatalogUserErrorCode {
   TooLong = 'TOO_LONG',
   /** The input value is too short. */
   TooShort = 'TOO_SHORT',
+  /** Managing this catalog is not supported by your plan. */
+  UnpermittedEntitlementsMarketCatalogs = 'UNPERMITTED_ENTITLEMENTS_MARKET_CATALOGS',
   /** Can't perform this action on a catalog of this type. */
   UnsupportedCatalogAction = 'UNSUPPORTED_CATALOG_ACTION'
 }
@@ -5995,11 +6019,6 @@ export enum CheckoutProfileSortKeys {
   Id = 'ID',
   /** Sort by the `is_published` value. */
   IsPublished = 'IS_PUBLISHED',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `updated_at` value. */
   UpdatedAt = 'UPDATED_AT'
 }
@@ -6517,6 +6536,16 @@ export type CollectionEdge = {
   node: Collection;
 };
 
+/** The input fields for identifying a collection. */
+export type CollectionIdentifierInput = {
+  /** The [custom ID](https://shopify.dev/docs/apps/build/custom-data/metafields/working-with-custom-ids) of the collection. */
+  customId?: InputMaybe<UniqueMetafieldValueInput>;
+  /** The handle of the collection. */
+  handle?: InputMaybe<Scalars['String']['input']>;
+  /** The ID of the collection. */
+  id?: InputMaybe<Scalars['ID']['input']>;
+};
+
 /** The input fields required to create a collection. */
 export type CollectionInput = {
   /** The description of the collection, in HTML format. */
@@ -6965,14 +6994,20 @@ export enum CombinedListingUpdateUserErrorCode {
   OptionsMustBeEqualToTheOtherComponents = 'OPTIONS_MUST_BE_EQUAL_TO_THE_OTHER_COMPONENTS',
   /** Unable to add products with blank option names. */
   OptionNameCannotBeBlank = 'OPTION_NAME_CANNOT_BE_BLANK',
+  /** Option name contains invalid characters. */
+  OptionNameContainsInvalidCharacters = 'OPTION_NAME_CONTAINS_INVALID_CHARACTERS',
   /** Option does not exist. */
   OptionNotFound = 'OPTION_NOT_FOUND',
   /** Unable to update options with blank option values. */
   OptionValuesCannotBeBlank = 'OPTION_VALUES_CANNOT_BE_BLANK',
   /** Unable to update options with no option values. */
   OptionValuesCannotBeEmpty = 'OPTION_VALUES_CANNOT_BE_EMPTY',
+  /** Parent product cannot be a combined listing child. */
+  ParentProductCannotBeCombinedListingChild = 'PARENT_PRODUCT_CANNOT_BE_COMBINED_LISTING_CHILD',
   /** Unable to update components for a product that isn't a combined listing. */
   ParentProductMustBeACombinedListing = 'PARENT_PRODUCT_MUST_BE_A_COMBINED_LISTING',
+  /** Parent product not found. */
+  ParentProductNotFound = 'PARENT_PRODUCT_NOT_FOUND',
   /** Unable to add a product that is already a child. */
   ProductIsAlreadyAChild = 'PRODUCT_IS_ALREADY_A_CHILD',
   /** Failed to remove mebmership due to invalid input. */
@@ -7230,12 +7265,7 @@ export enum CommentSortKeys {
   /** Sort by the `created_at` value. */
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /** Return type for `commentSpam` mutation. */
@@ -7819,11 +7849,6 @@ export enum CompanyContactRoleAssignmentSortKeys {
   Id = 'ID',
   /** Sort by the `location_name` value. */
   LocationName = 'LOCATION_NAME',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `updated_at` value. */
   UpdatedAt = 'UPDATED_AT'
 }
@@ -7854,11 +7879,6 @@ export enum CompanyContactRoleSortKeys {
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
   Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `updated_at` value. */
   UpdatedAt = 'UPDATED_AT'
 }
@@ -8000,7 +8020,10 @@ export type CompanyLocation = CommentEventSubject & HasEvents & HasMetafieldDefi
   inCatalog: Scalars['Boolean']['output'];
   /** The preferred locale of the company location. */
   locale?: Maybe<Scalars['String']['output']>;
-  /** The market that includes the location's shipping address. If the shipping address is empty, then the value is the shop's primary market. */
+  /**
+   * The market that includes the location's shipping address. If the shipping address is empty, then the value is the shop's primary market.
+   * @deprecated This `market` field will be removed in a future version of the API.
+   */
   market: Market;
   /**
    * A [custom field](https://shopify.dev/docs/apps/build/custom-data),
@@ -8411,11 +8434,6 @@ export enum CompanyLocationStaffMemberAssignmentSortKeys {
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
   Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `updated_at` value. */
   UpdatedAt = 'UPDATED_AT'
 }
@@ -8465,6 +8483,25 @@ export type CompanyLocationUpdatePayload = {
   userErrors: Array<BusinessCustomerUserError>;
 };
 
+/** A condition checking the company location a visitor is purchasing for. */
+export type CompanyLocationsCondition = {
+  __typename?: 'CompanyLocationsCondition';
+  /** The application level for the condition. */
+  applicationLevel?: Maybe<MarketConditionApplicationType>;
+  /** The company locations that comprise the market. */
+  companyLocations: CompanyLocationConnection;
+};
+
+
+/** A condition checking the company location a visitor is purchasing for. */
+export type CompanyLocationsConditionCompanyLocationsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  reverse?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 /** Return type for `companyLocationsDelete` mutation. */
 export type CompanyLocationsDeletePayload = {
   __typename?: 'CompanyLocationsDeletePayload';
@@ -8493,11 +8530,6 @@ export enum CompanySortKeys {
   Name = 'NAME',
   /** Sort by the `order_count` value. */
   OrderCount = 'ORDER_COUNT',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `since_date` value. */
   SinceDate = 'SINCE_DATE',
   /** Sort by the `total_spent` value. */
@@ -8515,12 +8547,89 @@ export type CompanyUpdatePayload = {
   userErrors: Array<BusinessCustomerUserError>;
 };
 
+/**
+ * A consent policy describes the level of consent that the merchant requires from the user before actually
+ * collecting and processing the data.
+ */
+export type ConsentPolicy = Node & {
+  __typename?: 'ConsentPolicy';
+  /** Whether consent is required for the region. */
+  consentRequired?: Maybe<Scalars['Boolean']['output']>;
+  /** The `ISO 3166` country code for which the policy applies. */
+  countryCode?: Maybe<PrivacyCountryCode>;
+  /** Whether data sale opt-out is required for the region. */
+  dataSaleOptOutRequired?: Maybe<Scalars['Boolean']['output']>;
+  /** The global ID of the consent policy. IDs prefixed with `SD-` are system default policies. */
+  id: Scalars['ID']['output'];
+  /** The `ISO 3166` region code for which the policy applies. */
+  regionCode?: Maybe<Scalars['String']['output']>;
+  /** The global ID of the shop that owns the policy. */
+  shopId: Scalars['ID']['output'];
+};
+
+/** The errors encountered while performing mutations on consent policies. */
+export type ConsentPolicyError = DisplayableError & {
+  __typename?: 'ConsentPolicyError';
+  /** The error code. */
+  code?: Maybe<ConsentPolicyErrorCode>;
+  /** The path to the input field that caused the error. */
+  field?: Maybe<Array<Scalars['String']['output']>>;
+  /** The error message. */
+  message: Scalars['String']['output'];
+};
+
+/** Possible error codes that can be returned by `ConsentPolicyError`. */
+export enum ConsentPolicyErrorCode {
+  /** Country code is required. */
+  CountryCodeRequired = 'COUNTRY_CODE_REQUIRED',
+  /** Region code must match the country code. */
+  RegionCodeMustMatchCountryCode = 'REGION_CODE_MUST_MATCH_COUNTRY_CODE',
+  /** Region code is required for countries with existing regional policies. */
+  RegionCodeRequired = 'REGION_CODE_REQUIRED',
+  /** Shopify's cookie banner must be disabled. */
+  ShopifyCookieBannerNotDisabled = 'SHOPIFY_COOKIE_BANNER_NOT_DISABLED',
+  /** Unsupported consent policy. */
+  UnsuportedConsentPolicy = 'UNSUPORTED_CONSENT_POLICY'
+}
+
+/** The input fields for a consent policy to be updated or created. */
+export type ConsentPolicyInput = {
+  /** Whether consent is required for the region. */
+  consentRequired?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The `ISO 3166` country code for which the policy applies. */
+  countryCode?: InputMaybe<PrivacyCountryCode>;
+  /** Whether data sale opt-out is required for the region. */
+  dataSaleOptOutRequired?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The `ISO 3166` region code for which the policy applies. */
+  regionCode?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** A country or region code. */
+export type ConsentPolicyRegion = {
+  __typename?: 'ConsentPolicyRegion';
+  /** The `ISO 3166` country code for which the policy applies. */
+  countryCode?: Maybe<PrivacyCountryCode>;
+  /** The `ISO 3166` region code for which the policy applies. */
+  regionCode?: Maybe<Scalars['String']['output']>;
+};
+
+/** Return type for `consentPolicyUpdate` mutation. */
+export type ConsentPolicyUpdatePayload = {
+  __typename?: 'ConsentPolicyUpdatePayload';
+  /** All updated and created consent policies. The consent policies that haven't been modified as part of the mutation aren't returned. */
+  updatedPolicies?: Maybe<Array<ConsentPolicy>>;
+  /** The list of errors that occurred from executing the mutation. */
+  userErrors: Array<ConsentPolicyError>;
+};
+
 /** The input fields for the context data that determines the pricing of a variant. Refer to [Product](https://shopify.dev/docs/api/admin-graphql/latest/queries/product?example=Get+the+price+range+for+a+product+for+buyers+from+Canada)for more information on how to use this input object. */
 export type ContextualPricingContext = {
   /** The CompanyLocation ID used to fetch company location specific prices. */
   companyLocationId?: InputMaybe<Scalars['ID']['input']>;
   /** The country code used to fetch country-specific prices. */
   country?: InputMaybe<CountryCode>;
+  /** The Location ID used to fetch location specific prices. */
+  locationId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 /** The context data that determines the publication status of a product. */
@@ -8529,6 +8638,26 @@ export type ContextualPublicationContext = {
   companyLocationId?: InputMaybe<Scalars['ID']['input']>;
   /** The country code used to fetch country-specific publication. */
   country?: InputMaybe<CountryCode>;
+  /** The Location ID used to fetch the publication status of a product. */
+  locationId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+/** A shop's banner settings. */
+export type CookieBanner = HasPublishedTranslations & {
+  __typename?: 'CookieBanner';
+  /** Indicates if the banner is auto managed. */
+  autoManaged: Scalars['Boolean']['output'];
+  /** Indicates if the banner is enabled. */
+  enabled: Scalars['Boolean']['output'];
+  /** The published translations associated with the resource. */
+  translations: Array<Translation>;
+};
+
+
+/** A shop's banner settings. */
+export type CookieBannerTranslationsArgs = {
+  locale: Scalars['String']['input'];
+  marketId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 /** Details for count of elements. */
@@ -8544,7 +8673,7 @@ export type Count = {
 export enum CountPrecision {
   /** The count is at least the value. A limit was imposed and reached. */
   AtLeast = 'AT_LEAST',
-  /** The count is exactly the value. */
+  /** The count is exactly the value. A write may not be reflected instantaneously. */
   Exact = 'EXACT'
 }
 
@@ -9544,16 +9673,24 @@ export type Customer = CommentEventSubject & HasEvents & HasMetafieldDefinitions
   dataSaleOptOut: Scalars['Boolean']['output'];
   /** The default address associated with the customer. */
   defaultAddress?: Maybe<MailingAddress>;
+  /** The customer's default email address. */
+  defaultEmailAddress?: Maybe<CustomerEmailAddress>;
+  /** The customer's default phone number. */
+  defaultPhoneNumber?: Maybe<CustomerPhoneNumber>;
   /**
    * The full name of the customer, based on the values for first_name and last_name. If the first_name and
    * last_name are not available, then this falls back to the customer's email address, and if that is not available, the customer's phone number.
    */
   displayName: Scalars['String']['output'];
-  /** The customer's email address. */
+  /**
+   * The customer's email address.
+   * @deprecated Use `defaultEmailAddress.emailAddress` instead.
+   */
   email?: Maybe<Scalars['String']['output']>;
   /**
    * The current email marketing state for the customer.
    * If the customer doesn't have an email address, then this property is `null`.
+   * @deprecated Use `defaultEmailAddress.marketingState`, `defaultEmailAddress.marketingOptInLevel`, `defaultEmailAddress.marketingUpdatedAt`, and `defaultEmailAddress.sourceLocation` instead.
    */
   emailMarketingConsent?: Maybe<CustomerEmailMarketingConsentState>;
   /** A list of events associated with the customer. */
@@ -9583,7 +9720,10 @@ export type Customer = CommentEventSubject & HasEvents & HasMetafieldDefinitions
   lifetimeDuration: Scalars['String']['output'];
   /** The customer's locale. */
   locale: Scalars['String']['output'];
-  /** The market that includes the customer’s default address. */
+  /**
+   * The market that includes the customer’s default address.
+   * @deprecated This `market` field will be removed in a future version of the API.
+   */
   market?: Maybe<Market>;
   /** Whether the customer can be merged with another customer. */
   mergeable: CustomerMergeable;
@@ -9613,7 +9753,10 @@ export type Customer = CommentEventSubject & HasEvents & HasMetafieldDefinitions
   orders: OrderConnection;
   /** A list of the customer's payment methods. */
   paymentMethods: CustomerPaymentMethodConnection;
-  /** The customer's phone number. */
+  /**
+   * The customer's phone number.
+   * @deprecated Use `defaultPhoneNumber.phoneNumber` instead.
+   */
   phone?: Maybe<Scalars['String']['output']>;
   /** Possible subscriber states of a customer defined by their subscription contracts. */
   productSubscriberStatus: CustomerProductSubscriberStatus;
@@ -9621,6 +9764,7 @@ export type Customer = CommentEventSubject & HasEvents & HasMetafieldDefinitions
    * The current SMS marketing state for the customer's phone number.
    *
    * If the customer does not have a phone number, then this property is `null`.
+   * @deprecated Use `defaultPhoneNumber.marketingState`, `defaultPhoneNumber.marketingOptInLevel`, `defaultPhoneNumber.marketingUpdatedAt`, `defaultPhoneNumber.marketingCollectedFrom`, and `defaultPhoneNumber.sourceLocation` instead.
    */
   smsMarketingConsent?: Maybe<CustomerSmsMarketingConsentState>;
   /**
@@ -9644,7 +9788,10 @@ export type Customer = CommentEventSubject & HasEvents & HasMetafieldDefinitions
   taxExempt: Scalars['Boolean']['output'];
   /** The list of tax exemptions applied to the customer. */
   taxExemptions: Array<TaxExemption>;
-  /** The URL to unsubscribe the customer from the mailing list. */
+  /**
+   * The URL to unsubscribe the customer from the mailing list.
+   * @deprecated Use `defaultEmailAddress.marketingUnsubscribeUrl` instead.
+   */
   unsubscribeUrl: Scalars['URL']['output'];
   /** The date and time when the customer was last updated. */
   updatedAt: Scalars['DateTime']['output'];
@@ -9654,6 +9801,7 @@ export type Customer = CommentEventSubject & HasEvents & HasMetafieldDefinitions
    * Returns `true` when the email is formatted correctly and
    * belongs to an existing domain. This doesn't guarantee that
    * the email address actually exists.
+   * @deprecated Use `defaultEmailAddress.validFormat` instead.
    */
   validEmailAddress: Scalars['Boolean']['output'];
   /** Whether the customer has verified their email address. Defaults to `true` if the customer is created through the Shopify admin or API. */
@@ -9918,6 +10066,33 @@ export type CustomerAddTaxExemptionsPayload = {
   userErrors: Array<UserError>;
 };
 
+/** Return type for `customerAddressCreate` mutation. */
+export type CustomerAddressCreatePayload = {
+  __typename?: 'CustomerAddressCreatePayload';
+  /** The created address. */
+  address?: Maybe<MailingAddress>;
+  /** The list of errors that occurred from executing the mutation. */
+  userErrors: Array<UserError>;
+};
+
+/** Return type for `customerAddressDelete` mutation. */
+export type CustomerAddressDeletePayload = {
+  __typename?: 'CustomerAddressDeletePayload';
+  /** The ID of the address deleted from the customer. */
+  deletedAddressId?: Maybe<Scalars['ID']['output']>;
+  /** The list of errors that occurred from executing the mutation. */
+  userErrors: Array<UserError>;
+};
+
+/** Return type for `customerAddressUpdate` mutation. */
+export type CustomerAddressUpdatePayload = {
+  __typename?: 'CustomerAddressUpdatePayload';
+  /** The updated address. */
+  address?: Maybe<MailingAddress>;
+  /** The list of errors that occurred from executing the mutation. */
+  userErrors: Array<UserError>;
+};
+
 /** Possible error codes that can be returned by `CustomerCancelDataErasureUserError`. */
 export enum CustomerCancelDataErasureErrorCode {
   /** Customer does not exist. */
@@ -10065,14 +10240,34 @@ export type CustomerEmailAddress = {
   __typename?: 'CustomerEmailAddress';
   /** The customer's default email address. */
   emailAddress: Scalars['String']['output'];
+  /**
+   * The marketing subscription opt-in level, as described by the M3AAWG best practices guidelines,
+   * received when the marketing consent was updated.
+   */
+  marketingOptInLevel?: Maybe<CustomerMarketingOptInLevel>;
   /** Whether the customer has subscribed to email marketing. */
   marketingState: CustomerEmailAddressMarketingState;
   /** The URL to unsubscribe a member from all mailing lists. */
   marketingUnsubscribeUrl: Scalars['URL']['output'];
+  /**
+   * The date and time at which the marketing consent was updated.
+   *
+   * No date is provided if the email address never updated its marketing consent.
+   */
+  marketingUpdatedAt?: Maybe<Scalars['DateTime']['output']>;
   /** Whether the customer has opted in to having their opened emails tracked. */
   openTrackingLevel: CustomerEmailAddressOpenTrackingLevel;
   /** The URL that can be used to opt a customer in or out of email open tracking. */
   openTrackingUrl: Scalars['URL']['output'];
+  /** The location where the customer consented to receive marketing material by email. */
+  sourceLocation?: Maybe<Location>;
+  /**
+   * Whether the email address is formatted correctly.
+   *
+   * Returns `true` when the email is formatted correctly. This doesn't guarantee that the email address
+   * actually exists.
+   */
+  validFormat: Scalars['Boolean']['output'];
 };
 
 /** Possible marketing states for the customer’s email address. */
@@ -10116,6 +10311,8 @@ export type CustomerEmailMarketingConsentInput = {
    *           If the customer doesn't have an email, then this field is `null`.
    */
   marketingState: CustomerEmailMarketingState;
+  /** Identifies the location where the customer consented to receiving marketing material by email. */
+  sourceLocationId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 /** The record of when a customer consented to receive marketing material by email. */
@@ -10134,6 +10331,8 @@ export type CustomerEmailMarketingConsentState = {
   marketingOptInLevel?: Maybe<CustomerMarketingOptInLevel>;
   /** The current email marketing state for the customer. */
   marketingState: CustomerEmailMarketingState;
+  /** The location where the customer consented to receive marketing material by email. */
+  sourceLocation?: Maybe<Location>;
 };
 
 /** The input fields for the email consent information to update for a given customer ID. */
@@ -10841,7 +11040,7 @@ export type CustomerPaymentMethodRemoteInput = {
   authorizeNetCustomerPaymentProfile?: InputMaybe<RemoteAuthorizeNetCustomerPaymentProfileInput>;
   /** The input fields for a remote Braintree customer profile. */
   braintreePaymentMethod?: InputMaybe<RemoteBraintreePaymentMethodInput>;
-  /** Input containing the fields for a remote stripe payment method. */
+  /** Input containing the fields for a remote stripe credit card. */
   stripePaymentMethod?: InputMaybe<RemoteStripePaymentMethodInput>;
 };
 
@@ -10886,6 +11085,10 @@ export enum CustomerPaymentMethodRevocationReason {
   BraintreePaymentMethodNotCard = 'BRAINTREE_PAYMENT_METHOD_NOT_CARD',
   /** Braintree returned no payment methods. Make sure the correct Braintree account is linked. */
   BraintreeReturnedNoPaymentMethod = 'BRAINTREE_RETURNED_NO_PAYMENT_METHOD',
+  /** The customer redacted their payment method. */
+  CustomerRedacted = 'CUSTOMER_REDACTED',
+  /** CVV attempts limit exceeded. */
+  CvvAttemptsLimitExceeded = 'CVV_ATTEMPTS_LIMIT_EXCEEDED',
   /** The billing address failed to retrieve. */
   FailedToRetrieveBillingAddress = 'FAILED_TO_RETRIEVE_BILLING_ADDRESS',
   /** The credit card failed to update. */
@@ -10907,7 +11110,9 @@ export enum CustomerPaymentMethodRevocationReason {
   /** Stripe did not return any payment methods. Make sure that the correct Stripe account is linked. */
   StripeReturnedNoPaymentMethod = 'STRIPE_RETURNED_NO_PAYMENT_METHOD',
   /** Verification of the payment method failed due to 3DS not being supported. */
-  ThreeDSecureFlowInVerificationNotImplemented = 'THREE_D_SECURE_FLOW_IN_VERIFICATION_NOT_IMPLEMENTED'
+  ThreeDSecureFlowInVerificationNotImplemented = 'THREE_D_SECURE_FLOW_IN_VERIFICATION_NOT_IMPLEMENTED',
+  /** Too many consecutive failed attempts. */
+  TooManyConsecutiveFailures = 'TOO_MANY_CONSECUTIVE_FAILURES'
 }
 
 /** Return type for `customerPaymentMethodRevoke` mutation. */
@@ -10965,10 +11170,25 @@ export type CustomerPaypalBillingAgreement = {
 /** A phone number. */
 export type CustomerPhoneNumber = {
   __typename?: 'CustomerPhoneNumber';
+  /** The source from which the SMS marketing information for the customer was collected. */
+  marketingCollectedFrom?: Maybe<CustomerConsentCollectedFrom>;
+  /**
+   * The marketing subscription opt-in level, as described by the M3AAWG best practices guidelines,
+   * received when the marketing consent was updated.
+   */
+  marketingOptInLevel?: Maybe<CustomerMarketingOptInLevel>;
   /** Whether the customer has subscribed to SMS marketing material. */
   marketingState: CustomerSmsMarketingState;
+  /**
+   * The date and time at which the marketing consent was updated.
+   *
+   * No date is provided if the email address never updated its marketing consent.
+   */
+  marketingUpdatedAt?: Maybe<Scalars['DateTime']['output']>;
   /** A customer's phone number. */
   phoneNumber: Scalars['String']['output'];
+  /** The location where the customer consented to receive marketing material by SMS. */
+  sourceLocation?: Maybe<Location>;
 };
 
 /** The valid tiers for the predicted spend of a customer with a shop. */
@@ -11055,17 +11275,38 @@ export type CustomerRequestDataErasureUserError = DisplayableError & {
   message: Scalars['String']['output'];
 };
 
+/** The RFM (Recency, Frequency, Monetary) group for a customer. */
+export enum CustomerRfmGroup {
+  /** Customers with recent purchases, some orders, and moderate spend. */
+  Active = 'ACTIVE',
+  /** Customers without recent purchases, fewer orders, and with lower spend. */
+  AlmostLost = 'ALMOST_LOST',
+  /** Customers without recent purchases, but with a strong history of orders and spend. */
+  AtRisk = 'AT_RISK',
+  /** Customers with very recent purchases, many orders, and the most spend. */
+  Champions = 'CHAMPIONS',
+  /** Customers without recent orders, with infrequent orders, and with low spend. */
+  Dormant = 'DORMANT',
+  /** Customers with recent purchases, many orders, and the most spend. */
+  Loyal = 'LOYAL',
+  /** Customers with recent purchases, some orders, and moderate spend. */
+  NeedsAttention = 'NEEDS_ATTENTION',
+  /** Customers with very recent purchases, few orders, and low spend. */
+  New = 'NEW',
+  /** Customers without recent purchases, but with a very strong history of orders and spend. */
+  PreviouslyLoyal = 'PREVIOUSLY_LOYAL',
+  /** Customers with recent purchases, few orders, and low spend. */
+  Promising = 'PROMISING',
+  /** Customers with no orders yet. */
+  Prospects = 'PROSPECTS'
+}
+
 /** The set of valid sort keys for the CustomerSavedSearch query. */
 export enum CustomerSavedSearchSortKeys {
   /** Sort by the `id` value. */
   Id = 'ID',
   /** Sort by the `name` value. */
-  Name = 'NAME',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Name = 'NAME'
 }
 
 /** The member of a segment. */
@@ -11224,6 +11465,96 @@ export enum CustomerSendAccountInviteEmailUserErrorCode {
   Invalid = 'INVALID'
 }
 
+/** The input fields required to identify a customer. */
+export type CustomerSetIdentifiers = {
+  /** Custom ID of customer to upsert. */
+  customId?: InputMaybe<UniqueMetafieldValueInput>;
+  /** Email address of the customer to upsert. */
+  email?: InputMaybe<Scalars['String']['input']>;
+  /** ID of customer to update. */
+  id?: InputMaybe<Scalars['ID']['input']>;
+  /** Phone number of the customer to upsert. */
+  phone?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** The input fields and values to use when creating or updating a customer. */
+export type CustomerSetInput = {
+  /** The addresses for a customer. */
+  addresses?: InputMaybe<Array<MailingAddressInput>>;
+  /** The unique email address of the customer. */
+  email?: InputMaybe<Scalars['String']['input']>;
+  /** The customer's first name. */
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  /** The customer's last name. */
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  /** The customer's locale. */
+  locale?: InputMaybe<Scalars['String']['input']>;
+  /** A note about the customer. */
+  note?: InputMaybe<Scalars['String']['input']>;
+  /** The unique phone number for the customer. */
+  phone?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * A list of tags to associate with the customer. Can be an array or a comma-separated list. Example values: `["tag1", "tag2", "tag3"]`, `"tag1, tag2, tag3"`
+   *
+   * Updating `tags` overwrites any existing tags that were previously added to the customer. To add new tags without overwriting
+   * existing tags, use the [tagsAdd](https://shopify.dev/api/admin-graphql/latest/mutations/tagsadd)
+   * mutation.
+   */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** Whether the customer is exempt from paying taxes on their order. */
+  taxExempt?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The list of tax exemptions to apply to the customer. */
+  taxExemptions?: InputMaybe<Array<TaxExemption>>;
+};
+
+/** Return type for `customerSet` mutation. */
+export type CustomerSetPayload = {
+  __typename?: 'CustomerSetPayload';
+  /** The created or updated customer. */
+  customer?: Maybe<Customer>;
+  /** The list of errors that occurred from executing the mutation. */
+  userErrors: Array<CustomerSetUserError>;
+};
+
+/** Defines errors for CustomerSet mutation. */
+export type CustomerSetUserError = DisplayableError & {
+  __typename?: 'CustomerSetUserError';
+  /** The error code. */
+  code?: Maybe<CustomerSetUserErrorCode>;
+  /** The path to the input field that caused the error. */
+  field?: Maybe<Array<Scalars['String']['output']>>;
+  /** The error message. */
+  message: Scalars['String']['output'];
+};
+
+/** Possible error codes that can be returned by `CustomerSetUserError`. */
+export enum CustomerSetUserErrorCode {
+  /** The input value is blank. */
+  Blank = 'BLANK',
+  /** The id field is not allowed if identifier is provided. */
+  IdNotAllowed = 'ID_NOT_ALLOWED',
+  /** The input value isn't included in the list. */
+  Inclusion = 'INCLUSION',
+  /** The identifier value does not match the value of the corresponding field in the input. */
+  InputMismatch = 'INPUT_MISMATCH',
+  /** The input value is invalid. */
+  Invalid = 'INVALID',
+  /** The input argument `metafields` (if present) must contain the `customId` value. */
+  MetafieldMismatch = 'METAFIELD_MISMATCH',
+  /** The input field corresponding to the identifier is required. */
+  MissingFieldRequired = 'MISSING_FIELD_REQUIRED',
+  /** Resource matching the identifier was not found. */
+  NotFound = 'NOT_FOUND',
+  /** The input value needs to be blank. */
+  Present = 'PRESENT',
+  /** The input value is already taken. */
+  Taken = 'TAKEN',
+  /** The input value is too long. */
+  TooLong = 'TOO_LONG',
+  /** The input value is too short. */
+  TooShort = 'TOO_SHORT'
+}
+
 /** Represents a Shop Pay card instrument for customer payment method. */
 export type CustomerShopPayAgreement = {
   __typename?: 'CustomerShopPayAgreement';
@@ -11284,6 +11615,8 @@ export type CustomerSmsMarketingConsentInput = {
   marketingOptInLevel?: InputMaybe<CustomerMarketingOptInLevel>;
   /** The current SMS marketing state for the customer. */
   marketingState: CustomerSmsMarketingState;
+  /** Identifies the location where the customer consented to receiving marketing material by SMS. */
+  sourceLocationId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 /**
@@ -11304,6 +11637,8 @@ export type CustomerSmsMarketingConsentState = {
   marketingOptInLevel: CustomerMarketingOptInLevel;
   /** The current SMS marketing state for the customer. */
   marketingState: CustomerSmsMarketingState;
+  /** The location where the customer consented to receive marketing material by SMS. */
+  sourceLocation?: Maybe<Location>;
 };
 
 /** The input fields for updating SMS marketing consent information for a given customer ID. */
@@ -11373,6 +11708,8 @@ export type CustomerStatistics = {
   __typename?: 'CustomerStatistics';
   /** The predicted spend tier of a customer with a shop. */
   predictedSpendTier?: Maybe<CustomerPredictedSpendTier>;
+  /** The RFM (Recency, Frequency, Monetary) group of the customer. */
+  rfmGroup?: Maybe<CustomerRfmGroup>;
 };
 
 /** Return type for `customerUpdateDefaultAddress` mutation. */
@@ -11464,6 +11801,13 @@ export type CustomerVisitProductInfoEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of CustomerVisitProductInfoEdge. */
   node: CustomerVisitProductInfo;
+};
+
+/** A shop's data sale opt out page. */
+export type DataSaleOptOutPage = {
+  __typename?: 'DataSaleOptOutPage';
+  /** If the data sale opt out page is auto managed. */
+  autoManaged: Scalars['Boolean']['output'];
 };
 
 /** Return type for `dataSaleOptOut` mutation. */
@@ -11648,12 +11992,7 @@ export enum DeletionEventSortKeys {
   /** Sort by the `created_at` value. */
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /** The supported subject types of deletion events. */
@@ -12387,6 +12726,11 @@ export type DeliveryLocalPickupSettings = {
 
 /** Possible pickup time values that a location enabled for local pickup can have. */
 export enum DeliveryLocalPickupTime {
+  /**
+   * Custom pickup time. Unrecognized pickup time enum value.
+   * @deprecated Custom pickup time is no longer supported.
+   */
+  Custom = 'CUSTOM',
   /** Usually ready in 5+ days. */
   FiveOrMoreDays = 'FIVE_OR_MORE_DAYS',
   /** Usually ready in 4 hours. */
@@ -12515,6 +12859,8 @@ export type DeliveryLocationLocalPickupSettingsError = DisplayableError & {
 export enum DeliveryLocationLocalPickupSettingsErrorCode {
   /** Provided locationId is not for an active location belonging to this store. */
   ActiveLocationNotFound = 'ACTIVE_LOCATION_NOT_FOUND',
+  /** Custom pickup time is not allowed for local pickup settings. */
+  CustomPickupTimeNotAllowed = 'CUSTOM_PICKUP_TIME_NOT_ALLOWED',
   /** An error occurred while changing the local pickup settings. */
   GenericError = 'GENERIC_ERROR'
 }
@@ -13429,8 +13775,11 @@ export type DiscountAutomaticApp = {
    * The
    * [discount class](https://help.shopify.com/manual/discounts/combining-discounts/discount-combinations)
    * that's used to control how discounts can be combined.
+   * @deprecated Use `discountClasses` instead.
    */
   discountClass: DiscountClass;
+  /** The classes of the discount. */
+  discountClasses: Array<DiscountClass>;
   /**
    * The [globally-unique ID](https://shopify.dev/docs/api/usage/gids)
    * for the discount.
@@ -13500,6 +13849,8 @@ export type DiscountAutomaticAppInput = {
    * [Shopify discount types](https://help.shopify.com/manual/discounts/discount-types).
    */
   combinesWith?: InputMaybe<DiscountCombinesWithInput>;
+  /** Determines which discount effects the discount can apply. */
+  discountClasses?: InputMaybe<Array<DiscountClass>>;
   /**
    * The date and time when the discount expires and is no longer available to customers.
    * For discounts without a fixed expiration date, specify `null`.
@@ -13587,8 +13938,11 @@ export type DiscountAutomaticBasic = {
   /**
    * The [discount class](https://help.shopify.com/manual/discounts/combining-discounts/discount-combinations)
    * that's used to control how discounts can be combined.
+   * @deprecated Use `discountClasses` instead.
    */
   discountClass: MerchandiseDiscountClass;
+  /** The classes of the discount. */
+  discountClasses: Array<DiscountClass>;
   /**
    * The date and time when the discount expires and is no longer available to customers.
    * For discounts without a fixed expiration date, specify `null`.
@@ -13742,8 +14096,11 @@ export type DiscountAutomaticBxgy = HasEvents & Node & {
   /**
    * The [discount class](https://help.shopify.com/manual/discounts/combining-discounts/discount-combinations)
    * that's used to control how discounts can be combined.
+   * @deprecated Use `discountClasses` instead.
    */
   discountClass: MerchandiseDiscountClass;
+  /** The classes of the discount. */
+  discountClasses: Array<DiscountClass>;
   /**
    * The date and time when the discount expires and is no longer available to customers.
    * For discounts without a fixed expiration date, specify `null`.
@@ -13963,8 +14320,11 @@ export type DiscountAutomaticFreeShipping = {
   /**
    * The [discount class](https://help.shopify.com/manual/discounts/combining-discounts/discount-combinations)
    * that's used to control how discounts can be combined.
+   * @deprecated Use `discountClasses` instead.
    */
   discountClass: ShippingDiscountClass;
+  /** The classes of the discount. */
+  discountClasses: Array<DiscountClass>;
   /**
    * The date and time when the discount expires and is no longer available to customers.
    * For discounts without a fixed expiration date, specify `null`.
@@ -14295,8 +14655,11 @@ export type DiscountCodeApp = {
    * The
    * [discount class](https://help.shopify.com/manual/discounts/combining-discounts/discount-combinations)
    * that's used to control how discounts can be combined.
+   * @deprecated Use `discountClasses` instead.
    */
   discountClass: DiscountClass;
+  /** The classes of the discount. */
+  discountClasses: Array<DiscountClass>;
   /**
    * The [globally-unique ID](https://shopify.dev/docs/api/usage/gids)
    * for the discount.
@@ -14408,6 +14771,8 @@ export type DiscountCodeAppInput = {
   combinesWith?: InputMaybe<DiscountCombinesWithInput>;
   /** The customers that can use the discount. */
   customerSelection?: InputMaybe<DiscountCustomerSelectionInput>;
+  /** Determines which discount effects the discount can apply. */
+  discountClasses?: InputMaybe<Array<DiscountClass>>;
   /**
    * The date and time when the discount expires and is no longer available to customers.
    * For discounts without a fixed expiration date, specify `null`.
@@ -14517,8 +14882,11 @@ export type DiscountCodeBasic = {
   /**
    * The [discount class](https://help.shopify.com/manual/discounts/combining-discounts/discount-combinations)
    * that's used to control how discounts can be combined.
+   * @deprecated Use `discountClasses` instead.
    */
   discountClass: MerchandiseDiscountClass;
+  /** The classes of the discount. */
+  discountClasses: Array<DiscountClass>;
   /**
    * The date and time when the discount expires and is no longer available to customers.
    * For discounts without a fixed expiration date, specify `null`.
@@ -14742,8 +15110,11 @@ export type DiscountCodeBxgy = {
   /**
    * The [discount class](https://help.shopify.com/manual/discounts/combining-discounts/discount-combinations)
    * that's used to control how discounts can be combined.
+   * @deprecated Use `discountClasses` instead.
    */
   discountClass: MerchandiseDiscountClass;
+  /** The classes of the discount. */
+  discountClasses: Array<DiscountClass>;
   /**
    * The date and time when the discount expires and is no longer available to customers.
    * For discounts without a fixed expiration date, specify `null`.
@@ -14968,8 +15339,11 @@ export type DiscountCodeFreeShipping = {
   /**
    * The [discount class](https://help.shopify.com/manual/discounts/combining-discounts/discount-combinations)
    * that's used to control how discounts can be combined.
+   * @deprecated Use `discountClasses` instead.
    */
   discountClass: ShippingDiscountClass;
+  /** The classes of the discount. */
+  discountClasses: Array<DiscountClass>;
   /**
    * The date and time when the discount expires and is no longer available to customers.
    * For discounts without a fixed expiration date, specify `null`.
@@ -16175,6 +16549,8 @@ export type DomainLocalization = {
  * For draft orders in multiple currencies `presentment_money` is the source of truth for what a customer is going to be charged and `shop_money` is an estimate of what the merchant might receive in their shop currency.
  *
  * **Caution:** Only use this data if it's required for your app's functionality. Shopify will restrict [access to scopes](https://shopify.dev/api/usage/access-scopes) for apps that don't have a legitimate use for the associated data.
+ *
+ * Draft orders created on or after April 1, 2025 will be automatically purged after one year of inactivity.
  */
 export type DraftOrder = CommentEventSubject & HasEvents & HasLocalizationExtensions & HasLocalizedFields & HasMetafields & LegacyInteroperability & Navigable & Node & {
   __typename?: 'DraftOrder';
@@ -16378,6 +16754,8 @@ export type DraftOrder = CommentEventSubject & HasEvents & HasLocalizationExtens
  * For draft orders in multiple currencies `presentment_money` is the source of truth for what a customer is going to be charged and `shop_money` is an estimate of what the merchant might receive in their shop currency.
  *
  * **Caution:** Only use this data if it's required for your app's functionality. Shopify will restrict [access to scopes](https://shopify.dev/api/usage/access-scopes) for apps that don't have a legitimate use for the associated data.
+ *
+ * Draft orders created on or after April 1, 2025 will be automatically purged after one year of inactivity.
  */
 export type DraftOrderEventsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -16404,6 +16782,8 @@ export type DraftOrderEventsArgs = {
  * For draft orders in multiple currencies `presentment_money` is the source of truth for what a customer is going to be charged and `shop_money` is an estimate of what the merchant might receive in their shop currency.
  *
  * **Caution:** Only use this data if it's required for your app's functionality. Shopify will restrict [access to scopes](https://shopify.dev/api/usage/access-scopes) for apps that don't have a legitimate use for the associated data.
+ *
+ * Draft orders created on or after April 1, 2025 will be automatically purged after one year of inactivity.
  */
 export type DraftOrderLineItemsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -16428,6 +16808,8 @@ export type DraftOrderLineItemsArgs = {
  * For draft orders in multiple currencies `presentment_money` is the source of truth for what a customer is going to be charged and `shop_money` is an estimate of what the merchant might receive in their shop currency.
  *
  * **Caution:** Only use this data if it's required for your app's functionality. Shopify will restrict [access to scopes](https://shopify.dev/api/usage/access-scopes) for apps that don't have a legitimate use for the associated data.
+ *
+ * Draft orders created on or after April 1, 2025 will be automatically purged after one year of inactivity.
  */
 export type DraftOrderLocalizationExtensionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -16454,6 +16836,8 @@ export type DraftOrderLocalizationExtensionsArgs = {
  * For draft orders in multiple currencies `presentment_money` is the source of truth for what a customer is going to be charged and `shop_money` is an estimate of what the merchant might receive in their shop currency.
  *
  * **Caution:** Only use this data if it's required for your app's functionality. Shopify will restrict [access to scopes](https://shopify.dev/api/usage/access-scopes) for apps that don't have a legitimate use for the associated data.
+ *
+ * Draft orders created on or after April 1, 2025 will be automatically purged after one year of inactivity.
  */
 export type DraftOrderLocalizedFieldsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -16480,6 +16864,8 @@ export type DraftOrderLocalizedFieldsArgs = {
  * For draft orders in multiple currencies `presentment_money` is the source of truth for what a customer is going to be charged and `shop_money` is an estimate of what the merchant might receive in their shop currency.
  *
  * **Caution:** Only use this data if it's required for your app's functionality. Shopify will restrict [access to scopes](https://shopify.dev/api/usage/access-scopes) for apps that don't have a legitimate use for the associated data.
+ *
+ * Draft orders created on or after April 1, 2025 will be automatically purged after one year of inactivity.
  */
 export type DraftOrderMetafieldArgs = {
   key: Scalars['String']['input'];
@@ -16501,6 +16887,8 @@ export type DraftOrderMetafieldArgs = {
  * For draft orders in multiple currencies `presentment_money` is the source of truth for what a customer is going to be charged and `shop_money` is an estimate of what the merchant might receive in their shop currency.
  *
  * **Caution:** Only use this data if it's required for your app's functionality. Shopify will restrict [access to scopes](https://shopify.dev/api/usage/access-scopes) for apps that don't have a legitimate use for the associated data.
+ *
+ * Draft orders created on or after April 1, 2025 will be automatically purged after one year of inactivity.
  */
 export type DraftOrderMetafieldsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -16823,8 +17211,13 @@ export type DraftOrderLineItem = Node & {
    * This value doesn't include discounts applied to the entire draft order.
    */
   approximateDiscountedUnitPriceSet: MoneyBag;
-  /** The list of bundle components if applicable. */
+  /**
+   * The list of bundle components if applicable.
+   * @deprecated Use `components` instead.
+   */
   bundleComponents: Array<DraftOrderLineItem>;
+  /** The components of the draft order line item. */
+  components: Array<DraftOrderLineItem>;
   /** Whether the line item is custom (`true`) or contains a product variant (`false`). */
   custom: Scalars['Boolean']['output'];
   /** A list of attributes that represent custom features or special requests. */
@@ -16927,6 +17320,19 @@ export type DraftOrderLineItem = Node & {
   weight?: Maybe<Weight>;
 };
 
+/** The input fields representing the components of a line item. */
+export type DraftOrderLineItemComponentInput = {
+  /** The quantity of the component. */
+  quantity: Scalars['Int']['input'];
+  /**
+   * The UUID of the component. Must be unique and consistent across requests.
+   * This field is mandatory in order to manipulate drafts with parent line items.
+   */
+  uuid?: InputMaybe<Scalars['String']['input']>;
+  /** The ID of the product variant corresponding to the component. */
+  variantId?: InputMaybe<Scalars['ID']['input']>;
+};
+
 /** An auto-generated type for paginating through multiple DraftOrderLineItems. */
 export type DraftOrderLineItemConnection = {
   __typename?: 'DraftOrderLineItemConnection';
@@ -16951,8 +17357,8 @@ export type DraftOrderLineItemEdge = {
 export type DraftOrderLineItemInput = {
   /** The custom discount to be applied. */
   appliedDiscount?: InputMaybe<DraftOrderAppliedDiscountInput>;
-  /** The bundle components when the line item is a bundle. */
-  bundleComponents?: InputMaybe<Array<BundlesDraftOrderBundleLineItemComponentInput>>;
+  /** The components of the draft order line item. */
+  components?: InputMaybe<Array<DraftOrderLineItemComponentInput>>;
   /** A generic custom attribute using a key value pair. */
   customAttributes?: InputMaybe<Array<AttributeInput>>;
   /**
@@ -17186,6 +17592,13 @@ export type EmailInput = {
   to?: InputMaybe<Scalars['String']['input']>;
 };
 
+/** The shop's entitlements. */
+export type EntitlementsType = {
+  __typename?: 'EntitlementsType';
+  /** Represents the markets for the shop. */
+  markets: MarketsType;
+};
+
 /** An error that occurs during the execution of a server pixel mutation. */
 export type ErrorsServerPixelUserError = DisplayableError & {
   __typename?: 'ErrorsServerPixelUserError';
@@ -17290,6 +17703,8 @@ export type EventBridgeWebhookSubscriptionInput = {
   includeFields?: InputMaybe<Array<Scalars['String']['input']>>;
   /** The list of namespaces for any metafields that should be included in the webhook subscription. */
   metafieldNamespaces?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** A list of identifiers specifying metafields to include in the webhook payload. */
+  metafields?: InputMaybe<Array<HasMetafieldsMetafieldIdentifierInput>>;
 };
 
 /** Return type for `eventBridgeWebhookSubscriptionUpdate` mutation. */
@@ -17326,12 +17741,7 @@ export enum EventSortKeys {
   /** Sort by the `created_at` value. */
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /** The type of the resource that generated the event. */
@@ -17450,6 +17860,8 @@ export type ExchangeV2 = Node & {
   id: Scalars['ID']['output'];
   /** The location where the exchange happened. */
   location?: Maybe<Location>;
+  /** Mirrored from Admin Exchanges. */
+  mirrored: Scalars['Boolean']['output'];
   /** The text of an optional note that a shop owner can attach to the exchange. */
   note?: Maybe<Scalars['String']['output']>;
   /** The refunds processed during the exchange. */
@@ -17974,6 +18386,8 @@ export enum FilesErrorCode {
   NonReadyState = 'NON_READY_STATE',
   /** Exceeded the limit of media per product. */
   ProductMediaLimitExceeded = 'PRODUCT_MEDIA_LIMIT_EXCEEDED',
+  /** One or more associated products are suspended. */
+  ProductSuspended = 'PRODUCT_SUSPENDED',
   /** The target resource does not exist. */
   ReferenceTargetDoesNotExist = 'REFERENCE_TARGET_DOES_NOT_EXIST',
   /** Specify one argument: search, IDs, or deleteAll. */
@@ -18010,6 +18424,45 @@ export type FilterOption = {
   label: Scalars['String']['output'];
   /** The filter option's value. */
   value: Scalars['String']['output'];
+};
+
+/** Current user's access policy for a finance app. */
+export type FinanceAppAccessPolicy = {
+  __typename?: 'FinanceAppAccessPolicy';
+  /** Current shop staff's access within the app. */
+  access: Array<BankingFinanceAppAccess>;
+};
+
+/** Shopify Payments account information shared with embedded finance applications. */
+export type FinanceKycInformation = {
+  __typename?: 'FinanceKycInformation';
+  /** The legal entity business address. */
+  businessAddress?: Maybe<ShopifyPaymentsAddressBasic>;
+  /** The legal entity business type. */
+  businessType?: Maybe<ShopifyPaymentsBusinessType>;
+  /** Business industry. */
+  industry?: Maybe<ShopifyPaymentsMerchantCategoryCode>;
+  /** Returns the business legal name. */
+  legalName?: Maybe<Scalars['String']['output']>;
+  /** The shop owner information for financial KYC purposes. */
+  shopOwner: FinancialKycShopOwner;
+  /** Tax identification information. */
+  taxIdentification?: Maybe<ShopifyPaymentsTaxIdentification>;
+};
+
+/** Represents the shop owner information for financial KYC purposes. */
+export type FinancialKycShopOwner = {
+  __typename?: 'FinancialKycShopOwner';
+  /** The email of the shop owner. */
+  email: Scalars['String']['output'];
+  /** The first name of the shop owner. */
+  firstName?: Maybe<Scalars['String']['output']>;
+  /** A globally-unique ID. */
+  id: Scalars['ID']['output'];
+  /** The last name of the shop owner. */
+  lastName?: Maybe<Scalars['String']['output']>;
+  /** The phone number of the shop owner. */
+  phone?: Maybe<Scalars['String']['output']>;
 };
 
 /** An amount that's allocated to a line item based on an associated discount application. */
@@ -18481,12 +18934,7 @@ export enum FulfillmentEventSortKeys {
   /** Sort by the `happened_at` value. */
   HappenedAt = 'HAPPENED_AT',
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /** The status that describes a fulfillment or delivery event. */
@@ -20372,12 +20820,30 @@ export type FulfillmentOrderRejectFulfillmentRequestPayload = {
 export enum FulfillmentOrderRejectionReason {
   /** The fulfillment order was rejected because of an incorrect address. */
   IncorrectAddress = 'INCORRECT_ADDRESS',
+  /** The fulfillment order was rejected because product information is incorrect to be able to ship. */
+  IncorrectProductInfo = 'INCORRECT_PRODUCT_INFO',
   /** The fulfillment order was rejected because of an ineligible product. */
   IneligibleProduct = 'INELIGIBLE_PRODUCT',
+  /** The fulfillment order was rejected because international address shipping hasn't been enabled. */
+  InternationalShippingUnavailable = 'INTERNATIONAL_SHIPPING_UNAVAILABLE',
+  /** The fulfillment order was rejected because of invalid customer contact information. */
+  InvalidContactInformation = 'INVALID_CONTACT_INFORMATION',
+  /** The fulfillment order was rejected because of an invalid SKU. */
+  InvalidSku = 'INVALID_SKU',
   /** The fulfillment order was rejected because inventory is out of stock. */
   InventoryOutOfStock = 'INVENTORY_OUT_OF_STOCK',
+  /** The fulfillment order was rejected because the merchant is blocked or suspended. */
+  MerchantBlockedOrSuspended = 'MERCHANT_BLOCKED_OR_SUSPENDED',
+  /** The fulfillment order was rejected because customs information was missing for international shipping. */
+  MissingCustomsInfo = 'MISSING_CUSTOMS_INFO',
+  /** The fulfillment order was rejected because the order is too large. */
+  OrderTooLarge = 'ORDER_TOO_LARGE',
   /** The fulfillment order was rejected for another reason. */
   Other = 'OTHER',
+  /** The fulfillment order was rejected because the package preference was not set. */
+  PackagePreferenceNotSet = 'PACKAGE_PREFERENCE_NOT_SET',
+  /** The fulfillment order was rejected because the payment method was declined. */
+  PaymentDeclined = 'PAYMENT_DECLINED',
   /** The fulfillment order was rejected because of an undeliverable destination. */
   UndeliverableDestination = 'UNDELIVERABLE_DESTINATION'
 }
@@ -20470,11 +20936,6 @@ export enum FulfillmentOrderRescheduleUserErrorCode {
 export enum FulfillmentOrderSortKeys {
   /** Sort by the `id` value. */
   Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `updated_at` value. */
   UpdatedAt = 'UPDATED_AT'
 }
@@ -20744,6 +21205,8 @@ export type FulfillmentService = {
   location?: Maybe<Location>;
   /** Whether the fulfillment service can stock inventory alongside other locations. */
   permitsSkuSharing: Scalars['Boolean']['output'];
+  /** Whether the fulfillment service requires products to be physically shipped. */
+  requiresShippingMethod: Scalars['Boolean']['output'];
   /** The name of the fulfillment service as seen by merchants. */
   serviceName: Scalars['String']['output'];
   /** Whether the fulfillment service implemented the /fetch_tracking_numbers endpoint. */
@@ -21244,6 +21707,15 @@ export type GiftCardTransactionsArgs = {
   reverse?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+/** Represents information about the configuration of gift cards on the shop. */
+export type GiftCardConfiguration = {
+  __typename?: 'GiftCardConfiguration';
+  /** The issue limit for gift cards in the default shop currency. */
+  issueLimit: MoneyV2;
+  /** The purchase limit for gift cards in the default shop currency. */
+  purchaseLimit: MoneyV2;
+};
+
 /** An auto-generated type for paginating through multiple GiftCards. */
 export type GiftCardConnection = {
   __typename?: 'GiftCardConnection';
@@ -21608,11 +22080,6 @@ export enum GiftCardSortKeys {
   Id = 'ID',
   /** Sort by the `initial_value` value. */
   InitialValue = 'INITIAL_VALUE',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `updated_at` value. */
   UpdatedAt = 'UPDATED_AT'
 }
@@ -21871,6 +22338,17 @@ export type HasMetafieldsMetafieldsArgs = {
   reverse?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+/** The input fields that identify metafield definitions. */
+export type HasMetafieldsMetafieldIdentifierInput = {
+  /** The unique identifier for the metafield definition within its namespace. */
+  key: Scalars['String']['input'];
+  /**
+   * The container for a group of metafields that the metafield definition will be associated with. If omitted, the
+   * app-reserved namespace will be used.
+   */
+  namespace?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** Published translations associated with the resource. */
 export type HasPublishedTranslations = {
   /** The published translations associated with the resource. */
@@ -22076,6 +22554,24 @@ export type ImageUploadParameter = {
   /** The parameter value. */
   value: Scalars['String']['output'];
 };
+
+/** Answers the question if prices include duties and / or taxes. */
+export enum InclusiveDutiesPricingStrategy {
+  /** Add duties at checkout when configured to collect. */
+  AddDutiesAtCheckout = 'ADD_DUTIES_AT_CHECKOUT',
+  /** Include duties in price when configured to collect. */
+  IncludeDutiesInPrice = 'INCLUDE_DUTIES_IN_PRICE'
+}
+
+/** Answers the question if prices include duties and / or taxes. */
+export enum InclusiveTaxPricingStrategy {
+  /** Add taxes at checkout when configured to collect. */
+  AddTaxesAtCheckout = 'ADD_TAXES_AT_CHECKOUT',
+  /** Include taxes in price when configured to collect. */
+  IncludesTaxesInPrice = 'INCLUDES_TAXES_IN_PRICE',
+  /** Include taxes in price based on country when configured to collect. */
+  IncludesTaxesInPriceBasedOnCountry = 'INCLUDES_TAXES_IN_PRICE_BASED_ON_COUNTRY'
+}
 
 /** The input fields for the incoming line item. */
 export type IncomingRequestLineItemInput = {
@@ -22325,7 +22821,7 @@ export type InventoryItem = LegacyInteroperability & Node & {
   createdAt: Scalars['DateTime']['output'];
   /** The number of inventory items that share the same SKU with this item. */
   duplicateSkuCount: Scalars['Int']['output'];
-  /** The harmonized system code of the item. */
+  /** The harmonized system code of the item. This must be a number between 6 and 13 digits. */
   harmonizedSystemCode?: Maybe<Scalars['String']['output']>;
   /** A globally-unique ID. */
   id: Scalars['ID']['output'];
@@ -22426,7 +22922,7 @@ export type InventoryItemInput = {
   countryCodeOfOrigin?: InputMaybe<CountryCode>;
   /** List of country-specific harmonized system codes. */
   countryHarmonizedSystemCodes?: InputMaybe<Array<CountryHarmonizedSystemCodeInput>>;
-  /** The harmonized system code of the inventory item. */
+  /** The harmonized system code of the inventory item. This must be a number between 6 and 13 digits. */
   harmonizedSystemCode?: InputMaybe<Scalars['String']['input']>;
   /** The measurements of an inventory item. */
   measurement?: InputMaybe<InventoryItemMeasurementInput>;
@@ -24440,6 +24936,14 @@ export enum LocationEditUserErrorCode {
   UnstructuredReservedNamespace = 'UNSTRUCTURED_RESERVED_NAMESPACE'
 }
 
+/** The input fields for identifying a location. */
+export type LocationIdentifierInput = {
+  /** The [custom ID](https://shopify.dev/docs/apps/build/custom-data/metafields/working-with-custom-ids) of the location. */
+  customId?: InputMaybe<UniqueMetafieldValueInput>;
+  /** The ID of the location. */
+  id?: InputMaybe<Scalars['ID']['input']>;
+};
+
 /** Return type for `locationLocalPickupDisable` mutation. */
 export type LocationLocalPickupDisablePayload = {
   __typename?: 'LocationLocalPickupDisablePayload';
@@ -24492,6 +24996,25 @@ export type LocationSuggestedAddress = {
   provinceCode?: Maybe<Scalars['String']['output']>;
   /** The ZIP code of the suggested address. */
   zip?: Maybe<Scalars['String']['output']>;
+};
+
+/** A condition checking the location that the visitor is shopping from. */
+export type LocationsCondition = {
+  __typename?: 'LocationsCondition';
+  /** The application level for the condition. */
+  applicationLevel?: Maybe<MarketConditionApplicationType>;
+  /** The locations that comprise the market. */
+  locations: LocationConnection;
+};
+
+
+/** A condition checking the location that the visitor is shopping from. */
+export type LocationsConditionLocationsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  reverse?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 /**
@@ -24671,12 +25194,16 @@ export type ManualDiscountApplication = DiscountApplication & {
  */
 export type Market = HasMetafieldDefinitions & HasMetafields & Node & {
   __typename?: 'Market';
+  /** Whether the market has a customization with the given ID. */
+  assignedCustomization: Scalars['Boolean']['output'];
   /** The catalogs that belong to the market. */
   catalogs: MarketCatalogConnection;
   /** The number of catalogs that belong to the market. */
   catalogsCount?: Maybe<Count>;
+  /** The conditions under which a visitor is in the market. */
+  conditions?: Maybe<MarketConditions>;
   /** The market’s currency settings. */
-  currencySettings: MarketCurrencySettings;
+  currencySettings?: Maybe<MarketCurrencySettings>;
   /**
    * Whether the market is enabled to receive visitors and sales. **Note**: Regions in inactive
    * markets can't be selected on the storefront or in checkout.
@@ -24705,6 +25232,8 @@ export type Market = HasMetafieldDefinitions & HasMetafields & Node & {
   metafields: MetafieldConnection;
   /** The name of the market. Not shown to customers. */
   name: Scalars['String']['output'];
+  /** The inclusive pricing strategy for a market. This determines if prices include duties and / or taxes. */
+  priceInclusions?: Maybe<MarketPriceInclusions>;
   /**
    * The market’s price list, which specifies a percentage-based price adjustment as well as
    * fixed price overrides for specific variants.
@@ -24724,6 +25253,10 @@ export type Market = HasMetafieldDefinitions & HasMetafields & Node & {
    * @deprecated This field is deprecated and will be removed in the future. Use `conditions.regionConditions` instead.
    */
   regions: MarketRegionConnection;
+  /** Status of the market. Replaces the enabled field. */
+  status: MarketStatus;
+  /** The type of the market. */
+  type: MarketType;
   /**
    * The market’s web presence, which defines its SEO strategy. This can be a different domain,
    * subdomain, or subfolders of the primary domain. Each web presence comprises one or more
@@ -24742,6 +25275,19 @@ export type Market = HasMetafieldDefinitions & HasMetafields & Node & {
    * selectors](https://shopify.dev/themes/internationalization/multiple-currencies-languages#the-country-selector).
    */
   webPresences: MarketWebPresenceConnection;
+};
+
+
+/**
+ * A market is a group of one or more regions that you want to target for international sales.
+ * By creating a market, you can configure a distinct, localized shopping experience for
+ * customers from a specific area of the world. For example, you can
+ * [change currency](https://shopify.dev/api/admin-graphql/current/mutations/marketCurrencySettingsUpdate),
+ * [configure international pricing](https://shopify.dev/apps/internationalization/product-price-lists),
+ * or [add market-specific domains or subfolders](https://shopify.dev/api/admin-graphql/current/objects/MarketWebPresence).
+ */
+export type MarketAssignedCustomizationArgs = {
+  customizationId: Scalars['ID']['input'];
 };
 
 
@@ -24856,6 +25402,8 @@ export type MarketCatalog = Catalog & Node & {
   id: Scalars['ID']['output'];
   /** The markets associated with the catalog. */
   markets: MarketConnection;
+  /** The number of markets associated with the catalog. */
+  marketsCount?: Maybe<Count>;
   /** Most recent catalog operations. */
   operations: Array<ResourceOperation>;
   /** The price list associated with the catalog. */
@@ -24876,6 +25424,16 @@ export type MarketCatalogMarketsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   reverse?: InputMaybe<Scalars['Boolean']['input']>;
+  status?: InputMaybe<MarketStatus>;
+  type?: InputMaybe<MarketType>;
+};
+
+
+/** A list of products with publishing and pricing information associated with markets. */
+export type MarketCatalogMarketsCountArgs = {
+  query?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<MarketStatus>;
+  type?: InputMaybe<MarketType>;
 };
 
 /** An auto-generated type for paginating through multiple MarketCatalogs. */
@@ -24898,6 +25456,87 @@ export type MarketCatalogEdge = {
   node: MarketCatalog;
 };
 
+/** The application level for a market condition. */
+export enum MarketConditionApplicationType {
+  /** The condition matches all records of a given type. */
+  All = 'ALL',
+  /** The condition matches specified records of a given type. */
+  Specified = 'SPECIFIED'
+}
+
+/** The condition types for the condition set. */
+export enum MarketConditionType {
+  /** The condition checks the company location that the visitor is purchasing for. */
+  CompanyLocation = 'COMPANY_LOCATION',
+  /** The condition checks the location that the visitor is shopping from. */
+  Location = 'LOCATION',
+  /** The condition checks the visitor's region. */
+  Region = 'REGION'
+}
+
+/** The conditions that determine whether a visitor is in a market. */
+export type MarketConditions = {
+  __typename?: 'MarketConditions';
+  /** The company location conditions that determine whether a visitor is in the market. */
+  companyLocationsCondition?: Maybe<CompanyLocationsCondition>;
+  /** The set of condition types that are defined for the market. */
+  conditionTypes: Array<MarketConditionType>;
+  /** The retail location conditions that determine whether a visitor is in the market. */
+  locationsCondition?: Maybe<LocationsCondition>;
+  /** The region conditions that determine whether a visitor is in the market. */
+  regionsCondition?: Maybe<RegionsCondition>;
+};
+
+/** The input fields required to create or update a company location market condition. */
+export type MarketConditionsCompanyLocationsInput = {
+  /** A type of market condition (e.g. NONE, ALL) to apply. */
+  applicationLevel?: InputMaybe<MarketConditionApplicationType>;
+  /** A list of company location IDs to include in the market condition. */
+  companyLocationIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
+/** The input fields required to create or update the market conditions. */
+export type MarketConditionsInput = {
+  /** The company locations to include in the market conditions. */
+  companyLocationsCondition?: InputMaybe<MarketConditionsCompanyLocationsInput>;
+  /** The locations to include in the market conditions. */
+  locationsCondition?: InputMaybe<MarketConditionsLocationsInput>;
+  /** The regions to include in the market conditions. */
+  regionsCondition?: InputMaybe<MarketConditionsRegionsInput>;
+};
+
+/** The input fields required to create or update a location market condition. */
+export type MarketConditionsLocationsInput = {
+  /** A type of market condition (e.g. NONE, ALL) to apply. */
+  applicationLevel?: InputMaybe<MarketConditionApplicationType>;
+  /** A list of location IDs to include in the market condition. */
+  locationIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
+/** The input fields to specify a region condition. */
+export type MarketConditionsRegionInput = {
+  /** A country code to which this condition should apply. */
+  countryCode: CountryCode;
+};
+
+/** The input fields required to create or update a region market condition. */
+export type MarketConditionsRegionsInput = {
+  /** A type of market condition (e.g. NONE, ALL) to apply. */
+  applicationLevel?: InputMaybe<MarketConditionApplicationType>;
+  /** A list of market region IDs to include in the market condition. */
+  regionIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** A list of market regions to include in the market condition. */
+  regions?: InputMaybe<Array<MarketConditionsRegionInput>>;
+};
+
+/** The input fields required to update a market condition. */
+export type MarketConditionsUpdateInput = {
+  /** The conditions to update to the market condition. */
+  conditionsToAdd?: InputMaybe<MarketConditionsInput>;
+  /** The conditions to delete from the market condition. */
+  conditionsToDelete?: InputMaybe<MarketConditionsInput>;
+};
+
 /** An auto-generated type for paginating through multiple Markets. */
 export type MarketConnection = {
   __typename?: 'MarketConnection';
@@ -24911,28 +25550,27 @@ export type MarketConnection = {
 
 /** The input fields required to create a market. */
 export type MarketCreateInput = {
-  /**
-   * Whether the market is enabled to receive visitors and sales. If a
-   * value isn't provided, then the market is enabled by default if all
-   * included regions have shipping rates, and disabled if any regions don't
-   * have shipping rates.
-   *
-   * **Note**: Regions in inactive markets can't be selected on the
-   * storefront or in checkout.
-   */
-  enabled?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Catalog IDs to include in the market. */
+  catalogs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** The conditions that apply to the market. */
+  conditions?: InputMaybe<MarketConditionsInput>;
+  /** Currency settings for the market. */
+  currencySettings?: InputMaybe<MarketCurrencySettingsUpdateInput>;
   /**
    * A unique identifier for the market. For example `"ca"`.
    * If the handle isn't provided, then the handle is auto-generated based on the country or name.
    */
   handle?: InputMaybe<Scalars['String']['input']>;
+  /** Whether to update duplicate region or wildcard markets' status to draft. */
+  makeDuplicateUniqueMarketsDraft?: InputMaybe<Scalars['Boolean']['input']>;
   /** The name of the market. Not shown to customers. */
   name: Scalars['String']['input'];
-  /**
-   * The regions to be included in the market. Each region can only be included in one market at
-   * a time.
-   */
-  regions: Array<MarketRegionCreateInput>;
+  /** The strategy used to determine how prices are displayed to the customer. */
+  priceInclusions?: InputMaybe<MarketPriceInclusionsInput>;
+  /** The status of the market. */
+  status?: InputMaybe<MarketStatus>;
+  /** Web presence IDs to include in the market. */
+  webPresences?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 /** Return type for `marketCreate` mutation. */
@@ -24947,28 +25585,23 @@ export type MarketCreatePayload = {
 /** A market's currency settings. */
 export type MarketCurrencySettings = {
   __typename?: 'MarketCurrencySettings';
-  /**
-   * The currency which this market's prices are defined in, and the
-   * currency which its customers must use if local currencies are disabled.
-   */
+  /** The currency which this market's customers must use if local currencies are disabled. */
   baseCurrency: CurrencySetting;
   /**
    * Whether or not local currencies are enabled. If enabled, then prices will
    * be converted to give each customer the best experience based on their
    * region. If disabled, then all customers in this market will see prices
-   * in the market's base currency. For single country markets this will be true when
-   * the market's base currency is the same as the default currency for the region.
+   * in the market's base currency.
    */
   localCurrencies: Scalars['Boolean']['output'];
 };
 
 /** The input fields used to update the currency settings of a market. */
 export type MarketCurrencySettingsUpdateInput = {
-  /**
-   * The currency which this market’s prices are defined in, and the
-   * currency which its customers must use if local currencies are disabled.
-   */
+  /** The currency which this market’s customers must use if local currencies are disabled. */
   baseCurrency?: InputMaybe<CurrencyCode>;
+  /** The manual exchange rate that will be used to convert shop currency prices. If null, then the automatic exchange rates will be used. */
+  baseCurrencyManualRate?: InputMaybe<Scalars['Decimal']['input']>;
   /**
    * Whether or not local currencies are enabled. If enabled, then prices will
    * be converted to give each customer the best experience based on their
@@ -24976,12 +25609,17 @@ export type MarketCurrencySettingsUpdateInput = {
    * in the market's base currency.
    */
   localCurrencies?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Whether or not rounding is enabled on multi-currency prices. */
+  roundingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 /** Return type for `marketCurrencySettingsUpdate` mutation. */
 export type MarketCurrencySettingsUpdatePayload = {
   __typename?: 'MarketCurrencySettingsUpdatePayload';
-  /** The market object. */
+  /**
+   * The market object.
+   * @deprecated Use `marketCreate` and `marketUpdate` mutations instead.
+   */
   market?: Maybe<Market>;
   /** The list of errors that occurred from executing the mutation. */
   userErrors: Array<MarketCurrencySettingsUserError>;
@@ -25010,6 +25648,8 @@ export enum MarketCurrencySettingsUserErrorCode {
   NoLocalCurrenciesOnSingleCountryMarket = 'NO_LOCAL_CURRENCIES_ON_SINGLE_COUNTRY_MARKET',
   /** The primary market must use the shop currency. */
   PrimaryMarketUsesShopCurrency = 'PRIMARY_MARKET_USES_SHOP_CURRENCY',
+  /** This action is restricted if unified markets is enabled. */
+  UnifiedMarketsEnabled = 'UNIFIED_MARKETS_ENABLED',
   /** The specified currency is not supported. */
   UnsupportedCurrency = 'UNSUPPORTED_CURRENCY'
 }
@@ -25133,6 +25773,23 @@ export type MarketLocalizationsRemovePayload = {
   userErrors: Array<TranslationUserError>;
 };
 
+/** The inclusive pricing strategy for a market. */
+export type MarketPriceInclusions = {
+  __typename?: 'MarketPriceInclusions';
+  /** The inclusive duties pricing strategy of the market. This determines if prices include duties. */
+  inclusiveDutiesPricingStrategy: InclusiveDutiesPricingStrategy;
+  /** The inclusive tax pricing strategy of the market. This determines if prices include taxes. */
+  inclusiveTaxPricingStrategy: InclusiveTaxPricingStrategy;
+};
+
+/** The input fields used to create a price inclusion. */
+export type MarketPriceInclusionsInput = {
+  /** The inclusive duties pricing strategy for the market. */
+  dutiesPricingStrategy?: InputMaybe<InclusiveDutiesPricingStrategy>;
+  /** The inclusive tax pricing strategy for the market. */
+  taxPricingStrategy?: InputMaybe<InclusiveTaxPricingStrategy>;
+};
+
 /** A geographic region which comprises a market. */
 export type MarketRegion = {
   /** A globally-unique ID. */
@@ -25209,17 +25866,54 @@ export type MarketRegionsDeletePayload = {
   userErrors: Array<MarketUserError>;
 };
 
+/** The possible market statuses. */
+export enum MarketStatus {
+  /** The market is active. */
+  Active = 'ACTIVE',
+  /** The market is in draft. */
+  Draft = 'DRAFT'
+}
+
+/** The market types. */
+export enum MarketType {
+  /** The market applies to the visitor based on the company location. */
+  CompanyLocation = 'COMPANY_LOCATION',
+  /** The market applies to the visitor based on the location. */
+  Location = 'LOCATION',
+  /** The market does not apply to any visitor. */
+  None = 'NONE',
+  /** The market applies to the visitor based on region. */
+  Region = 'REGION'
+}
+
 /** The input fields used to update a market. */
 export type MarketUpdateInput = {
-  /**
-   * Whether the market is enabled to receive visitors and sales. **Note**: Regions in
-   * inactive markets cannot be selected on the storefront or in checkout.
-   */
-  enabled?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Catalog IDs to include in the market. */
+  catalogsToAdd?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** Catalog IDs to remove from the market. */
+  catalogsToDelete?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** The conditions to update. */
+  conditions?: InputMaybe<MarketConditionsUpdateInput>;
+  /** Currency settings for the market. */
+  currencySettings?: InputMaybe<MarketCurrencySettingsUpdateInput>;
   /** A unique identifier for the market. For example `"ca"`. */
   handle?: InputMaybe<Scalars['String']['input']>;
+  /** Whether to update duplicate region or wildcard markets' status to draft. */
+  makeDuplicateUniqueMarketsDraft?: InputMaybe<Scalars['Boolean']['input']>;
   /** The name of the market. Not shown to customers. */
   name?: InputMaybe<Scalars['String']['input']>;
+  /** The strategy used to determine how prices are displayed to the customer. */
+  priceInclusions?: InputMaybe<MarketPriceInclusionsInput>;
+  /** Remove any currency settings that are defined for the market. */
+  removeCurrencySettings?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The price inclusions to remove from the market. */
+  removePriceInclusions?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The status of the market. */
+  status?: InputMaybe<MarketStatus>;
+  /** The web presences to add to the market. */
+  webPresencesToAdd?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** The web presences to remove from the market. */
+  webPresencesToDelete?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 /** Return type for `marketUpdate` mutation. */
@@ -25244,6 +25938,8 @@ export type MarketUserError = DisplayableError & {
 
 /** Possible error codes that can be returned by `MarketUserError`. */
 export enum MarketUserErrorCode {
+  /** B2B markets must be merchant managed. */
+  B2BMarketMustBeMerchantManaged = 'B2B_MARKET_MUST_BE_MERCHANT_MANAGED',
   /** The input value is blank. */
   Blank = 'BLANK',
   /** Can't add customer account domain to a market. */
@@ -25268,20 +25964,72 @@ export enum MarketUserErrorCode {
   CannotHaveSubfolderAndDomain = 'CANNOT_HAVE_SUBFOLDER_AND_DOMAIN',
   /** Can't set default locale to null. */
   CannotSetDefaultLocaleToNull = 'CANNOT_SET_DEFAULT_LOCALE_TO_NULL',
+  /** Catalogs with volume pricing or quantity rules are not supported for the specified condition types. */
+  CatalogsWithVolumePricingOrQuantityRulesNotSupported = 'CATALOGS_WITH_VOLUME_PRICING_OR_QUANTITY_RULES_NOT_SUPPORTED',
+  /** Catalog condition types must be the same for all conditions on a catalog. */
+  CatalogConditionTypesMustBeTheSame = 'CATALOG_CONDITION_TYPES_MUST_BE_THE_SAME',
+  /** Catalogs cannot be added to a market with the specified condition types. */
+  CatalogNotCompatibleWithConditionTypes = 'CATALOG_NOT_COMPATIBLE_WITH_CONDITION_TYPES',
+  /** A market can only have market catalogs. */
+  CatalogTypeNotSupported = 'CATALOG_TYPE_NOT_SUPPORTED',
+  /** One or more condition IDs were not found. */
+  ConditionsNotFound = 'CONDITIONS_NOT_FOUND',
+  /** Contains regions that cannot be managed. */
+  ContainsRegionsThatCannotBeManaged = 'CONTAINS_REGIONS_THAT_CANNOT_BE_MANAGED',
+  /** One or more customizations were not found. */
+  CustomizationsNotFound = 'CUSTOMIZATIONS_NOT_FOUND',
   /** The language isn't enabled on the store. */
   DisabledLanguage = 'DISABLED_LANGUAGE',
   /** Domain was not found. */
   DomainNotFound = 'DOMAIN_NOT_FOUND',
   /** Duplicates found in languages. */
   DuplicateLanguages = 'DUPLICATE_LANGUAGES',
+  /** Duplicate region market. */
+  DuplicateRegionMarket = 'DUPLICATE_REGION_MARKET',
+  /** Duplicate unique market. */
+  DuplicateUniqueMarket = 'DUPLICATE_UNIQUE_MARKET',
+  /** Exceeds max multi-context markets. */
+  ExceedsMaxMultiContextMarkets = 'EXCEEDS_MAX_MULTI_CONTEXT_MARKETS',
+  /** An error occurred. See the message for details. */
+  GenericError = 'GENERIC_ERROR',
+  /** The input value isn't included in the list. */
+  Inclusion = 'INCLUSION',
+  /** Inclusive pricing cannot be added to a market with the specified condition types. */
+  InclusivePricingNotCompatibleWithConditionTypes = 'INCLUSIVE_PRICING_NOT_COMPATIBLE_WITH_CONDITION_TYPES',
+  /** The specified conditions are not compatible with each other. */
+  IncompatibleConditions = 'INCOMPATIBLE_CONDITIONS',
   /** The input value is invalid. */
   Invalid = 'INVALID',
+  /** Invalid combination of status and enabled. */
+  InvalidStatusAndEnabledCombination = 'INVALID_STATUS_AND_ENABLED_COMBINATION',
+  /** Location match all is only valid with one non-match all region. */
+  LocationMatchAllRequiresOneSpecificRegion = 'LOCATION_MATCH_ALL_REQUIRES_ONE_SPECIFIC_REGION',
+  /** A location's country does not match the region's country. */
+  LocationRegionCountryMismatch = 'LOCATION_REGION_COUNTRY_MISMATCH',
+  /** The currency settings of the given market cannot be changed because the market manager has exclusive control of pricing. */
+  ManagedMarket = 'MANAGED_MARKET',
+  /** Catalogs created by Managed Markets cannot be added to a market. */
+  ManagedMarketsCatalogNotAllowed = 'MANAGED_MARKETS_CATALOG_NOT_ALLOWED',
+  /** A direct connection catalog can't be attached to a market. */
+  MarketCantHaveDirectConnectionCatalog = 'MARKET_CANT_HAVE_DIRECT_CONNECTION_CATALOG',
   /** The market wasn't found. */
   MarketNotFound = 'MARKET_NOT_FOUND',
   /** Can't add another web presence to the market. */
   MarketReachedWebPresenceLimit = 'MARKET_REACHED_WEB_PRESENCE_LIMIT',
+  /** All retail locations in a market must be in the same country. */
+  MixedCountryLocationsNotAllowed = 'MIXED_COUNTRY_LOCATIONS_NOT_ALLOWED',
+  /** The shop's payment gateway does not support enabling more than one currency. */
+  MultipleCurrenciesNotSupported = 'MULTIPLE_CURRENCIES_NOT_SUPPORTED',
+  /** Can’t delete, disable, or change the type of the last region market. */
+  MustHaveAtLeastOneActiveRegionMarket = 'MUST_HAVE_AT_LEAST_ONE_ACTIVE_REGION_MARKET',
   /** No languages selected. */
   NoLanguages = 'NO_LANGUAGES',
+  /** Can't enable or disable local currencies on a single country market. */
+  NoLocalCurrenciesOnSingleCountryMarket = 'NO_LOCAL_CURRENCIES_ON_SINGLE_COUNTRY_MARKET',
+  /** Rounding is not supported if unified markets are not enabled. */
+  NoRoundingOnLegacyMarket = 'NO_ROUNDING_ON_LEGACY_MARKET',
+  /** POS location markets must be merchant managed. */
+  PosLocationMarketMustBeMerchantManaged = 'POS_LOCATION_MARKET_MUST_BE_MERCHANT_MANAGED',
   /** The primary market must use the primary domain. */
   PrimaryMarketMustUsePrimaryDomain = 'PRIMARY_MARKET_MUST_USE_PRIMARY_DOMAIN',
   /** The market region wasn't found. */
@@ -25292,8 +26040,14 @@ export enum MarketUserErrorCode {
   RequiresDomainOrSubfolder = 'REQUIRES_DOMAIN_OR_SUBFOLDER',
   /** Exactly one input option is required. */
   RequiresExactlyOneOption = 'REQUIRES_EXACTLY_ONE_OPTION',
+  /** Retail location currency must be local. */
+  RetailLocationCurrencyMustBeLocal = 'RETAIL_LOCATION_CURRENCY_MUST_BE_LOCAL',
+  /** The shop must have a web presence that uses the primary domain. */
+  ShopMustHavePrimaryDomainWebPresence = 'SHOP_MUST_HAVE_PRIMARY_DOMAIN_WEB_PRESENCE',
   /** Can't have more than 50 markets. */
   ShopReachedMarketsLimit = 'SHOP_REACHED_MARKETS_LIMIT',
+  /** With an ID list in input, SPECIFIED is not needed. */
+  SpecifiedNotValidForInput = 'SPECIFIED_NOT_VALID_FOR_INPUT',
   /** The subfolder suffix is invalid, please provide a different value. */
   SubfolderSuffixCannotBeScriptCode = 'SUBFOLDER_SUFFIX_CANNOT_BE_SCRIPT_CODE',
   /** The subfolder suffix must contain only letters. */
@@ -25304,12 +26058,24 @@ export enum MarketUserErrorCode {
   TooLong = 'TOO_LONG',
   /** The input value is too short. */
   TooShort = 'TOO_SHORT',
+  /** Unified markets are not enabled. */
+  UnifiedMarketsNotEnabled = 'UNIFIED_MARKETS_NOT_ENABLED',
   /** The language isn't published to the store. */
   UnpublishedLanguage = 'UNPUBLISHED_LANGUAGE',
   /** Can't add unsupported country or region. */
   UnsupportedCountryRegion = 'UNSUPPORTED_COUNTRY_REGION',
+  /** The specified currency is not supported. */
+  UnsupportedCurrency = 'UNSUPPORTED_CURRENCY',
+  /** The user doesn't have permission access to create or edit markets. */
+  UserLacksPermission = 'USER_LACKS_PERMISSION',
+  /** Web presences cannot be added to a market with the specified condition types. */
+  WebPresenceNotCompatibleWithConditionTypes = 'WEB_PRESENCE_NOT_COMPATIBLE_WITH_CONDITION_TYPES',
   /** The market web presence wasn't found. */
-  WebPresenceNotFound = 'WEB_PRESENCE_NOT_FOUND'
+  WebPresenceNotFound = 'WEB_PRESENCE_NOT_FOUND',
+  /** Can't add web presence to the another market. */
+  WebPresenceReachedMarketsLimit = 'WEB_PRESENCE_REACHED_MARKETS_LIMIT',
+  /** Matching ALL or NONE isn't supported for this driver type. */
+  WildcardNotSupported = 'WILDCARD_NOT_SUPPORTED'
 }
 
 /**
@@ -25348,12 +26114,40 @@ export type MarketWebPresence = Node & {
   domain?: Maybe<Domain>;
   /** A globally-unique ID. */
   id: Scalars['ID']['output'];
-  /** The associated market. */
-  market: Market;
+  /**
+   * The associated market. This can be null for a web presence that isn't associated with a market.
+   * @deprecated Use `markets` instead.
+   */
+  market?: Maybe<Market>;
+  /** The associated markets for this web presence. */
+  markets?: Maybe<MarketConnection>;
   /** The list of root URLs for each of the web presence’s locales. As of version `2024-04` this value will no longer have a trailing slash. */
   rootUrls: Array<MarketWebPresenceRootUrl>;
   /** The market-specific suffix of the subfolders defined by the web presence. Example: in `/en-us` the subfolder suffix is `us`. This field will be null if `domain` isn't null. */
   subfolderSuffix?: Maybe<Scalars['String']['output']>;
+};
+
+
+/**
+ * The market’s web presence, which defines its SEO strategy. This can be a different domain
+ * (e.g. `example.ca`), subdomain (e.g. `ca.example.com`), or subfolders of the primary
+ * domain (e.g. `example.com/en-ca`). Each web presence comprises one or more language
+ * variants. If a market does not have its own web presence, it is accessible on the shop’s
+ * primary domain via [country
+ * selectors](https://shopify.dev/themes/internationalization/multiple-currencies-languages#the-country-selector).
+ *
+ * Note: while the domain/subfolders defined by a market’s web presence are not applicable to
+ * custom storefronts, which must manage their own domains and routing, the languages chosen
+ * here do govern [the languages available on the Storefront
+ * API](https://shopify.dev/custom-storefronts/internationalization/multiple-languages) for the countries in
+ * this market.
+ */
+export type MarketWebPresenceMarketsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  reverse?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 /** An auto-generated type for paginating through multiple MarketWebPresences. */
@@ -25717,11 +26511,6 @@ export enum MarketingActivitySortKeys {
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
   Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `title` value. */
   Title = 'TITLE'
 }
@@ -26204,11 +26993,6 @@ export type MarketingEventEdge = {
 export enum MarketingEventSortKeys {
   /** Sort by the `id` value. */
   Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `started_at` value. */
   StartedAt = 'STARTED_AT'
 }
@@ -26242,6 +27026,76 @@ export enum MarketingTactic {
   /** A transactional email. */
   Transactional = 'TRANSACTIONAL'
 }
+
+/** The entitlements for B2B markets. */
+export type MarketsB2BEntitlement = {
+  __typename?: 'MarketsB2BEntitlement';
+  /** The entitlements for B2B market catalogs. */
+  catalogs: MarketsCatalogsEntitlement;
+  /** Whether B2B markets are enabled. */
+  enabled: Scalars['Boolean']['output'];
+};
+
+/** The entitlements for catalogs. */
+export type MarketsCatalogsEntitlement = {
+  __typename?: 'MarketsCatalogsEntitlement';
+  /** Whether catalogs are enabled. */
+  enabled: Scalars['Boolean']['output'];
+};
+
+/** The entitlements for region markets. */
+export type MarketsRegionsEntitlement = {
+  __typename?: 'MarketsRegionsEntitlement';
+  /** The entitlements for region market catalogs. */
+  catalogs: MarketsCatalogsEntitlement;
+  /** Whether region markets are enabled. */
+  enabled: Scalars['Boolean']['output'];
+};
+
+/** The entitlements for retail markets. */
+export type MarketsRetailEntitlement = {
+  __typename?: 'MarketsRetailEntitlement';
+  /** The entitlements for retail market catalogs. */
+  catalogs: MarketsCatalogsEntitlement;
+  /** Whether retail markets are enabled. */
+  enabled: Scalars['Boolean']['output'];
+};
+
+/** The set of valid sort keys for the Markets query. */
+export enum MarketsSortKeys {
+  /** Sort by the `created_at` value. */
+  CreatedAt = 'CREATED_AT',
+  /** Sort by the `id` value. */
+  Id = 'ID',
+  /** Sort by the `market_condition_types` value. */
+  MarketConditionTypes = 'MARKET_CONDITION_TYPES',
+  /** Sort by the `market_type` value. */
+  MarketType = 'MARKET_TYPE',
+  /** Sort by the `name` value. */
+  Name = 'NAME',
+  /** Sort by the `updated_at` value. */
+  UpdatedAt = 'UPDATED_AT'
+}
+
+/** The entitlements for themes. */
+export type MarketsThemesEntitlement = {
+  __typename?: 'MarketsThemesEntitlement';
+  /** Whether themes are enabled. */
+  enabled: Scalars['Boolean']['output'];
+};
+
+/** Markets entitlement information. */
+export type MarketsType = {
+  __typename?: 'MarketsType';
+  /** The entitlements for B2B markets. */
+  b2b: MarketsB2BEntitlement;
+  /** The entitlements for region markets. */
+  regions: MarketsRegionsEntitlement;
+  /** The entitlements for retail markets. */
+  retail: MarketsRetailEntitlement;
+  /** The entitlements for themes. */
+  themes: MarketsThemesEntitlement;
+};
 
 /** Represents a media interface. */
 export type Media = {
@@ -26762,11 +27616,6 @@ export type MenuItemUpdateInput = {
 export enum MenuSortKeys {
   /** Sort by the `id` value. */
   Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `title` value. */
   Title = 'TITLE',
   /** Sort by the `updated_at` value. */
@@ -26845,7 +27694,11 @@ export type Metafield = HasCompareDigest & LegacyInteroperability & Node & {
   createdAt: Scalars['DateTime']['output'];
   /** The metafield definition that the metafield belongs to, if any. */
   definition?: Maybe<MetafieldDefinition>;
-  /** The description of the metafield. */
+  /**
+   * The description of the metafield.
+   * @deprecated This field will be removed in a future release. Use the `description` on the metafield definition instead.
+   *
+   */
   description?: Maybe<Scalars['String']['output']>;
   /** A globally-unique ID. */
   id: Scalars['ID']['output'];
@@ -27082,7 +27935,10 @@ export type MetafieldDefinition = Node & {
   access: MetafieldAccess;
   /** The capabilities of the metafield definition. */
   capabilities: MetafieldCapabilities;
-  /** The constraints that determine what subtypes of resources a metafield definition applies to. */
+  /**
+   * The [constraints](https://shopify.dev/apps/build/custom-data/metafields/conditional-metafield-definitions)
+   * that determine what subtypes of resources a metafield definition applies to.
+   */
   constraints?: Maybe<MetafieldDefinitionConstraints>;
   /** The description of the metafield definition. */
   description?: Maybe<Scalars['String']['output']>;
@@ -27224,7 +28080,10 @@ export type MetafieldDefinitionConstraintValueUpdateInput = {
   delete?: InputMaybe<Scalars['String']['input']>;
 };
 
-/** The constraints that determine what subtypes of resources a metafield definition applies to. */
+/**
+ * The [constraints](https://shopify.dev/apps/build/custom-data/metafields/conditional-metafield-definitions)
+ * that determine what subtypes of resources a metafield definition applies to.
+ */
 export type MetafieldDefinitionConstraints = {
   __typename?: 'MetafieldDefinitionConstraints';
   /** The category of resource subtypes that the definition applies to. */
@@ -27234,7 +28093,10 @@ export type MetafieldDefinitionConstraints = {
 };
 
 
-/** The constraints that determine what subtypes of resources a metafield definition applies to. */
+/**
+ * The [constraints](https://shopify.dev/apps/build/custom-data/metafields/conditional-metafield-definitions)
+ * that determine what subtypes of resources a metafield definition applies to.
+ */
 export type MetafieldDefinitionConstraintsValuesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -27244,8 +28106,8 @@ export type MetafieldDefinitionConstraintsValuesArgs = {
 };
 
 /**
- * The input fields required to create metafield definition constraints. Each constraint applies a metafield
- * definition to a subtype of a resource.
+ * The input fields required to create metafield definition [constraints](https://shopify.dev/apps/build/custom-data/metafields/conditional-metafield-definitions).
+ * Each constraint applies a metafield definition to a subtype of a resource.
  */
 export type MetafieldDefinitionConstraintsInput = {
   /** The category of resource subtypes that the definition applies to. */
@@ -27255,8 +28117,8 @@ export type MetafieldDefinitionConstraintsInput = {
 };
 
 /**
- * The input fields required to update metafield definition constraints. Each constraint applies a metafield
- * definition to a subtype of a resource.
+ * The input fields required to update metafield definition [constraints](https://shopify.dev/apps/build/custom-data/metafields/conditional-metafield-definitions).
+ * Each constraint applies a metafield definition to a subtype of a resource.
  */
 export type MetafieldDefinitionConstraintsUpdatesInput = {
   /**
@@ -27344,6 +28206,8 @@ export enum MetafieldDefinitionCreateUserErrorCode {
 /** Return type for `metafieldDefinitionDelete` mutation. */
 export type MetafieldDefinitionDeletePayload = {
   __typename?: 'MetafieldDefinitionDeletePayload';
+  /** The metafield definition that was deleted. */
+  deletedDefinition?: Maybe<MetafieldDefinitionIdentifier>;
   /** The ID of the deleted metafield definition. */
   deletedDefinitionId?: Maybe<Scalars['ID']['output']>;
   /** The list of errors that occurred from executing the mutation. */
@@ -27390,13 +28254,40 @@ export type MetafieldDefinitionEdge = {
   node: MetafieldDefinition;
 };
 
+/** Identifies a metafield definition by its owner type, namespace, and key. */
+export type MetafieldDefinitionIdentifier = {
+  __typename?: 'MetafieldDefinitionIdentifier';
+  /** The unique identifier for the metafield definition within its namespace. */
+  key: Scalars['String']['output'];
+  /** The container for a group of metafields that the metafield definition is associated with. */
+  namespace: Scalars['String']['output'];
+  /** The resource type that the metafield definition is attached to. */
+  ownerType: MetafieldOwnerType;
+};
+
+/** The input fields that identify metafield definitions. */
+export type MetafieldDefinitionIdentifierInput = {
+  /** The unique identifier for the metafield definition within its namespace. */
+  key: Scalars['String']['input'];
+  /**
+   * The container for a group of metafields that the metafield definition will be associated with. If omitted, the
+   * app-reserved namespace will be used.
+   */
+  namespace?: InputMaybe<Scalars['String']['input']>;
+  /** The resource type that the metafield definition is attached to. */
+  ownerType: MetafieldOwnerType;
+};
+
 /** The input fields required to create a metafield definition. */
 export type MetafieldDefinitionInput = {
   /** The access settings that apply to each of the metafields that belong to the metafield definition. */
   access?: InputMaybe<MetafieldAccessInput>;
   /** The capabilities of the metafield definition. */
   capabilities?: InputMaybe<MetafieldCapabilityCreateInput>;
-  /** The constraints that determine what resources a metafield definition applies to. */
+  /**
+   * The [constraints](https://shopify.dev/apps/build/custom-data/metafields/conditional-metafield-definitions)
+   * that determine what resources a metafield definition applies to.
+   */
   constraints?: InputMaybe<MetafieldDefinitionConstraintsInput>;
   /** The description for the metafield definition. */
   description?: InputMaybe<Scalars['String']['input']>;
@@ -27570,7 +28461,10 @@ export type MetafieldDefinitionUpdateInput = {
   access?: InputMaybe<MetafieldAccessUpdateInput>;
   /** The capabilities of the metafield definition. */
   capabilities?: InputMaybe<MetafieldCapabilityUpdateInput>;
-  /** The constraints that determine what resources a metafield definition applies to. */
+  /**
+   * The [constraints](https://shopify.dev/apps/build/custom-data/metafields/conditional-metafield-definitions)
+   * that determine what resources a metafield definition applies to.
+   */
   constraintsUpdates?: InputMaybe<MetafieldDefinitionConstraintsUpdatesInput>;
   /** The description for the metafield definition. */
   description?: InputMaybe<Scalars['String']['input']>;
@@ -28324,6 +29218,18 @@ export type MetaobjectCapabilityTranslatableInput = {
   enabled: Scalars['Boolean']['input'];
 };
 
+/** Metaobject Capabilities types which can be enabled. */
+export enum MetaobjectCapabilityType {
+  /** Allows for a Metaobject to be rendered as an Online Store page. */
+  OnlineStore = 'ONLINE_STORE',
+  /** Allows for a Metaobject to be conditionally publishable. */
+  Publishable = 'PUBLISHABLE',
+  /** Allows for a Metaobject to have attributes of a renderable page such as SEO. */
+  Renderable = 'RENDERABLE',
+  /** Allows for a Metaobject to be translated using the translation api. */
+  Translatable = 'TRANSLATABLE'
+}
+
 /** The input fields for updating a metaobject capability. */
 export type MetaobjectCapabilityUpdateInput = {
   /** The input for enabling the Online Store capability. */
@@ -28395,6 +29301,8 @@ export type MetaobjectDefinition = Node & {
   metaobjectsCount: Scalars['Int']['output'];
   /** The human-readable name. */
   name: Scalars['String']['output'];
+  /** The standard metaobject template associated with the definition. */
+  standardTemplate?: Maybe<StandardMetaobjectDefinitionTemplate>;
   /** The type of the object definition. Defines the namespace of associated metafields. */
   type: Scalars['String']['output'];
 };
@@ -28761,6 +29669,8 @@ export enum MetaobjectUserErrorCode {
   Present = 'PRESENT',
   /** The requested record couldn't be found. */
   RecordNotFound = 'RECORD_NOT_FOUND',
+  /** The action cannot be completed because associated metaobjects are referenced by another resource. */
+  ReferenceExistsError = 'REFERENCE_EXISTS_ERROR',
   /** The provided name is reserved for system use. */
   ReservedName = 'RESERVED_NAME',
   /** The input value is already taken. */
@@ -28786,12 +29696,7 @@ export enum MethodDefinitionSortKeys {
   /** Sort by the `id` value. */
   Id = 'ID',
   /** Sort by the `rate_provider_type` value. */
-  RateProviderType = 'RATE_PROVIDER_TYPE',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  RateProviderType = 'RATE_PROVIDER_TYPE'
 }
 
 /**
@@ -29095,6 +30000,8 @@ export type Mutation = {
   articleDelete?: Maybe<ArticleDeletePayload>;
   /** Updates an article. */
   articleUpdate?: Maybe<ArticleUpdatePayload>;
+  /** Update the backup region that is used when we have no better signal of what region a buyer is in. */
+  backupRegionUpdate?: Maybe<BackupRegionUpdatePayload>;
   /** Creates a blog. */
   blogCreate?: Maybe<BlogCreatePayload>;
   /** Deletes a blog. */
@@ -29277,8 +30184,16 @@ export type Mutation = {
   companyRevokeMainContact?: Maybe<CompanyRevokeMainContactPayload>;
   /** Updates a company. */
   companyUpdate?: Maybe<CompanyUpdatePayload>;
+  /** Update or create consent policies in bulk. */
+  consentPolicyUpdate?: Maybe<ConsentPolicyUpdatePayload>;
   /** Add tax exemptions for the customer. */
   customerAddTaxExemptions?: Maybe<CustomerAddTaxExemptionsPayload>;
+  /** Create a new customer address. */
+  customerAddressCreate?: Maybe<CustomerAddressCreatePayload>;
+  /** Deletes a customer's address. */
+  customerAddressDelete?: Maybe<CustomerAddressDeletePayload>;
+  /** Update a customer's address information. */
+  customerAddressUpdate?: Maybe<CustomerAddressUpdatePayload>;
   /**
    * Cancels a pending erasure of a customer's data.
    *
@@ -29347,6 +30262,33 @@ export type Mutation = {
   customerSegmentMembersQueryCreate?: Maybe<CustomerSegmentMembersQueryCreatePayload>;
   /** Sends the customer an account invite email. */
   customerSendAccountInviteEmail?: Maybe<CustomerSendAccountInviteEmailPayload>;
+  /**
+   * Creates or updates a customer in a single mutation.
+   *
+   * Use this mutation when syncing information from an external data source into Shopify.
+   *
+   * This mutation can be used to create a new customer, update an existing customer by id, or
+   * upsert a customer by a unique key (email or phone).
+   *
+   * To create a new customer omit the `identifier` argument.
+   * To update an existing customer, include the `identifier` with the id of the customer to update.
+   *
+   * To perform an 'upsert' by unique key (email or phone)
+   * use the `identifier` argument to upsert a customer by a unique key (email or phone). If a customer
+   * with the specified unique key exists, it will be updated. If not, a new customer will be created with
+   * that unique key.
+   *
+   * As of API version 2022-10, apps using protected customer data must meet the
+   * protected customer data [requirements](https://shopify.dev/apps/store/data-protection/protected-customer-data)
+   *
+   * Any list field (e.g.
+   * [addresses](https://shopify.dev/api/admin-graphql/unstable/input-objects/MailingAddressInput),
+   * will be updated so that all included entries are either created or updated, and all existing entries not
+   * included will be deleted.
+   *
+   * All other fields will be updated to the value passed. Omitted fields will not be updated.
+   */
+  customerSet?: Maybe<CustomerSetPayload>;
   /** Update a customer's SMS marketing consent information. */
   customerSmsMarketingConsentUpdate?: Maybe<CustomerSmsMarketingConsentUpdatePayload>;
   /** Update a customer's attributes. As of API version 2022-10, apps using protected customer data must meet the protected customer data [requirements](https://shopify.dev/apps/store/data-protection/protected-customer-data). */
@@ -30094,6 +31036,11 @@ export type Mutation = {
   orderCreate?: Maybe<OrderCreatePayload>;
   /** Creates a payment for an order by mandate. */
   orderCreateMandatePayment?: Maybe<OrderCreateMandatePaymentPayload>;
+  /**
+   * Create a manual payment for an order. You can only create a manual payment for an order if it isn't already
+   * fully paid.
+   */
+  orderCreateManualPayment?: Maybe<OrderCreateManualPaymentPayload>;
   /** Deletes an order. For more information on which orders can be deleted, refer to [Delete an order](https://help.shopify.com/manual/orders/cancel-delete-order#delete-an-order). */
   orderDelete?: Maybe<OrderDeletePayload>;
   /** Adds a custom line item to an existing order. For example, you could add a gift wrapping service as a [custom line item](https://shopify.dev/apps/fulfillment/order-management-apps/order-editing#add-a-custom-line-item). To learn how to edit existing orders, refer to [Edit an existing order with Admin API](https://shopify.dev/apps/fulfillment/order-management-apps/order-editing). */
@@ -30178,6 +31125,8 @@ export type Mutation = {
    * If you modify the currency, then any fixed prices set on the price list will be deleted.
    */
   priceListUpdate?: Maybe<PriceListUpdatePayload>;
+  /** Disable a shop's privacy features. */
+  privacyFeaturesDisable?: Maybe<PrivacyFeaturesDisablePayload>;
   /** Creates a new componentized product. */
   productBundleCreate?: Maybe<ProductBundleCreatePayload>;
   /** Updates a componentized product. */
@@ -30782,6 +31731,12 @@ export type Mutation = {
    * define [web pixel settings](https://shopify.dev/docs/apps/build/marketing-analytics/build-web-pixels#step-2-define-your-web-pixel-settings).
    */
   webPixelUpdate?: Maybe<WebPixelUpdatePayload>;
+  /** Creates a web presence. */
+  webPresenceCreate?: Maybe<WebPresenceCreatePayload>;
+  /** Deletes a web presence. */
+  webPresenceDelete?: Maybe<WebPresenceDeletePayload>;
+  /** Updates a web presence. */
+  webPresenceUpdate?: Maybe<WebPresenceUpdatePayload>;
   /**
    * Creates a new webhook subscription.
    *
@@ -30896,6 +31851,12 @@ export type MutationArticleUpdateArgs = {
   article: ArticleUpdateInput;
   blog?: InputMaybe<ArticleBlogInput>;
   id: Scalars['ID']['input'];
+};
+
+
+/** The schema's entry point for all mutation operations. */
+export type MutationBackupRegionUpdateArgs = {
+  region?: InputMaybe<BackupRegionUpdateInput>;
 };
 
 
@@ -31323,9 +32284,39 @@ export type MutationCompanyUpdateArgs = {
 
 
 /** The schema's entry point for all mutation operations. */
+export type MutationConsentPolicyUpdateArgs = {
+  consentPolicies: Array<ConsentPolicyInput>;
+};
+
+
+/** The schema's entry point for all mutation operations. */
 export type MutationCustomerAddTaxExemptionsArgs = {
   customerId: Scalars['ID']['input'];
   taxExemptions: Array<TaxExemption>;
+};
+
+
+/** The schema's entry point for all mutation operations. */
+export type MutationCustomerAddressCreateArgs = {
+  address: MailingAddressInput;
+  customerId: Scalars['ID']['input'];
+  setAsDefault?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+/** The schema's entry point for all mutation operations. */
+export type MutationCustomerAddressDeleteArgs = {
+  addressId: Scalars['ID']['input'];
+  customerId: Scalars['ID']['input'];
+};
+
+
+/** The schema's entry point for all mutation operations. */
+export type MutationCustomerAddressUpdateArgs = {
+  address: MailingAddressInput;
+  addressId: Scalars['ID']['input'];
+  customerId: Scalars['ID']['input'];
+  setAsDefault?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -31471,6 +32462,13 @@ export type MutationCustomerSegmentMembersQueryCreateArgs = {
 export type MutationCustomerSendAccountInviteEmailArgs = {
   customerId: Scalars['ID']['input'];
   email?: InputMaybe<EmailInput>;
+};
+
+
+/** The schema's entry point for all mutation operations. */
+export type MutationCustomerSetArgs = {
+  identifier?: InputMaybe<CustomerSetIdentifiers>;
+  input: CustomerSetInput;
 };
 
 
@@ -32102,6 +33100,7 @@ export type MutationFulfillmentServiceCreateArgs = {
   callbackUrl: Scalars['URL']['input'];
   inventoryManagement?: InputMaybe<Scalars['Boolean']['input']>;
   name: Scalars['String']['input'];
+  requiresShippingMethod?: InputMaybe<Scalars['Boolean']['input']>;
   trackingSupport?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -32120,6 +33119,7 @@ export type MutationFulfillmentServiceUpdateArgs = {
   id: Scalars['ID']['input'];
   inventoryManagement?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  requiresShippingMethod?: InputMaybe<Scalars['Boolean']['input']>;
   trackingSupport?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -32457,19 +33457,22 @@ export type MutationMetafieldDefinitionCreateArgs = {
 /** The schema's entry point for all mutation operations. */
 export type MutationMetafieldDefinitionDeleteArgs = {
   deleteAllAssociatedMetafields?: InputMaybe<Scalars['Boolean']['input']>;
-  id: Scalars['ID']['input'];
+  id?: InputMaybe<Scalars['ID']['input']>;
+  identifier?: InputMaybe<MetafieldDefinitionIdentifierInput>;
 };
 
 
 /** The schema's entry point for all mutation operations. */
 export type MutationMetafieldDefinitionPinArgs = {
-  definitionId: Scalars['ID']['input'];
+  definitionId?: InputMaybe<Scalars['ID']['input']>;
+  identifier?: InputMaybe<MetafieldDefinitionIdentifierInput>;
 };
 
 
 /** The schema's entry point for all mutation operations. */
 export type MutationMetafieldDefinitionUnpinArgs = {
-  definitionId: Scalars['ID']['input'];
+  definitionId?: InputMaybe<Scalars['ID']['input']>;
+  identifier?: InputMaybe<MetafieldDefinitionIdentifierInput>;
 };
 
 
@@ -32599,6 +33602,14 @@ export type MutationOrderCreateMandatePaymentArgs = {
   idempotencyKey: Scalars['String']['input'];
   mandateId: Scalars['ID']['input'];
   paymentScheduleId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+/** The schema's entry point for all mutation operations. */
+export type MutationOrderCreateManualPaymentArgs = {
+  amount?: InputMaybe<MoneyInput>;
+  id: Scalars['ID']['input'];
+  paymentMethodName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -32856,6 +33867,12 @@ export type MutationPriceListUpdateArgs = {
 
 
 /** The schema's entry point for all mutation operations. */
+export type MutationPrivacyFeaturesDisableArgs = {
+  featuresToDisable: Array<PrivacyFeaturesEnum>;
+};
+
+
+/** The schema's entry point for all mutation operations. */
 export type MutationProductBundleCreateArgs = {
   input: ProductBundleCreateInput;
 };
@@ -32996,6 +34013,7 @@ export type MutationProductReorderMediaArgs = {
 
 /** The schema's entry point for all mutation operations. */
 export type MutationProductSetArgs = {
+  identifier?: InputMaybe<ProductSetIdentifiers>;
   input: ProductSetInput;
   synchronous?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -33451,7 +34469,6 @@ export type MutationStandardMetafieldDefinitionEnableArgs = {
   namespace?: InputMaybe<Scalars['String']['input']>;
   ownerType: MetafieldOwnerType;
   pin?: Scalars['Boolean']['input'];
-  useAsCollectionCondition?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -33733,6 +34750,7 @@ export type MutationTaxAppConfigureArgs = {
 /** The schema's entry point for all mutation operations. */
 export type MutationThemeCreateArgs = {
   name?: InputMaybe<Scalars['String']['input']>;
+  role?: InputMaybe<ThemeRole>;
   source: Scalars['URL']['input'];
 };
 
@@ -33883,6 +34901,25 @@ export type MutationWebPixelDeleteArgs = {
 export type MutationWebPixelUpdateArgs = {
   id: Scalars['ID']['input'];
   webPixel: WebPixelInput;
+};
+
+
+/** The schema's entry point for all mutation operations. */
+export type MutationWebPresenceCreateArgs = {
+  input: WebPresenceCreateInput;
+};
+
+
+/** The schema's entry point for all mutation operations. */
+export type MutationWebPresenceDeleteArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+/** The schema's entry point for all mutation operations. */
+export type MutationWebPresenceUpdateArgs = {
+  id: Scalars['ID']['input'];
+  input: WebPresenceUpdateInput;
 };
 
 
@@ -34138,8 +35175,16 @@ export type OnlineStoreThemeFileEdge = {
 /** Represents the result of a copy, delete, or write operation performed on a theme file. */
 export type OnlineStoreThemeFileOperationResult = {
   __typename?: 'OnlineStoreThemeFileOperationResult';
+  /** The md5 digest of the theme file for data integrity. */
+  checksumMd5?: Maybe<Scalars['String']['output']>;
+  /** The date and time when the theme file was created. */
+  createdAt: Scalars['DateTime']['output'];
   /** Unique identifier of the theme file. */
   filename: Scalars['String']['output'];
+  /** The size of the theme file in bytes. */
+  size: Scalars['UnsignedInt64']['output'];
+  /** The date and time when the theme file was last updated. */
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 /** Represents the result of a read operation performed on a theme asset. */
@@ -34483,7 +35528,10 @@ export type Order = CommentEventSubject & HasEvents & HasLocalizationExtensions 
   estimatedTaxes: Scalars['Boolean']['output'];
   /** A list of events associated with the order. */
   events: EventConnection;
-  /** A list of ExchangeV2s for the order. */
+  /**
+   * A list of ExchangeV2s for the order.
+   * @deprecated Use `returns` instead.
+   */
   exchangeV2s: ExchangeV2Connection;
   /**
    * Whether there are line items that can be fulfilled.
@@ -34651,7 +35699,7 @@ export type Order = CommentEventSubject & HasEvents & HasLocalizationExtensions 
   requiresShipping: Scalars['Boolean']['output'];
   /** Whether any line item on the order can be restocked. */
   restockable: Scalars['Boolean']['output'];
-  /** The physical location where a retail order is created or completed, except for draft POS orders completed via the “mark as paid” flow in Admin, which return null. */
+  /** The physical location where a retail order is created or completed, except for draft POS orders completed via the “mark as paid” flow in Admin, which return null. Transactions associated with the order might have been processed at a different location. */
   retailLocation?: Maybe<Location>;
   /** The order's aggregated return status for display purposes. */
   returnStatus: OrderReturnStatus;
@@ -35656,6 +36704,8 @@ export type OrderCreateLineItemInput = {
   variantTitle?: InputMaybe<Scalars['String']['input']>;
   /** The name of the item's supplier. */
   vendor?: InputMaybe<Scalars['String']['input']>;
+  /** The weight of the line item. This will take precedence over the weight of the product variant, if one was specified. */
+  weight?: InputMaybe<WeightInput>;
 };
 
 /** The input fields for a line item property for an order. */
@@ -35693,6 +36743,40 @@ export enum OrderCreateMandatePaymentUserErrorCode {
   /** Errors for mandate payment on order. */
   OrderMandatePaymentErrorCode = 'ORDER_MANDATE_PAYMENT_ERROR_CODE'
 }
+
+/** An error that occurs during the execution of a order create manual payment mutation. */
+export type OrderCreateManualPaymentOrderCreateManualPaymentError = DisplayableError & {
+  __typename?: 'OrderCreateManualPaymentOrderCreateManualPaymentError';
+  /** The error code. */
+  code?: Maybe<OrderCreateManualPaymentOrderCreateManualPaymentErrorCode>;
+  /** The path to the input field that caused the error. */
+  field?: Maybe<Array<Scalars['String']['output']>>;
+  /** The error message. */
+  message: Scalars['String']['output'];
+};
+
+/** Possible error codes that can be returned by `OrderCreateManualPaymentOrderCreateManualPaymentError`. */
+export enum OrderCreateManualPaymentOrderCreateManualPaymentErrorCode {
+  /** Amount exceeds the remaining balance. */
+  AmountExceedsBalance = 'AMOUNT_EXCEEDS_BALANCE',
+  /** Amount must be positive. */
+  AmountNotPositive = 'AMOUNT_NOT_POSITIVE',
+  /** Payment gateway is not found. */
+  GatewayNotFound = 'GATEWAY_NOT_FOUND',
+  /** Order is temporarily unavailable. */
+  OrderIsTemporarilyUnavailable = 'ORDER_IS_TEMPORARILY_UNAVAILABLE',
+  /** Order is not found. */
+  OrderNotFound = 'ORDER_NOT_FOUND'
+}
+
+/** Return type for `orderCreateManualPayment` mutation. */
+export type OrderCreateManualPaymentPayload = {
+  __typename?: 'OrderCreateManualPaymentPayload';
+  /** The order recorded a manual payment. */
+  order?: Maybe<Order>;
+  /** The list of errors that occurred from executing the mutation. */
+  userErrors: Array<OrderCreateManualPaymentOrderCreateManualPaymentError>;
+};
 
 /** The input fields which control certain side affects. */
 export type OrderCreateOptionsInput = {
@@ -36304,6 +37388,14 @@ export enum OrderEditUpdateShippingLineUserErrorCode {
   /** The input value is invalid. */
   Invalid = 'INVALID'
 }
+
+/** The input fields for identifying a order. */
+export type OrderIdentifierInput = {
+  /** The [custom ID](https://shopify.dev/docs/apps/build/custom-data/metafields/working-with-custom-ids) of the order. */
+  customId?: InputMaybe<UniqueMetafieldValueInput>;
+  /** The ID of the order. */
+  id?: InputMaybe<Scalars['ID']['input']>;
+};
 
 /** The input fields for specifying the information to be updated on an order when using the orderUpdate mutation. */
 export type OrderInput = {
@@ -37198,6 +38290,18 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['String']['output']>;
 };
 
+/** The set of valid sort keys for the Page query. */
+export enum PageSortKeys {
+  /** Sort by the `id` value. */
+  Id = 'ID',
+  /** Sort by the `published_at` value. */
+  PublishedAt = 'PUBLISHED_AT',
+  /** Sort by the `title` value. */
+  Title = 'TITLE',
+  /** Sort by the `updated_at` value. */
+  UpdatedAt = 'UPDATED_AT'
+}
+
 /** The input fields to update a page. */
 export type PageUpdateInput = {
   /** The text content of the page, complete with HTML markup. */
@@ -37453,8 +38557,12 @@ export type PaymentMandate = Node & {
 /** Some of the payment methods used in Shopify. */
 export enum PaymentMethods {
   AmericanExpress = 'AMERICAN_EXPRESS',
+  /** The payment method for Bancontact payment. */
+  Bancontact = 'BANCONTACT',
   Bitcoin = 'BITCOIN',
   Bogus = 'BOGUS',
+  /** The payment method for Cartes Bancaires payment. */
+  CartesBancaires = 'CARTES_BANCAIRES',
   Dankort = 'DANKORT',
   DinersClub = 'DINERS_CLUB',
   Discover = 'DISCOVER',
@@ -37755,11 +38863,6 @@ export enum PayoutSortKeys {
   IssuedAt = 'ISSUED_AT',
   /** Sort by the `refund_gross` value. */
   RefundGross = 'REFUND_GROSS',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `shipping_label_gross` value. */
   ShippingLabelGross = 'SHIPPING_LABEL_GROSS',
   /** Sort by the `status` value. */
@@ -38188,12 +39291,7 @@ export enum PriceListSortKeys {
   /** Sort by the `id` value. */
   Id = 'ID',
   /** Sort by the `name` value. */
-  Name = 'NAME',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Name = 'NAME'
 }
 
 /** The input fields used to update a price list. */
@@ -38230,17 +39328,11 @@ export type PriceListUserError = DisplayableError & {
 
 /** Possible error codes that can be returned by `PriceListUserError`. */
 export enum PriceListUserErrorCode {
-  /** An app catalog cannot be assigned to a price list. */
-  AppCatalogPriceListAssignment = 'APP_CATALOG_PRICE_LIST_ASSIGNMENT',
   /** The input value is blank. */
   Blank = 'BLANK',
-  /** Cannot assign a catalog to a price list that also has context rules. */
-  CatalogAssignmentNotAllowed = 'CATALOG_ASSIGNMENT_NOT_ALLOWED',
-  /** The context type of a catalog cannot be changed. */
-  CatalogCannotChangeContextType = 'CATALOG_CANNOT_CHANGE_CONTEXT_TYPE',
-  /** Quantity price breaks can be associated only with company location catalogs. */
+  /** Quantity price breaks can be associated only with company location catalogs or catalogs associated with compatible markets. */
   CatalogContextDoesNotSupportQuantityPriceBreaks = 'CATALOG_CONTEXT_DOES_NOT_SUPPORT_QUANTITY_PRICE_BREAKS',
-  /** Quantity rules can be associated only with company location catalogs. */
+  /** Quantity rules can be associated only with company location catalogs or catalogs associated with compatible markets. */
   CatalogContextDoesNotSupportQuantityRules = 'CATALOG_CONTEXT_DOES_NOT_SUPPORT_QUANTITY_RULES',
   /** The specified catalog does not exist. */
   CatalogDoesNotExist = 'CATALOG_DOES_NOT_EXIST',
@@ -38306,8 +39398,11 @@ export type PriceRule = CommentEventSubject & HasEvents & LegacyInteroperability
    * The
    * [discount class](https://help.shopify.com/manual/discounts/combining-discounts/discount-combinations)
    * that's used to control how discounts can be combined.
+   * @deprecated Use `discountClasses` instead.
    */
   discountClass: DiscountClass;
+  /** The classes of the discount. */
+  discountClasses: Array<DiscountClass>;
   /** List of the price rule's discount codes. */
   discountCodes: PriceRuleDiscountCodeConnection;
   /** How many discount codes associated with the price rule. */
@@ -38723,6 +39818,576 @@ export type PricingPercentageValue = {
 
 /** The type of value given to a customer when a discount is applied to an order. For example, the application of the discount might give the customer a percentage off a specified item. Alternatively, the application of the discount might give the customer a monetary value in a given currency off an order. */
 export type PricingValue = MoneyV2 | PricingPercentageValue;
+
+/** A country code from the `ISO 3166` standard. e.g. `CA` for Canada. */
+export enum PrivacyCountryCode {
+  /** The `ISO 3166` country code of `AC`. */
+  Ac = 'AC',
+  /** The `ISO 3166` country code of `AD`. */
+  Ad = 'AD',
+  /** The `ISO 3166` country code of `AE`. */
+  Ae = 'AE',
+  /** The `ISO 3166` country code of `AF`. */
+  Af = 'AF',
+  /** The `ISO 3166` country code of `AG`. */
+  Ag = 'AG',
+  /** The `ISO 3166` country code of `AI`. */
+  Ai = 'AI',
+  /** The `ISO 3166` country code of `AL`. */
+  Al = 'AL',
+  /** The `ISO 3166` country code of `AM`. */
+  Am = 'AM',
+  /** The `ISO 3166` country code of `AN`. */
+  An = 'AN',
+  /** The `ISO 3166` country code of `AO`. */
+  Ao = 'AO',
+  /** The `ISO 3166` country code of `AQ`. */
+  Aq = 'AQ',
+  /** The `ISO 3166` country code of `AR`. */
+  Ar = 'AR',
+  /** The `ISO 3166` country code of `AS`. */
+  As = 'AS',
+  /** The `ISO 3166` country code of `AT`. */
+  At = 'AT',
+  /** The `ISO 3166` country code of `AU`. */
+  Au = 'AU',
+  /** The `ISO 3166` country code of `AW`. */
+  Aw = 'AW',
+  /** The `ISO 3166` country code of `AX`. */
+  Ax = 'AX',
+  /** The `ISO 3166` country code of `AZ`. */
+  Az = 'AZ',
+  /** The `ISO 3166` country code of `BA`. */
+  Ba = 'BA',
+  /** The `ISO 3166` country code of `BB`. */
+  Bb = 'BB',
+  /** The `ISO 3166` country code of `BD`. */
+  Bd = 'BD',
+  /** The `ISO 3166` country code of `BE`. */
+  Be = 'BE',
+  /** The `ISO 3166` country code of `BF`. */
+  Bf = 'BF',
+  /** The `ISO 3166` country code of `BG`. */
+  Bg = 'BG',
+  /** The `ISO 3166` country code of `BH`. */
+  Bh = 'BH',
+  /** The `ISO 3166` country code of `BI`. */
+  Bi = 'BI',
+  /** The `ISO 3166` country code of `BJ`. */
+  Bj = 'BJ',
+  /** The `ISO 3166` country code of `BL`. */
+  Bl = 'BL',
+  /** The `ISO 3166` country code of `BM`. */
+  Bm = 'BM',
+  /** The `ISO 3166` country code of `BN`. */
+  Bn = 'BN',
+  /** The `ISO 3166` country code of `BO`. */
+  Bo = 'BO',
+  /** The `ISO 3166` country code of `BQ`. */
+  Bq = 'BQ',
+  /** The `ISO 3166` country code of `BR`. */
+  Br = 'BR',
+  /** The `ISO 3166` country code of `BS`. */
+  Bs = 'BS',
+  /** The `ISO 3166` country code of `BT`. */
+  Bt = 'BT',
+  /** The `ISO 3166` country code of `BV`. */
+  Bv = 'BV',
+  /** The `ISO 3166` country code of `BW`. */
+  Bw = 'BW',
+  /** The `ISO 3166` country code of `BY`. */
+  By = 'BY',
+  /** The `ISO 3166` country code of `BZ`. */
+  Bz = 'BZ',
+  /** The `ISO 3166` country code of `CA`. */
+  Ca = 'CA',
+  /** The `ISO 3166` country code of `CC`. */
+  Cc = 'CC',
+  /** The `ISO 3166` country code of `CD`. */
+  Cd = 'CD',
+  /** The `ISO 3166` country code of `CF`. */
+  Cf = 'CF',
+  /** The `ISO 3166` country code of `CG`. */
+  Cg = 'CG',
+  /** The `ISO 3166` country code of `CH`. */
+  Ch = 'CH',
+  /** The `ISO 3166` country code of `CI`. */
+  Ci = 'CI',
+  /** The `ISO 3166` country code of `CK`. */
+  Ck = 'CK',
+  /** The `ISO 3166` country code of `CL`. */
+  Cl = 'CL',
+  /** The `ISO 3166` country code of `CM`. */
+  Cm = 'CM',
+  /** The `ISO 3166` country code of `CN`. */
+  Cn = 'CN',
+  /** The `ISO 3166` country code of `CO`. */
+  Co = 'CO',
+  /** The `ISO 3166` country code of `CR`. */
+  Cr = 'CR',
+  /** The `ISO 3166` country code of `CU`. */
+  Cu = 'CU',
+  /** The `ISO 3166` country code of `CV`. */
+  Cv = 'CV',
+  /** The `ISO 3166` country code of `CW`. */
+  Cw = 'CW',
+  /** The `ISO 3166` country code of `CX`. */
+  Cx = 'CX',
+  /** The `ISO 3166` country code of `CY`. */
+  Cy = 'CY',
+  /** The `ISO 3166` country code of `CZ`. */
+  Cz = 'CZ',
+  /** The `ISO 3166` country code of `DE`. */
+  De = 'DE',
+  /** The `ISO 3166` country code of `DJ`. */
+  Dj = 'DJ',
+  /** The `ISO 3166` country code of `DK`. */
+  Dk = 'DK',
+  /** The `ISO 3166` country code of `DM`. */
+  Dm = 'DM',
+  /** The `ISO 3166` country code of `DO`. */
+  Do = 'DO',
+  /** The `ISO 3166` country code of `DZ`. */
+  Dz = 'DZ',
+  /** The `ISO 3166` country code of `EC`. */
+  Ec = 'EC',
+  /** The `ISO 3166` country code of `EE`. */
+  Ee = 'EE',
+  /** The `ISO 3166` country code of `EG`. */
+  Eg = 'EG',
+  /** The `ISO 3166` country code of `EH`. */
+  Eh = 'EH',
+  /** The `ISO 3166` country code of `ER`. */
+  Er = 'ER',
+  /** The `ISO 3166` country code of `ES`. */
+  Es = 'ES',
+  /** The `ISO 3166` country code of `ET`. */
+  Et = 'ET',
+  /** The `ISO 3166` country code of `FI`. */
+  Fi = 'FI',
+  /** The `ISO 3166` country code of `FJ`. */
+  Fj = 'FJ',
+  /** The `ISO 3166` country code of `FK`. */
+  Fk = 'FK',
+  /** The `ISO 3166` country code of `FM`. */
+  Fm = 'FM',
+  /** The `ISO 3166` country code of `FO`. */
+  Fo = 'FO',
+  /** The `ISO 3166` country code of `FR`. */
+  Fr = 'FR',
+  /** The `ISO 3166` country code of `GA`. */
+  Ga = 'GA',
+  /** The `ISO 3166` country code of `GB`. */
+  Gb = 'GB',
+  /** The `ISO 3166` country code of `GD`. */
+  Gd = 'GD',
+  /** The `ISO 3166` country code of `GE`. */
+  Ge = 'GE',
+  /** The `ISO 3166` country code of `GF`. */
+  Gf = 'GF',
+  /** The `ISO 3166` country code of `GG`. */
+  Gg = 'GG',
+  /** The `ISO 3166` country code of `GH`. */
+  Gh = 'GH',
+  /** The `ISO 3166` country code of `GI`. */
+  Gi = 'GI',
+  /** The `ISO 3166` country code of `GL`. */
+  Gl = 'GL',
+  /** The `ISO 3166` country code of `GM`. */
+  Gm = 'GM',
+  /** The `ISO 3166` country code of `GN`. */
+  Gn = 'GN',
+  /** The `ISO 3166` country code of `GP`. */
+  Gp = 'GP',
+  /** The `ISO 3166` country code of `GQ`. */
+  Gq = 'GQ',
+  /** The `ISO 3166` country code of `GR`. */
+  Gr = 'GR',
+  /** The `ISO 3166` country code of `GS`. */
+  Gs = 'GS',
+  /** The `ISO 3166` country code of `GT`. */
+  Gt = 'GT',
+  /** The `ISO 3166` country code of `GU`. */
+  Gu = 'GU',
+  /** The `ISO 3166` country code of `GW`. */
+  Gw = 'GW',
+  /** The `ISO 3166` country code of `GY`. */
+  Gy = 'GY',
+  /** The `ISO 3166` country code of `HK`. */
+  Hk = 'HK',
+  /** The `ISO 3166` country code of `HM`. */
+  Hm = 'HM',
+  /** The `ISO 3166` country code of `HN`. */
+  Hn = 'HN',
+  /** The `ISO 3166` country code of `HR`. */
+  Hr = 'HR',
+  /** The `ISO 3166` country code of `HT`. */
+  Ht = 'HT',
+  /** The `ISO 3166` country code of `HU`. */
+  Hu = 'HU',
+  /** The `ISO 3166` country code of `ID`. */
+  Id = 'ID',
+  /** The `ISO 3166` country code of `IE`. */
+  Ie = 'IE',
+  /** The `ISO 3166` country code of `IL`. */
+  Il = 'IL',
+  /** The `ISO 3166` country code of `IM`. */
+  Im = 'IM',
+  /** The `ISO 3166` country code of `IN`. */
+  In = 'IN',
+  /** The `ISO 3166` country code of `IO`. */
+  Io = 'IO',
+  /** The `ISO 3166` country code of `IQ`. */
+  Iq = 'IQ',
+  /** The `ISO 3166` country code of `IR`. */
+  Ir = 'IR',
+  /** The `ISO 3166` country code of `IS`. */
+  Is = 'IS',
+  /** The `ISO 3166` country code of `IT`. */
+  It = 'IT',
+  /** The `ISO 3166` country code of `JE`. */
+  Je = 'JE',
+  /** The `ISO 3166` country code of `JM`. */
+  Jm = 'JM',
+  /** The `ISO 3166` country code of `JO`. */
+  Jo = 'JO',
+  /** The `ISO 3166` country code of `JP`. */
+  Jp = 'JP',
+  /** The `ISO 3166` country code of `KE`. */
+  Ke = 'KE',
+  /** The `ISO 3166` country code of `KG`. */
+  Kg = 'KG',
+  /** The `ISO 3166` country code of `KH`. */
+  Kh = 'KH',
+  /** The `ISO 3166` country code of `KI`. */
+  Ki = 'KI',
+  /** The `ISO 3166` country code of `KM`. */
+  Km = 'KM',
+  /** The `ISO 3166` country code of `KN`. */
+  Kn = 'KN',
+  /** The `ISO 3166` country code of `KP`. */
+  Kp = 'KP',
+  /** The `ISO 3166` country code of `KR`. */
+  Kr = 'KR',
+  /** The `ISO 3166` country code of `KW`. */
+  Kw = 'KW',
+  /** The `ISO 3166` country code of `KY`. */
+  Ky = 'KY',
+  /** The `ISO 3166` country code of `KZ`. */
+  Kz = 'KZ',
+  /** The `ISO 3166` country code of `LA`. */
+  La = 'LA',
+  /** The `ISO 3166` country code of `LB`. */
+  Lb = 'LB',
+  /** The `ISO 3166` country code of `LC`. */
+  Lc = 'LC',
+  /** The `ISO 3166` country code of `LI`. */
+  Li = 'LI',
+  /** The `ISO 3166` country code of `LK`. */
+  Lk = 'LK',
+  /** The `ISO 3166` country code of `LR`. */
+  Lr = 'LR',
+  /** The `ISO 3166` country code of `LS`. */
+  Ls = 'LS',
+  /** The `ISO 3166` country code of `LT`. */
+  Lt = 'LT',
+  /** The `ISO 3166` country code of `LU`. */
+  Lu = 'LU',
+  /** The `ISO 3166` country code of `LV`. */
+  Lv = 'LV',
+  /** The `ISO 3166` country code of `LY`. */
+  Ly = 'LY',
+  /** The `ISO 3166` country code of `MA`. */
+  Ma = 'MA',
+  /** The `ISO 3166` country code of `MC`. */
+  Mc = 'MC',
+  /** The `ISO 3166` country code of `MD`. */
+  Md = 'MD',
+  /** The `ISO 3166` country code of `ME`. */
+  Me = 'ME',
+  /** The `ISO 3166` country code of `MF`. */
+  Mf = 'MF',
+  /** The `ISO 3166` country code of `MG`. */
+  Mg = 'MG',
+  /** The `ISO 3166` country code of `MH`. */
+  Mh = 'MH',
+  /** The `ISO 3166` country code of `MK`. */
+  Mk = 'MK',
+  /** The `ISO 3166` country code of `ML`. */
+  Ml = 'ML',
+  /** The `ISO 3166` country code of `MM`. */
+  Mm = 'MM',
+  /** The `ISO 3166` country code of `MN`. */
+  Mn = 'MN',
+  /** The `ISO 3166` country code of `MO`. */
+  Mo = 'MO',
+  /** The `ISO 3166` country code of `MP`. */
+  Mp = 'MP',
+  /** The `ISO 3166` country code of `MQ`. */
+  Mq = 'MQ',
+  /** The `ISO 3166` country code of `MR`. */
+  Mr = 'MR',
+  /** The `ISO 3166` country code of `MS`. */
+  Ms = 'MS',
+  /** The `ISO 3166` country code of `MT`. */
+  Mt = 'MT',
+  /** The `ISO 3166` country code of `MU`. */
+  Mu = 'MU',
+  /** The `ISO 3166` country code of `MV`. */
+  Mv = 'MV',
+  /** The `ISO 3166` country code of `MW`. */
+  Mw = 'MW',
+  /** The `ISO 3166` country code of `MX`. */
+  Mx = 'MX',
+  /** The `ISO 3166` country code of `MY`. */
+  My = 'MY',
+  /** The `ISO 3166` country code of `MZ`. */
+  Mz = 'MZ',
+  /** The `ISO 3166` country code of `NA`. */
+  Na = 'NA',
+  /** The `ISO 3166` country code of `NC`. */
+  Nc = 'NC',
+  /** The `ISO 3166` country code of `NE`. */
+  Ne = 'NE',
+  /** The `ISO 3166` country code of `NF`. */
+  Nf = 'NF',
+  /** The `ISO 3166` country code of `NG`. */
+  Ng = 'NG',
+  /** The `ISO 3166` country code of `NI`. */
+  Ni = 'NI',
+  /** The `ISO 3166` country code of `NL`. */
+  Nl = 'NL',
+  /** The `ISO 3166` country code of `NO`. */
+  No = 'NO',
+  /** The `ISO 3166` country code of `NP`. */
+  Np = 'NP',
+  /** The `ISO 3166` country code of `NR`. */
+  Nr = 'NR',
+  /** The `ISO 3166` country code of `NS`. */
+  Ns = 'NS',
+  /** The `ISO 3166` country code of `NU`. */
+  Nu = 'NU',
+  /** The `ISO 3166` country code of `NZ`. */
+  Nz = 'NZ',
+  /** The `ISO 3166` country code of `OM`. */
+  Om = 'OM',
+  /** The `ISO 3166` country code of `PA`. */
+  Pa = 'PA',
+  /** The `ISO 3166` country code of `PE`. */
+  Pe = 'PE',
+  /** The `ISO 3166` country code of `PF`. */
+  Pf = 'PF',
+  /** The `ISO 3166` country code of `PG`. */
+  Pg = 'PG',
+  /** The `ISO 3166` country code of `PH`. */
+  Ph = 'PH',
+  /** The `ISO 3166` country code of `PK`. */
+  Pk = 'PK',
+  /** The `ISO 3166` country code of `PL`. */
+  Pl = 'PL',
+  /** The `ISO 3166` country code of `PM`. */
+  Pm = 'PM',
+  /** The `ISO 3166` country code of `PN`. */
+  Pn = 'PN',
+  /** The `ISO 3166` country code of `PR`. */
+  Pr = 'PR',
+  /** The `ISO 3166` country code of `PS`. */
+  Ps = 'PS',
+  /** The `ISO 3166` country code of `PT`. */
+  Pt = 'PT',
+  /** The `ISO 3166` country code of `PW`. */
+  Pw = 'PW',
+  /** The `ISO 3166` country code of `PY`. */
+  Py = 'PY',
+  /** The `ISO 3166` country code of `QA`. */
+  Qa = 'QA',
+  /** The `ISO 3166` country code of `RE`. */
+  Re = 'RE',
+  /** The `ISO 3166` country code of `RO`. */
+  Ro = 'RO',
+  /** The `ISO 3166` country code of `RS`. */
+  Rs = 'RS',
+  /** The `ISO 3166` country code of `RU`. */
+  Ru = 'RU',
+  /** The `ISO 3166` country code of `RW`. */
+  Rw = 'RW',
+  /** The `ISO 3166` country code of `SA`. */
+  Sa = 'SA',
+  /** The `ISO 3166` country code of `SB`. */
+  Sb = 'SB',
+  /** The `ISO 3166` country code of `SC`. */
+  Sc = 'SC',
+  /** The `ISO 3166` country code of `SD`. */
+  Sd = 'SD',
+  /** The `ISO 3166` country code of `SE`. */
+  Se = 'SE',
+  /** The `ISO 3166` country code of `SG`. */
+  Sg = 'SG',
+  /** The `ISO 3166` country code of `SH`. */
+  Sh = 'SH',
+  /** The `ISO 3166` country code of `SI`. */
+  Si = 'SI',
+  /** The `ISO 3166` country code of `SJ`. */
+  Sj = 'SJ',
+  /** The `ISO 3166` country code of `SK`. */
+  Sk = 'SK',
+  /** The `ISO 3166` country code of `SL`. */
+  Sl = 'SL',
+  /** The `ISO 3166` country code of `SM`. */
+  Sm = 'SM',
+  /** The `ISO 3166` country code of `SN`. */
+  Sn = 'SN',
+  /** The `ISO 3166` country code of `SO`. */
+  So = 'SO',
+  /** The `ISO 3166` country code of `SR`. */
+  Sr = 'SR',
+  /** The `ISO 3166` country code of `SS`. */
+  Ss = 'SS',
+  /** The `ISO 3166` country code of `ST`. */
+  St = 'ST',
+  /** The `ISO 3166` country code of `SV`. */
+  Sv = 'SV',
+  /** The `ISO 3166` country code of `SX`. */
+  Sx = 'SX',
+  /** The `ISO 3166` country code of `SY`. */
+  Sy = 'SY',
+  /** The `ISO 3166` country code of `SZ`. */
+  Sz = 'SZ',
+  /** The `ISO 3166` country code of `TA`. */
+  Ta = 'TA',
+  /** The `ISO 3166` country code of `TC`. */
+  Tc = 'TC',
+  /** The `ISO 3166` country code of `TD`. */
+  Td = 'TD',
+  /** The `ISO 3166` country code of `TF`. */
+  Tf = 'TF',
+  /** The `ISO 3166` country code of `TG`. */
+  Tg = 'TG',
+  /** The `ISO 3166` country code of `TH`. */
+  Th = 'TH',
+  /** The `ISO 3166` country code of `TJ`. */
+  Tj = 'TJ',
+  /** The `ISO 3166` country code of `TK`. */
+  Tk = 'TK',
+  /** The `ISO 3166` country code of `TL`. */
+  Tl = 'TL',
+  /** The `ISO 3166` country code of `TM`. */
+  Tm = 'TM',
+  /** The `ISO 3166` country code of `TN`. */
+  Tn = 'TN',
+  /** The `ISO 3166` country code of `TO`. */
+  To = 'TO',
+  /** The `ISO 3166` country code of `TR`. */
+  Tr = 'TR',
+  /** The `ISO 3166` country code of `TT`. */
+  Tt = 'TT',
+  /** The `ISO 3166` country code of `TV`. */
+  Tv = 'TV',
+  /** The `ISO 3166` country code of `TW`. */
+  Tw = 'TW',
+  /** The `ISO 3166` country code of `TZ`. */
+  Tz = 'TZ',
+  /** The `ISO 3166` country code of `UA`. */
+  Ua = 'UA',
+  /** The `ISO 3166` country code of `UG`. */
+  Ug = 'UG',
+  /** The `ISO 3166` country code of `UM`. */
+  Um = 'UM',
+  /** The `ISO 3166` country code of `US`. */
+  Us = 'US',
+  /** The `ISO 3166` country code of `UY`. */
+  Uy = 'UY',
+  /** The `ISO 3166` country code of `UZ`. */
+  Uz = 'UZ',
+  /** The `ISO 3166` country code of `VA`. */
+  Va = 'VA',
+  /** The `ISO 3166` country code of `VC`. */
+  Vc = 'VC',
+  /** The `ISO 3166` country code of `VE`. */
+  Ve = 'VE',
+  /** The `ISO 3166` country code of `VG`. */
+  Vg = 'VG',
+  /** The `ISO 3166` country code of `VI`. */
+  Vi = 'VI',
+  /** The `ISO 3166` country code of `VN`. */
+  Vn = 'VN',
+  /** The `ISO 3166` country code of `VU`. */
+  Vu = 'VU',
+  /** The `ISO 3166` country code of `WF`. */
+  Wf = 'WF',
+  /** The `ISO 3166` country code of `WS`. */
+  Ws = 'WS',
+  /** The `ISO 3166` country code of `XK`. */
+  Xk = 'XK',
+  /** The `ISO 3166` country code of `XX`. */
+  Xx = 'XX',
+  /** The `ISO 3166` country code of `YE`. */
+  Ye = 'YE',
+  /** The `ISO 3166` country code of `YT`. */
+  Yt = 'YT',
+  /** The `ISO 3166` country code of `ZA`. */
+  Za = 'ZA',
+  /** The `ISO 3166` country code of `ZM`. */
+  Zm = 'ZM',
+  /** The `ISO 3166` country code of `ZW`. */
+  Zw = 'ZW'
+}
+
+/** Return type for `privacyFeaturesDisable` mutation. */
+export type PrivacyFeaturesDisablePayload = {
+  __typename?: 'PrivacyFeaturesDisablePayload';
+  /** The privacy features that were disabled. */
+  featuresDisabled?: Maybe<Array<PrivacyFeaturesEnum>>;
+  /** The list of errors that occurred from executing the mutation. */
+  userErrors: Array<PrivacyFeaturesDisableUserError>;
+};
+
+/** An error that occurs during the execution of `PrivacyFeaturesDisable`. */
+export type PrivacyFeaturesDisableUserError = DisplayableError & {
+  __typename?: 'PrivacyFeaturesDisableUserError';
+  /** The error code. */
+  code?: Maybe<PrivacyFeaturesDisableUserErrorCode>;
+  /** The path to the input field that caused the error. */
+  field?: Maybe<Array<Scalars['String']['output']>>;
+  /** The error message. */
+  message: Scalars['String']['output'];
+};
+
+/** Possible error codes that can be returned by `PrivacyFeaturesDisableUserError`. */
+export enum PrivacyFeaturesDisableUserErrorCode {
+  /** Failed to disable privacy features. */
+  Failed = 'FAILED'
+}
+
+/** The input fields for a shop's privacy settings. */
+export enum PrivacyFeaturesEnum {
+  /** The cookie banner feature. */
+  CookieBanner = 'COOKIE_BANNER',
+  /** The data sale opt out page feature. */
+  DataSaleOptOutPage = 'DATA_SALE_OPT_OUT_PAGE',
+  /** The privacy policy feature. */
+  PrivacyPolicy = 'PRIVACY_POLICY'
+}
+
+/** A shop's privacy policy settings. */
+export type PrivacyPolicy = {
+  __typename?: 'PrivacyPolicy';
+  /** Whether the policy is auto managed. */
+  autoManaged: Scalars['Boolean']['output'];
+  /** Policy template supported locales. */
+  supportedLocales: Array<Scalars['String']['output']>;
+};
+
+/** A shop's privacy settings. */
+export type PrivacySettings = {
+  __typename?: 'PrivacySettings';
+  /** Banner customizations for the 'cookie banner'. */
+  banner?: Maybe<CookieBanner>;
+  /** A shop's data sale opt out page (e.g. CCPA). */
+  dataSaleOptOutPage?: Maybe<DataSaleOptOutPage>;
+  /** A shop's privacy policy settings. */
+  privacyPolicy?: Maybe<PrivacyPolicy>;
+};
 
 /**
  * The `Product` object lets you manage products in a merchant’s store.
@@ -39901,26 +41566,23 @@ export type ProductClaimOwnershipInput = {
   bundles?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-/** The set of valid sort keys for the ProductCollection query. */
+/** The set of valid sort keys for products belonging to a collection. */
 export enum ProductCollectionSortKeys {
-  /** Sort by the `best-selling` value. */
+  /** Sort by best selling. */
   BestSelling = 'BEST_SELLING',
-  /** Sort by the `collection-default` value. */
+  /** Sort by collection default order. */
   CollectionDefault = 'COLLECTION_DEFAULT',
-  /** Sort by the `created` value. */
+  /** Sort by creation time. */
   Created = 'CREATED',
-  /** Sort by the `id` value. */
+  /** Sort by id. */
   Id = 'ID',
-  /** Sort by the `manual` value. */
+  /** Sort by manual order. */
   Manual = 'MANUAL',
-  /** Sort by the `price` value. */
+  /** Sort by price. */
   Price = 'PRICE',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
+  /** Sort by relevance. */
   Relevance = 'RELEVANCE',
-  /** Sort by the `title` value. */
+  /** Sort by title. */
   Title = 'TITLE'
 }
 
@@ -40314,6 +41976,8 @@ export enum ProductFeedStatus {
 /** Return type for `productFullSync` mutation. */
 export type ProductFullSyncPayload = {
   __typename?: 'ProductFullSyncPayload';
+  /** The ID for the full sync operation. */
+  id?: Maybe<Scalars['ID']['output']>;
   /** The list of errors that occurred from executing the mutation. */
   userErrors: Array<ProductFullSyncUserError>;
 };
@@ -40352,12 +42016,7 @@ export enum ProductImageSortKeys {
   /** Sort by the `id` value. */
   Id = 'ID',
   /** Sort by the `position` value. */
-  Position = 'POSITION',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Position = 'POSITION'
 }
 
 /** The input fields for creating or updating a product. */
@@ -40492,12 +42151,7 @@ export enum ProductMediaSortKeys {
   /** Sort by the `id` value. */
   Id = 'ID',
   /** Sort by the `position` value. */
-  Position = 'POSITION',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Position = 'POSITION'
 }
 
 /** An entity that represents details of an asynchronous operation on a product. */
@@ -41041,6 +42695,16 @@ export type ProductSale = Sale & {
   totalTaxAmount: MoneyBag;
 };
 
+/** The input fields required to identify a resource. */
+export type ProductSetIdentifiers = {
+  /** Custom ID of product to upsert. */
+  customId?: InputMaybe<UniqueMetafieldValueInput>;
+  /** Handle of product to upsert. */
+  handle?: InputMaybe<Scalars['String']['input']>;
+  /** ID of product to update. */
+  id?: InputMaybe<Scalars['ID']['input']>;
+};
+
 /** The input fields required to create or update a product via ProductSet mutation. */
 export type ProductSetInput = {
   /**
@@ -41077,16 +42741,6 @@ export type ProductSetInput = {
    * For example, if a product is titled "Black Sunglasses", then the handle is `black-sunglasses`.
    */
   handle?: InputMaybe<Scalars['String']['input']>;
-  /**
-   * The product's ID.
-   *
-   * If you're creating a product, then you don't need to pass the `id` as input to the
-   * [`productCreate`](https://shopify.dev/docs/api/admin-graphql/latest/mutations/productCreate) mutation.
-   * If you're updating a product, then you do need to pass the `id` as input to the
-   * [`productUpdate`](https://shopify.dev/docs/api/admin-graphql/latest/mutations/productUpdate) mutation
-   * to identify which product you want to update.
-   */
-  id?: InputMaybe<Scalars['ID']['input']>;
   /** The metafields to associate with this product. */
   metafields?: InputMaybe<Array<MetafieldInput>>;
   /** List of custom product options and option values (maximum of 3 per product). */
@@ -41216,6 +42870,10 @@ export enum ProductSetUserErrorCode {
   GiftCardAttributeCannotBeChanged = 'GIFT_CARD_ATTRIBUTE_CANNOT_BE_CHANGED',
   /** Handle already in use. Please provide a new handle. */
   HandleNotUnique = 'HANDLE_NOT_UNIQUE',
+  /** The id field is not allowed if identifier is provided. */
+  IdNotAllowed = 'ID_NOT_ALLOWED',
+  /** The identifier value does not match the value of the corresponding field in the input. */
+  InputMismatch = 'INPUT_MISMATCH',
   /** Input is not valid. */
   InvalidInput = 'INVALID_INPUT',
   /** Metafield is not valid. */
@@ -41232,6 +42890,12 @@ export enum ProductSetUserErrorCode {
   LinkedMetafieldDefinitionNotFound = 'LINKED_METAFIELD_DEFINITION_NOT_FOUND',
   /** Linked options are currently not supported for this shop. */
   LinkedOptionsNotSupportedForShop = 'LINKED_OPTIONS_NOT_SUPPORTED_FOR_SHOP',
+  /** The input argument `metafields` (if present) must contain the `customId` value. */
+  MetafieldMismatch = 'METAFIELD_MISMATCH',
+  /** The input field corresponding to the identifier is required. */
+  MissingFieldRequired = 'MISSING_FIELD_REQUIRED',
+  /** Resource matching the identifier was not found. */
+  NotFound = 'NOT_FOUND',
   /** Options over limit. */
   OptionsOverLimit = 'OPTIONS_OVER_LIMIT',
   /** Option does not exist. */
@@ -41772,6 +43436,14 @@ export type ProductVariantGroupRelationshipInput = {
   quantity: Scalars['Int']['input'];
 };
 
+/** The input fields for identifying a product variant. */
+export type ProductVariantIdentifierInput = {
+  /** The [custom ID](https://shopify.dev/docs/apps/build/custom-data/metafields/working-with-custom-ids) of the product variant. */
+  customId?: InputMaybe<UniqueMetafieldValueInput>;
+  /** The ID of the product variant. */
+  id?: InputMaybe<Scalars['ID']['input']>;
+};
+
 /** The valid values for the inventory policy of a product variant once it is out of stock. */
 export enum ProductVariantInventoryPolicy {
   /** Customers can buy this product variant after it's out of stock. */
@@ -42166,6 +43838,8 @@ export type ProductVariantsBulkReorderUserError = DisplayableError & {
 export enum ProductVariantsBulkReorderUserErrorCode {
   /** Product variant IDs must be unique. */
   DuplicatedVariantId = 'DUPLICATED_VARIANT_ID',
+  /** Something went wrong, please try again. */
+  GenericError = 'GENERIC_ERROR',
   /** Product variant position cannot be zero or negative number. */
   InvalidPosition = 'INVALID_POSITION',
   /** Product variant does not exist. */
@@ -42314,6 +43988,8 @@ export type PubSubWebhookSubscriptionInput = {
   includeFields?: InputMaybe<Array<Scalars['String']['input']>>;
   /** The list of namespaces for any metafields that should be included in the webhook subscription. */
   metafieldNamespaces?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** A list of identifiers specifying metafields to include in the webhook payload. */
+  metafields?: InputMaybe<Array<HasMetafieldsMetafieldIdentifierInput>>;
   /** The Pub/Sub project ID. */
   pubSubProject: Scalars['String']['input'];
   /** The Pub/Sub topic ID. */
@@ -42366,6 +44042,8 @@ export type Publication = Node & {
   hasCollection: Scalars['Boolean']['output'];
   /** A globally-unique ID. */
   id: Scalars['ID']['output'];
+  /** The list of products included, but not necessarily published, in the publication. */
+  includedProducts: ProductConnection;
   /**
    * Name of the publication.
    * @deprecated Use [Catalog.title](https://shopify.dev/api/admin-graphql/unstable/interfaces/Catalog#field-catalog-title) instead.
@@ -42405,6 +44083,16 @@ export type PublicationCollectionsArgs = {
 /** A publication is a group of products and collections that is published to an app. */
 export type PublicationHasCollectionArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+/** A publication is a group of products and collections that is published to an app. */
+export type PublicationIncludedProductsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  reverse?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -42869,12 +44557,7 @@ export enum QuantityPriceBreakSortKeys {
   /** Sort by the `id` value. */
   Id = 'ID',
   /** Sort by the `minimum_quantity` value. */
-  MinimumQuantity = 'MINIMUM_QUANTITY',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  MinimumQuantity = 'MINIMUM_QUANTITY'
 }
 
 /** The input fields used to update quantity pricing. */
@@ -42887,6 +44570,8 @@ export type QuantityPricingByVariantUpdateInput = {
   quantityPriceBreaksToAdd: Array<QuantityPriceBreakInput>;
   /** A list of quantity price break IDs that identify which quantity breaks to remove. */
   quantityPriceBreaksToDelete: Array<Scalars['ID']['input']>;
+  /** A list of product variant IDs that identify which quantity breaks to remove. */
+  quantityPriceBreaksToDeleteByVariantId?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** A list of quantity rules to add. */
   quantityRulesToAdd: Array<QuantityRuleInput>;
   /** A list of variant IDs that identify which quantity rules to remove. */
@@ -42951,6 +44636,8 @@ export enum QuantityPricingByVariantUserErrorCode {
   QuantityPriceBreakAddPriceListPriceNotFound = 'QUANTITY_PRICE_BREAK_ADD_PRICE_LIST_PRICE_NOT_FOUND',
   /** Quantity price break variant not found. */
   QuantityPriceBreakAddVariantNotFound = 'QUANTITY_PRICE_BREAK_ADD_VARIANT_NOT_FOUND',
+  /** Variant to delete by is not found. */
+  QuantityPriceBreakDeleteByVariantIdVariantNotFound = 'QUANTITY_PRICE_BREAK_DELETE_BY_VARIANT_ID_VARIANT_NOT_FOUND',
   /** Failed to delete quantity price break. */
   QuantityPriceBreakDeleteFailed = 'QUANTITY_PRICE_BREAK_DELETE_FAILED',
   /** Quantity price break not found. */
@@ -43071,7 +44758,7 @@ export type QuantityRuleUserError = DisplayableError & {
 export enum QuantityRuleUserErrorCode {
   /** The input value is blank. */
   Blank = 'BLANK',
-  /** Quantity rules can be associated only with company location catalogs. */
+  /** Quantity rules can be associated only with company location catalogs or catalogs associated with compatible markets. */
   CatalogContextDoesNotSupportQuantityRules = 'CATALOG_CONTEXT_DOES_NOT_SUPPORT_QUANTITY_RULES',
   /** Quantity rule inputs must be unique by variant id. */
   DuplicateInputForVariant = 'DUPLICATE_INPUT_FOR_VARIANT',
@@ -43146,12 +44833,16 @@ export type QueryRoot = {
   appDiscountType?: Maybe<AppDiscountType>;
   /** A list of app discount types installed by apps. */
   appDiscountTypes: Array<AppDiscountType>;
+  /** A list of app discount types installed by apps. */
+  appDiscountTypesNodes: AppDiscountTypeConnection;
   /** Lookup an AppInstallation by ID or return the AppInstallation for the currently authenticated App. */
   appInstallation?: Maybe<AppInstallation>;
   /** A list of app installations. To use this query, you need to contact [Shopify Support](https://partners.shopify.com/current/support/) to grant your custom app the `read_apps` access scope. Public apps can't be granted this access scope. */
   appInstallations: AppInstallationConnection;
   /** Returns an Article resource by ID. */
   article?: Maybe<Article>;
+  /** List of article authors for the shop. */
+  articleAuthors: ArticleAuthorConnection;
   /** List of all article tags. */
   articleTags: Array<Scalars['String']['output']>;
   /** List of the shop's articles. */
@@ -43194,10 +44885,14 @@ export type QueryRoot = {
    * @deprecated Use `automaticDiscountNodes` instead.
    */
   automaticDiscounts: DiscountAutomaticConnection;
+  /** The regions that can be used as the backup region of the shop. */
+  availableBackupRegions: Array<MarketRegion>;
   /** Returns a list of activated carrier services and associated shop locations that support them. */
   availableCarrierServices: Array<DeliveryCarrierServiceAndLocations>;
   /** A list of available locales. */
   availableLocales: Array<Locale>;
+  /** The backup region of the shop. */
+  backupRegion: MarketRegion;
   /** Returns a Blog resource by ID. */
   blog?: Maybe<Blog>;
   /** List of the shop's blogs. */
@@ -43268,6 +44963,8 @@ export type QueryRoot = {
    * @deprecated Use `collectionByIdentifier` instead.
    */
   collectionByHandle?: Maybe<Collection>;
+  /** Return a collection by an identifier. */
+  collectionByIdentifier?: Maybe<Collection>;
   /** Lists all rules that can be used to create smart collections. */
   collectionRulesConditions: Array<CollectionRuleConditions>;
   /** Returns a list of the shop's collection saved searches. */
@@ -43294,6 +44991,10 @@ export type QueryRoot = {
   companyLocation?: Maybe<CompanyLocation>;
   /** Returns the list of company locations in the shop. */
   companyLocations: CompanyLocationConnection;
+  /** Returns the customer privacy consent policies of a shop. */
+  consentPolicy: Array<ConsentPolicy>;
+  /** List of countries and regions for which consent policies can be created or updated. */
+  consentPolicyRegions: Array<ConsentPolicyRegion>;
   /** Return the AppInstallation for the currently authenticated App. */
   currentAppInstallation: AppInstallation;
   /** Returns the current app's most recent BulkOperation. Apps can run one bulk query and one bulk mutation operation at a time, by shop. */
@@ -43388,6 +45089,10 @@ export type QueryRoot = {
   fileSavedSearches: SavedSearchConnection;
   /** Returns a paginated list of files that have been uploaded to Shopify. */
   files: FileConnection;
+  /** Returns the access policy for a finance app . */
+  financeAppAccessPolicy: FinanceAppAccessPolicy;
+  /** Returns the KYC information for the shop's Shopify Payments account, used in embedded finance apps. */
+  financeKycInformation?: Maybe<FinanceKycInformation>;
   /** Returns a Fulfillment resource by ID. */
   fulfillment?: Maybe<Fulfillment>;
   /** The fulfillment constraint rules that belong to a shop. */
@@ -43412,6 +45117,8 @@ export type QueryRoot = {
   fulfillmentService?: Maybe<FulfillmentService>;
   /** Returns a gift card resource by ID. */
   giftCard?: Maybe<GiftCard>;
+  /** The configuration for the shop's gift cards. */
+  giftCardConfiguration: GiftCardConfiguration;
   /** Returns a list of gift cards. */
   giftCards: GiftCardConnection;
   /** The total number of gift cards issued for the shop. Limited to a maximum of 10000. */
@@ -43436,6 +45143,8 @@ export type QueryRoot = {
   job?: Maybe<Job>;
   /** Returns an inventory Location resource by ID. */
   location?: Maybe<Location>;
+  /** Return a location by an identifier. */
+  locationByIdentifier?: Maybe<Location>;
   /** Returns a list of active inventory locations. */
   locations: LocationConnection;
   /**
@@ -43451,7 +45160,10 @@ export type QueryRoot = {
   manualHoldsFulfillmentOrders: FulfillmentOrderConnection;
   /** Returns a market resource by ID. */
   market?: Maybe<Market>;
-  /** Returns the applicable market for a customer based on where they are in the world. */
+  /**
+   * Returns the applicable market for a customer based on where they are in the world.
+   * @deprecated This `market_by_geography` field will be removed in a future version of the API.
+   */
   marketByGeography?: Maybe<Market>;
   /** A resource that can have localized values for different markets. */
   marketLocalizableResource?: Maybe<MarketLocalizableResource>;
@@ -43519,6 +45231,8 @@ export type QueryRoot = {
   onlineStore: OnlineStore;
   /** Returns an Order resource by ID. */
   order?: Maybe<Order>;
+  /** Return an order by an identifier. */
+  orderByIdentifier?: Maybe<Order>;
   /** Returns a payment status by payment reference ID. Used to check the status of a deferred payment. */
   orderPaymentStatus?: Maybe<OrderPaymentStatus>;
   /** List of the shop's order saved searches. */
@@ -43550,6 +45264,8 @@ export type QueryRoot = {
    * @deprecated Use `backupRegion` instead.
    */
   primaryMarket: Market;
+  /** Privacy related settings for a shop. */
+  privacySettings: PrivacySettings;
   /** Returns a Product resource by ID. */
   product?: Maybe<Product>;
   /**
@@ -43600,6 +45316,8 @@ export type QueryRoot = {
   productTypes?: Maybe<StringConnection>;
   /** Returns a ProductVariant resource by ID. */
   productVariant?: Maybe<ProductVariant>;
+  /** Return a product variant by an identifier. */
+  productVariantByIdentifier?: Maybe<ProductVariant>;
   /** Returns a list of product variants. */
   productVariants: ProductVariantConnection;
   /** Count of product variants. */
@@ -43763,6 +45481,8 @@ export type QueryRoot = {
    * by ID.
    */
   webPixel?: Maybe<WebPixel>;
+  /** The web presences for the shop. */
+  webPresences?: Maybe<MarketWebPresenceConnection>;
   /**
    * Returns a webhook subscription by ID.
    *
@@ -43842,6 +45562,16 @@ export type QueryRootAppDiscountTypeArgs = {
 
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
+export type QueryRootAppDiscountTypesNodesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  reverse?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootAppInstallationArgs = {
   id?: InputMaybe<Scalars['ID']['input']>;
 };
@@ -43863,6 +45593,16 @@ export type QueryRootAppInstallationsArgs = {
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootArticleArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
+export type QueryRootArticleAuthorsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  reverse?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -44136,6 +45876,12 @@ export type QueryRootCollectionByHandleArgs = {
 
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
+export type QueryRootCollectionByIdentifierArgs = {
+  identifier: CollectionIdentifierInput;
+};
+
+
+/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootCollectionSavedSearchesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -44228,6 +45974,16 @@ export type QueryRootCompanyLocationsArgs = {
   query?: InputMaybe<Scalars['String']['input']>;
   reverse?: InputMaybe<Scalars['Boolean']['input']>;
   sortKey?: InputMaybe<CompanyLocationSortKeys>;
+};
+
+
+/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
+export type QueryRootConsentPolicyArgs = {
+  consentRequired?: InputMaybe<Scalars['Boolean']['input']>;
+  countryCode?: InputMaybe<PrivacyCountryCode>;
+  dataSaleOptOutRequired?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  regionCode?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -44663,6 +46419,12 @@ export type QueryRootLocationArgs = {
 
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
+export type QueryRootLocationByIdentifierArgs = {
+  identifier: LocationIdentifierInput;
+};
+
+
+/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootLocationsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -44789,7 +46551,10 @@ export type QueryRootMarketsArgs = {
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
   reverse?: InputMaybe<Scalars['Boolean']['input']>;
+  sortKey?: InputMaybe<MarketsSortKeys>;
+  type?: InputMaybe<MarketType>;
 };
 
 
@@ -44813,7 +46578,7 @@ export type QueryRootMenusArgs = {
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootMetafieldDefinitionArgs = {
-  id: Scalars['ID']['input'];
+  identifier?: InputMaybe<MetafieldDefinitionIdentifierInput>;
 };
 
 
@@ -44917,6 +46682,12 @@ export type QueryRootOrderArgs = {
 
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
+export type QueryRootOrderByIdentifierArgs = {
+  identifier: OrderIdentifierInput;
+};
+
+
+/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootOrderPaymentStatusArgs = {
   orderId: Scalars['ID']['input'];
   paymentReferenceId: Scalars['String']['input'];
@@ -44966,7 +46737,10 @@ export type QueryRootPagesArgs = {
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
   reverse?: InputMaybe<Scalars['Boolean']['input']>;
+  savedSearchId?: InputMaybe<Scalars['ID']['input']>;
+  sortKey?: InputMaybe<PageSortKeys>;
 };
 
 
@@ -45095,6 +46869,12 @@ export type QueryRootProductTypesArgs = {
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootProductVariantArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
+export type QueryRootProductVariantByIdentifierArgs = {
+  identifier: ProductVariantIdentifierInput;
 };
 
 
@@ -45441,6 +47221,7 @@ export type QueryRootSubscriptionContractsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   query?: InputMaybe<Scalars['String']['input']>;
   reverse?: InputMaybe<Scalars['Boolean']['input']>;
+  sortKey?: InputMaybe<SubscriptionContractsSortKeys>;
 };
 
 
@@ -45569,6 +47350,16 @@ export type QueryRootValidationsArgs = {
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootWebPixelArgs = {
   id?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
+export type QueryRootWebPresencesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  reverse?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -45908,6 +47699,25 @@ export type RefundShippingLineEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of RefundShippingLineEdge. */
   node: RefundShippingLine;
+};
+
+/** A condition checking the visitor's region. */
+export type RegionsCondition = {
+  __typename?: 'RegionsCondition';
+  /** The application level for the condition. */
+  applicationLevel?: Maybe<MarketConditionApplicationType>;
+  /** The regions that comprise the market. */
+  regions: MarketRegionConnection;
+};
+
+
+/** A condition checking the visitor's region. */
+export type RegionsConditionRegionsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  reverse?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 /** The input fields for a remote Authorize.net customer payment profile. */
@@ -47461,12 +49271,7 @@ export enum ScheduledChangeSortKeys {
   /** Sort by the `expected_at` value. */
   ExpectedAt = 'EXPECTED_AT',
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /**
@@ -48735,11 +50540,6 @@ export enum SellingPlanGroupSortKeys {
   Id = 'ID',
   /** Sort by the `name` value. */
   Name = 'NAME',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE',
   /** Sort by the `updated_at` value. */
   UpdatedAt = 'UPDATED_AT'
 }
@@ -49493,6 +51293,8 @@ export type Shop = HasMetafields & HasPublishedTranslations & Node & {
   email: Scalars['String']['output'];
   /** The presentment currencies enabled for the shop. */
   enabledPresentmentCurrencies: Array<CurrencyCode>;
+  /** The entitlements for a shop. */
+  entitlements: EntitlementsType;
   /** The set of features enabled for the shop. */
   features: ShopFeatures;
   /**
@@ -50105,6 +51907,8 @@ export type ShopFeatures = {
   showMetrics: Scalars['Boolean']['output'];
   /** Whether a shop has an online store. */
   storefront: Scalars['Boolean']['output'];
+  /** Whether a shop is eligible for Unified Markets. */
+  unifiedMarkets: Scalars['Boolean']['output'];
   /** Whether a shop is using Shopify Balance. */
   usingShopifyBalance: Scalars['Boolean']['output'];
 };
@@ -50479,15 +52283,36 @@ export type ShopifyPaymentsAccountPayoutsArgs = {
   transactionType?: InputMaybe<ShopifyPaymentsPayoutTransactionType>;
 };
 
+/** A Shopify Payments address. */
+export type ShopifyPaymentsAddressBasic = {
+  __typename?: 'ShopifyPaymentsAddressBasic';
+  /** Line 1 of the address. */
+  addressLine1?: Maybe<Scalars['String']['output']>;
+  /** Line 2 of the address. */
+  addressLine2?: Maybe<Scalars['String']['output']>;
+  /** The address city. */
+  city?: Maybe<Scalars['String']['output']>;
+  /** The address country. */
+  country?: Maybe<Scalars['String']['output']>;
+  /** The address postal code. */
+  postalCode?: Maybe<Scalars['String']['output']>;
+  /** The address state/province/zone. */
+  zone?: Maybe<Scalars['String']['output']>;
+};
+
 /** The adjustment order object. */
 export type ShopifyPaymentsAdjustmentOrder = {
   __typename?: 'ShopifyPaymentsAdjustmentOrder';
   /** The amount of the adjustment order. */
   amount: MoneyV2;
+  /** The fee of the adjustment order. */
+  fees: MoneyV2;
   /** The link to the adjustment order. */
   link: Scalars['URL']['output'];
   /** The name of the adjustment order. */
   name: Scalars['String']['output'];
+  /** The net of the adjustment order. */
+  net: MoneyV2;
   /** The ID of the order transaction. */
   orderTransactionId: Scalars['BigInt']['output'];
 };
@@ -50660,6 +52485,54 @@ export enum ShopifyPaymentsBankAccountStatus {
   Validated = 'VALIDATED',
   /** Bank account validation was successful. */
   Verified = 'VERIFIED'
+}
+
+/** The business type of a Shopify Payments account. */
+export enum ShopifyPaymentsBusinessType {
+  /** The business type is a corporation. */
+  Corporation = 'CORPORATION',
+  /** The business type is a government. */
+  Government = 'GOVERNMENT',
+  /** The business type is an incorporated partnership. */
+  IncorporatedPartnership = 'INCORPORATED_PARTNERSHIP',
+  /** The business is an individual. */
+  Individual = 'INDIVIDUAL',
+  /** The business type is a Limited Liability Company. */
+  Llc = 'LLC',
+  /** The business type is a non profit. */
+  NonProfit = 'NON_PROFIT',
+  /** The business type is a non profit (incorporated). */
+  NonProfitIncorporated = 'NON_PROFIT_INCORPORATED',
+  /** The business type is a non profit (registered charity). */
+  NonProfitRegisteredCharity = 'NON_PROFIT_REGISTERED_CHARITY',
+  /** The business type is a non profit (unincorporated). */
+  NonProfitUnincorporated = 'NON_PROFIT_UNINCORPORATED',
+  /** The business type is a non profit (unincorporated_association). */
+  NonProfitUnincorporatedAssociation = 'NON_PROFIT_UNINCORPORATED_ASSOCIATION',
+  /** The business type is not set. This is usually because onboarding is incomplete. */
+  NotSet = 'NOT_SET',
+  /** The business type is a partnership. */
+  Partnership = 'PARTNERSHIP',
+  /** The business type is a private corporation. */
+  PrivateCorporation = 'PRIVATE_CORPORATION',
+  /** The business type is a private multi member LLC. */
+  PrivateMultiMemberLlc = 'PRIVATE_MULTI_MEMBER_LLC',
+  /** The business type is a private partnership. */
+  PrivatePartnership = 'PRIVATE_PARTNERSHIP',
+  /** The business type is a private single member LLC. */
+  PrivateSingleMemberLlc = 'PRIVATE_SINGLE_MEMBER_LLC',
+  /** The business type is a private unincorporated association. */
+  PrivateUnincorporatedAssociation = 'PRIVATE_UNINCORPORATED_ASSOCIATION',
+  /** The business type is a public company. */
+  PublicCompany = 'PUBLIC_COMPANY',
+  /** The business type is a public corporation. */
+  PublicCorporation = 'PUBLIC_CORPORATION',
+  /** The business type is a public partnership. */
+  PublicPartnership = 'PUBLIC_PARTNERSHIP',
+  /** The business type is a sole proprietorship. */
+  SoleProp = 'SOLE_PROP',
+  /** The business type is an unincorporated partnership. */
+  UnincorporatedPartnership = 'UNINCORPORATED_PARTNERSHIP'
 }
 
 /** The charge descriptors for a payments account. */
@@ -50932,6 +52805,21 @@ export type ShopifyPaymentsJpChargeStatementDescriptor = ShopifyPaymentsChargeSt
   prefix: Scalars['String']['output'];
 };
 
+/** A MerchantCategoryCode (MCC) is a four-digit number listed in ISO 18245 for retail financial services and used to classify the business by the type of goods or services it provides. */
+export type ShopifyPaymentsMerchantCategoryCode = {
+  __typename?: 'ShopifyPaymentsMerchantCategoryCode';
+  /** The category of the MCC. */
+  category: Scalars['String']['output'];
+  /** The category label of the MCC. */
+  categoryLabel: Scalars['String']['output'];
+  /** A four-digit number listed in ISO 18245. */
+  code: Scalars['Int']['output'];
+  /** The ID of the MCC. */
+  id: Scalars['Int']['output'];
+  /** The subcategory label of the MCC. */
+  subcategoryLabel: Scalars['String']['output'];
+};
+
 /**
  * Payouts represent the movement of money between a merchant's Shopify
  * Payments balance and their bank account.
@@ -51142,6 +53030,25 @@ export enum ShopifyPaymentsSourceType {
   Transfer = 'TRANSFER'
 }
 
+/** A typed identifier that represents an individual within a tax jurisdiction. */
+export type ShopifyPaymentsTaxIdentification = {
+  __typename?: 'ShopifyPaymentsTaxIdentification';
+  /** The type of the identification. */
+  taxIdentificationType: ShopifyPaymentsTaxIdentificationType;
+  /** The value of the identification. */
+  value: Scalars['String']['output'];
+};
+
+/** The type of tax identification field. */
+export enum ShopifyPaymentsTaxIdentificationType {
+  /** Business EIN. */
+  Ein = 'EIN',
+  /** Full SSN. */
+  FullSsn = 'FULL_SSN',
+  /** The last 4 digits of the SSN. */
+  SsnLast4Digits = 'SSN_LAST4_DIGITS'
+}
+
 /** Relevant reference information for an alternate currency payout. */
 export type ShopifyPaymentsToolingProviderPayout = {
   __typename?: 'ShopifyPaymentsToolingProviderPayout';
@@ -51242,6 +53149,8 @@ export enum ShopifyPaymentsTransactionType {
   ImportTax = 'IMPORT_TAX',
   /** The import_tax_adjustment transaction type. */
   ImportTaxAdjustment = 'IMPORT_TAX_ADJUSTMENT',
+  /** The tax refund transaction type. */
+  ImportTaxRefund = 'IMPORT_TAX_REFUND',
   /** The marketplace_fee_credit transaction type. */
   MarketplaceFeeCredit = 'MARKETPLACE_FEE_CREDIT',
   /** The marketplace_fee_credit_reversal transaction type. */
@@ -51514,6 +53423,8 @@ export enum StaffMemberPermission {
   CreateAndEditCustomers = 'CREATE_AND_EDIT_CUSTOMERS',
   /** The staff member can create and edit gift cards. */
   CreateAndEditGiftCards = 'CREATE_AND_EDIT_GIFT_CARDS',
+  /** The staff member can create and edit markets. */
+  CreateAndEditMarkets = 'CREATE_AND_EDIT_MARKETS',
   /** The staff member can view customers. */
   Customers = 'CUSTOMERS',
   /** The staff member can view the Shopify Home page, which includes sales information and other shop data. */
@@ -51522,6 +53433,8 @@ export enum StaffMemberPermission {
   DeactivateGiftCards = 'DEACTIVATE_GIFT_CARDS',
   /** The staff member can delete customers. */
   DeleteCustomers = 'DELETE_CUSTOMERS',
+  /** The staff member can delete markets. */
+  DeleteMarkets = 'DELETE_MARKETS',
   /** The staff member can view, buy, and manage domains. */
   Domains = 'DOMAINS',
   /** The staff member can create, update, and delete draft orders. */
@@ -51573,7 +53486,9 @@ export enum StaffMemberPermission {
    * The staff member can view and create translations.
    * @deprecated Unused.
    */
-  Translations = 'TRANSLATIONS'
+  Translations = 'TRANSLATIONS',
+  /** The staff member can view markets. */
+  ViewMarkets = 'VIEW_MARKETS'
 }
 
 /** Represents the data used to customize the Shopify admin experience for a logged-in staff member. */
@@ -51947,6 +53862,13 @@ export type StandardMetafieldDefinitionTemplateEdge = {
   node: StandardMetafieldDefinitionTemplate;
 };
 
+/** Describes a capability that is enabled on a Metaobject Definition. */
+export type StandardMetaobjectCapabilityTemplate = {
+  __typename?: 'StandardMetaobjectCapabilityTemplate';
+  /** The type of capability that's enabled for the metaobject definition. */
+  capabilityType: MetaobjectCapabilityType;
+};
+
 /** Return type for `standardMetaobjectDefinitionEnable` mutation. */
 export type StandardMetaobjectDefinitionEnablePayload = {
   __typename?: 'StandardMetaobjectDefinitionEnablePayload';
@@ -51954,6 +53876,42 @@ export type StandardMetaobjectDefinitionEnablePayload = {
   metaobjectDefinition?: Maybe<MetaobjectDefinition>;
   /** The list of errors that occurred from executing the mutation. */
   userErrors: Array<MetaobjectUserError>;
+};
+
+/** A preset field definition on a standard metaobject definition template. */
+export type StandardMetaobjectDefinitionFieldTemplate = {
+  __typename?: 'StandardMetaobjectDefinitionFieldTemplate';
+  /** The administrative description. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The key owned by the definition after the definition has been enabled. */
+  key: Scalars['String']['output'];
+  /** The human-readable name. */
+  name: Scalars['String']['output'];
+  /** The required status of the field within the object composition. */
+  required: Scalars['Boolean']['output'];
+  /** The associated [metafield definition type](https://shopify.dev/apps/metafields/definitions/types) that the metafield stores. */
+  type: MetafieldDefinitionType;
+  /** The configured validations for the standard metafield definition. */
+  validations: Array<MetafieldDefinitionValidation>;
+  /** Whether metafields for the definition are by default visible using the Storefront API. */
+  visibleToStorefrontApi: Scalars['Boolean']['output'];
+};
+
+/** Standard metaobject definition templates provide preset configurations to create metaobject definitions. */
+export type StandardMetaobjectDefinitionTemplate = {
+  __typename?: 'StandardMetaobjectDefinitionTemplate';
+  /** The administrative description. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The key of a field to reference as the display name for each object. */
+  displayNameKey?: Maybe<Scalars['String']['output']>;
+  /** The capabilities of the metaobject definition. */
+  enabledCapabilities: Array<StandardMetaobjectCapabilityTemplate>;
+  /** Templates for the associated field definitions. */
+  fieldDefinitions: Array<StandardMetaobjectDefinitionFieldTemplate>;
+  /** The human-readable name. */
+  name: Scalars['String']['output'];
+  /** The namespace owned by the definition after the definition has been enabled. */
+  type: Scalars['String']['output'];
 };
 
 /** Represents the details of a specific type of product within the [Shopify product taxonomy](https://shopify.github.io/product-taxonomy/releases/unstable/?categoryId=sg-4-17-2-17). */
@@ -52514,6 +54472,8 @@ export enum SubscriptionBillingAttemptErrorCode {
   InventoryAllocationsNotFound = 'INVENTORY_ALLOCATIONS_NOT_FOUND',
   /** A payment has already been made for this invoice. */
   InvoiceAlreadyPaid = 'INVOICE_ALREADY_PAID',
+  /** Non-test order limit reached. Use a test payment gateway to place another order. */
+  NonTestOrderLimitReached = 'NON_TEST_ORDER_LIMIT_REACHED',
   /** Payment method was declined by processor. */
   PaymentMethodDeclined = 'PAYMENT_METHOD_DECLINED',
   /** Payment method cannot be used with the current payment gateway test mode configuration. */
@@ -52637,12 +54597,7 @@ export enum SubscriptionBillingAttemptsSortKeys {
   /** Sort by the `created_at` value. */
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /** A subscription billing cycle. */
@@ -53071,12 +55026,7 @@ export enum SubscriptionBillingCyclesSortKeys {
   /** Sort by the `cycle_index` value. */
   CycleIndex = 'CYCLE_INDEX',
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /** Select subscription billing cycles to be targeted. */
@@ -53515,6 +55465,18 @@ export type SubscriptionContractUserError = DisplayableError & {
   /** The error message. */
   message: Scalars['String']['output'];
 };
+
+/** The set of valid sort keys for the SubscriptionContracts query. */
+export enum SubscriptionContractsSortKeys {
+  /** Sort by the `created_at` value. */
+  CreatedAt = 'CREATED_AT',
+  /** Sort by the `id` value. */
+  Id = 'ID',
+  /** Sort by the `status` value. */
+  Status = 'STATUS',
+  /** Sort by the `updated_at` value. */
+  UpdatedAt = 'UPDATED_AT'
+}
 
 /** Represents a Subscription Line Pricing Cycle Adjustment. */
 export type SubscriptionCyclePriceAdjustment = {
@@ -56257,12 +58219,7 @@ export type ValidationEdge = {
 /** The set of valid sort keys for the Validation query. */
 export enum ValidationSortKeys {
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /** The input fields required to update a validation. */
@@ -56530,6 +58487,138 @@ export type WebPixelUpdatePayload = {
   webPixel?: Maybe<WebPixel>;
 };
 
+/**
+ * This can be a domain (e.g. `example.ca`), subdomain (e.g. `ca.example.com`), or subfolders of the primary
+ * domain (e.g. `example.com/en-ca`). Each web presence comprises one or more language
+ * variants.
+ *
+ * Note: while the domain/subfolders defined by a web presence are not applicable to
+ * custom storefronts, which must manage their own domains and routing, the languages chosen
+ * here do govern [the languages available on the Storefront
+ * API](https://shopify.dev/custom-storefronts/internationalization/multiple-languages) for the countries
+ * using this web presence.
+ */
+export type WebPresence = Node & {
+  __typename?: 'WebPresence';
+  /**
+   * The ShopLocale object for the alternate locales. When a domain is used, these locales will be
+   * available as language-specific subfolders. For example, if English is an
+   * alternate locale, and `example.ca` is the domain, then
+   * `example.ca/en` will load in English.
+   */
+  alternateLocales: Array<ShopLocale>;
+  /**
+   * The ShopLocale object for the default locale. When a domain is used, this is the locale that will
+   * be used when the domain root is accessed. For example, if French is the default locale,
+   * and `example.ca` is the domain, then `example.ca` will load in French.
+   */
+  defaultLocale: ShopLocale;
+  /** The web presence’s domain. This field will be null if `subfolderSuffix` is present. */
+  domain?: Maybe<Domain>;
+  /** A globally-unique ID. */
+  id: Scalars['ID']['output'];
+  /** The associated markets for this web presence. */
+  markets?: Maybe<MarketConnection>;
+  /** The list of root URLs for each of the web presence’s locales. */
+  rootUrls: Array<WebPresenceRootUrl>;
+  /**
+   * The suffix of the subfolders defined by the web presence.
+   * Example: in `/en-us` the subfolder suffix is `us`.
+   * This field will be null if `domain` isn't null.
+   */
+  subfolderSuffix?: Maybe<Scalars['String']['output']>;
+};
+
+
+/**
+ * This can be a domain (e.g. `example.ca`), subdomain (e.g. `ca.example.com`), or subfolders of the primary
+ * domain (e.g. `example.com/en-ca`). Each web presence comprises one or more language
+ * variants.
+ *
+ * Note: while the domain/subfolders defined by a web presence are not applicable to
+ * custom storefronts, which must manage their own domains and routing, the languages chosen
+ * here do govern [the languages available on the Storefront
+ * API](https://shopify.dev/custom-storefronts/internationalization/multiple-languages) for the countries
+ * using this web presence.
+ */
+export type WebPresenceMarketsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  reverse?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** The input fields used to create a web presence. */
+export type WebPresenceCreateInput = {
+  /** The alternate locales for the web presence. */
+  alternateLocales?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** The default locale for the web presence. */
+  defaultLocale: Scalars['String']['input'];
+  /** The web presence's domain ID. This field must be `null` if the `subfolderSuffix` isn't `null`. */
+  domainId?: InputMaybe<Scalars['ID']['input']>;
+  /**
+   * The market-specific suffix of the subfolders defined by the web presence.
+   * For example: in `/en-us`, the subfolder suffix is `us`.
+   * Only ASCII characters are allowed. This field must be `null` if the `domainId` isn't `null`.
+   */
+  subfolderSuffix?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Return type for `webPresenceCreate` mutation. */
+export type WebPresenceCreatePayload = {
+  __typename?: 'WebPresenceCreatePayload';
+  /** The list of errors that occurred from executing the mutation. */
+  userErrors: Array<MarketUserError>;
+  /** The created web presence object. */
+  webPresence?: Maybe<MarketWebPresence>;
+};
+
+/** Return type for `webPresenceDelete` mutation. */
+export type WebPresenceDeletePayload = {
+  __typename?: 'WebPresenceDeletePayload';
+  /** The ID of the deleted web presence. */
+  deletedId?: Maybe<Scalars['ID']['output']>;
+  /** The list of errors that occurred from executing the mutation. */
+  userErrors: Array<MarketUserError>;
+};
+
+/**
+ * The URL for the homepage of the online store in the context of the web presence and a
+ * particular locale.
+ */
+export type WebPresenceRootUrl = {
+  __typename?: 'WebPresenceRootUrl';
+  /** The locale that the storefront loads in. */
+  locale: Scalars['String']['output'];
+  /** The URL. */
+  url: Scalars['URL']['output'];
+};
+
+/** The input fields used to update a web presence. */
+export type WebPresenceUpdateInput = {
+  /** The alternate locales for the web presence. */
+  alternateLocales?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** The default locale for the web presence. */
+  defaultLocale?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * The market-specific suffix of the subfolders defined by the web presence.
+   * Example: in `/en-us` the subfolder suffix is `us`.
+   * Only ASCII characters are allowed.
+   * This field must be null if subfolder suffix is not already defined for the web presence.
+   */
+  subfolderSuffix?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Return type for `webPresenceUpdate` mutation. */
+export type WebPresenceUpdatePayload = {
+  __typename?: 'WebPresenceUpdatePayload';
+  /** The list of errors that occurred from executing the mutation. */
+  userErrors: Array<MarketUserError>;
+  /** The web presence object. */
+  webPresence?: Maybe<MarketWebPresence>;
+};
+
 /** An Amazon EventBridge partner event source to which webhook subscriptions publish events. */
 export type WebhookEventBridgeEndpoint = {
   __typename?: 'WebhookEventBridgeEndpoint';
@@ -56584,6 +58673,8 @@ export type WebhookSubscription = LegacyInteroperability & Node & {
   legacyResourceId: Scalars['UnsignedInt64']['output'];
   /** The list of namespaces for any metafields that should be included in the webhook subscription. */
   metafieldNamespaces: Array<Scalars['String']['output']>;
+  /** The list of identifiers specifying metafields to include in the webhook subscription. */
+  metafields: Array<WebhookSubscriptionMetafieldIdentifier>;
   /** The type of event that triggers the webhook. The topic determines when the webhook subscription sends a webhook, as well as what class of data object that webhook contains. */
   topic: WebhookSubscriptionTopic;
   /** The date and time when the webhook subscription was updated. */
@@ -56649,6 +58740,17 @@ export type WebhookSubscriptionInput = {
   includeFields?: InputMaybe<Array<Scalars['String']['input']>>;
   /** The list of namespaces for any metafields that should be included in the webhook subscription. */
   metafieldNamespaces?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** A list of identifiers specifying metafields to include in the webhook payload. */
+  metafields?: InputMaybe<Array<HasMetafieldsMetafieldIdentifierInput>>;
+};
+
+/** Identifies metafields by their namespace, and key. */
+export type WebhookSubscriptionMetafieldIdentifier = {
+  __typename?: 'WebhookSubscriptionMetafieldIdentifier';
+  /** The unique identifier for the metafield definition within its namespace. */
+  key: Scalars['String']['output'];
+  /** The container for a group of metafields that the metafield definition is associated with. */
+  namespace: Scalars['String']['output'];
 };
 
 /** The set of valid sort keys for the WebhookSubscription query. */
@@ -56656,12 +58758,7 @@ export enum WebhookSubscriptionSortKeys {
   /** Sort by the `created_at` value. */
   CreatedAt = 'CREATED_AT',
   /** Sort by the `id` value. */
-  Id = 'ID',
-  /**
-   * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
-   * Don't use this sort key when no search query is specified.
-   */
-  Relevance = 'RELEVANCE'
+  Id = 'ID'
 }
 
 /**
@@ -56706,6 +58803,8 @@ export enum WebhookSubscriptionTopic {
   CheckoutsDelete = 'CHECKOUTS_DELETE',
   /** The webhook topic for `checkouts/update` events. Occurs whenever a checkout is updated. Requires the `read_orders` scope. */
   CheckoutsUpdate = 'CHECKOUTS_UPDATE',
+  /** The webhook topic for `checkout_and_accounts_configurations/update` events. The event occurs whenever a published checkout and account configuration is updated. */
+  CheckoutAndAccountsConfigurationsUpdate = 'CHECKOUT_AND_ACCOUNTS_CONFIGURATIONS_UPDATE',
   /** The webhook topic for `collections/create` events. Occurs whenever a collection is created. Requires the `read_products` scope. */
   CollectionsCreate = 'COLLECTIONS_CREATE',
   /** The webhook topic for `collections/delete` events. Occurs whenever a collection is deleted. Requires the `read_products` scope. */
@@ -56814,6 +58913,16 @@ export enum WebhookSubscriptionTopic {
   DraftOrdersDelete = 'DRAFT_ORDERS_DELETE',
   /** The webhook topic for `draft_orders/update` events. Occurs whenever a draft order is updated. Requires the `read_draft_orders` scope. */
   DraftOrdersUpdate = 'DRAFT_ORDERS_UPDATE',
+  /** The webhook topic for `finance_app_staff_member/delete` events. Triggers when a staff with access to all or some finance app has been removed. Requires the `read_financial_kyc_information` scope. */
+  FinanceAppStaffMemberDelete = 'FINANCE_APP_STAFF_MEMBER_DELETE',
+  /** The webhook topic for `finance_app_staff_member/grant` events. Triggers when a staff is granted access to all or some finance app. Requires the `read_financial_kyc_information` scope. */
+  FinanceAppStaffMemberGrant = 'FINANCE_APP_STAFF_MEMBER_GRANT',
+  /** The webhook topic for `finance_app_staff_member/revoke` events. Triggers when a staff's access to all or some finance app has been revoked. Requires the `read_financial_kyc_information` scope. */
+  FinanceAppStaffMemberRevoke = 'FINANCE_APP_STAFF_MEMBER_REVOKE',
+  /** The webhook topic for `finance_app_staff_member/update` events. Triggers when a staff's information has been updated. Requires the `read_financial_kyc_information` scope. */
+  FinanceAppStaffMemberUpdate = 'FINANCE_APP_STAFF_MEMBER_UPDATE',
+  /** The webhook topic for `finance_kyc_information/update` events. Occurs whenever shop's finance KYC information was updated Requires the `read_financial_kyc_information` scope. */
+  FinanceKycInformationUpdate = 'FINANCE_KYC_INFORMATION_UPDATE',
   /** The webhook topic for `fulfillments/create` events. Occurs whenever a fulfillment is created. Requires at least one of the following scopes: read_fulfillments, read_marketplace_orders. */
   FulfillmentsCreate = 'FULFILLMENTS_CREATE',
   /** The webhook topic for `fulfillments/update` events. Occurs whenever a fulfillment is updated. Requires at least one of the following scopes: read_fulfillments, read_marketplace_orders. */
@@ -56902,11 +59011,11 @@ export enum WebhookSubscriptionTopic {
   FulfillmentOrdersScheduledFulfillmentOrderReady = 'FULFILLMENT_ORDERS_SCHEDULED_FULFILLMENT_ORDER_READY',
   /** The webhook topic for `fulfillment_orders/split` events. Occurs when a fulfillment order is split into multiple fulfillment orders. Requires at least one of the following scopes: read_merchant_managed_fulfillment_orders, read_assigned_fulfillment_orders, read_third_party_fulfillment_orders. */
   FulfillmentOrdersSplit = 'FULFILLMENT_ORDERS_SPLIT',
-  /** The webhook topic for `inventory_items/create` events. Occurs whenever an inventory item is created. Requires the `read_inventory` scope. */
+  /** The webhook topic for `inventory_items/create` events. Occurs whenever an inventory item is created. Requires at least one of the following scopes: read_inventory, read_products. */
   InventoryItemsCreate = 'INVENTORY_ITEMS_CREATE',
-  /** The webhook topic for `inventory_items/delete` events. Occurs whenever an inventory item is deleted. Requires the `read_inventory` scope. */
+  /** The webhook topic for `inventory_items/delete` events. Occurs whenever an inventory item is deleted. Requires at least one of the following scopes: read_inventory, read_products. */
   InventoryItemsDelete = 'INVENTORY_ITEMS_DELETE',
-  /** The webhook topic for `inventory_items/update` events. Occurs whenever an inventory item is updated. Requires the `read_inventory` scope. */
+  /** The webhook topic for `inventory_items/update` events. Occurs whenever an inventory item is updated. Requires at least one of the following scopes: read_inventory, read_products. */
   InventoryItemsUpdate = 'INVENTORY_ITEMS_UPDATE',
   /** The webhook topic for `inventory_levels/connect` events. Occurs whenever an inventory level is connected. Requires the `read_inventory` scope. */
   InventoryLevelsConnect = 'INVENTORY_LEVELS_CONNECT',
@@ -56928,6 +59037,8 @@ export enum WebhookSubscriptionTopic {
   LocationsDelete = 'LOCATIONS_DELETE',
   /** The webhook topic for `locations/update` events. Occurs whenever a location is updated. Requires the `read_locations` scope. */
   LocationsUpdate = 'LOCATIONS_UPDATE',
+  /** The webhook topic for `markets_backup_region/update` events. Occurs when a backup region is updated. Requires the `read_markets` scope. */
+  MarketsBackupRegionUpdate = 'MARKETS_BACKUP_REGION_UPDATE',
   /** The webhook topic for `markets/create` events. Occurs when a new market is created. Requires the `read_markets` scope. */
   MarketsCreate = 'MARKETS_CREATE',
   /** The webhook topic for `markets/delete` events. Occurs when a market is deleted. Requires the `read_markets` scope. */

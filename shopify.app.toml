@@ -30,7 +30,7 @@ dev_store_url = "shopflare-dev.myshopify.com"
 include_config_on_deploy = true
 
 [webhooks]
-api_version = "2025-01"
+api_version = "2025-04"
 
   [[webhooks.subscriptions]]
   uri = "/shopify/webhooks"

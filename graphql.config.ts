@@ -4,7 +4,7 @@ import type { IGraphQLProject, IGraphQLProjects } from "graphql-config";
 
 type Config = IGraphQLProject & IGraphQLProjects;
 
-import { apiVersion } from "./app/shopify.server";
+import { API_VERSION } from "./app/const";
 
 function getConfig() {
 	const config: Config = {
@@ -12,12 +12,12 @@ function getConfig() {
 		projects: {
 			default: shopifyApiProject({
 				apiType: ApiType.Admin,
-				apiVersion,
+				apiVersion: API_VERSION,
 				documents: ["./app/**/*[!test].{ts,tsx}"],
 				outputDir: "./app/types",
 			}),
 		},
-		schema: `https://shopify.dev/admin-graphql-direct-proxy/${apiVersion}`,
+		schema: `https://shopify.dev/admin-graphql-direct-proxy/${API_VERSION}`,
 	};
 
 	let extensions: string[] = [];

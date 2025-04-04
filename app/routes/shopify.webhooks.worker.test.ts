@@ -2,7 +2,7 @@ import { env } from "node:process";
 import type { AppLoadContext } from "react-router";
 import { describe, expect, test } from "vitest";
 
-import { apiVersion } from "../shopify.server";
+import { API_VERSION } from "~/const";
 import type { Route } from "./+types/shopify.webhooks";
 import { action } from "./shopify.webhooks";
 
@@ -82,7 +82,7 @@ describe("action", () => {
 		const request = new Request("http://localhost", {
 			body: "123",
 			headers: {
-				"X-Shopify-API-Version": apiVersion,
+				"X-Shopify-API-Version": API_VERSION,
 				"X-Shopify-Shop-Domain": "test.myshopify.com",
 				"X-Shopify-Hmac-Sha256": "tKI9km9Efxo6gfUjbUBCo3XJ0CmqMLgb4xNzNhpQhK0=",
 				"X-Shopify-Topic": "app/uninstalled",
