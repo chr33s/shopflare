@@ -67,9 +67,26 @@ To split environments see [Cloudflare](https://developers.cloudflare.com/workers
 
 ### Components
 
-- **[app-bridge.tsx](./app/components/app-bridge.tsx)** as per App Bridge docs but import `~/components/polaris` instead of `@shopify/polaris`
-- **[polaris.tsx](./app/components/polaris.tsx)** as per Polaris docs but import `~/components/app-bridge` instead of `@shopify/app-bridge-react`
-- **[proxy.tsx](./app/components/proxy.tsx)** as per [Shopify App Proxy](https://shopify.dev/docs/api/shopify-app-remix/v3/app-proxy-components) docs but import from `~/components/proxy` instead of `@shopify/shopify-app-remix/react`
+#### [app-bridge.tsx](./app/components/app-bridge.tsx) 
+
+Follow App Bridge docs but import `~/components/polaris` instead of `@shopify/polaris`
+
+#### [polaris.tsx](./app/components/polaris.tsx)
+
+Follow Polaris docs but import `~/components/app-bridge` instead of `@shopify/app-bridge-react` and take note that:
+
+- Checkbox
+- ColorPicker
+- DatePicker
+- RangeSlider
+- Select
+- TextField
+
+no longer require `onChange` & `value` (as these are now uncontrolled) but requires a `name` prop now.
+
+#### [proxy.tsx](./app/components/proxy.tsx)
+
+Follow [Shopify App Proxy](https://shopify.dev/docs/api/shopify-app-remix/v3/app-proxy-components) docs but import from `~/components/proxy` instead of `@shopify/shopify-app-remix/react`
 
 ## Copyright
 
