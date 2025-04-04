@@ -9,7 +9,7 @@ export * from "@shopify/polaris";
 
 export function AppProvider({ children, ...props }: Polaris.AppProviderProps) {
 	return (
-		<Polaris.AppProvider {...props} linkComponent={Link}>
+		<Polaris.AppProvider {...props} linkComponent={LinkComponent}>
 			{children}
 		</Polaris.AppProvider>
 	);
@@ -168,11 +168,11 @@ export function DatePicker(props: DatePickerProps) {
 	);
 }
 
-export interface LinkProps extends LinkLikeComponentProps {
+export interface LinkComponentProps extends LinkLikeComponentProps {
 	ref?: Ref<HTMLAnchorElement>;
 }
 
-export function Link({ url, ...props }: LinkProps) {
+export function LinkComponent({ url, ...props }: LinkComponentProps) {
 	return <ReactRouterLink {...props} to={url} />;
 }
 
