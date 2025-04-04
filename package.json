@@ -5,6 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "react-router build",
+		"build:shopify": "shopify app build",
 		"check": "concurrently 'npm:check:*'",
 		"check:actions": "if command -v actionlint 2>&1 >/dev/null; then actionlint; fi",
 		"check:code": "biome check --write",
