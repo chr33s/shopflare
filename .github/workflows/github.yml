@@ -46,19 +46,19 @@ jobs:
         with:
           script: |
             const tag_name = context.ref;
-            const name = context.ref_name;
+            const name = tag_name.replace(/^refs\/tags\/releases\//, '');
             const version = name.split("/").at(-1);
             const prerelease = version.startsWith("0.") || version.includes("-");
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
-            const latestRelease = await octokit.rest.repos.getLatestRelease({
+            const { data: latestRelease } = await github.rest.repos.getLatestRelease({
               owner,
               repo,
             });
-            const latestReleaseName = latestRelease.tag_name;
-            const latestReleaseVersion = latestReleaseName.split("/").at(-1);
-            const body = `changes: [${latestReleaseVersion}...${version}](${context.server_url}/${context.repository}/compare/${latestReleaseName}...${name})`;
+            const latestReleaseTagName = latestRelease.tag_name;
+            const latestReleaseVersion = latestReleaseTagName.split("/").at(-1);
+            const body = `changes: [${latestReleaseVersion}...${version}](https://github.com/${owner}/${repo}/compare/${latestReleaseTagName}...${tag_name})`;
 
             await github.rest.repos.createRelease({
               body,
