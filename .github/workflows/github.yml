@@ -9,13 +9,6 @@ on:
     branches: [main]
     tags: [releases/*]
 
-  workflow_dispatch:
-    inputs:
-      tag_name:
-        description: Tag name (e.g. 'releases/0.0.0')
-        required: true
-        type: string
-
   schedule:
     - cron: '0 0 * * 0'
 
@@ -37,29 +30,39 @@ jobs:
         with:
           node-version-file: "package.json"
           cache: "npm"
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
       - uses: github/codeql-action/analyze@v3
 
   release:
     name: Release
-    if: ${{ github.repository == 'chr33s/shopflare' && (github.ref_type == 'tag' || github.event_name == 'workflow_dispatch') }}
+    if: ${{ github.repository == 'chr33s/shopflare' && github.ref_type == 'tag' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.tag_name || github.event.release.tag_name }}
+          ref: ${{ github.event.release.tag_name }}
       - uses: actions/github-script@v7
         with:
           script: |
             const tag_name = context.ref;
-            const name = tag_name.replace(/^refs\/tags\/releases\//, '');
-            const prerelease = name.startsWith("0.") || name.includes("-");
+            const name = context.ref_name;
+            const version = name.split("/").at(-1);
+            const prerelease = version.startsWith("0.") || version.includes("-");
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
-            github.rest.repos.createRelease({
+            const latestRelease = await octokit.rest.repos.getLatestRelease({
+              owner,
+              repo,
+            });
+            const latestReleaseName = latestRelease.tag_name;
+            const latestReleaseVersion = latestReleaseName.split("/").at(-1);
+            const body = `changes: [${latestReleaseVersion}...${version}](${context.server_url}/${context.repository}/compare/${latestReleaseName}...${name})`;
+
+            await github.rest.repos.createRelease({
+              body,
               name,
               owner,
               prerelease,
