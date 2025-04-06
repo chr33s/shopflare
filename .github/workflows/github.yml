@@ -6,7 +6,6 @@ concurrency:
 
 on:
   push:
-    branches: [main]
     tags: [releases/*]
 
   schedule:
@@ -15,7 +14,7 @@ on:
 jobs:
   codeql:
     name: CodeQL
-    if: ${{ github.repository == 'chr33s/shopflare' && (github.ref_type == 'branch' || github.event_name == 'schedule') }}
+    if: ${{ github.repository == 'chr33s/shopflare' && github.event_name == 'schedule' }}
     runs-on: ubuntu-latest
     permissions:
       security-events: write
