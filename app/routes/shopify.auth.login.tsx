@@ -1,3 +1,4 @@
+import polarisCss from "@shopify/polaris/build/esm/styles.css?url";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Form, redirect } from "react-router";
@@ -104,3 +105,13 @@ export async function action({ context, request }: Route.ActionArgs) {
 	const redirectUrl = `https://${adminPath}/oauth/install?client_id=${shopify.config.apiKey}`;
 	throw redirect(redirectUrl);
 }
+
+export const links: Route.LinksFunction = () => [
+	{ href: "https://cdn.shopify.com", rel: "preconnect" },
+	{
+		href: "https://cdn.shopify.com/static/fonts/inter/v4/styles.css",
+		precedence: "default",
+		rel: "stylesheet",
+	},
+	{ href: polarisCss, precedence: "high", rel: "stylesheet" },
+];
