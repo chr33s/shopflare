@@ -502,7 +502,7 @@ export class ShopifyException extends Error {
 	constructor(
 		message: string,
 		options: ErrorOptions & {
-			errors?: string[];
+			errors?: unknown[];
 			status: number;
 			type: string;
 		},
