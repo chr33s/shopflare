@@ -6,7 +6,7 @@
 	"analytics_engine_datasets": [
 		{
 			"binding": "WEB_VITALS",
-			"dataset": "SHOPFLARE_WEB_VITALS"
+			"dataset": "shopflare"
 		}
 	],
 	"assets": {
