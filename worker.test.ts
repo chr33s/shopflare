@@ -18,6 +18,7 @@ test("fetch", async () => {
 	expect(response.status).toBe(200);
 });
 
+// FIXME: upstream bundler issue
 test.skip("worker", async () => {
 	const request = new Request("http://example.com");
 	const ctx = createExecutionContext();

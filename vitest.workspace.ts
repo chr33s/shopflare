@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import {
 	defineWorkersConfig,
 	defineWorkersProject,
@@ -39,6 +40,14 @@ export default defineWorkspace([
 			{ extends: "./vitest.config.ts" },
 			defineWorkersProject({
 				test: {
+					alias: [
+						{
+							find: "virtual:react-router/server-build",
+							replacement: fileURLToPath(
+								new URL("./build/server/index.js", import.meta.url),
+							),
+						},
+					],
 					include: ["worker.test.ts", "app/**/*.worker.test.ts"],
 					name: "workers",
 					poolOptions: {
