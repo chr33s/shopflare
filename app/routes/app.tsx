@@ -74,7 +74,6 @@ export default function App({ loaderData }: Route.ComponentProps) {
 					>
 						Pricing plans
 					</Link>
-					<Link to="/app/page">{t("page")}</Link>
 				</NavMenu>
 
 				<Outlet />
