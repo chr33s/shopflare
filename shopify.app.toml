@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "17b048405a3e2ffe901be65f5783837d"
-application_url = "https://chris.glue.sg"
+application_url = "https://local.chr33s.dev"
 embedded = true
 name = "ShopFlare"
 handle = "shopflare"
@@ -17,16 +17,16 @@ optional_scopes = [ "write_products" ]
 use_legacy_install_flow = false
 
 [app_proxy]
-url = "https://chris.glue.sg/proxy"
+url = "https://local.chr33s.dev/proxy"
 subpath = "shopflare"
 prefix = "apps"
 
 [auth]
-redirect_urls = [ "https://chris.glue.sg/shopify/auth/callback" ]
+redirect_urls = [ "https://local.chr33s.dev/shopify/auth/callback" ]
 
 [build]
 automatically_update_urls_on_dev = false
-dev_store_url = "shopflare-dev.myshopify.com"
+dev_store_url = "glue-dev-store.myshopify.com"
 include_config_on_deploy = true
 
 [webhooks]
