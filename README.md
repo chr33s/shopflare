@@ -90,6 +90,11 @@ no longer require `onChange` & `value` (as these are now uncontrolled) but requi
 
 Follow [Shopify App Proxy](https://shopify.dev/docs/api/shopify-app-remix/v3/app-proxy-components) docs but import from `~/components/proxy` instead of `@shopify/shopify-app-remix/react`
 
+### Branching convention
+
+- `issue/#` references an current issue / pull-request
+- `extension/#` is a non core feature extension
+
 ## Copyright
 
 Copyright (c) 2025 chr33s. See LICENSE.md for further details.
