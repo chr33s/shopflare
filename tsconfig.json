@@ -1,34 +1,37 @@
 {
-	"include": [
-		"**/*",
-		"**/.server/**/*",
-		"**/.client/**/*",
-		".react-router/types/**/*",
-		"./node_modules/vite-plugin-i18next-loader/typings/*"
-	],
 	"compilerOptions": {
+		"baseUrl": ".",
+		"checkJs": true,
 		"composite": true,
+		"esModuleInterop": true,
+		"jsx": "react-jsx",
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],
+		"module": "ES2022",
+		"moduleResolution": "bundler",
+		"noEmit": true,
+		"paths": {
+			"~/*": ["./app/*"]
+		},
+		"resolveJsonModule": true,
+		"rootDirs": [".", "./.react-router/types"],
+		"skipLibCheck": true,
+		"strict": true,
+		"target": "ES2022",
+		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
 		"types": [
 			"@cloudflare/vitest-pool-workers",
 			"@vitest/browser/providers/playwright",
 			"vite/client"
 		],
-		"target": "ES2022",
-		"module": "ES2022",
-		"moduleResolution": "bundler",
-		"jsx": "react-jsx",
-		"rootDirs": [".", "./.react-router/types"],
-		"baseUrl": ".",
-		"paths": {
-			"~/*": ["./app/*"]
-		},
-		"esModuleInterop": true,
-		"verbatimModuleSyntax": true,
-		"noEmit": true,
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
-		"strict": true,
-		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo"
-	}
+		"verbatimModuleSyntax": true
+	},
+	"exclude": ["build"],
+	"include": [
+		"**/*",
+		"**/.server/**/*",
+		"**/.client/**/*",
+		".react-router/types/**/*",
+		"worker-configuration.d.ts",
+		"node_modules/vite-plugin-i18next-loader/typings/*"
+	]
 }
