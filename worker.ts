@@ -1,5 +1,7 @@
 import { createRequestHandler } from "react-router";
 
+import type { WebhookQueueMessage } from "~/types/app";
+
 declare module "react-router" {
 	export interface AppLoadContext {
 		cloudflare: {
@@ -28,4 +30,4 @@ export default {
 			message.ack();
 		}
 	},
-} satisfies ExportedHandler<Env>;
+} satisfies ExportedHandler<Env, WebhookQueueMessage>;
