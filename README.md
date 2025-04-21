@@ -24,7 +24,7 @@ Familiarity with React, ReactRouter, Cloudflare, Shopify conventions.
 3. Node.js & NPM see package.json#engines `brew install node@22`
 4. Github cli `brew install gh` (optional)
 
-[1] Inorder to wss:// working on a cloudflare tunnel, you need to set "Additional application settings" > "HTTP Settings" > "HTTP Host Header" to match the service URL (e.g. 127.0.0.1), otherwise the tunnel returns a 502 http status & client connection fails
+[1] In-order to wss:// working on a cloudflare tunnel, you need to set "Additional application settings" > "HTTP Settings" > "HTTP Host Header" to match the service URL (e.g. 127.0.0.1), otherwise the tunnel returns a 502 http status & client connection fails
 
 ## Setup
 
