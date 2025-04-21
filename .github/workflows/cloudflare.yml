@@ -65,4 +65,49 @@ jobs:
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: versions deploy
+          command: versions deploy --message=${{ github.ref_name }} --yes
+      - uses: actions/github-script@v7
+        if: ${{ vars.SHOPIFY_APP_URL != '' }}
+        env:
+          SHOPIFY_APP_URL: ${{ vars.SHOPIFY_APP_URL }}
+        with:
+          script: |
+            const url = process.env.SHOPIFY_APP_URL;
+            const count = 5;
+
+            const primed = await fetch(url).then(() => true).catch(() => false); // <-- prime origin
+            if (!primed) {
+              throw new Error("origin not reachable");
+            }
+
+            const values = await Promise.allSettled(
+              [...Array(count).keys()].map(async () => {
+                return fetch(url).then((res) => {
+                  if (!res.ok) {
+                    throw new Error(`request failed with status ${res.status}`);
+                  }
+                  const header = res.headers.get("server-timing");
+                  const desc = header.replace(/^cfL4;desc="|"$/, "");
+                  const params = new URLSearchParams(desc);
+                  const rtt = params.get("rtt");
+                  return Number(rtt);
+                });
+              }),
+            );
+            const average = values.reduce((acc, { value }) => acc + value, 0) / count;
+            if (average > 100_000) {
+              throw new Error("100ms threshold exceeded")
+            }
+
+  rollback:
+    name: Rollback
+    if: ${{ failure() && needs.deploy.result == 'failure' }}
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: rollback deploy --message=${{ github.ref_name }}
