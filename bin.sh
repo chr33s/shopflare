@@ -51,7 +51,7 @@ function update() {
 		--silent https://api.github.com/repos/chr33s/shopflare/tarball \
 		| tar \
 		--directory=. \
-		--exclude={.dev.vars,.gitignore,extensions,public,LICENSE.md,package-lock.json,README.md} \
+		--exclude={.dev.vars,.github/act,.gitignore,extensions,public,LICENSE.md,package-lock.json,README.md,SECURITY.md} \
 		--extract \
 		--strip-components=1 \
 		--gzip
