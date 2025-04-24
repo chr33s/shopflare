@@ -8,12 +8,11 @@ import { API_VERSION } from "./app/const";
 
 function getConfig() {
 	const config: Config = {
-		documents: ["./app/**/*.{js,ts,jsx,tsx}"],
 		projects: {
 			default: shopifyApiProject({
 				apiType: ApiType.Admin,
 				apiVersion: API_VERSION,
-				documents: ["./app/**/*[!test].{ts,tsx}"],
+				documents: ["./app/**/*.{ts,tsx}"],
 				outputDir: "./app/types",
 			}),
 		},
