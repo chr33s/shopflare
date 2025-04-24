@@ -16,7 +16,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	const client = await shopify.admin(request);
 
 	try {
-		const { data, errors } = await client.request(/* GraphQL */ `
+		const { data, errors } = await client.request<ShopQuery>(/* GraphQL */ `
 			#graphql
 			query Shop {
 				shop {
@@ -25,7 +25,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 			}
 		`);
 		return {
-			data: data as ShopQuery,
+			data,
 			errors,
 		};
 	} catch (error) {
@@ -85,7 +85,7 @@ export default function AppIndex({
 			method: "POST",
 			signal: controller.signal,
 		})
-			.then((res) => res.json())
+			.then<{ data: ShopQuery }>((res) => res.json())
 			.then((res) => console.log("app.index.useEffect", res))
 			.catch((err) => console.error("app.index.useEffect.error", err));
 
