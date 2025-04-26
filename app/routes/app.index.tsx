@@ -122,3 +122,5 @@ export async function action(_: Route.ActionArgs) {
 	const data = {};
 	return { data };
 }
+
+export { headers } from "./app";
