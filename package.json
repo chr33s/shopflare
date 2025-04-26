@@ -67,6 +67,7 @@
 		"node": "^22.14.0",
 		"npm": ">=9.6.4"
 	},
+	"workspaces": ["extensions/*"],
 	"bin": {
 		"shopflare": "./bin.sh"
 	}
