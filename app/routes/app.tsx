@@ -72,7 +72,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
 						target="_top"
 						to={`shopify://admin/charges/${appHandle}/pricing_plans`}
 					>
-						Pricing plans
+						{t("pricingPlans")}
 					</Link>
 				</NavMenu>
 
