@@ -1,11 +1,9 @@
 import * as Polaris from "@shopify/polaris";
 import type { LinkLikeComponentProps } from "@shopify/polaris/build/ts/src/utilities/link";
-import { type Ref, useCallback, useState } from "react";
+import { type Ref, useCallback, useRef, useState } from "react";
 import { Link as ReactRouterLink } from "react-router";
 
 export * from "@shopify/polaris";
-
-// TODO: [Combobox, Dropzone] : -> source components !pass [name] attribute
 
 export function AppProvider({ children, ...props }: Polaris.AppProviderProps) {
 	return (
@@ -37,6 +35,32 @@ export function Checkbox(props: CheckboxProps) {
 			id={props.name}
 			onChange={onChange}
 		/>
+	);
+}
+
+interface ComboboxActivatorProps
+	extends Omit<Polaris.ComboboxProps["activator"], "name"> {
+	name: string;
+	ref?: Ref<Polaris.ComboboxProps["activator"]>;
+	value?: string | string[];
+}
+
+export interface ComboboxProps
+	extends Omit<Polaris.ComboboxProps, "activator"> {
+	activator: ComboboxActivatorProps;
+}
+
+export function Combobox(props: ComboboxProps) {
+	return (
+		<>
+			<Combobox {...props} />
+			<input
+				name={props.activator.name}
+				style={{ display: "none" }}
+				type="hidden"
+				value={props.activator.value}
+			/>
+		</>
 	);
 }
 
@@ -166,6 +190,48 @@ export function DatePicker(props: DatePickerProps) {
 			/>
 		</>
 	);
+}
+
+export interface DropZoneProps extends Polaris.DropZoneProps {
+	name: string;
+	ref?: Ref<typeof Polaris.DropZone>;
+	value?: string | string[] | File | File[];
+}
+
+export function DropZone({ children, ...props }: DropZoneProps) {
+	const ref = useRef<HTMLInputElement>(null);
+
+	return (
+		<DropZone
+			{...props}
+			onDropAccepted={(files: File[]) => {
+				props.onDropAccepted?.(files);
+
+				if (!ref.current) return;
+
+				const container = new DataTransfer();
+				files.map((file) => container.items.add(file));
+				ref.current.files = container.files;
+			}}
+		>
+			{children}
+			<input
+				name={props.name}
+				ref={ref}
+				style={{ display: "none" }}
+				type="file"
+			/>
+		</DropZone>
+	);
+}
+
+export interface FormProps extends Omit<Polaris.FormProps, "action"> {
+	action: Polaris.FormProps["action"];
+	ref?: Ref<HTMLFormElement>;
+}
+
+export function Form(props: FormProps) {
+	return <Polaris.Form {...props} />;
 }
 
 export interface LinkComponentProps extends LinkLikeComponentProps {
