@@ -180,29 +180,9 @@ export function createShopify(context: AppLoadContext) {
 			accessToken: accessTokenResponse.access_token,
 		});
 
-		const client = createClient({
+		const client = createShopifyClient({
 			headers: { "X-Shopify-Access-Token": accessTokenResponse.access_token },
 			shop,
-		});
-		return client;
-	}
-
-	function createClient({
-		apiVersion = config.apiVersion,
-		headers,
-		shop,
-	}: {
-		apiVersion?: string;
-		shop: string;
-		headers: Record<string, string | string[]>;
-	}) {
-		const client = createGraphQLClient({
-			customFetchApi: fetch,
-			headers: {
-				"Content-Type": "application/json",
-				...headers,
-			},
-			url: `https://${shop}/admin/api/${apiVersion}/graphql.json`,
 		});
 		return client;
 	}
@@ -279,7 +259,7 @@ export function createShopify(context: AppLoadContext) {
 			});
 		}
 
-		const client = createClient({
+		const client = createShopifyClient({
 			headers: { "X-Shopify-Access-Token": shopify.accessToken },
 			shop,
 		});
@@ -595,6 +575,42 @@ export function createShopify(context: AppLoadContext) {
 		utils,
 		webhook,
 	};
+}
+
+export function createShopifyClient({
+	apiVersion = API_VERSION,
+	headers,
+	shop,
+	type = "admin",
+}: {
+	apiVersion?: string;
+	shop: string;
+	headers: Record<string, string | string[]>;
+	type?: "admin" | "storefront";
+}) {
+	const authHeader = {
+		admin: "X-Shopify-Access-Token",
+		storefront: "X-Shopify-Storefront-Access-Token",
+	}[type];
+	if (!authHeader) {
+		throw new ShopifyException(`Missing header ${authHeader}`, {
+			status: 401,
+			type: "REQUEST",
+		});
+	}
+
+	const client = createGraphQLClient({
+		customFetchApi: fetch,
+		headers: {
+			"Content-Type": "application/json",
+			...headers,
+		},
+		url:
+			type === "admin"
+				? `https://${shop}/admin/api/${apiVersion}/graphql.json`
+				: `https://${shop}.myshopify.com/api/${apiVersion}/graphql.json`,
+	});
+	return client;
 }
 
 const schema = v.object({
