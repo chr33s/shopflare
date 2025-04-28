@@ -1,9 +1,9 @@
 import { createGraphQLClient } from "@shopify/graphql-client";
 import { type JWTPayload, jwtVerify } from "jose";
-import { type AppLoadContext, redirect } from "react-router";
+import { type AppLoadContext, redirect as routerRedirect } from "react-router";
 import * as v from "valibot";
 
-import { API_VERSION } from "./const";
+import { API_VERSION, APP_BRIDGE_URL } from "./const";
 
 export function createShopify(context: AppLoadContext) {
 	const env = v.parse(schema, context.cloudflare.env);
@@ -58,7 +58,7 @@ export function createShopify(context: AppLoadContext) {
 					"shopify-reload",
 					`${url.pathname}?${url.searchParams.toString()}`,
 				);
-				throw redirect(
+				throw routerRedirect(
 					`/shopify/auth/session-token-bounce?${url.searchParams.toString()}`,
 				);
 			}
@@ -287,6 +287,129 @@ export function createShopify(context: AppLoadContext) {
 		return client;
 	}
 
+	function redirect(
+		request: Request,
+		url: string,
+		{
+			shop,
+			target,
+			...init
+		}: ResponseInit & {
+			shop: string;
+			target?: "_self" | "_parent" | "_top" | "_blank";
+		},
+	) {
+		const headers = new Headers({
+			"content-type": "text/html;charset=utf-8",
+			...init.headers,
+		});
+
+		let windowTarget = target ?? "_self";
+		let windowUrl = new URL(url, config.appUrl);
+
+		const isSameOrigin = config.appUrl === windowUrl.origin;
+		const isRelativePath = url.startsWith("/");
+		if (isSameOrigin || isRelativePath) {
+			for (const [key, value] of new URL(request.url).searchParams.entries()) {
+				if (!windowUrl.searchParams.has(key)) {
+					windowUrl.searchParams.set(key, value);
+				}
+			}
+		}
+
+		const adminLinkRegExp = /^shopify:\/*admin\//i;
+		const isAdminLink = adminLinkRegExp.test(url);
+		if (isAdminLink) {
+			const shopHandle = shop.replace(".myshopify.com", "");
+			const adminUri = url.replace(adminLinkRegExp, "/");
+			windowUrl = new URL(
+				`https://admin.shopify.com/store/${shopHandle}${adminUri}`,
+			);
+
+			const remove = [
+				"appLoadId", // sent when clicking rel="home" nav item
+				"hmac",
+				"host",
+				"embedded",
+				"id_token",
+				"locale",
+				"protocol",
+				"session",
+				"shop",
+				"timestamp",
+			];
+			for (const param of remove) {
+				if (windowUrl.searchParams.has(param)) {
+					windowUrl.searchParams.delete(param);
+				}
+			}
+
+			if (!target) {
+				windowTarget = "_parent";
+			}
+		}
+
+		switch (true) {
+			case target === "_self" && isBounce(request):
+			case target !== "_self" && isEmbedded(request): {
+				throw new Response(
+					/* html */ `<head>
+						<meta name="shopify-api-key" content="${config.apiKey}" />
+						<script src="${APP_BRIDGE_URL}"></script>
+						<script>
+							window.open(
+								${JSON.stringify(windowUrl.toString())},
+								${JSON.stringify(windowTarget)},
+							)
+						</script>
+					</head>`,
+					{
+						...init,
+						headers,
+					},
+				);
+			}
+
+			case isData(request): {
+				throw new Response(undefined, {
+					headers: new Headers({
+						"X-Shopify-API-Request-Failure-Reauthorize-Url":
+							windowUrl.toString(),
+					}),
+					status: 401,
+					statusText: "Unauthorized",
+				});
+			}
+
+			default: {
+				throw routerRedirect(url, init);
+			}
+		}
+
+		function authorizationHeader(request: Request) {
+			return request.headers.get("authorization")?.replace(/Bearer\s?/, "");
+		}
+
+		function isBounce(request: Request) {
+			return (
+				!!authorizationHeader(request) &&
+				request.headers.has("X-Shopify-Bounce")
+			);
+		}
+
+		function isData(request: Request) {
+			return (
+				!!authorizationHeader(request) &&
+				!isBounce(request) &&
+				(!isEmbedded(request) || request.method !== "GET")
+			);
+		}
+
+		function isEmbedded(request: Request) {
+			return new URL(request.url).searchParams.get("embedded") === "1";
+		}
+	}
+
 	const session = new ShopifySession(context.cloudflare.env.SESSION_STORAGE);
 
 	const utils = {
@@ -467,6 +590,7 @@ export function createShopify(context: AppLoadContext) {
 		admin,
 		config,
 		proxy,
+		redirect,
 		session,
 		utils,
 		webhook,

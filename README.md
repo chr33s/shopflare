@@ -67,6 +67,18 @@ To split environments see [Cloudflare](https://developers.cloudflare.com/workers
 - [React Router](https://reactrouter.com/home)
 - [Shopify](http://shopify.dev/)
 
+### createShopify
+
+```js
+export async function loader({ context, request }) {
+	const shopify = createShopify(context);
+	shopify.utils.log.debug("message...");                                     // Log on [error, info, debug]
+	const client = await shopify.admin(request);                               // Authenticate on [admin*, proxy*, webhook] [*] returns a client
+  const { data, errors } = await client.request(`query { shop { name } }`);
+  shopify.redirect(request, url, { shop });
+}
+```
+
 ### Components
 
 #### [app-bridge.tsx](./app/components/app-bridge.tsx) 
