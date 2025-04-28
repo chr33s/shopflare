@@ -24,15 +24,7 @@ export default defineWorkspace([
 		test: {
 			environment: "happy-dom",
 			include: ["app/**/*.client.test.tsx"],
-			name: "app/client",
-		},
-	},
-	{
-		extends: "./vitest.config.ts",
-		test: {
-			environment: "node",
-			include: ["app/**/*.server.test.ts"],
-			name: "app/server",
+			name: "client",
 		},
 	},
 	defineWorkersConfig(
@@ -48,8 +40,8 @@ export default defineWorkspace([
 							),
 						},
 					],
-					include: ["worker.test.ts", "app/**/*.worker.test.ts"],
-					name: "workers",
+					include: ["worker.test.ts", "app/**/*.server.test.ts"],
+					name: "server",
 					poolOptions: {
 						workers: {
 							main: "./build/server/index.js",

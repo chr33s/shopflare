@@ -187,36 +187,6 @@ export function createShopify(context: AppLoadContext) {
 		return client;
 	}
 
-	function createLogger() {
-		const levels = ["error", "info", "debug"];
-		const level = levels.findIndex((level) => level === config.appLogLevel);
-
-		function noop() {}
-
-		return {
-			debug(...args: unknown[]) {
-				if (level >= 2) {
-					return console.debug("logger.debug", ...args);
-				}
-				return noop;
-			},
-
-			info(...args: unknown[]) {
-				if (level >= 1) {
-					return console.info("logger.info", ...args);
-				}
-				return noop;
-			},
-
-			error(...args: unknown[]) {
-				if (level >= 0) {
-					return console.error("logger.error", ...args);
-				}
-				return noop;
-			},
-		};
-	}
-
 	async function proxy(request: Request) {
 		const url = new URL(request.url);
 
@@ -248,7 +218,7 @@ export function createShopify(context: AppLoadContext) {
 			.sort((a, b) => a.localeCompare(b))
 			.join("");
 
-		await validateHmac(params, param, "hex");
+		await utils.validateHmac(params, param, "hex");
 
 		const shop = utils.sanitizeShop(url.searchParams.get("shop")!)!; // shop is value due to hmac validation
 		const shopify = await session.get(shop);
@@ -393,15 +363,15 @@ export function createShopify(context: AppLoadContext) {
 	const session = new ShopifySession(context.cloudflare.env.SESSION_STORAGE);
 
 	const utils = {
-		allowedDomains: ["myshopify.com", "shopify.com", "myshopify.io"]
+		allowedDomains: ["myshopify.com", "myshopify.io", "shop.dev", "shopify.com"]
 			.map((v) => v.replace(/\./g, "\\.")) // escape
 			.join("|"),
 
 		legacyUrlToShopAdminUrl(shop: string) {
 			const shopUrl = shop.replace(/^https?:\/\//, "").replace(/\/$/, "");
-			const regex = /(.+)\\.myshopify\\.com$/;
+			const regExp = /(.+)\.myshopify\.com$/;
 
-			const matches = shopUrl.match(regex);
+			const matches = shopUrl.match(regExp);
 			if (matches && matches.length === 2) {
 				const shopName = matches[1];
 				return `admin.shopify.com/store/${shopName}`;
@@ -409,16 +379,16 @@ export function createShopify(context: AppLoadContext) {
 			return null;
 		},
 
-		log: createLogger(),
+		log: createLogger(config.appLogLevel),
 
 		sanitizeHost(host: string) {
-			const base64regex = /^[0-9a-z+/]+={0,2}$/i;
-			let sanitizedHost = base64regex.test(host) ? host : null;
+			const base64RegExp = /^[0-9a-z+/]+={0,2}$/i;
+			let sanitizedHost = base64RegExp.test(host) ? host : null;
 			if (sanitizedHost) {
 				const { hostname } = new URL(`https://${atob(sanitizedHost)}`);
 
-				const hostRegex = new RegExp(`\\.(${utils.allowedDomains})$`);
-				if (!hostRegex.test(hostname)) {
+				const hostRegExp = new RegExp(`\\.(${utils.allowedDomains})$`);
+				if (!hostRegExp.test(hostname)) {
 					sanitizedHost = null;
 				}
 			}
@@ -426,93 +396,89 @@ export function createShopify(context: AppLoadContext) {
 		},
 
 		sanitizeShop(shop: string) {
-			let shopUrl: string = shop;
+			let sanitizedShop = shop;
 
-			const shopAdminRegex = new RegExp(
-				`^admin\\.(?:${utils.allowedDomains})/store/(?:[a-zA-Z0-9]\\w*)$`,
+			const shopAdminRegExp = new RegExp(
+				`^admin\\.(${utils.allowedDomains})/store/([a-zA-Z0-9][a-zA-Z0-9-_]*)$`,
 			);
-			if (shopAdminRegex.test(shopUrl)) {
-				shopUrl = shopUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
-				if (shopUrl.split(".")[0] !== "admin") {
+			if (shopAdminRegExp.test(shop)) {
+				sanitizedShop = shop.replace(/^https?:\/\//, "").replace(/\/$/, "");
+				if (sanitizedShop.split(".").at(0) !== "admin") {
 					return null;
 				}
 
-				const regex = /admin\..+\/store\/[^/]+/;
-				const matches = shopUrl.match(regex);
+				const regex = /admin\..+\/store\/([^\/]+)/;
+				const matches = sanitizedShop.match(regex);
 				if (matches && matches.length === 2) {
-					const shopName = matches[1];
-					shopUrl = `${shopName}.myshopify.com`;
+					sanitizedShop = `${matches.at(1)}.myshopify.com`;
 				} else {
 					return null;
 				}
 			}
 
-			const shopUrlRegex = new RegExp(
-				`^[a-zA-Z0-9][\\w-]*\\.(?:${utils.allowedDomains})$`,
+			const shopRegExp = new RegExp(
+				`^[a-zA-Z0-9][a-zA-Z0-9-_]*\\.(${utils.allowedDomains})[/]*$`,
 			);
-			const sanitizedShop = shopUrlRegex.test(shopUrl) ? shopUrl : null;
+			if (!shopRegExp.test(sanitizedShop)) return null;
+
 			return sanitizedShop;
 		},
+
+		async validateHmac(data: string, hmac: string, encoding: "hex" | "base64") {
+			const encoder = new TextEncoder();
+			const key = await crypto.subtle.importKey(
+				"raw",
+				encoder.encode(env.SHOPIFY_API_SECRET_KEY),
+				{
+					name: "HMAC",
+					hash: "SHA-256",
+				},
+				false,
+				["sign"],
+			);
+			const signature = await crypto.subtle.sign(
+				"HMAC",
+				key,
+				encoder.encode(data),
+			);
+
+			const computed = (function encode() {
+				switch (encoding) {
+					case "base64":
+						return btoa(String.fromCharCode(...new Uint8Array(signature)));
+
+					case "hex":
+						return [...new Uint8Array(signature)].reduce(
+							(a, b) => a + b.toString(16).padStart(2, "0"),
+							"",
+						);
+				}
+			})();
+
+			const bufA = encoder.encode(computed);
+			const bufB = encoder.encode(hmac);
+			if (bufA.byteLength !== bufB.byteLength) {
+				throw new ShopifyException("Encoded byte length mismatch", {
+					status: 401,
+					type: "HMAC",
+				});
+			}
+
+			// biome-ignore lint/suspicious/noExplicitAny: lib: [DOM] overrides worker-configuration.d.ts
+			const valid = (crypto.subtle as any).timingSafeEqual(bufA, bufB);
+			utils.log.debug("validateHmac", {
+				hmac,
+				computed,
+				valid,
+			});
+			if (!valid) {
+				throw new ShopifyException("Invalid hmac", {
+					status: 401,
+					type: "HMAC",
+				});
+			}
+		},
 	};
-
-	async function validateHmac(
-		data: string,
-		hmac: string,
-		encoding: "hex" | "base64",
-	) {
-		const encoder = new TextEncoder();
-		const key = await crypto.subtle.importKey(
-			"raw",
-			encoder.encode(config.apiSecretKey),
-			{
-				name: "HMAC",
-				hash: "SHA-256",
-			},
-			false,
-			["sign"],
-		);
-		const signature = await crypto.subtle.sign(
-			"HMAC",
-			key,
-			encoder.encode(data),
-		);
-		let computed: string;
-		switch (encoding) {
-			case "base64":
-				computed = btoa(String.fromCharCode(...new Uint8Array(signature)));
-				break;
-
-			case "hex":
-				computed = [...new Uint8Array(signature)].reduce(
-					(a, b) => a + b.toString(16).padStart(2, "0"),
-					"",
-				);
-				break;
-		}
-
-		const bufA = encoder.encode(computed);
-		const bufB = encoder.encode(hmac);
-		if (bufA.byteLength !== bufB.byteLength) {
-			throw new ShopifyException("Encoded byte length mismatch", {
-				status: 401,
-				type: "HMAC",
-			});
-		}
-
-		// biome-ignore lint/suspicious/noExplicitAny: lib: [DOM] overrides worker-configuration.d.ts
-		const valid = (crypto.subtle as any).timingSafeEqual(bufA, bufB);
-		utils.log.debug("validateHmac", {
-			hmac,
-			computed,
-			valid,
-		});
-		if (!valid) {
-			throw new ShopifyException("Invalid hmac", {
-				status: 401,
-				type: "HMAC",
-			});
-		}
-	}
 
 	async function webhook(request: Request) {
 		// validate.body
@@ -533,7 +499,7 @@ export function createShopify(context: AppLoadContext) {
 			});
 		}
 
-		await validateHmac(body, header, "base64");
+		await utils.validateHmac(body, header, "base64");
 
 		// validate.headers
 		const requiredHeaders = {
@@ -611,6 +577,40 @@ export function createShopifyClient({
 				: `https://${shop}.myshopify.com/api/${apiVersion}/graphql.json`,
 	});
 	return client;
+}
+
+const Log = {
+	error: 0,
+	info: 1,
+	debug: 2,
+};
+type LogLevel = keyof typeof Log;
+
+function createLogger(level: LogLevel) {
+	function noop() {}
+
+	return {
+		debug(...args: unknown[]) {
+			if (Log[level] >= Log.debug) {
+				return console.debug("log.debug", ...args);
+			}
+			return noop;
+		},
+
+		info(...args: unknown[]) {
+			if (Log[level] >= Log.info) {
+				return console.info("log.info", ...args);
+			}
+			return noop;
+		},
+
+		error(...args: unknown[]) {
+			if (Log[level] >= Log.error) {
+				return console.error("log.error", ...args);
+			}
+			return noop;
+		},
+	};
 }
 
 const schema = v.object({

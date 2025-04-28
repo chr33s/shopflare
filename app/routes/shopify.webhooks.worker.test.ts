@@ -84,7 +84,7 @@ describe("action", () => {
 			headers: {
 				"X-Shopify-API-Version": API_VERSION,
 				"X-Shopify-Shop-Domain": "test.myshopify.com",
-				"X-Shopify-Hmac-Sha256": "tKI9km9Efxo6gfUjbUBCo3XJ0CmqMLgb4xNzNhpQhK0=",
+				"X-Shopify-Hmac-Sha256": await getHmac("123"),
 				"X-Shopify-Topic": "app/uninstalled",
 				"X-Shopify-Webhook-Id": "test",
 			},
@@ -98,3 +98,20 @@ describe("action", () => {
 		expect(response.body).toBe(null);
 	});
 });
+
+async function getHmac(body: string) {
+	const encoder = new TextEncoder();
+	const key = await crypto.subtle.importKey(
+		"raw",
+		encoder.encode(context.cloudflare.env.SHOPIFY_API_SECRET_KEY),
+		{
+			name: "HMAC",
+			hash: "SHA-256",
+		},
+		true,
+		["sign"],
+	);
+	const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(body));
+	const hmac = btoa(String.fromCharCode(...new Uint8Array(signature))); // base64
+	return hmac;
+}
