@@ -56,7 +56,7 @@ export function createShopify(context: AppLoadContext) {
 				// Using shopify-reload path to redirect the bounce automatically.
 				url.searchParams.append(
 					"shopify-reload",
-					`${url.pathname}?${url.searchParams.toString()}`,
+					`${config.appUrl}${url.pathname}?${url.searchParams.toString()}`,
 				);
 				throw routerRedirect(
 					`/shopify/auth/session-token-bounce?${url.searchParams.toString()}`,
