@@ -1,6 +1,6 @@
 {
 	"name": "@chr33s/shopflare",
-	"version": "2.5.17",
+	"version": "2.6.0",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -67,7 +67,9 @@
 		"node": "^22.14.0",
 		"npm": ">=9.6.4"
 	},
-	"workspaces": ["extensions/*"],
+	"workspaces": [
+		"extensions/*"
+	],
 	"bin": {
 		"shopflare": "./bin.sh"
 	}
