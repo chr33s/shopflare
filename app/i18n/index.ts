@@ -15,7 +15,7 @@ const i18n = {
 
 export default i18n;
 
-type DetectorOptions = {
+export type DetectorOptions = {
 	headers: Headers;
 	searchParams: URLSearchParams;
 };
@@ -24,42 +24,44 @@ export class LanguageDetector implements LanguageDetectorModule {
 	public type = "languageDetector" as const;
 	static type = "languageDetector" as const;
 
-	#options: DetectorOptions | undefined;
+	#options: DetectorOptions;
+	#i18n: InitOptions;
 
 	constructor(
-		services: Services,
+		_services: Services,
 		detectorOptions: DetectorOptions,
 		initOptions: InitOptions,
 	) {
-		this.init(services, detectorOptions, initOptions);
-	}
-
-	public init(
-		_services: Services,
-		detectorOptions: DetectorOptions,
-		_initOptions: InitOptions,
-	) {
 		this.#options = detectorOptions;
+		this.#i18n = initOptions;
 	}
 
 	public detect() {
 		let locale: string | null | undefined;
-		if (this.#options?.searchParams?.has("locale")) {
-			locale = this.#options.searchParams.get("locale"); // shopify admin
+
+		const param = "locale";
+		if (this.#options?.searchParams?.has(param)) {
+			locale = this.#options.searchParams.get(param); // shopify admin
 		}
-		if (!locale && this.#options?.headers?.has("accept-language")) {
+
+		const header = "accept-language";
+		if (!locale && this.#options?.headers?.has(header)) {
 			locale = this.#options?.headers
-				.get("accept-language")
+				.get(header)
 				?.match(/[a-z-_]{2,5}/i)
-				?.at(0); // shopify storefront proxy
+				?.at(0); // shopify storefront
 		}
 		locale = locale?.split("-").at(0);
-		if (locale && !i18n.supportedLngs.includes(locale)) {
+
+		const supportedLngs = this.#i18n?.supportedLngs || i18n.supportedLngs;
+		if (locale && !supportedLngs.includes(locale)) {
 			locale = null;
 		}
+
 		if (!locale) {
-			locale = i18n.fallbackLng;
+			const fallbackLng = this.#i18n?.fallbackLng || i18n.fallbackLng;
+			locale = Array.isArray(fallbackLng) ? fallbackLng[0] : fallbackLng;
 		}
-		return locale;
+		return locale || "en";
 	}
 }
