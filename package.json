@@ -24,6 +24,7 @@
 		"preview": "vite preview",
 		"start": "wrangler dev",
 		"test": "vitest --run",
+		"test:e2e": "node --env-file=.env --env-file=.env.test $(npm root)/.bin/playwright test",
 		"tunnel": "source .env && cloudflared tunnel --no-autoupdate --url ${SHOPIFY_APP_URL}:8080 run --token ${CLOUDFLARE_API_TOKEN}"
 	},
 	"dependencies": {
@@ -41,6 +42,7 @@
 		"@biomejs/biome": "1.9.4",
 		"@cloudflare/vite-plugin": "1.0.12",
 		"@cloudflare/vitest-pool-workers": "0.8.22",
+		"@playwright/test": "1.52.0",
 		"@react-router/dev": "7.5.2",
 		"@shopify/api-codegen-preset": "1.1.7",
 		"@shopify/app-bridge-types": "0.0.18",
