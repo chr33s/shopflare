@@ -9,12 +9,14 @@
 	},
 	"editor.defaultFormatter": "biomejs.biome",
 	"editor.guides.bracketPairs": "active",
+	"eslint.enable": false,
 	"files.associations": {
 		".env*": "properties"
 	},
 	"github.copilot.chat.codeGeneration.useInstructionFiles": true,
 	"github.copilot.chat.codesearch.enabled": true,
 	"github.copilot.selectedCompletionModel": "gpt-4o-copilot",
+	"prettier.enable": false,
 	"terminal.integrated.suggest.enabled": true,
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"typescript.enablePromptUseWorkspaceTsdk": true
