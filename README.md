@@ -71,9 +71,9 @@ To split environments see [Cloudflare](https://developers.cloudflare.com/workers
 
 ```js
 export async function loader({ context, request }) {
-	const shopify = createShopify(context);
-	shopify.utils.log.debug("message...");                                     // Log on [error, info, debug]
-	const client = await shopify.admin(request);                               // Authenticate on [admin*, proxy*, webhook] [*] returns a client
+  const shopify = createShopify(context);
+  shopify.utils.log.debug("message...");                                     // Log on [error, info, debug]
+  const client = await shopify.admin(request);                               // Authenticate on [admin*, proxy*, webhook] [*] returns a client
   const { data, errors } = await client.request(`query { shop { name } }`);
   shopify.redirect(request, url, { shop });
 }
@@ -87,7 +87,7 @@ Follow App Bridge docs but import `~/components/polaris` instead of `@shopify/po
 
 #### [polaris.tsx](./app/components/polaris.tsx)
 
-Follow Polaris docs but import `~/components/app-bridge` instead of `@shopify/app-bridge-react` and take note that:
+Follow Polaris docs but import `~/components/app-bridge` instead of `@shopify/app-bridge-react` and note that:
 
 - Checkbox
 - RadioButton
