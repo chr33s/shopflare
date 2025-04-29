@@ -21,6 +21,7 @@
 	},
 	"formatter": {
 		"enabled": true,
+		"ignore": ["package.json"],
 		"useEditorconfig": true,
 		"formatWithErrors": false,
 		"bracketSpacing": true
