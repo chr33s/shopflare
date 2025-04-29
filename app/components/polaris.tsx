@@ -1,47 +1,28 @@
-import * as Polaris from "@shopify/polaris";
+import { AppProvider as PolarisAppProvider } from "@shopify/polaris";
+import type * as Polaris from "@shopify/polaris";
 import type { LinkLikeComponentProps } from "@shopify/polaris/build/ts/src/utilities/link";
-import { type Ref, useCallback, useRef, useState } from "react";
+import type { Ref } from "react";
 import { Link as ReactRouterLink } from "react-router";
-
-export * from "@shopify/polaris";
 
 export function AppProvider({ children, ...props }: Polaris.AppProviderProps) {
 	return (
-		<Polaris.AppProvider {...props} linkComponent={LinkComponent}>
+		<PolarisAppProvider {...props} linkComponent={LinkComponent}>
 			{children}
-		</Polaris.AppProvider>
+		</PolarisAppProvider>
 	);
 }
 
 export interface CheckboxProps extends Omit<Polaris.CheckboxProps, "name"> {
 	name: Polaris.CheckboxProps["name"];
-	ref?: Ref<Polaris.CheckboxHandles>;
+	ref?: Ref<HTMLInputElement>;
 }
 
-export function Checkbox(props: CheckboxProps) {
-	const [checked, setChecked] = useState(!!props.checked);
-	const onChange = useCallback(
-		(value: boolean, id: string) => {
-			props.onChange?.(value, id);
-			setChecked(value);
-		},
-		[props.onChange],
-	);
-
-	return (
-		<Polaris.Checkbox
-			{...props}
-			checked={checked}
-			id={props.name}
-			onChange={onChange}
-		/>
-	);
-}
+export declare function Checkbox(props: CheckboxProps): React.JSX.Element;
 
 interface ComboboxActivatorProps
 	extends Omit<Polaris.ComboboxProps["activator"], "name"> {
 	name: string;
-	ref?: Ref<Polaris.ComboboxProps["activator"]>;
+	ref?: Ref<HTMLInputElement>;
 	value?: string | string[];
 }
 
@@ -50,189 +31,22 @@ export interface ComboboxProps
 	activator: ComboboxActivatorProps;
 }
 
-export function Combobox(props: ComboboxProps) {
-	return (
-		<>
-			<Combobox {...props} />
-			<input
-				name={props.activator.name}
-				style={{ display: "none" }}
-				type="hidden"
-				value={props.activator.value}
-			/>
-		</>
-	);
-}
-
-export interface ColorPickerProps
-	extends Omit<Polaris.ColorPickerProps, "color" | "onChange"> {
-	color?: Polaris.HSBAColor;
-	name: string;
-	onChange?: Polaris.ColorPickerProps["onChange"];
-	ref?: Ref<Polaris.ColorPicker>;
-}
-
-export function ColorPicker(props: ColorPickerProps) {
-	const [value, setValue] = useState(
-		props.color ?? {
-			alpha: 1,
-			brightness: 0,
-			hue: 1,
-			saturation: 0,
-		},
-	);
-	const onChange = useCallback(
-		(value: Polaris.HSBAColor) => {
-			props.onChange?.(value);
-			setValue(value);
-		},
-		[props.onChange],
-	);
-
-	return (
-		<>
-			<input type="hidden" name={props.name} value={JSON.stringify(value)} />
-
-			<Polaris.ColorPicker
-				{...props}
-				color={value}
-				id={props.name}
-				onChange={onChange}
-			/>
-		</>
-	);
-}
-
-export interface DatePickerProps extends Polaris.DatePickerProps {
-	name: string;
-	ref?: Ref<typeof Polaris.DatePicker>;
-}
-
-export function DatePicker(props: DatePickerProps) {
-	const date = new Date();
-
-	const [selected, setSelected] = useState(
-		(props.selected ?? !props.allowRange)
-			? new Date(date)
-			: {
-					start: new Date(date),
-					end: new Date(date),
-				},
-	);
-	const onChange = useCallback(
-		(selected: Polaris.Range) => {
-			props.onChange?.(selected);
-			setSelected(selected);
-		},
-		[props.onChange],
-	);
-
-	const [{ month, year }, setDate] = useState({
-		month: props.month,
-		year: props.year,
-	});
-	const onMonthChange = useCallback(
-		(month: number, year: number) => {
-			props.onMonthChange?.(month, year);
-			setDate({ month, year });
-		},
-		[props.onMonthChange],
-	);
-
-	const format = useCallback((value: Date): string => {
-		if (!(value instanceof Date)) {
-			return "";
-		}
-
-		return [
-			value.getFullYear(),
-			(value.getMonth() + 1).toString().padStart(2, "0"),
-			value.getDate().toString().padStart(2, "0"),
-		].join("-");
-	}, []);
-
-	return (
-		<>
-			{props.allowRange ? (
-				[
-					<input
-						key="start"
-						name={`${props.name}[start]`}
-						type="hidden"
-						value={format((selected as Polaris.Range).start)}
-					/>,
-					<input
-						key="end"
-						name={`${props.name}[end]`}
-						type="hidden"
-						value={format((selected as Polaris.Range).end)}
-					/>,
-				]
-			) : (
-				<input
-					type="hidden"
-					name={props.name}
-					value={
-						format(selected as Date) ||
-						format((selected as Polaris.Range).start)
-					}
-				/>
-			)}
-
-			<Polaris.DatePicker
-				{...props}
-				id={props.name}
-				month={month}
-				onChange={onChange}
-				onMonthChange={onMonthChange}
-				selected={selected}
-				year={year}
-			/>
-		</>
-	);
-}
+export declare function Combobox(props: ComboboxProps): React.JSX.Element;
 
 export interface DropZoneProps extends Polaris.DropZoneProps {
 	name: string;
-	ref?: Ref<typeof Polaris.DropZone>;
+	ref?: Ref<HTMLInputElement>;
 	value?: string | string[] | File | File[];
 }
 
-export function DropZone({ children, ...props }: DropZoneProps) {
-	const ref = useRef<HTMLInputElement>(null);
-
-	return (
-		<DropZone
-			{...props}
-			onDropAccepted={(files: File[]) => {
-				props.onDropAccepted?.(files);
-
-				if (!ref.current) return;
-
-				const container = new DataTransfer();
-				files.map((file) => container.items.add(file));
-				ref.current.files = container.files;
-			}}
-		>
-			{children}
-			<input
-				name={props.name}
-				ref={ref}
-				style={{ display: "none" }}
-				type="file"
-			/>
-		</DropZone>
-	);
-}
+export declare function DropZone(props: DropZoneProps): React.JSX.Element;
 
 export interface FormProps extends Omit<Polaris.FormProps, "action"> {
 	action: Polaris.FormProps["action"];
 	ref?: Ref<HTMLFormElement>;
 }
 
-export function Form(props: FormProps) {
-	return <Polaris.Form {...props} />;
-}
+export declare function Form(props: FormProps): React.JSX.Element;
 
 export interface LinkComponentProps extends LinkLikeComponentProps {
 	ref?: Ref<HTMLAnchorElement>;
@@ -245,103 +59,25 @@ export function LinkComponent({ url, ...props }: LinkComponentProps) {
 export interface RadioButtonProps
 	extends Omit<Polaris.RadioButtonProps, "name"> {
 	name: Polaris.RadioButtonProps["name"];
-	ref?: Ref<typeof Polaris.RadioButton>;
+	ref?: Ref<HTMLInputElement>;
 }
 
-export function RadioButton(props: RadioButtonProps) {
-	const [checked, setChecked] = useState(!!props.checked);
-	const onChange = useCallback(
-		(value: boolean, id: string) => {
-			props.onChange?.(value, id);
-			setChecked(value);
-		},
-		[props.onChange],
-	);
-
-	return (
-		<Polaris.RadioButton
-			{...props}
-			checked={checked}
-			id={props.name}
-			onChange={onChange}
-		/>
-	);
-}
-
-export interface RangeSliderProps
-	extends Omit<Polaris.RangeSliderProps, "onChange" | "value"> {
-	name: string;
-	onChange?: Polaris.RangeSliderProps["onChange"];
-	ref?: Ref<typeof Polaris.RangeSlider>;
-	value?: Polaris.RangeSliderProps["value"];
-}
-
-export function RangeSlider(props: RangeSliderProps) {
-	const [value, setValue] = useState(props.value ?? 0);
-	const onChange = useCallback(
-		(value: Polaris.RangeSliderProps["value"], id: string) => {
-			props.onChange?.(value, id);
-			setValue(value);
-		},
-		[props.onChange],
-	);
-
-	return (
-		<Polaris.RangeSlider
-			{...props}
-			id={props.name}
-			onChange={onChange}
-			value={value}
-		/>
-	);
-}
+export declare function RadioButton(props: RadioButtonProps): React.JSX.Element;
 
 export interface SelectProps extends Omit<Polaris.SelectProps, "name"> {
 	name: Polaris.SelectProps["name"];
-	ref?: Ref<typeof Polaris.Select>;
+	ref?: Ref<HTMLSelectElement>;
 }
 
-export function Select(props: SelectProps) {
-	const [value, setValue] = useState(props.value ?? "");
-	const onChange = useCallback(
-		(value: string, id: string) => {
-			props.onChange?.(value, id);
-			setValue(value);
-		},
-		[props.onChange],
-	);
-
-	return (
-		<Polaris.Select
-			{...props}
-			id={props.name}
-			onChange={onChange}
-			value={value}
-		/>
-	);
-}
+export declare function Select(props: SelectProps): React.JSX.Element;
 
 export interface TextFieldProps extends Omit<Polaris.TextFieldProps, "name"> {
 	name: Polaris.TextFieldProps["name"];
-	ref?: Ref<typeof Polaris.TextField>;
+	ref?: Ref<HTMLInputElement>;
 }
 
-export function TextField(props: TextFieldProps) {
-	const [value, setValue] = useState(props.value ?? "");
-	const onChange = useCallback(
-		(value: string, id: string) => {
-			props.onChange?.(value, id);
-			setValue(value);
-		},
-		[props.onChange],
-	);
+export declare function TextField(props: TextFieldProps): React.JSX.Element;
 
-	return (
-		<Polaris.TextField
-			{...props}
-			id={props.name}
-			onChange={onChange}
-			value={value}
-		/>
-	);
-}
+export * from "@shopify/polaris";
+
+// declare module "@shopify/polaris" {}

@@ -90,9 +90,7 @@ Follow App Bridge docs but import `~/components/polaris` instead of `@shopify/po
 Follow Polaris docs but import `~/components/app-bridge` instead of `@shopify/app-bridge-react` and take note that:
 
 - Checkbox
-- ColorPicker
-- DatePicker
-- RangeSlider
+- RadioButton
 - Select
 - TextField
 
