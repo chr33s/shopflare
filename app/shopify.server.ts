@@ -47,7 +47,9 @@ export function createShopify(context: AppLoadContext) {
 				});
 			}
 			decodedSessionToken = payload as ShopifyJWTPayload;
-		} catch (_error) {
+		} catch (error) {
+			utils.log.debug("admin.jwt", { error, url });
+
 			const isDocumentRequest = !request.headers.has("Authorization");
 			if (isDocumentRequest) {
 				// Remove `id_token` from the query string to prevent an invalid session token sent to the redirect path.

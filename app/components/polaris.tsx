@@ -53,7 +53,14 @@ export interface LinkComponentProps extends LinkLikeComponentProps {
 }
 
 export function LinkComponent({ url, ...props }: LinkComponentProps) {
-	return <ReactRouterLink {...props} to={url} />;
+	return (
+		<ReactRouterLink
+			viewTransition
+			{...props}
+			to={url}
+			suppressHydrationWarning
+		/>
+	);
 }
 
 export interface RadioButtonProps
@@ -79,5 +86,3 @@ export interface TextFieldProps extends Omit<Polaris.TextFieldProps, "name"> {
 export declare function TextField(props: TextFieldProps): React.JSX.Element;
 
 export * from "@shopify/polaris";
-
-// declare module "@shopify/polaris" {}

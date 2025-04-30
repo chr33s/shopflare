@@ -85,7 +85,7 @@ export async function loader({ context, request }) {
 
 Follow App Bridge docs but import `~/components/polaris` instead of `@shopify/polaris`
 
-#### [polaris.tsx](./app/components/polaris.tsx)
+#### [polaris.tsx](./app/components/polaris.tsx) *optional
 
 Follow Polaris docs but import `~/components/app-bridge` instead of `@shopify/app-bridge-react` and note that:
 
