@@ -1,7 +1,7 @@
 import { AppProvider as PolarisAppProvider } from "@shopify/polaris";
 import type * as Polaris from "@shopify/polaris";
 import type { LinkLikeComponentProps } from "@shopify/polaris/build/ts/src/utilities/link";
-import { type Ref, useEffect, useRef } from "react";
+import { type JSX, type Ref, useEffect, useRef } from "react";
 import { Link as ReactRouterLink } from "react-router";
 
 export function AppProvider({ children, ...props }: Polaris.AppProviderProps) {
@@ -17,7 +17,7 @@ export interface CheckboxProps extends Omit<Polaris.CheckboxProps, "name"> {
 	ref?: Ref<HTMLInputElement>;
 }
 
-export declare function Checkbox(props: CheckboxProps): React.JSX.Element;
+export declare function Checkbox(props: CheckboxProps): JSX.Element;
 
 interface ComboboxActivatorProps
 	extends Omit<Polaris.ComboboxProps["activator"], "name"> {
@@ -31,7 +31,7 @@ export interface ComboboxProps
 	activator: ComboboxActivatorProps;
 }
 
-export declare function Combobox(props: ComboboxProps): React.JSX.Element;
+export declare function Combobox(props: ComboboxProps): JSX.Element;
 
 export interface DropZoneProps extends Polaris.DropZoneProps {
 	name: string;
@@ -39,14 +39,14 @@ export interface DropZoneProps extends Polaris.DropZoneProps {
 	value?: string | string[] | File | File[];
 }
 
-export declare function DropZone(props: DropZoneProps): React.JSX.Element;
+export declare function DropZone(props: DropZoneProps): JSX.Element;
 
 export interface FormProps extends Omit<Polaris.FormProps, "action"> {
 	action: Polaris.FormProps["action"];
 	ref?: Ref<HTMLFormElement>;
 }
 
-export declare function Form(props: FormProps): React.JSX.Element;
+export declare function Form(props: FormProps): JSX.Element;
 
 export interface LinkComponentProps extends LinkLikeComponentProps {
 	ref?: Ref<HTMLAnchorElement>;
@@ -89,20 +89,20 @@ export interface RadioButtonProps
 	ref?: Ref<HTMLInputElement>;
 }
 
-export declare function RadioButton(props: RadioButtonProps): React.JSX.Element;
+export declare function RadioButton(props: RadioButtonProps): JSX.Element;
 
 export interface SelectProps extends Omit<Polaris.SelectProps, "name"> {
 	name: Polaris.SelectProps["name"];
 	ref?: Ref<HTMLSelectElement>;
 }
 
-export declare function Select(props: SelectProps): React.JSX.Element;
+export declare function Select(props: SelectProps): JSX.Element;
 
 export interface TextFieldProps extends Omit<Polaris.TextFieldProps, "name"> {
 	name: Polaris.TextFieldProps["name"];
 	ref?: Ref<HTMLInputElement>;
 }
 
-export declare function TextField(props: TextFieldProps): React.JSX.Element;
+export declare function TextField(props: TextFieldProps): JSX.Element;
 
 export * from "@shopify/polaris";
