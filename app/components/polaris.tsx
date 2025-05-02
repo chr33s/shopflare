@@ -1,7 +1,7 @@
 import { AppProvider as PolarisAppProvider } from "@shopify/polaris";
 import type * as Polaris from "@shopify/polaris";
 import type { LinkLikeComponentProps } from "@shopify/polaris/build/ts/src/utilities/link";
-import type { Ref } from "react";
+import { type Ref, useEffect, useRef } from "react";
 import { Link as ReactRouterLink } from "react-router";
 
 export function AppProvider({ children, ...props }: Polaris.AppProviderProps) {
@@ -53,6 +53,26 @@ export interface LinkComponentProps extends LinkLikeComponentProps {
 }
 
 export function LinkComponent({ url, ...props }: LinkComponentProps) {
+	const ref = useRef<string>(url);
+	useEffect(() => {
+		try {
+			const { shop } = JSON.parse(
+				window.sessionStorage.getItem("app-bridge-config")!,
+			);
+			const link = new URL(url, "relative://");
+			if (!link.searchParams.has("shop")) {
+				link.searchParams.set("shop", shop);
+			}
+			if (link.protocol === "relative:") {
+				ref.current = `${link.pathname}?${link.searchParams.toString()}`;
+			} else {
+				ref.current = link.toString();
+			}
+		} catch (e) {
+			// noop
+		}
+	}, [url]);
+
 	return (
 		<ReactRouterLink
 			viewTransition
