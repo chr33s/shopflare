@@ -25,7 +25,7 @@
 		"start": "wrangler dev",
 		"test": "vitest --run",
 		"test:e2e": "node --env-file=.env --env-file=.env.test $(npm root)/.bin/playwright test",
-		"tunnel": "source .env && cloudflared tunnel --no-autoupdate --url ${SHOPIFY_APP_URL}:8080 run --token ${CLOUDFLARE_API_TOKEN}"
+		"tunnel": "source .env && cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}"
 	},
 	"dependencies": {
 		"@shopify/graphql-client": "1.3.2",
@@ -40,8 +40,8 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@cloudflare/vite-plugin": "1.0.13",
-		"@cloudflare/vitest-pool-workers": "0.8.23",
+		"@cloudflare/vite-plugin": "1.1.0",
+		"@cloudflare/vitest-pool-workers": "0.8.24",
 		"@playwright/test": "1.52.0",
 		"@react-router/dev": "7.5.3",
 		"@shopify/api-codegen-preset": "1.1.7",
@@ -49,18 +49,18 @@
 		"@shopify/polaris": "13.9.5",
 		"@shopify/polaris-icons": "9.3.1",
 		"@types/react": "19.1.2",
-		"@types/react-dom": "19.1.2",
+		"@types/react-dom": "19.1.3",
 		"@vitest/browser": "3.1.2",
 		"concurrently": "9.1.2",
-		"happy-dom": "17.4.4",
+		"happy-dom": "17.4.6",
 		"playwright": "1.52.0",
 		"typescript": "5.8.3",
-		"vite": "6.3.3",
+		"vite": "6.3.4",
 		"vite-plugin-i18next-loader": "3.1.2",
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.1.2",
 		"vitest-browser-react": "0.1.1",
-		"wrangler": "4.14.0"
+		"wrangler": "4.14.1"
 	},
 	"optionalDependencies": {
 		"@shopify/cli": "3.78.2"
