@@ -53,31 +53,29 @@ export interface LinkComponentProps extends LinkLikeComponentProps {
 }
 
 export function LinkComponent({ url, ...props }: LinkComponentProps) {
-	const ref = useRef<string>(url);
-	useEffect(() => {
-		try {
-			const { shop } = JSON.parse(
-				window.sessionStorage.getItem("app-bridge-config")!,
-			);
-			const link = new URL(url, "relative://");
-			if (!link.searchParams.has("shop")) {
-				link.searchParams.set("shop", shop);
-			}
-			if (link.protocol === "relative:") {
-				ref.current = `${link.pathname}?${link.searchParams.toString()}`;
-			} else {
-				ref.current = link.toString();
-			}
-		} catch (e) {
-			// noop
+	let to: string;
+	try {
+		const { shop } = JSON.parse(
+			window.sessionStorage.getItem("app-bridge-config")!,
+		);
+		const link = new URL(url, "relative://");
+		if (!link.searchParams.has("shop")) {
+			link.searchParams.set("shop", shop);
 		}
-	}, [url]);
+		if (link.protocol === "relative:") {
+			to = `${link.pathname}?${link.searchParams.toString()}`;
+		} else {
+			to = link.toString();
+		}
+	} catch (e) {
+		to = url;
+	}
 
 	return (
 		<ReactRouterLink
 			viewTransition
 			{...props}
-			to={url}
+			to={to}
 			suppressHydrationWarning
 		/>
 	);
