@@ -20,6 +20,17 @@ export function createShopify(context: AppLoadContext) {
 	async function admin(request: Request) {
 		const url = new URL(request.url);
 
+		if (request.method === "OPTIONS") {
+			const response = new Response(null, {
+				status: 204,
+				headers: {
+					"Access-Control-Max-Age": "7200",
+				},
+			});
+			utils.addCorsHeaders(request, response.headers);
+			throw response;
+		}
+
 		let encodedSessionToken = null;
 		let decodedSessionToken = null;
 		try {
@@ -65,13 +76,15 @@ export function createShopify(context: AppLoadContext) {
 				);
 			}
 
-			throw new Response(undefined, {
+			const response = new Response(undefined, {
 				headers: new Headers({
 					"X-Shopify-Retry-Invalid-Session-Request": "1",
 				}),
 				status: 401,
 				statusText: "Unauthorized",
 			});
+			utils.addCorsHeaders(request, response.headers);
+			throw response;
 		}
 
 		const shop = utils.sanitizeShop(new URL(decodedSessionToken.dest).hostname);
@@ -304,7 +317,7 @@ export function createShopify(context: AppLoadContext) {
 		switch (true) {
 			case target === "_self" && isBounce(request):
 			case target !== "_self" && isEmbedded(request): {
-				throw new Response(
+				const response = new Response(
 					/* html */ `<head>
 						<meta name="shopify-api-key" content="${config.apiKey}" />
 						<script src="${APP_BRIDGE_URL}"></script>
@@ -320,10 +333,12 @@ export function createShopify(context: AppLoadContext) {
 						headers,
 					},
 				);
+				utils.addCorsHeaders(request, response.headers);
+				throw response;
 			}
 
 			case isData(request): {
-				throw new Response(undefined, {
+				const response = new Response(undefined, {
 					headers: new Headers({
 						"X-Shopify-API-Request-Failure-Reauthorize-Url":
 							windowUrl.toString(),
@@ -331,6 +346,8 @@ export function createShopify(context: AppLoadContext) {
 					status: 401,
 					statusText: "Unauthorized",
 				});
+				utils.addCorsHeaders(request, response.headers);
+				throw response;
 			}
 
 			default: {
@@ -365,6 +382,21 @@ export function createShopify(context: AppLoadContext) {
 	const session = new ShopifySession(context.cloudflare.env.SESSION_STORAGE);
 
 	const utils = {
+		addCorsHeaders(request: Request, responseHeaders: Headers) {
+			const origin = request.headers.get("Origin");
+			if (origin && origin !== config.appUrl) {
+				responseHeaders.set(
+					"Access-Control-Allow-Headers",
+					["Authorization", "Content-Type"].join(", "),
+				);
+				responseHeaders.set("Access-Control-Allow-Origin", "*"); // FIXME:
+				responseHeaders.set(
+					"Access-Control-Expose-Headers",
+					"X-Shopify-API-Request-Failure-Reauthorize-Url",
+				);
+			}
+		},
+
 		addHeaders(request: Request, responseHeaders: Headers) {
 			const url = new URL(request.url);
 			const localhost = url.hostname !== "localhost";
