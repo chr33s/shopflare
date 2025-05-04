@@ -365,6 +365,42 @@ export function createShopify(context: AppLoadContext) {
 	const session = new ShopifySession(context.cloudflare.env.SESSION_STORAGE);
 
 	const utils = {
+		addHeaders(request: Request, responseHeaders: Headers) {
+			const url = new URL(request.url);
+			const localhost = url.hostname !== "localhost";
+			const shop = utils.sanitizeShop(url.searchParams.get("shop")!);
+
+			responseHeaders.set("X-Content-Type-Options", "nosniff");
+			responseHeaders.set("X-Download-Options", "noopen");
+			responseHeaders.set("X-Permitted-Cross-Domain-Policies", "none");
+			responseHeaders.set("Referrer-Policy", "origin-when-cross-origin");
+			responseHeaders.set(
+				"Content-Security-Policy",
+				[
+					"default-src 'self';",
+					"script-src 'self' 'unsafe-inline' https://cdn.shopify.com;",
+					"style-src 'self' 'unsafe-inline' https://cdn.shopify.com;",
+					"font-src 'self' https://cdn.shopify.com;",
+					"img-src 'self' data: https://cdn.shopify.com;",
+					"connect-src 'self' https://atlas.shopifysvc.com https://extensions.shopifycdn.com;",
+					`frame-ancestors ${shop ? `https://${shop} https://admin.shopify.com` : "'none'"};`,
+					!localhost ? "upgrade-insecure-requests" : "",
+				].join(" "),
+			);
+			if (shop) {
+				responseHeaders.set(
+					"Link",
+					`<${APP_BRIDGE_URL}>; rel="preload"; as="script";`,
+				);
+			}
+			if (!localhost) {
+				responseHeaders.set(
+					"Strict-Transport-Security",
+					"max-age=631138519; includeSubDomains",
+				);
+			}
+		},
+
 		allowedDomains: ["myshopify.com", "myshopify.io", "shop.dev", "shopify.com"]
 			.map((v) => v.replace(/\./g, "\\.")) // escape
 			.join("|"),
