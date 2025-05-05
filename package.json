@@ -63,7 +63,7 @@
 		"wrangler": "4.14.1"
 	},
 	"optionalDependencies": {
-		"@shopify/cli": "3.78.2"
+		"@shopify/cli": "3.79.0"
 	},
 	"engines": {
 		"node": "^22.14.0",
