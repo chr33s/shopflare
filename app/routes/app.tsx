@@ -1,8 +1,9 @@
 import polarisCss from "@shopify/polaris/build/esm/styles.css?url";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Outlet } from "react-router";
+import { Link, Outlet, useNavigation } from "react-router";
 
-import { NavMenu } from "~/components/app-bridge";
+import { NavMenu, useAppBridge } from "~/components/app-bridge";
 import { AppProvider, type AppProviderProps } from "~/components/polaris";
 import { APP_BRIDGE_URL } from "~/const";
 import { createShopify } from "~/shopify.server";
@@ -76,10 +77,21 @@ export default function App({ loaderData }: Route.ComponentProps) {
 					</Link>
 				</NavMenu>
 
-				<Outlet />
+				<AppOutlet />
 			</AppProvider>
 		</>
 	);
+}
+
+function AppOutlet() {
+	const shopify = useAppBridge();
+	const navigation = useNavigation();
+	const isNavigating = navigation.state !== "idle" || !!navigation.location;
+	useEffect(() => {
+		shopify.loading(isNavigating);
+	}, [isNavigating, shopify.loading]);
+
+	return <Outlet />;
 }
 
 export function ErrorBoundary(error: Route.ErrorBoundaryProps) {
