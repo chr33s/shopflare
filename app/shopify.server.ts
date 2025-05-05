@@ -22,10 +22,10 @@ export function createShopify(context: AppLoadContext) {
 
 		if (request.method === "OPTIONS") {
 			const response = new Response(null, {
-				status: 204,
-				headers: {
+				headers: new Headers({
 					"Access-Control-Max-Age": "7200",
-				},
+				}),
+				status: 204,
 			});
 			utils.addCorsHeaders(request, response.headers);
 			throw response;
@@ -385,15 +385,21 @@ export function createShopify(context: AppLoadContext) {
 		addCorsHeaders(request: Request, responseHeaders: Headers) {
 			const origin = request.headers.get("Origin");
 			if (origin && origin !== config.appUrl) {
-				responseHeaders.set(
-					"Access-Control-Allow-Headers",
-					["Authorization", "Content-Type"].join(", "),
-				);
-				responseHeaders.set("Access-Control-Allow-Origin", "*"); // FIXME:
-				responseHeaders.set(
-					"Access-Control-Expose-Headers",
-					"X-Shopify-API-Request-Failure-Reauthorize-Url",
-				);
+				if (!responseHeaders.has("Access-Control-Allow-Headers")) {
+					responseHeaders.set("Access-Control-Allow-Headers", "Authorization");
+				}
+				if (!responseHeaders.has("Access-Control-Allow-Origin")) {
+					responseHeaders.set("Access-Control-Allow-Origin", origin);
+				}
+				if (responseHeaders.get("Access-Control-Allow-Origin") !== "*") {
+					responseHeaders.set("Vary", "Origin");
+				}
+				if (!responseHeaders.has("Access-Control-Expose-Headers")) {
+					responseHeaders.set(
+						"Access-Control-Expose-Headers",
+						"X-Shopify-API-Request-Failure-Reauthorize-Url",
+					);
+				}
 			}
 		},
 
