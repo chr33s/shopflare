@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
 	const shopifyApp = new URL(env.SHOPIFY_APP_URL);
 
 	return {
+		base: shopifyApp.href,
 		clearScreen: false,
 		plugins: [
 			i18nextLoader(i18nextLoaderOptions),
@@ -23,6 +24,13 @@ export default defineConfig(({ mode }) => {
 		},
 		server: {
 			allowedHosts: [shopifyApp.hostname],
+			cors: {
+				origin: new RegExp(
+					`^https?:\/\/(?:(?:[^:]+\.)?localhost|127\.0\.0\.1|\[::1\]|${shopifyApp.hostname.replace(/\./g, "\\.")})(?::\d+)?$`,
+					"g",
+				),
+			},
+			origin: shopifyApp.origin,
 			port: Number(env.PORT || 8080),
 		},
 		ssr: {
