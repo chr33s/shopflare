@@ -405,7 +405,7 @@ export function createShopify(context: AppLoadContext) {
 
 		addHeaders(request: Request, responseHeaders: Headers) {
 			const url = new URL(request.url);
-			const localhost = url.hostname !== "localhost";
+			const localhost = ["localhost", "127.0.0.1"].includes(url.hostname);
 			const shop = utils.sanitizeShop(url.searchParams.get("shop")!);
 
 			responseHeaders.set("X-Content-Type-Options", "nosniff");
