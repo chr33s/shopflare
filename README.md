@@ -20,7 +20,7 @@ Familiarity with React, ReactRouter, Cloudflare, Shopify conventions.
 ## Requirements
 
 1. Cloudflare account
-2. cloudflared cli `brew install cloudflared` (optional, if `--use-localhost`) [1]
+2. cloudflared cli `brew install cloudflared` (optional, if `--localhost-port=8080 --use-localhost`) [1]
 3. Node.js & NPM see package.json#engines `brew install node@22`
 4. Github cli `brew install gh` (optional)
 
