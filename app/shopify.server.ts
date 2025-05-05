@@ -415,7 +415,7 @@ export function createShopify(context: AppLoadContext) {
 					"font-src 'self' https://cdn.shopify.com;",
 					"img-src 'self' data: https://cdn.shopify.com;",
 					"connect-src 'self' https://atlas.shopifysvc.com https://extensions.shopifycdn.com;",
-					`frame-ancestors ${shop ? `https://${shop} https://admin.shopify.com` : "'none'"};`,
+					`frame-ancestors ${shop ? `https://${shop} https://admin.shopify.com https://*.spin.dev https://admin.myshopify.io https://admin.shop.dev` : "'none'"};`,
 					!localhost ? "upgrade-insecure-requests" : "",
 				].join(" "),
 			);
