@@ -2,20 +2,28 @@ import {
 	type RouteConfig,
 	index,
 	layout,
+	prefix,
 	route,
 } from "@react-router/dev/routes";
 
 export default [
 	index("routes/index.tsx"),
-	layout("routes/app.tsx", [route("app", "routes/app.index.tsx")]),
-	layout("routes/proxy.tsx", [
-		route("proxy", "routes/proxy.index.tsx"), // NOTE: route path must match proxy path
+	...prefix("app", [
+		layout("./routes/app.tsx", [index("routes/app.index.tsx")]),
 	]),
-	route("shopify/auth/login", "routes/shopify.auth.login.tsx"),
-	route(
-		"shopify/auth/session-token-bounce",
-		"routes/shopify.auth.session-token-bounce.tsx",
-	),
-	route("shopify/webhooks", "routes/shopify.webhooks.tsx"),
-	route("shopify/web-vitals", "routes/shopify.web-vitals.tsx"),
+	// NOTE: route path must match proxy path ~ shopify.url/:subpathPrefix((a|apps|community|tools)/:subpath == proxy.url/:subpathPrefix/:subpath
+	...prefix("apps/:subpath", [
+		layout("./routes/proxy.tsx", [index("./routes/proxy.index.tsx")]),
+	]),
+	...prefix("shopify", [
+		...prefix("auth", [
+			route("login", "./routes/shopify.auth.login.tsx"),
+			route(
+				"session-token-bounce",
+				"./routes/shopify.auth.session-token-bounce.tsx",
+			),
+		]),
+		route("webhooks", "./routes/shopify.webhooks.tsx"),
+		route("web-vitals", "./routes/shopify.web-vitals.tsx"),
+	]),
 ] satisfies RouteConfig;
