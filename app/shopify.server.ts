@@ -745,6 +745,13 @@ export class ShopifySession {
 		this.#namespace = namespace;
 	}
 
+	async clear(shop: string) {
+		const shops = await this.#namespace.list({ prefix: shop });
+		await Promise.all(
+			shops.keys.map((key) => this.#namespace.delete(key.name)),
+		);
+	}
+
 	async delete(id: string | undefined) {
 		if (!id) return false;
 
@@ -800,6 +807,7 @@ export class ShopifySession {
 		return this.#namespace.put(
 			session.id,
 			JSON.stringify(this.serialize(session)),
+			{ metadata: { shop: session.shop } },
 		);
 	}
 

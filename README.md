@@ -76,7 +76,7 @@ export async function loader({ context, request }) {
   const client = await shopify.admin(request);                               // Authenticate on [admin*, proxy*, webhook] [*] returns a client
   const { data, errors } = await client.request(`query { shop { name } }`);
   shopify.redirect(request, url, { shop });
-  shopify.session.get(sessionId);                                            // [get, set, delete](id = shop)
+  shopify.session.get(sessionId);                                            // [get, set, delete, clear](id = shop)
   shopify.utils.addCorsHeaders(request, responseHeaders);                    // handle CORS headers
 }
 ```
