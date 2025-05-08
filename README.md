@@ -76,19 +76,29 @@ export async function loader({ context, request }) {
   const client = await shopify.admin(request);                               // Authenticate on [admin*, proxy*, webhook] [*] returns a client
   const { data, errors } = await client.request(`query { shop { name } }`);
   shopify.redirect(request, url, { shop });
+  shopify.session.get(sessionId);                                            // [get, set, delete](id = shop)
+  shopify.utils.addCorsHeaders(request, responseHeaders);                    // handle CORS headers
 }
+```
+
+### createShopifyClient
+
+```js
+const admin = createShopifyClient({ headers: { "X-Shopify-Access-Token": "?" }, shop });
+const storefront = createShopifyClient({ headers: { "X-Shopify-Storefront-Access-Token": "?" }, shop });
 ```
 
 ### Components
 
 #### [app-bridge.tsx](./app/components/app-bridge.tsx) 
 
-Follow App Bridge docs but import `~/components/polaris` instead of `@shopify/polaris`
+Follow App Bridge docs but import `~/components/app-bridge` instead of `@shopify/app-bridge-react`
 
 #### [polaris.tsx](./app/components/polaris.tsx) *optional
 
-Follow Polaris docs but import `~/components/app-bridge` instead of `@shopify/app-bridge-react` and note that:
+Follow Polaris docs but import `~/components/polaris` instead of `@shopify/polaris` and note that:
 
+- AppProvider
 - Checkbox
 - RadioButton
 - Select
