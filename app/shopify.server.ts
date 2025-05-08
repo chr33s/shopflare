@@ -623,34 +623,33 @@ export function createShopifyClient({
 	apiVersion = API_VERSION,
 	headers,
 	shop,
-	type = "admin",
 }: {
 	apiVersion?: string;
-	shop: string;
 	headers: Record<string, string | string[]>;
-	type?: "admin" | "storefront";
+	shop: string;
 }) {
-	const authHeader = {
-		admin: "X-Shopify-Access-Token",
-		storefront: "X-Shopify-Storefront-Access-Token",
-	}[type];
-	if (!authHeader) {
-		throw new ShopifyException(`Missing header ${authHeader}`, {
-			status: 401,
-			type: "REQUEST",
-		});
+	const admin = "X-Shopify-Access-Token";
+	const storefront = "X-Shopify-Storefront-Access-Token";
+	if (!headers[admin] || !headers[storefront]) {
+		throw new ShopifyException(
+			`Missing auth header [${admin}, ${storefront}]`,
+			{
+				status: 401,
+				type: "REQUEST",
+			},
+		);
 	}
 
+	const url = headers[storefront]
+		? `https://${shop}.myshopify.com/api/${apiVersion}/graphql.json`
+		: `https://${shop}/admin/api/${apiVersion}/graphql.json`;
 	const client = createGraphQLClient({
 		customFetchApi: fetch,
 		headers: {
 			"Content-Type": "application/json",
 			...headers,
 		},
-		url:
-			type === "admin"
-				? `https://${shop}/admin/api/${apiVersion}/graphql.json`
-				: `https://${shop}.myshopify.com/api/${apiVersion}/graphql.json`,
+		url,
 	});
 	return client;
 }
