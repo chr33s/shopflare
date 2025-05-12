@@ -631,7 +631,7 @@ export function createShopifyClient({
 }) {
 	const admin = "X-Shopify-Access-Token";
 	const storefront = "X-Shopify-Storefront-Access-Token";
-	if (!headers[admin] || !headers[storefront]) {
+	if (!headers[admin] && !headers[storefront]) {
 		throw new ShopifyException(
 			`Missing auth header [${admin}, ${storefront}]`,
 			{
