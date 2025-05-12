@@ -17,7 +17,7 @@ optional_scopes = [ "write_products" ]
 use_legacy_install_flow = false
 
 [app_proxy]
-url = "https://local.chr33s.dev/proxy"
+url = "https://local.chr33s.dev/apps/shopflare"
 subpath = "shopflare"
 prefix = "apps"
 
