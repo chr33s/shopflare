@@ -45,7 +45,7 @@ gh variable set SHOPIFY_API_KEY
 # vi .env               # update vars[SHOPIFY_APP_LOG_LEVEL] sets logging verbosity.
 npm run deploy:shopify  # only required on setup or config changes
 npm run gen
-npm run dev             # or npm run dev:shopify -- --use-localhost
+npm run dev             # or npm run dev:shopify:local
 # open -a Safari ${SHOPIFY_APP_URL}
 ```
 
