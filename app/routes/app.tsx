@@ -89,7 +89,7 @@ function AppOutlet() {
 	const isNavigating = navigation.state !== "idle" || !!navigation.location;
 	useEffect(() => {
 		shopify.loading(isNavigating);
-	}, [isNavigating, shopify.loading]);
+	}, [isNavigating, shopify]);
 
 	return <Outlet />;
 }
