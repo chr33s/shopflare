@@ -10,6 +10,7 @@
 		"ignore": [
 			"**/+types/*",
 			"**/build/*",
+			"**/dist/*",
 			"**/generated/*",
 			"**/node_modules/*",
 			"**/types/*",

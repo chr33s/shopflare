@@ -25,7 +25,7 @@
 		],
 		"verbatimModuleSyntax": true
 	},
-	"exclude": ["build"],
+	"exclude": ["build", "**/dist"],
 	"include": [
 		"**/*",
 		"**/.server/**/*",

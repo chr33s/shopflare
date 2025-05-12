@@ -1,5 +1,11 @@
 {
-	"ignorePaths": ["**/types", "**/node_modules", "worker-configuration.d.ts"],
+	"ignorePaths": [
+		"**/types",
+		"**/dist",
+		"**/node_modules",
+		"build",
+		"worker-configuration.d.ts"
+	],
 	"ignoreWords": [
 		"accesstoken",
 		"autoupdate",
