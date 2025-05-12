@@ -20,11 +20,11 @@ Familiarity with React, ReactRouter, Cloudflare, Shopify conventions.
 ## Requirements
 
 1. Cloudflare account
-2. cloudflared cli `brew install cloudflared` (optional, if `--localhost-port=8080 --use-localhost`) [1]
+2. Shopify Partner account
 3. Node.js & NPM see package.json#engines `brew install node@22`
 4. Github cli `brew install gh` (optional)
 
-[1] In-order to wss:// working on a cloudflare tunnel, you need to set "Additional application settings" > "HTTP Settings" > "HTTP Host Header" to match the service URL (e.g. 127.0.0.1), otherwise the tunnel returns a 502 http status & client connection fails
+> NOTE: For wss:// to work on a cloudflare tunnel, you need to set "Additional application settings" > "HTTP Settings" > "HTTP Host Header" to match the service URL (e.g. 127.0.0.1), otherwise the tunnel returns a 502 http status & client connection fails
 
 ## Setup
 

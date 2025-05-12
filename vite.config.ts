@@ -8,10 +8,10 @@ import i18nextLoaderOptions from "./i18n.config";
 
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), "");
-	const shopifyApp = new URL(env.SHOPIFY_APP_URL);
+	const app = new URL(env.HOST);
 
 	return {
-		base: shopifyApp.href,
+		base: app.href,
 		clearScreen: false,
 		plugins: [
 			i18nextLoader(i18nextLoaderOptions),
@@ -23,14 +23,12 @@ export default defineConfig(({ mode }) => {
 			mainFields: ["browser", "module", "main"],
 		},
 		server: {
-			allowedHosts: [shopifyApp.hostname],
+			allowedHosts: [app.hostname],
 			cors: {
-				origin: new RegExp(
-					`^https?:\/\/(?:(?:[^:]+\.)?localhost|127\.0\.0\.1|\[::1\]|${shopifyApp.hostname.replace(/\./g, "\\.")})(?::\d+)?$`,
-					"g",
-				),
+				origin: true,
+				preflightContinue: true,
 			},
-			origin: shopifyApp.origin,
+			origin: app.origin,
 			port: Number(env.PORT || 8080),
 		},
 		ssr: {

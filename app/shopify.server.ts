@@ -407,26 +407,7 @@ export function createShopify(context: AppLoadContext) {
 			const url = new URL(request.url);
 			const localhost = ["localhost", "127.0.0.1"].includes(url.hostname);
 			const shop = utils.sanitizeShop(url.searchParams.get("shop")!);
-			const app = new URL(config.appUrl).origin;
-
-			responseHeaders.set("X-Content-Type-Options", "nosniff");
-			responseHeaders.set("X-Download-Options", "noopen");
-			responseHeaders.set("X-Permitted-Cross-Domain-Policies", "none");
-			responseHeaders.set("Referrer-Policy", "origin-when-cross-origin");
-			responseHeaders.set(
-				"Content-Security-Policy",
-				[
-					"default-src 'self';",
-					`script-src 'self' 'unsafe-inline' ${app} https://cdn.shopify.com;`,
-					`style-src 'self' 'unsafe-inline' ${app} https://cdn.shopify.com;`,
-					`font-src 'self' ${app} https://cdn.shopify.com;`,
-					`img-src 'self' data: ${app} https://cdn.shopify.com;`,
-					`connect-src 'self' ${app} ${app.replace(/^https/, "wss")} https://atlas.shopifysvc.com https://extensions.shopifycdn.com;`,
-					`frame-ancestors ${shop ? `https://${shop} https://admin.shopify.com https://*.spin.dev https://admin.myshopify.io https://admin.shop.dev` : "'none'"};`,
-					!localhost ? "upgrade-insecure-requests" : "",
-				].join(" "),
-			);
-			if (shop) {
+			if (shop && !url.pathname.startsWith("/apps")) {
 				responseHeaders.set(
 					"Link",
 					`<${APP_BRIDGE_URL}>; rel="preload"; as="script";`,

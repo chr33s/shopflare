@@ -4,8 +4,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "react-router build",
-		"build:shopify": "shopify app build",
+		"build": "shopify app build",
 		"check": "concurrently 'npm:check:*'",
 		"check:actions": "if command -v actionlint 2>&1 >/dev/null; then actionlint; fi",
 		"check:code": "biome check --write",
@@ -15,8 +14,8 @@
 		"deploy": "wrangler deploy",
 		"deploy:preview": "wrangler versions upload --env preview",
 		"deploy:shopify": "shopify app deploy --message=$(git rev-parse --abbrev-ref HEAD):$npm_package_version --version=$(git rev-parse HEAD)",
-		"dev": "react-router dev --host",
-		"dev:shopify": "shopify app dev",
+		"dev": "source .env && shopify app dev --tunnel-url=${SHOPIFY_APP_URL}:${PORT:-8080}",
+		"dev:local": "shopify app dev --localhost-port=8080 --use-localhost",
 		"gen": "concurrently 'npm:gen:*'",
 		"gen:code": "graphql-codegen --errors-only",
 		"gen:types": "wrangler types && react-router typegen",
@@ -25,7 +24,7 @@
 		"start": "wrangler dev",
 		"test": "vitest --run",
 		"test:e2e": "node --env-file=.env --env-file=.env.test $(npm root)/.bin/playwright test",
-		"tunnel": "source .env && cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}"
+		"tunnel": "source .env && $(npm root)/@shopify/cli/bin/cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}"
 	},
 	"dependencies": {
 		"@shopify/graphql-client": "1.3.2",
@@ -69,9 +68,6 @@
 		"node": "^22.14.0",
 		"npm": ">=9.6.4"
 	},
-	"workspaces": [
-		"extensions/*"
-	],
 	"bin": {
 		"shopflare": "./bin.sh"
 	}
