@@ -1,12 +1,14 @@
 import { env } from "node:process";
 import { defineConfig } from "@playwright/test";
 
+const appUrl = env.HOST ?? env.SHOPIFY_APP_URL;
+
 export default defineConfig({
 	outputDir: "node_modules/.playwright",
 	testDir: "./",
 	testMatch: /.*\.e2e.test.ts/,
 	use: {
-		baseURL: env.SHOPIFY_APP_URL,
+		baseURL: appUrl,
 		extraHTTPHeaders: {
 			Accept: "application/json",
 			// Authorization: `token ${env.SHOPIFY_STOREFRONT_ACCESS_TOKEN}`,
@@ -18,6 +20,6 @@ export default defineConfig({
 		command: "npm run dev",
 		reuseExistingServer: true,
 		timeout: 10 * 1000,
-		url: env.SHOPIFY_APP_URL,
+		url: appUrl,
 	},
 });
