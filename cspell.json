@@ -4,6 +4,7 @@
 		"**/dist",
 		"**/node_modules",
 		"build",
+		"patches",
 		"worker-configuration.d.ts"
 	],
 	"ignoreWords": [
