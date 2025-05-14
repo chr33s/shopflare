@@ -2,6 +2,7 @@
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "shopflare",
 	"compatibility_date": "2025-04-10",
+	"compatibility_flags": ["nodejs_compat"],
 	"main": "./worker.ts",
 	"analytics_engine_datasets": [
 		{
@@ -13,9 +14,25 @@
 		"binding": "ASSETS",
 		"directory": "./build/client"
 	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "shopflare",
+			"database_id": "?",
+			"migrations_dir": "./db/migrations"
+		}
+	],
 	"dev": {
 		"ip": "0.0.0.0",
 		"port": 8080
+	},
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "DURABLE_OBJECT",
+				"class_name": "ShopflareDurableObject"
+			}
+		]
 	},
 	"kv_namespaces": [
 		{
@@ -24,6 +41,12 @@
 		}
 	],
 	"logpush": true,
+	"migrations": [
+		{
+			"new_sqlite_classes": ["ShopflareDurableObject"],
+			"tag": "v1"
+		}
+	],
 	"observability": {
 		"enabled": true,
 		"logs": {
@@ -46,6 +69,13 @@
 			}
 		]
 	},
+	"rules": [
+		{
+			"fallthrough": true,
+			"globs": ["**/*.sql"],
+			"type": "Text"
+		}
+	],
 	"upload_source_maps": true,
 	"vars": {
 		"NODE_VERSION": 22,

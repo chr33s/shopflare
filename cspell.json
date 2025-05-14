@@ -4,6 +4,7 @@
 		"**/dist",
 		"**/node_modules",
 		"build",
+		"db/migrations",
 		"patches",
 		"worker-configuration.d.ts"
 	],
@@ -17,6 +18,7 @@
 		"eventpath",
 		"HSBA",
 		"isbot",
+		"libsql",
 		"logpush",
 		"miniflare",
 		"myshopify",

@@ -1,6 +1,6 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
-import { defineConfig, loadEnv } from "vite";
+import { type Plugin, defineConfig, loadEnv } from "vite";
 import i18nextLoader from "vite-plugin-i18next-loader";
 import tsconfigPaths from "vite-tsconfig-paths";
 
@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
 			i18nextLoader(i18nextLoaderOptions),
 			cloudflare({ viteEnvironment: { name: "ssr" } }),
 			reactRouter(),
+			sql(),
 			tsconfigPaths(),
 		],
 		resolve: {
@@ -38,3 +39,22 @@ export default defineConfig(({ mode }) => {
 		},
 	};
 });
+
+export function sql(): Plugin {
+	return {
+		name: "vite-plugin-sql",
+		enforce: "pre",
+		transform(src: string, id: string) {
+			if (id.endsWith(".sql")) {
+				const escapedSrc = JSON.stringify(src).replace(
+					/[\u2028\u2029]/g,
+					(c) => `\\u${`000${c.charCodeAt(0).toString(16)}`.slice(-4)}`,
+				);
+				return {
+					code: `export default ${escapedSrc};`,
+					map: { mappings: "" },
+				};
+			}
+		},
+	};
+}

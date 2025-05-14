@@ -4,6 +4,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 import i18nextLoaderOptions from "./i18n.config";
+import { sql } from "./vite.config";
 
 export default defineConfig((config) => {
 	const env = loadEnv(config.mode, process.cwd(), "");
@@ -12,7 +13,7 @@ export default defineConfig((config) => {
 		optimizeDeps: {
 			include: ["react/jsx-dev-runtime"],
 		},
-		plugins: [i18nextLoader(i18nextLoaderOptions), tsconfigPaths()],
+		plugins: [i18nextLoader(i18nextLoaderOptions), sql(), tsconfigPaths()],
 		test: {
 			css: true,
 			env,
