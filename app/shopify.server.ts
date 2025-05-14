@@ -405,18 +405,11 @@ export function createShopify(context: AppLoadContext) {
 
 		addHeaders(request: Request, responseHeaders: Headers) {
 			const url = new URL(request.url);
-			const localhost = ["localhost", "127.0.0.1"].includes(url.hostname);
 			const shop = utils.sanitizeShop(url.searchParams.get("shop")!);
 			if (shop && !url.pathname.startsWith("/apps")) {
 				responseHeaders.set(
 					"Link",
 					`<${APP_BRIDGE_URL}>; rel="preload"; as="script";`,
-				);
-			}
-			if (!localhost) {
-				responseHeaders.set(
-					"Strict-Transport-Security",
-					"max-age=631138519; includeSubDomains",
 				);
 			}
 		},
