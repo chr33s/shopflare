@@ -17,6 +17,7 @@
 			".react-router/*",
 			".shopify/*",
 			".wrangler/*",
+			"db/**/meta/**/*.json",
 			"worker-configuration.d.ts"
 		]
 	},
