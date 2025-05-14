@@ -1,5 +1,5 @@
 import { createGraphQLClient } from "@shopify/graphql-client";
-import { type JWTPayload, decodeJwt, jwtVerify } from "jose";
+import { type JWTPayload, jwtVerify } from "jose";
 import { type AppLoadContext, redirect as routerRedirect } from "react-router";
 import * as v from "valibot";
 
@@ -66,19 +66,11 @@ export function createShopify(context: AppLoadContext) {
 			utils.log.debug("admin.jwt", {
 				error,
 				headers: Object.fromEntries(request.headers),
-				token: utils.decodeJwt(encodedSessionToken),
 				url,
 			});
 
 			const isDocumentRequest = !request.headers.has("Authorization");
 			if (isDocumentRequest) {
-				// If no shop param recover it from session token
-				if (!url.searchParams.has("shop") && encodedSessionToken) {
-					decodedSessionToken = utils.decodeJwt(encodedSessionToken);
-					const shop = decodedSessionToken?.dest?.replace(/https?:\/\//, "");
-					if (shop) url.searchParams.set("shop", shop);
-				}
-
 				// Remove `id_token` from the query string to prevent an invalid session token sent to the redirect path.
 				url.searchParams.delete("id_token");
 
@@ -433,15 +425,6 @@ export function createShopify(context: AppLoadContext) {
 		allowedDomains: ["myshopify.com", "myshopify.io", "shop.dev", "shopify.com"]
 			.map((v) => v.replace(/\./g, "\\.")) // escape
 			.join("|"),
-
-		decodeJwt(token: string | null) {
-			if (!token) return;
-			try {
-				return decodeJwt<ShopifyJWTPayload>(token);
-			} catch {
-				return;
-			}
-		},
 
 		legacyUrlToShopAdminUrl(shop: string) {
 			const shopUrl = shop.replace(/^https?:\/\//, "").replace(/\/$/, "");
