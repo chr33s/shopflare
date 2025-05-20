@@ -14,7 +14,7 @@
 		"deploy": "wrangler deploy",
 		"deploy:preview": "wrangler versions upload --env preview",
 		"deploy:shopify": "shopify app deploy --message=$(git rev-parse --abbrev-ref HEAD):$npm_package_version --version=$(git rev-parse HEAD)",
-		"dev": "source .env && shopify app dev --tunnel-url=${SHOPIFY_APP_URL}:${PORT:-8080}",
+		"dev": "node --env-file=.env $(npm root)/.bin/shopify app dev --tunnel-url=${SHOPIFY_APP_URL}:${PORT:-8080}",
 		"dev:local": "shopify app dev --localhost-port=8080 --use-localhost",
 		"gen": "concurrently 'npm:gen:*'",
 		"gen:code": "graphql-codegen --errors-only",
@@ -25,7 +25,7 @@
 		"start": "wrangler dev",
 		"test": "vitest --run",
 		"test:e2e": "node --env-file=.env --env-file=.env.test $(npm root)/.bin/playwright test",
-		"tunnel": "source .env && $(npm root)/@shopify/cli/bin/cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}"
+		"tunnel": "source .env && cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}"
 	},
 	"dependencies": {
 		"@shopify/graphql-client": "1.3.2",
