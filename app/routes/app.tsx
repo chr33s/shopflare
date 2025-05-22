@@ -1,10 +1,11 @@
+import { NavMenu, useAppBridge } from "@shopify/app-bridge-react";
+import { AppProvider, type AppProviderProps } from "@shopify/polaris";
 import polarisCss from "@shopify/polaris/build/esm/styles.css?url";
+import type { LinkLikeComponentProps } from "@shopify/polaris/build/ts/src/utilities/link";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Outlet, useNavigation } from "react-router";
 
-import { NavMenu, useAppBridge } from "~/components/app-bridge";
-import { AppProvider, type AppProviderProps } from "~/components/polaris";
 import { APP_BRIDGE_URL } from "~/const";
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/app";
@@ -47,24 +48,8 @@ export default function App({ loaderData }: Route.ComponentProps) {
 	return (
 		<>
 			<script data-api-key={apiKey} src={APP_BRIDGE_URL} />
-			<script
-				// biome-ignore lint/security/noDangerouslySetInnerHtml: framework
-				dangerouslySetInnerHTML={{
-					__html: /* javascript */ `
-						function processWebVitals(metrics) {
-							const monitorUrl = "${appUrl}/shopify/web-vitals";
-							const data = JSON.stringify(metrics);
-							navigator.sendBeacon(monitorUrl, data);
-						}
 
-						// Register the callback
-						shopify.webVitals.onReport(processWebVitals);
-					`,
-				}}
-				type="text/javascript"
-			/>
-
-			<AppProvider i18n={i18n}>
+			<AppProvider i18n={i18n} linkComponent={LinkComponent}>
 				<NavMenu>
 					<Link rel="home" to="/app">
 						{t("app")}
@@ -129,6 +114,10 @@ export function headers({
 		...(loaderHeaders ? Array.from(loaderHeaders.entries()) : []),
 		...(actionHeaders ? Array.from(actionHeaders.entries()) : []),
 	]);
+}
+
+function LinkComponent({ url, ...props }: LinkLikeComponentProps) {
+	return <Link viewTransition {...props} to={url} suppressHydrationWarning />;
 }
 
 export const links: Route.LinksFunction = () => [

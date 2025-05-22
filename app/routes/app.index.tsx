@@ -1,9 +1,9 @@
+import { SaveBar, useAppBridge } from "@shopify/app-bridge-react";
+import { Button, Page, Text } from "@shopify/polaris";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { data } from "react-router";
 
-import { SaveBar, useAppBridge } from "~/components/app-bridge";
-import { Button, Page, Text } from "~/components/polaris";
 import { API_VERSION } from "~/const";
 import { ShopifyException, createShopify } from "~/shopify.server";
 import type { ShopQuery } from "~/types/admin.generated";

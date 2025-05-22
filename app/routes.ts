@@ -24,6 +24,5 @@ export default [
 			),
 		]),
 		route("webhooks", "./routes/shopify.webhooks.tsx"),
-		route("web-vitals", "./routes/shopify.web-vitals.tsx"),
 	]),
 ] satisfies RouteConfig;

@@ -1,8 +1,3 @@
-import polarisCss from "@shopify/polaris/build/esm/styles.css?url";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Form, redirect } from "react-router";
-
 import {
 	AppProvider,
 	type AppProviderProps,
@@ -11,7 +6,12 @@ import {
 	Page,
 	Text,
 	TextField,
-} from "~/components/polaris";
+} from "@shopify/polaris";
+import polarisCss from "@shopify/polaris/build/esm/styles.css?url";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Form, redirect } from "react-router";
+
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/shopify.auth.login";
 

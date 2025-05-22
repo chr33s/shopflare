@@ -3,12 +3,6 @@
 	"name": "shopflare",
 	"compatibility_date": "2025-04-10",
 	"main": "./worker.ts",
-	"analytics_engine_datasets": [
-		{
-			"binding": "WEB_VITALS",
-			"dataset": "shopflare"
-		}
-	],
 	"assets": {
 		"binding": "ASSETS",
 		"directory": "./build/client"
