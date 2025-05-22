@@ -1,17 +1,23 @@
 # ShopFlare
 
-> Minimalist Shopify app using React Router (v7) running on cloudflare (worker, kv, analytics). Only essential features, no future changes other than core upgrades & platform alignment.
+> [!NOTE]  
+> [experimental](https://github.com/chr33s/shopflare/tree/experimental) branch tracks Next Gen Dev Platform changes, see [issue](https://github.com/chr33s/shopflare/issues/42)
+
+Minimalist Shopify app using React Router (v7) running on cloudflare (worker, kv, analytics). Only essential features, no future changes other than core upgrades & platform alignment.
 
 ## Rationale
 
 - @shopify/shopify-[api,app-remix] to complex (to much abstraction)
-- Needed a simple starter, than only does the basics
+- Simple starter, than focusses on the basics
 - Small code surface, easier audit
-- Stability over feature completeness
+- Stability over features
+- Modular, extendable, tree shakable (remove factory functions) -> smaller bundle size
 - Minimally opinionated, by supporting only:
   1.  Embedded app use-case
   2.  New Embedded Auth Strategy
   3.  Managed Pricing
+- Optimized for Cloudflare stack
+- Tested - (unit, browser, e2e)
 
 ## Assumptions
 
