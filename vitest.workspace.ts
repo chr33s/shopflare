@@ -40,7 +40,7 @@ export default defineWorkspace([
 							),
 						},
 					],
-					include: ["worker.test.ts", "app/**/*.server.test.ts"],
+					include: ["server.test.ts", "app/**/*.server.test.ts"],
 					name: "server",
 					poolOptions: {
 						workers: {

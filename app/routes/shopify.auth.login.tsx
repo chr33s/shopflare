@@ -1,17 +1,7 @@
-import {
-	AppProvider,
-	type AppProviderProps,
-	Button,
-	FormLayout,
-	Page,
-	Text,
-	TextField,
-} from "@shopify/polaris";
-import polarisCss from "@shopify/polaris/build/esm/styles.css?url";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Form, redirect } from "react-router";
+import { redirect } from "react-router";
 
+import { APP_BRIDGE_UI_URL, APP_BRIDGE_URL } from "~/const";
 import { createShopify } from "~/shopify.server";
 import type { Route } from "./+types/shopify.auth.login";
 
@@ -24,52 +14,32 @@ export default function AuthLogin({
 	loaderData,
 }: Route.ComponentProps) {
 	const { errors } = actionData ?? loaderData ?? {};
-	const [shop, setShop] = useState("");
 
-	const { t } = useTranslation(["app", "polaris"]);
-	const i18n = {
-		Polaris: t("Polaris", {
-			ns: "polaris",
-			returnObjects: true,
-		}),
-	} as AppProviderProps["i18n"];
+	const { t } = useTranslation();
 
 	return (
-		<div
-			style={{
-				alignItems: "center",
-				display: "flex",
-				height: "100vh",
-				justifyContent: "center",
-				width: "100vw",
-			}}
-		>
-			<AppProvider i18n={i18n}>
-				<Page narrowWidth>
-					<Form method="post">
-						<FormLayout>
-							<Text as="h2" variant="headingMd">
-								{t("login")}
-							</Text>
-							<TextField
-								autoComplete="on"
+		<>
+			<script data-api-key={loaderData.apiKey} src={APP_BRIDGE_URL} />
+			<script src={APP_BRIDGE_UI_URL} />
+
+			<s-page inlineSize="small">
+				<s-section heading={t("login")}>
+					<form method="post" style={{ minWidth: "250px" }}>
+						<s-stack gap="base">
+							<s-text-field
 								error={errors?.shop}
 								label={t("shopDomain")}
 								name="shop"
-								onChange={setShop}
-								pattern="^[a-zA-Z0-9][a-zA-Z0-9-]*\.myshopify\.com$"
 								placeholder="example.myshopify.com"
-								type="text"
-								value={shop}
 							/>
-							<Button submit variant="primary">
+							<s-button type="submit" variant="primary">
 								{t("login")}
-							</Button>
-						</FormLayout>
-					</Form>
-				</Page>
-			</AppProvider>
-		</div>
+							</s-button>
+						</s-stack>
+					</form>
+				</s-section>
+			</s-page>
+		</>
 	);
 }
 
@@ -79,7 +49,7 @@ export async function action({ context, request }: Route.ActionArgs) {
 	const url = new URL(request.url);
 	let shop = url.searchParams.get("shop");
 	if (request.method === "GET" && !shop) {
-		return {};
+		return { apiKey: shopify.config.apiKey };
 	}
 
 	if (!shop) {
@@ -106,12 +76,4 @@ export async function action({ context, request }: Route.ActionArgs) {
 	throw redirect(redirectUrl);
 }
 
-export const links: Route.LinksFunction = () => [
-	{ href: "https://cdn.shopify.com", rel: "preconnect" },
-	{
-		href: "https://cdn.shopify.com/static/fonts/inter/v4/styles.css",
-		precedence: "default",
-		rel: "stylesheet",
-	},
-	{ href: polarisCss, precedence: "high", rel: "stylesheet" },
-];
+export { headers, links } from "./app";
