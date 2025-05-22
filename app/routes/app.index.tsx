@@ -1,8 +1,7 @@
-import { SaveBar, useAppBridge } from "@shopify/app-bridge-react";
-import { Button, Page, Text } from "@shopify/polaris";
+import { useAppBridge } from "@shopify/app-bridge-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { data } from "react-router";
+import { data, useFetcher } from "react-router";
 
 import { API_VERSION } from "~/const";
 import { ShopifyException, createShopify } from "~/shopify.server";
@@ -24,6 +23,9 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 				}
 			}
 		`);
+
+		console.log("loader", { data, errors });
+
 		return {
 			data,
 			errors,
@@ -55,6 +57,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 
 export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
 	const data = await serverLoader();
+	console.log("clientLoader", data);
 	return data;
 }
 
@@ -92,34 +95,70 @@ export default function AppIndex({
 		return () => controller.abort();
 	}, []);
 
+	const fetcher = useFetcher();
+
 	const shopify = useAppBridge();
 
 	return (
-		<Page title={t("app")}>
-			<SaveBar id="savebar">
-				<button onClick={() => shopify.saveBar.hide("savebar")} type="reset" />
+		<s-page inlineSize="small">
+			<ui-title-bar title={t("app")}>
 				<button
-					onClick={() => console.log("savebar.click.primary")}
-					type="submit"
+					onClick={() => shopify.modal.show("modal")}
+					type="button"
 					variant="primary"
-				/>
-			</SaveBar>
+				>
+					Primary
+				</button>
+			</ui-title-bar>
+			<ui-modal id="modal">
+				<s-box padding="base">
+					<s-paragraph>Message</s-paragraph>
+				</s-box>
+				<ui-title-bar title="Title">
+					<button onClick={() => shopify.modal.hide("modal")} type="button">
+						Close
+					</button>
+				</ui-title-bar>
+			</ui-modal>
 
-			<Text as="p">
-				{errors ? JSON.stringify(errors, null, 2) : data?.shop?.name}
-			</Text>
-			<Button onClick={() => shopify.saveBar.show("savebar")}>click</Button>
-		</Page>
+			<s-section>
+				<s-paragraph>
+					{errors ? JSON.stringify(errors, null, 2) : data?.shop?.name}
+				</s-paragraph>
+				<fetcher.Form
+					data-save-bar
+					method="POST"
+					onReset={(ev) => {
+						console.log("onReset", ev);
+						ev.currentTarget.reset();
+						shopify.saveBar.hide("savebar");
+					}}
+					onSubmit={(ev) => {
+						const formData = new FormData(ev.currentTarget);
+						console.log("onSubmit", Object.fromEntries(formData));
+						fetcher.submit(formData, { method: "POST" });
+					}}
+				>
+					<ui-save-bar id="savebar">
+						<button type="reset" />
+						<button type="submit" variant="primary" />
+					</ui-save-bar>
+					<s-text-field label="Input" name="input" placeholder="Input Value" />
+				</fetcher.Form>
+			</s-section>
+		</s-page>
 	);
 }
 
 export async function clientAction({ serverAction }: Route.ClientActionArgs) {
 	const data = await serverAction();
+	console.log("clientAction", data);
 	return data;
 }
 
-export async function action(_: Route.ActionArgs) {
-	const data = {};
+export async function action({ request }: Route.ActionArgs) {
+	const data = Object.fromEntries(await request.formData());
+	console.log("action", { data });
 	return { data };
 }
 

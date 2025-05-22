@@ -40,7 +40,7 @@ export default defineWorkspace([
 							),
 						},
 					],
-					include: ["worker.test.ts", "app/**/*.server.test.ts"],
+					include: ["server.test.ts", "app/**/*.server.test.ts"],
 					name: "server",
 					poolOptions: {
 						workers: {
@@ -50,9 +50,6 @@ export default defineWorkspace([
 									"nodejs_compat",
 									"service_binding_extra_handlers",
 								],
-								kvNamespaces: ["shopflare"],
-								queueConsumers: ["shopflare"],
-								queueProducers: { WEBHOOK_QUEUE: "shopflare" },
 							},
 							singleWorker: true,
 							wrangler: { configPath: "./wrangler.json" },
