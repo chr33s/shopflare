@@ -35,14 +35,14 @@
 		"patch-package": "8.0.0",
 		"react": "19.1.0",
 		"react-dom": "19.1.0",
-		"react-i18next": "15.5.1",
+		"react-i18next": "15.5.2",
 		"react-router": "7.6.0",
 		"valibot": "1.1.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@cloudflare/vite-plugin": "1.2.3",
-		"@cloudflare/vitest-pool-workers": "0.8.31",
+		"@cloudflare/vite-plugin": "1.2.4",
+		"@cloudflare/vitest-pool-workers": "0.8.32",
 		"@playwright/test": "1.52.0",
 		"@react-router/dev": "7.6.0",
 		"@shopify/api-codegen-preset": "1.1.7",
@@ -62,10 +62,10 @@
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.1.4",
 		"vitest-browser-react": "0.2.0",
-		"wrangler": "4.16.0"
+		"wrangler": "4.16.1"
 	},
 	"optionalDependencies": {
-		"@shopify/cli": "3.80.6"
+		"@shopify/cli": "3.80.7"
 	},
 	"engines": {
 		"node": "^22.14.0",
