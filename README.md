@@ -1,6 +1,6 @@
 # ShopFlare
 
-> [!NOTE]  
+> [!TIP]  
 > [experimental](https://github.com/chr33s/shopflare/tree/experimental) branch tracks Next Gen Dev Platform changes, see [issue](https://github.com/chr33s/shopflare/issues/42)
 
 Minimalist Shopify app using React Router (v7) running on cloudflare (worker, kv, analytics). Only essential features, no future changes other than core upgrades & platform alignment.
@@ -31,8 +31,11 @@ Familiarity with React, ReactRouter, Cloudflare, Shopify conventions.
 4. cloudflared cli `brew install cloudflared` (optional)
 5. Github cli `brew install gh` (optional)
 
-> NOTE: For wss:// to work on a cloudflare tunnel, you need to set "Additional application settings" > "HTTP Settings" > "HTTP Host Header" to match the service URL (e.g. 127.0.0.1), otherwise the tunnel returns a 502 http status & client connection fails
-> NOTE: To bypass caching set: Caching > Cache Rules ["Rule Name" = "bypass cache on tunnel", "Custom filter expression" = "", Field = Hostname, Operator = equals, Value = tunnel url, "Cache eligibility" = "Bypass cache", "Browser TTL" = "Bypass cache" ]
+> [!NOTE]  
+> For wss:// to work on a cloudflare tunnel, you need to set "Additional application settings" > "HTTP Settings" > "HTTP Host Header" to match the service URL (e.g. 127.0.0.1), otherwise the tunnel returns a 502 http status & client connection fails
+
+> [!NOTE]  
+> To bypass caching set: Caching > Cache Rules ["Rule Name" = "bypass cache on tunnel", "Custom filter expression" = "", Field = Hostname, Operator = equals, Value = tunnel url, "Cache eligibility" = "Bypass cache", "Browser TTL" = "Bypass cache" ]
 
 ## Setup
 
