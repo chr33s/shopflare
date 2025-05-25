@@ -20,6 +20,14 @@ describe("utils", () => {
 		);
 	});
 
+	test("encode", async () => {
+		const encoder = new TextEncoder();
+		const data = encoder.encode("test");
+
+		expect(utils.encode(data, "base64")).toBe("dGVzdA==");
+		expect(utils.encode(data, "hex")).toBe("74657374");
+	});
+
 	test("legacyUrlToShopAdminUrl", () => {
 		expect(utils.legacyUrlToShopAdminUrl("test.myshopify.com")).toBe(
 			"admin.shopify.com/store/test",

@@ -426,6 +426,19 @@ export function createShopify(context: AppLoadContext) {
 			.map((v) => v.replace(/\./g, "\\.")) // escape
 			.join("|"),
 
+		encode(value: ArrayBuffer, encoding: "base64" | "hex") {
+			switch (encoding) {
+				case "base64":
+					return btoa(String.fromCharCode(...new Uint8Array(value)));
+
+				case "hex":
+					return [...new Uint8Array(value)].reduce(
+						(a, b) => a + b.toString(16).padStart(2, "0"),
+						"",
+					);
+			}
+		},
+
 		legacyUrlToShopAdminUrl(shop: string) {
 			const shopUrl = shop.replace(/^https?:\/\//, "").replace(/\/$/, "");
 			const regExp = /(.+)\.myshopify\.com$/;
@@ -501,19 +514,7 @@ export function createShopify(context: AppLoadContext) {
 				encoder.encode(data),
 			);
 
-			const computed = (function encode() {
-				switch (encoding) {
-					case "base64":
-						return btoa(String.fromCharCode(...new Uint8Array(signature)));
-
-					case "hex":
-						return [...new Uint8Array(signature)].reduce(
-							(a, b) => a + b.toString(16).padStart(2, "0"),
-							"",
-						);
-				}
-			})();
-
+			const computed = utils.encode(signature, encoding);
 			const bufA = encoder.encode(computed);
 			const bufB = encoder.encode(hmac);
 			if (bufA.byteLength !== bufB.byteLength) {
