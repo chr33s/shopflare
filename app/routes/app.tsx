@@ -35,7 +35,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 }
 
 export default function App({ loaderData }: Route.ComponentProps) {
-	const { appHandle, apiKey, appUrl } = loaderData;
+	const { appHandle, apiKey } = loaderData;
 
 	const { t } = useTranslation(["app", "polaris"]);
 	const i18n = {
@@ -132,6 +132,6 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export const meta: Route.MetaFunction = ({ data }: Route.MetaArgs) => [
-	data.appDebug ? { name: "shopify-debug", content: "web-vitals" } : {},
+	data?.appDebug ? { name: "shopify-debug", content: "web-vitals" } : {},
 	{ name: "shopify-experimental-features", content: "keepAlive" },
 ];

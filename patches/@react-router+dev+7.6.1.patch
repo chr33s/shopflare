@@ -1,14 +1,13 @@
 diff --git a/node_modules/@react-router/dev/dist/vite.js b/node_modules/@react-router/dev/dist/vite.js
-index 1c5c0bd..3d4fa6e 100644
+index c327ce5..403b07d 100644
 --- a/node_modules/@react-router/dev/dist/vite.js
 +++ b/node_modules/@react-router/dev/dist/vite.js
-@@ -3138,7 +3138,8 @@ var reactRouterVitePlugin = () => {
+@@ -3319,7 +3319,7 @@ var reactRouterVitePlugin = () => {
          if (ctx.reactRouterConfig.future.unstable_viteEnvironmentApi) {
            viteDevServer.middlewares.use(async (req, res, next) => {
              let [reqPathname, reqSearch] = (req.url ?? "").split("?");
 -            if (reqPathname === `${ctx.publicPath}@react-router/critical.css`) {
-+            let publicPathname = new URL(`${ctx.publicPath}@react-router/critical.css`, "http://localhost").pathname;
-+            if (reqPathname === publicPathname) {
++            if (reqPathname.startsWith("@react-router/critical.css")) {
                let pathname = new URLSearchParams(reqSearch).get("pathname");
                if (!pathname) {
                  return next("No pathname provided");
