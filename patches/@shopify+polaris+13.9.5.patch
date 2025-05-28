@@ -1,3 +1,51 @@
+diff --git a/node_modules/@shopify/polaris/build/cjs/components/ChoiceList/ChoiceList.js b/node_modules/@shopify/polaris/build/cjs/components/ChoiceList/ChoiceList.js
+index c4fbe9c..f77b8f6 100644
+--- a/node_modules/@shopify/polaris/build/cjs/components/ChoiceList/ChoiceList.js
++++ b/node_modules/@shopify/polaris/build/cjs/components/ChoiceList/ChoiceList.js
+@@ -27,7 +27,6 @@ function ChoiceList({
+   const ControlComponent = allowMultiple ? Checkbox.Checkbox : RadioButton.RadioButton;
+   const uniqName = React.useId();
+   const name = nameProp ?? uniqName;
+-  const finalName = allowMultiple ? `${name}[]` : name;
+   const titleMarkup = title ? /*#__PURE__*/React.createElement(Box.Box, {
+     as: "legend",
+     paddingBlockEnd: {
+@@ -71,7 +70,7 @@ function ChoiceList({
+         xs: '0'
+       }
+     }, /*#__PURE__*/React.createElement(ControlComponent, {
+-      name: finalName,
++      name: name,
+       value: value,
+       id: id,
+       label: label,
+@@ -83,7 +82,7 @@ function ChoiceList({
+       checked: choiceIsSelected(choice, selected),
+       helpText: helpText,
+       onChange: handleChange,
+-      ariaDescribedBy: error && describedByError ? InlineError.errorTextID(finalName) : null,
++      ariaDescribedBy: error && describedByError ? InlineError.errorTextID(name) : null,
+       tone: tone
+     }), children));
+   });
+@@ -95,7 +94,7 @@ function ChoiceList({
+     paddingBlockEnd: "200"
+   }, /*#__PURE__*/React.createElement(InlineError.InlineError, {
+     message: error,
+-    fieldID: finalName
++    fieldID: name
+   }));
+   return /*#__PURE__*/React.createElement(BlockStack.BlockStack, {
+     as: "fieldset",
+@@ -104,7 +103,7 @@ function ChoiceList({
+       md: '0'
+     },
+     "aria-invalid": error != null,
+-    id: finalName
++    id: name
+   }, titleMarkup, /*#__PURE__*/React.createElement(BlockStack.BlockStack, {
+     as: "ul",
+     gap: {
 diff --git a/node_modules/@shopify/polaris/build/cjs/components/DropZone/DropZone.js b/node_modules/@shopify/polaris/build/cjs/components/DropZone/DropZone.js
 index 690afda..62165b5 100644
 --- a/node_modules/@shopify/polaris/build/cjs/components/DropZone/DropZone.js
@@ -67,6 +115,54 @@ index 15c1002..331ba82 100644
    }, shared.unstyled.props, {
      ref: _ref
    }));
+diff --git a/node_modules/@shopify/polaris/build/esm/components/ChoiceList/ChoiceList.js b/node_modules/@shopify/polaris/build/esm/components/ChoiceList/ChoiceList.js
+index 2974ab6..b0e72bf 100644
+--- a/node_modules/@shopify/polaris/build/esm/components/ChoiceList/ChoiceList.js
++++ b/node_modules/@shopify/polaris/build/esm/components/ChoiceList/ChoiceList.js
+@@ -25,7 +25,6 @@ function ChoiceList({
+   const ControlComponent = allowMultiple ? Checkbox : RadioButton;
+   const uniqName = useId();
+   const name = nameProp ?? uniqName;
+-  const finalName = allowMultiple ? `${name}[]` : name;
+   const titleMarkup = title ? /*#__PURE__*/React.createElement(Box, {
+     as: "legend",
+     paddingBlockEnd: {
+@@ -69,7 +68,7 @@ function ChoiceList({
+         xs: '0'
+       }
+     }, /*#__PURE__*/React.createElement(ControlComponent, {
+-      name: finalName,
++      name: name,
+       value: value,
+       id: id,
+       label: label,
+@@ -81,7 +80,7 @@ function ChoiceList({
+       checked: choiceIsSelected(choice, selected),
+       helpText: helpText,
+       onChange: handleChange,
+-      ariaDescribedBy: error && describedByError ? errorTextID(finalName) : null,
++      ariaDescribedBy: error && describedByError ? errorTextID(name) : null,
+       tone: tone
+     }), children));
+   });
+@@ -93,7 +92,7 @@ function ChoiceList({
+     paddingBlockEnd: "200"
+   }, /*#__PURE__*/React.createElement(InlineError, {
+     message: error,
+-    fieldID: finalName
++    fieldID: name
+   }));
+   return /*#__PURE__*/React.createElement(BlockStack, {
+     as: "fieldset",
+@@ -102,7 +101,7 @@ function ChoiceList({
+       md: '0'
+     },
+     "aria-invalid": error != null,
+-    id: finalName
++    id: name
+   }, titleMarkup, /*#__PURE__*/React.createElement(BlockStack, {
+     as: "ul",
+     gap: {
 diff --git a/node_modules/@shopify/polaris/build/esm/components/DropZone/DropZone.js b/node_modules/@shopify/polaris/build/esm/components/DropZone/DropZone.js
 index 2926c87..4e26217 100644
 --- a/node_modules/@shopify/polaris/build/esm/components/DropZone/DropZone.js
@@ -136,6 +232,54 @@ index ada2ee3..c0d5ce4 100644
    }, unstyled.props, {
      ref: _ref
    }));
+diff --git a/node_modules/@shopify/polaris/build/esnext/components/ChoiceList/ChoiceList.esnext b/node_modules/@shopify/polaris/build/esnext/components/ChoiceList/ChoiceList.esnext
+index 45fd642..4f68720 100644
+--- a/node_modules/@shopify/polaris/build/esnext/components/ChoiceList/ChoiceList.esnext
++++ b/node_modules/@shopify/polaris/build/esnext/components/ChoiceList/ChoiceList.esnext
+@@ -25,7 +25,6 @@ function ChoiceList({
+   const ControlComponent = allowMultiple ? Checkbox : RadioButton;
+   const uniqName = useId();
+   const name = nameProp ?? uniqName;
+-  const finalName = allowMultiple ? `${name}[]` : name;
+   const titleMarkup = title ? /*#__PURE__*/React.createElement(Box, {
+     as: "legend",
+     paddingBlockEnd: {
+@@ -69,7 +68,7 @@ function ChoiceList({
+         xs: '0'
+       }
+     }, /*#__PURE__*/React.createElement(ControlComponent, {
+-      name: finalName,
++      name: name,
+       value: value,
+       id: id,
+       label: label,
+@@ -81,7 +80,7 @@ function ChoiceList({
+       checked: choiceIsSelected(choice, selected),
+       helpText: helpText,
+       onChange: handleChange,
+-      ariaDescribedBy: error && describedByError ? errorTextID(finalName) : null,
++      ariaDescribedBy: error && describedByError ? errorTextID(name) : null,
+       tone: tone
+     }), children));
+   });
+@@ -93,7 +92,7 @@ function ChoiceList({
+     paddingBlockEnd: "200"
+   }, /*#__PURE__*/React.createElement(InlineError, {
+     message: error,
+-    fieldID: finalName
++    fieldID: name
+   }));
+   return /*#__PURE__*/React.createElement(BlockStack, {
+     as: "fieldset",
+@@ -102,7 +101,7 @@ function ChoiceList({
+       md: '0'
+     },
+     "aria-invalid": error != null,
+-    id: finalName
++    id: name
+   }, titleMarkup, /*#__PURE__*/React.createElement(BlockStack, {
+     as: "ul",
+     gap: {
 diff --git a/node_modules/@shopify/polaris/build/esnext/components/DropZone/DropZone.esnext b/node_modules/@shopify/polaris/build/esnext/components/DropZone/DropZone.esnext
 index bfd1ace..7d2b69a 100644
 --- a/node_modules/@shopify/polaris/build/esnext/components/DropZone/DropZone.esnext
