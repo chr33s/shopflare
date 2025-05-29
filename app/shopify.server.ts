@@ -625,7 +625,7 @@ export function createShopifyClient({
 	}
 
 	const url = headers[storefront]
-		? `https://${shop}.myshopify.com/api/${apiVersion}/graphql.json`
+		? `https://${shop}/api/${apiVersion}/graphql.json`
 		: `https://${shop}/admin/api/${apiVersion}/graphql.json`;
 	const client = createGraphQLClient({
 		customFetchApi: fetch,
