@@ -1,13 +1,10 @@
 import { redirect } from "react-router";
 
 import { APP_BRIDGE_URL } from "~/const";
-import { createShopify } from "~/shopify.server";
+import * as shopify from "~/shopify.server";
 import type { Route } from "./+types/shopify.auth.session-token-bounce";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
-	const shopify = createShopify(context);
-	shopify.utils.log.debug("shopify.auth.session-token-bounce");
-
 	const url = new URL(request.url);
 	const shop = shopify.utils.sanitizeShop(url.searchParams.get("shop")!);
 	if (!shop) {
@@ -19,9 +16,10 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 	});
 	shopify.utils.addHeaders(request, headers);
 
+	const config = shopify.config(context);
 	return new Response(
 		/* html */ `<head>
-			<meta name="shopify-api-key" content="${shopify.config.apiKey}" />
+			<meta name="shopify-api-key" content="${config.SHOPIFY_API_KEY}" />
 			<script src="${APP_BRIDGE_URL}"></script>
 		</head>`,
 		{ headers },

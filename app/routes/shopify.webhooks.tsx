@@ -1,39 +1,12 @@
-import { createShopify } from "~/shopify.server";
+import * as shopify from "~/shopify.server";
 import type { Route } from "./+types/shopify.webhooks";
 
 export async function action({ context, request }: Route.ActionArgs) {
 	try {
-		const shopify = createShopify(context);
-		shopify.utils.log.debug("shopify.webhooks");
+		const { session, webhook } = await shopify.webhook(context, request);
 
-		const webhook = await shopify.webhook(request);
-		shopify.utils.log.debug("shopify.webhooks", { ...webhook });
-
-		const session = await shopify.session.get(webhook.domain);
-		const payload = await request.json();
-
-		switch (webhook.topic) {
-			case "APP_UNINSTALLED":
-				if (session) {
-					await shopify.session.delete(session.id);
-				}
-				break;
-
-			case "APP_SCOPES_UPDATE":
-				if (session) {
-					await shopify.session.set({
-						...session,
-						scope: (payload as { current: string[] }).current.toString(),
-					});
-				}
-				break;
-		}
-
-		await context.cloudflare.env.WEBHOOK_QUEUE?.send(
-			{
-				payload,
-				webhook,
-			},
+		await context.cloudflare.env.WEBHOOK_QUEUE.send(
+			{ session, webhook },
 			{ contentType: "json" },
 		);
 

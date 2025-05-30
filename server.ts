@@ -1,6 +1,6 @@
 import { createRequestHandler } from "react-router";
 
-import type { WebhookQueueMessage } from "~/types/app";
+import { type QueueHandlerMessage, queueHandler } from "~/queues";
 
 declare module "react-router" {
 	export interface AppLoadContext {
@@ -23,11 +23,9 @@ export default {
 		});
 	},
 
-	async queue(batch, _env, _ctx): Promise<void> {
-		console.log(`server.queue: ${JSON.stringify(batch.messages)}`);
-
-		for (const message of batch.messages) {
-			message.ack();
-		}
+	async queue(batch, env, ctx): Promise<void> {
+		return queueHandler(batch, {
+			cloudflare: { env, ctx },
+		});
 	},
-} satisfies ExportedHandler<Env, WebhookQueueMessage>;
+} satisfies ExportedHandler<Env, QueueHandlerMessage>;

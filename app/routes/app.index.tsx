@@ -4,15 +4,12 @@ import { useTranslation } from "react-i18next";
 import { data, useFetcher } from "react-router";
 
 import { API_VERSION } from "~/const";
-import { ShopifyException, createShopify } from "~/shopify.server";
+import * as shopify from "~/shopify.server";
 import type { ShopQuery } from "~/types/admin.generated";
 import type { Route } from "./+types/app.index";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
-	const shopify = createShopify(context);
-	shopify.utils.log.debug("app.index.loader");
-
-	const client = await shopify.admin(request);
+	const { client } = await shopify.admin(context, request);
 
 	try {
 		const { data, errors } = await client.request<ShopQuery>(/* GraphQL */ `
@@ -31,9 +28,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 			errors,
 		};
 	} catch (error) {
-		shopify.utils.log.error("app.index.loader.error", error);
-
-		if (error instanceof ShopifyException) {
+		if (error instanceof shopify.Exception) {
 			switch (error.type) {
 				case "GRAPHQL":
 					return { errors: error.errors };
@@ -156,7 +151,9 @@ export async function clientAction({ serverAction }: Route.ClientActionArgs) {
 	return data;
 }
 
-export async function action({ request }: Route.ActionArgs) {
+export async function action({ context, request }: Route.ActionArgs) {
+	await shopify.admin(context, request);
+
 	const data = Object.fromEntries(await request.formData());
 	console.log("action", { data });
 	return { data };

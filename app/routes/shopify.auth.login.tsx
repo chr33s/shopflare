@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { redirect } from "react-router";
 
 import { APP_BRIDGE_UI_URL, APP_BRIDGE_URL } from "~/const";
-import { createShopify } from "~/shopify.server";
+import * as shopify from "~/shopify.server";
 import type { Route } from "./+types/shopify.auth.login";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
@@ -44,12 +44,12 @@ export default function AuthLogin({
 }
 
 export async function action({ context, request }: Route.ActionArgs) {
-	const shopify = createShopify(context);
+	const apiKey = shopify.config(context).SHOPIFY_API_KEY;
 
 	const url = new URL(request.url);
 	let shop = url.searchParams.get("shop");
 	if (request.method === "GET" && !shop) {
-		return { apiKey: shopify.config.apiKey };
+		return { apiKey };
 	}
 
 	if (!shop) {
@@ -72,7 +72,7 @@ export async function action({ context, request }: Route.ActionArgs) {
 	}
 
 	const adminPath = shopify.utils.legacyUrlToShopAdminUrl(sanitizedShop);
-	const redirectUrl = `https://${adminPath}/oauth/install?client_id=${shopify.config.apiKey}`;
+	const redirectUrl = `https://${adminPath}/oauth/install?client_id=${apiKey}`;
 	throw redirect(redirectUrl);
 }
 

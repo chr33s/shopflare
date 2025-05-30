@@ -78,28 +78,21 @@ To split environments see [Cloudflare](https://developers.cloudflare.com/workers
 - [React Router](https://reactrouter.com/home)
 - [Shopify](http://shopify.dev/)
 
-### createShopify
+### Usage
 
 ```js
-export async function loader({ context, request }) {
-  const shopify = createShopify(context);
-  shopify.utils.log.debug("message...");                                     // Log on [error, info, debug]
-  const client = await shopify.admin(request);                               // Authenticate on [admin*, proxy*, webhook] [*] returns a client
-  const { data, errors } = await client.request(`query { shop { name } }`);
-  shopify.redirect(request, url, { shop });
-  shopify.session.get(sessionId);                                            // [get, set, delete, clear](id = shop)
-  shopify.utils.addCorsHeaders(request, responseHeaders);                    // handle CORS headers
+import * as shopify from '~/shopify.server';
+
+export async function loader({context, request}) {
+  const {client} = await shopify.admin(context, request); // shopify[admin | proxy | webhook](context, request);
+  const {data, errors} = await client.request(`query { shop { name } }`);
+
+  shopify.redirect(context, request, {shop, url});
+  shopify.session(context).get(sessionId);   // set(id, value | null);
+  shopify.utils.addCorsHeaders(context, request, responseHeaders);
+  shopify.client({ accessToken, shop }).admin(); // [admin | storefront](headers?)
 }
 ```
-
-### createShopifyClient
-
-```js
-const admin = createShopifyClient({ headers: { "X-Shopify-Access-Token": "?" }, shop });
-const storefront = createShopifyClient({ headers: { "X-Shopify-Storefront-Access-Token": "?" }, shop });
-```
-
-### Components
 
 #### [proxy.tsx](./app/components/proxy.tsx)
 

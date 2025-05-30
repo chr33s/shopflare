@@ -9,16 +9,16 @@ import {
 } from "react-router";
 
 import i18n, { LanguageDetector } from "./i18n";
-import { createShopify } from "./shopify.server";
+import * as shopify from "./shopify.server";
 
 export default async function handleRequest(
 	request: Request,
 	responseStatus: number,
 	responseHeaders: Headers,
 	routerContext: EntryContext,
-	loadContext: AppLoadContext,
+	_loadContext: AppLoadContext,
 ) {
-	createShopify(loadContext).utils.addHeaders(request, responseHeaders);
+	shopify.utils.addHeaders(request, responseHeaders);
 
 	const instance = createInstance();
 	await instance

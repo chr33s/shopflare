@@ -1,27 +1,28 @@
-import { env } from "node:process";
+import { env } from "cloudflare:test";
 import type { AppLoadContext } from "react-router";
 import { describe, expect, test } from "vitest";
 
 import { API_VERSION } from "~/const";
+import * as shopify from "../shopify.server";
 import type { Route } from "./+types/shopify.webhooks";
 import { action } from "./shopify.webhooks";
 
 const context = { cloudflare: { env } } as unknown as AppLoadContext;
 
 describe("action", () => {
-	test("error on body missing", async () => {
-		const request = new Request("http://localhost");
+	test("error on header missing", async () => {
+		const request = new Request("http://localhost", { method: "POST" });
 		const response = await action({ context, request } as Route.ActionArgs);
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response.ok).toBe(false);
 		expect(response.status).toBe(400);
-		expect(await response.text()).toBe("Webhook body is missing");
+		expect(await response.text()).toBe("Webhook header is missing");
 	});
 
-	test("error on header missing", async () => {
+	test("error on body missing", async () => {
 		const request = new Request("http://localhost", {
-			body: "123",
+			headers: { "X-Shopify-Hmac-Sha256": "123" },
 			method: "POST",
 		});
 		const response = await action({ context, request } as Route.ActionArgs);
@@ -29,7 +30,7 @@ describe("action", () => {
 		expect(response).toBeInstanceOf(Response);
 		expect(response.ok).toBe(false);
 		expect(response.status).toBe(400);
-		expect(await response.text()).toBe("Webhook header is missing");
+		expect(await response.text()).toBe("Webhook body is missing");
 	});
 
 	test("error on encoded byte length mismatch", async () => {
@@ -43,7 +44,7 @@ describe("action", () => {
 		expect(response).toBeInstanceOf(Response);
 		expect(response.ok).toBe(false);
 		expect(response.status).toBe(401);
-		expect(await response.text()).toBe("Encoded byte length mismatch");
+		expect(await response.text()).toBe("Invalid hmac");
 	});
 
 	test("error on invalid hmac", async () => {
@@ -66,7 +67,7 @@ describe("action", () => {
 		const request = new Request("http://localhost", {
 			body: "123",
 			headers: {
-				"X-Shopify-Hmac-Sha256": "tKI9km9Efxo6gfUjbUBCo3XJ0CmqMLgb4xNzNhpQhK0=",
+				"X-Shopify-Hmac-Sha256": "n4AEkjln23lncb9LphO+UPXo6yy8OqROUdN+Acw9yhE=",
 			},
 			method: "POST",
 		});
@@ -75,10 +76,10 @@ describe("action", () => {
 		expect(response).toBeInstanceOf(Response);
 		expect(response.ok).toBe(false);
 		expect(response.status).toBe(400);
-		expect(await response.text()).toBe("Webhook headers are missing");
+		expect(await response.text()).toBe("Webhook required header is missing");
 	});
 
-	test("success", async () => {
+	test("error on missing session", async () => {
 		const request = new Request("http://localhost", {
 			body: "123",
 			headers: {
@@ -93,9 +94,40 @@ describe("action", () => {
 		const response = await action({ context, request } as Route.ActionArgs);
 
 		expect(response).toBeInstanceOf(Response);
+		expect(response.ok).toBe(false);
+		expect(response.status).toBe(401);
+		expect(await response.text()).toBe("No session found");
+	});
+
+	test("success", async () => {
+		const shop = "test.myshopify.com";
+		const session = shopify.session(context);
+		await session.set(shop, {
+			accessToken: "123",
+			id: shop,
+			scope: "read_products",
+			shop,
+		});
+
+		const request = new Request("http://localhost", {
+			body: "123",
+			headers: {
+				"X-Shopify-API-Version": API_VERSION,
+				"X-Shopify-Shop-Domain": shop,
+				"X-Shopify-Hmac-Sha256": await getHmac("123"),
+				"X-Shopify-Topic": "app/uninstalled",
+				"X-Shopify-Webhook-Id": "test",
+			},
+			method: "POST",
+		});
+		const response = await action({ context, request } as Route.ActionArgs);
+
+		expect(response).toBeInstanceOf(Response);
 		expect(response.ok).toBe(true);
 		expect(response.status).toBe(204);
 		expect(response.body).toBe(null);
+
+		await session.set(shop, null);
 	});
 });
 

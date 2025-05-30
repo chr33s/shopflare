@@ -4,21 +4,19 @@ import { useTranslation } from "react-i18next";
 import { Link, Outlet, useNavigate, useNavigation } from "react-router";
 
 import { APP_BRIDGE_UI_URL, APP_BRIDGE_URL } from "~/const";
-import { createShopify } from "~/shopify.server";
+import * as shopify from "~/shopify.server";
 import type { Route } from "./+types/app";
 import css from "./app.css?url";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
 	try {
-		const shopify = createShopify(context);
-		shopify.utils.log.debug("app");
+		await shopify.admin(context, request);
 
-		await shopify.admin(request);
-
+		const config = shopify.config(context);
 		return {
-			appDebug: shopify.config.appLogLevel === "debug",
-			appHandle: shopify.config.appHandle,
-			apiKey: shopify.config.apiKey,
+			appDebug: config.SHOPIFY_APP_LOG_LEVEL === "debug",
+			appHandle: config.SHOPIFY_APP_HANDLE,
+			apiKey: config.SHOPIFY_API_KEY,
 		};
 		// biome-ignore lint/suspicious/noExplicitAny: catch(err)
 	} catch (error: any) {

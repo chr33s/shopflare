@@ -1,14 +1,11 @@
 import { useTranslation } from "react-i18next";
 
 import { Form } from "~/components/proxy";
-import { createShopify } from "~/shopify.server";
+import * as shopify from "~/shopify.server";
 import type { Route } from "./+types/proxy.index";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
-	const shopify = createShopify(context);
-	shopify.utils.log.debug("proxy.index");
-
-	await shopify.proxy(request);
+	await shopify.proxy(context, request);
 
 	const data = {};
 	return { data };

@@ -2,7 +2,7 @@ import { env } from "cloudflare:test";
 import type { AppLoadContext } from "react-router";
 import { describe, expect, test } from "vitest";
 
-import { ShopifySession } from "../shopify.server";
+import * as shopify from "../shopify.server";
 import type { Route } from "./+types/proxy";
 import { loader } from "./proxy";
 
@@ -22,7 +22,7 @@ describe("loader", () => {
 		expect(response).toBeInstanceOf(Response);
 		expect(response?.ok).toBe(false);
 		expect(response?.status).toBe(400);
-		expect(await response?.text()).toBe("Proxy param is missing");
+		expect(await response?.text()).toBe("Proxy signature param is missing");
 	});
 
 	test("error on proxy timestamp is expired", async () => {
@@ -38,7 +38,7 @@ describe("loader", () => {
 		expect(response).toBeInstanceOf(Response);
 		expect(response?.ok).toBe(false);
 		expect(response?.status).toBe(400);
-		expect(await response?.text()).toBe("Proxy timestamp is expired");
+		expect(await response?.text()).toBe("Proxy timestamp param is expired");
 	});
 
 	test("error on encoded byte length mismatch", async () => {
@@ -54,7 +54,7 @@ describe("loader", () => {
 		expect(response).toBeInstanceOf(Response);
 		expect(response?.ok).toBe(false);
 		expect(response?.status).toBe(401);
-		expect(await response?.text()).toBe("Encoded byte length mismatch");
+		expect(await response?.text()).toBe("Invalid hmac");
 	});
 
 	test("error on invalid hmac", async () => {
@@ -78,10 +78,12 @@ describe("loader", () => {
 
 	test("error on no session access token", async () => {
 		const timestamp = Math.trunc(Date.now() / 1_000).toString();
+		const shop = "test.myshopify.com";
 
 		const url = new URL("http://localhost");
-		url.searchParams.set("signature", await getHmac({ timestamp }));
+		url.searchParams.set("signature", await getHmac({ shop, timestamp }));
 		url.searchParams.set("timestamp", timestamp);
+		url.searchParams.set("shop", shop);
 
 		const request = new Request(url, { method: "POST" });
 		const response = (await loader({
@@ -92,14 +94,14 @@ describe("loader", () => {
 		expect(response).toBeInstanceOf(Response);
 		expect(response?.ok).toBe(false);
 		expect(response?.status).toBe(401);
-		expect(await response?.text()).toBe("No session access token");
+		expect(await response?.text()).toBe("No session found");
 	});
 
 	test("success", async () => {
 		const shop = "test.myshopify.com";
 
-		const session = new ShopifySession(context.cloudflare.env.SESSION_STORAGE);
-		await session.set({
+		const session = shopify.session(context);
+		await session.set(shop, {
 			accessToken: "123",
 			id: shop,
 			scope: "read_products",
@@ -123,7 +125,7 @@ describe("loader", () => {
 			appUrl: context.cloudflare.env.SHOPIFY_APP_URL,
 		});
 
-		await session.delete(shop);
+		await session.set(shop, null);
 	});
 });
 
