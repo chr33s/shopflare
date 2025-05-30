@@ -9,6 +9,9 @@ import {
 	isRouteErrorResponse,
 } from 'react-router';
 
+import {APP_BRIDGE_URL, APP_LINKS} from '~/const';
+import rootCss from '~/root.css?url';
+
 import type {Route} from './+types/root';
 
 export default function App() {
@@ -75,7 +78,16 @@ export function Layout({children}: PropsWithChildren) {
 	);
 }
 
-export const meta: Route.MetaFunction = () => [
+export const links: Route.LinksFunction = () => [
+	...APP_LINKS.filter((link) => link.href !== APP_BRIDGE_URL),
+	{
+		href: rootCss,
+		precedence: 'default',
+		rel: 'stylesheet',
+	},
+];
+
+export const meta: Route.MetaFunction = ({data}: Route.MetaArgs) => [
 	{title: 'ShopFlare'},
 	{name: 'description', content: '...'},
 ];

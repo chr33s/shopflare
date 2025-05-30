@@ -3,3 +3,14 @@ export const APP_BRIDGE_URL =
 	'https://cdn.shopify.com/shopifycloud/app-bridge.js';
 export const APP_BRIDGE_UI_URL =
 	'https://cdn.shopify.com/shopifycloud/app-bridge-ui-experimental.js';
+
+export const APP_LINKS = [
+	{href: 'https://cdn.shopify.com', rel: 'preconnect'},
+	{as: 'script', href: APP_BRIDGE_URL, rel: 'preload'},
+	{as: 'script', href: APP_BRIDGE_UI_URL, rel: 'preload'},
+	{
+		href: 'https://cdn.shopify.com/static/fonts/inter/v4/styles.css',
+		precedence: 'default',
+		rel: 'stylesheet',
+	},
+];

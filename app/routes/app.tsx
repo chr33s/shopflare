@@ -3,11 +3,11 @@ import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link, Outlet, useNavigate, useNavigation} from 'react-router';
 
-import {APP_BRIDGE_UI_URL, APP_BRIDGE_URL} from '~/const';
+import {APP_BRIDGE_UI_URL, APP_BRIDGE_URL, APP_LINKS} from '~/const';
 import * as shopify from '~/shopify.server';
+import rootCss from '~/root.css?url';
 
 import type {Route} from './+types/app';
-import css from './app.css?url';
 
 export async function loader({context, request}: Route.LoaderArgs) {
 	try {
@@ -113,16 +113,9 @@ export function headers({
 }
 
 export const links: Route.LinksFunction = () => [
-	{href: 'https://cdn.shopify.com', rel: 'preconnect'},
-	{as: 'script', href: APP_BRIDGE_URL, rel: 'preload'},
-	{as: 'script', href: APP_BRIDGE_UI_URL, rel: 'preload'},
+	...APP_LINKS,
 	{
-		href: 'https://cdn.shopify.com/static/fonts/inter/v4/styles.css',
-		precedence: 'default',
-		rel: 'stylesheet',
-	},
-	{
-		href: css,
+		href: rootCss,
 		precedence: 'default',
 		rel: 'stylesheet',
 	},

@@ -16,13 +16,7 @@ export default [
 		layout('./routes/proxy.tsx', [index('./routes/proxy.index.tsx')]),
 	]),
 	...prefix('shopify', [
-		...prefix('auth', [
-			route('login', './routes/shopify.auth.login.tsx'),
-			route(
-				'session-token-bounce',
-				'./routes/shopify.auth.session-token-bounce.tsx',
-			),
-		]),
+		route('session-token-bounce', './routes/shopify.session-token-bounce.tsx'),
 		route('webhooks', './routes/shopify.webhooks.tsx'),
 	]),
 ] satisfies RouteConfig;

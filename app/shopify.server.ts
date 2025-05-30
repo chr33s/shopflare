@@ -59,7 +59,7 @@ export async function admin(context: AppLoadContext, request: Request) {
 					`${SHOPIFY_APP_URL}${url.pathname}?${url.searchParams.toString()}`,
 				);
 				throw routerRedirect(
-					`/shopify/auth/session-token-bounce?${url.searchParams.toString()}`,
+					`/shopify/session-token-bounce?${url.searchParams.toString()}`,
 				);
 			}
 
@@ -215,7 +215,7 @@ export function client({
 
 	function admin(headers?: Headers) {
 		return client({
-			url: `https://${shop}/api/${apiVersion}/graphql.json`,
+			url: `https://${shop}/admin/api/${apiVersion}/graphql.json`,
 			headers: {
 				'X-Shopify-Access-Token': accessToken,
 				...headers,
@@ -225,7 +225,7 @@ export function client({
 
 	function storefront(headers?: Headers) {
 		return client({
-			url: `https://${shop}/admin/api/${apiVersion}/graphql.json`,
+			url: `https://${shop}/api/${apiVersion}/graphql.json`,
 			headers: {
 				'X-Shopify-Storefront-Access-Token': accessToken,
 				...headers,
@@ -459,8 +459,7 @@ export async function redirect(
 		case target !== '_self' && isEmbedded(request): {
 			const response = new Response(
 				/* html */ `<head>
-					<meta name="shopify-api-key" content="${SHOPIFY_API_KEY}" />
-					<script src="${APP_BRIDGE_URL}"></script>
+					<script data-api-key="${SHOPIFY_API_KEY}" src="${APP_BRIDGE_URL}" />
 					<script>
 						window.open(
 							${JSON.stringify(windowUrl.toString())},
