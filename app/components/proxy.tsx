@@ -5,12 +5,13 @@ import {
 	createContext,
 	useContext,
 	useEffect,
+	useMemo,
 	useState,
-} from "react";
+} from 'react';
 import {
 	Form as ReactRouterForm,
 	type FormProps as ReactRouterFormProps,
-} from "react-router";
+} from 'react-router';
 
 export interface FormProps extends ReactRouterFormProps {
 	action: string;
@@ -21,11 +22,11 @@ export function Form(props: FormProps) {
 
 	if (!context) {
 		throw new Error(
-			"Proxy.Form must be used within an Proxy.Provider component",
+			'Proxy.Form must be used within an Proxy.Provider component',
 		);
 	}
 
-	const { children, action, ...otherProps } = props;
+	const {children, action, ...otherProps} = props;
 
 	return (
 		<ReactRouterForm action={context.formatUrl(action, false)} {...otherProps}>
@@ -60,11 +61,11 @@ export function Link(props: LinkProps) {
 
 	if (!context) {
 		throw new Error(
-			"Proxy.Link must be used within an Proxy.Provider component",
+			'Proxy.Link must be used within an Proxy.Provider component',
 		);
 	}
 
-	const { children, href, ...otherProps } = props;
+	const {children, href, ...otherProps} = props;
 
 	return (
 		<a href={context.formatUrl(href)} {...otherProps}>
@@ -79,19 +80,22 @@ export interface ProviderProps {
 }
 
 export function Provider(props: ProviderProps) {
-	const { children, appUrl } = props;
+	const {children, appUrl} = props;
 	const [requestUrl, setRequestUrl] = useState<URL | undefined>();
 
 	useEffect(() => setRequestUrl(new URL(window.location.href)), []);
 
+	const value = useMemo(
+		() => ({
+			appUrl,
+			formatUrl: formatProxyUrl(requestUrl),
+			requestUrl,
+		}),
+		[appUrl, requestUrl],
+	);
+
 	return (
-		<Context.Provider
-			value={{
-				appUrl,
-				requestUrl,
-				formatUrl: formatProxyUrl(requestUrl),
-			}}
-		>
+		<Context.Provider value={value}>
 			<base href={appUrl} />
 
 			{children}
@@ -107,10 +111,10 @@ function formatProxyUrl(requestUrl: URL | undefined): FormatUrlFunction {
 
 		let finalUrl = url;
 
-		if (addOrigin && requestUrl && finalUrl.startsWith("/")) {
+		if (addOrigin && requestUrl && finalUrl.startsWith('/')) {
 			finalUrl = new URL(`${requestUrl.origin}${url}`).href;
 		}
-		if (!finalUrl.endsWith("/")) {
+		if (!finalUrl.endsWith('/')) {
 			finalUrl = `${finalUrl}/`;
 		}
 

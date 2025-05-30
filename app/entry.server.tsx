@@ -1,15 +1,15 @@
-import { createInstance } from "i18next";
-import { isbot } from "isbot";
-import { renderToReadableStream } from "react-dom/server";
-import { I18nextProvider, initReactI18next } from "react-i18next";
+import i18next from 'i18next';
+import {isbot} from 'isbot';
+import {renderToReadableStream} from 'react-dom/server';
+import {I18nextProvider, initReactI18next} from 'react-i18next';
 import {
 	type AppLoadContext,
 	type EntryContext,
 	ServerRouter,
-} from "react-router";
+} from 'react-router';
 
-import i18n, { LanguageDetector } from "./i18n";
-import * as shopify from "./shopify.server";
+import i18n, {LanguageDetector} from './i18n';
+import * as shopify from './shopify.server';
 
 export default async function handleRequest(
 	request: Request,
@@ -20,8 +20,7 @@ export default async function handleRequest(
 ) {
 	shopify.utils.addHeaders(request, responseHeaders);
 
-	const instance = createInstance();
-	await instance
+	await i18next
 		.use(initReactI18next)
 		.use(LanguageDetector)
 		.init({
@@ -32,19 +31,18 @@ export default async function handleRequest(
 			},
 		});
 
-	const userAgent = request.headers.get("User-Agent");
+	const userAgent = request.headers.get('User-Agent');
 	const body = await renderToReadableStream(
-		<I18nextProvider defaultNS={i18n.defaultNS} i18n={instance}>
+		<I18nextProvider defaultNS={i18n.defaultNS} i18n={i18next}>
 			<ServerRouter context={routerContext} url={request.url} />
 		</I18nextProvider>,
 		{
 			signal: request.signal,
 			onError(error: unknown) {
-				// biome-ignore lint/style/noParameterAssign: upstream
+				// eslint-disable-next-line no-param-reassign
 				responseStatus = 500;
 				if (!request.signal.aborted) {
-					// Log streaming rendering errors from inside the shell
-					console.error("entry.server.onError", error);
+					console.error('entry.server.onError', error);
 				}
 			},
 		},
@@ -55,10 +53,10 @@ export default async function handleRequest(
 	if ((userAgent && isbot(userAgent)) || routerContext.isSpaMode) {
 		await body.allReady;
 	} else {
-		responseHeaders.set("Transfer-Encoding", "chunked");
+		responseHeaders.set('Transfer-Encoding', 'chunked');
 	}
 
-	responseHeaders.set("Content-Type", "text/html");
+	responseHeaders.set('Content-Type', 'text/html');
 	return new Response(body, {
 		headers: responseHeaders,
 		status: responseStatus,

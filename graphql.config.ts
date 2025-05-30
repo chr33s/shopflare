@@ -1,10 +1,11 @@
-import fs from "node:fs";
-import { ApiType, shopifyApiProject } from "@shopify/api-codegen-preset";
-import type { IGraphQLProject, IGraphQLProjects } from "graphql-config";
+import fs from 'node:fs';
+
+import {ApiType, shopifyApiProject} from '@shopify/api-codegen-preset';
+import type {IGraphQLProject, IGraphQLProjects} from 'graphql-config';
+
+import {API_VERSION} from './app/const';
 
 type Config = IGraphQLProject & IGraphQLProjects;
-
-import { API_VERSION } from "./app/const";
 
 function getConfig() {
 	const config: Config = {
@@ -12,8 +13,8 @@ function getConfig() {
 			default: shopifyApiProject({
 				apiType: ApiType.Admin,
 				apiVersion: API_VERSION,
-				documents: ["./app/**/*.{ts,tsx}"],
-				outputDir: "./app/types",
+				documents: ['./app/**/*.{ts,tsx}'],
+				outputDir: './app/types',
 			}),
 		},
 		schema: `https://shopify.dev/admin-graphql-direct-proxy/${API_VERSION}`,
@@ -21,7 +22,7 @@ function getConfig() {
 
 	let extensions: string[] = [];
 	try {
-		extensions = fs.readdirSync("./extensions");
+		extensions = fs.readdirSync('./extensions');
 	} catch {
 		// ignore if no extensions
 	}

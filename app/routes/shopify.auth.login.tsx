@@ -1,21 +1,22 @@
-import { useTranslation } from "react-i18next";
-import { redirect } from "react-router";
+import {useTranslation} from 'react-i18next';
+import {redirect} from 'react-router';
 
-import { APP_BRIDGE_UI_URL, APP_BRIDGE_URL } from "~/const";
-import * as shopify from "~/shopify.server";
-import type { Route } from "./+types/shopify.auth.login";
+import {APP_BRIDGE_UI_URL, APP_BRIDGE_URL} from '~/const';
+import * as shopify from '~/shopify.server';
 
-export async function loader({ context, request }: Route.LoaderArgs) {
-	return action({ context, request } as Route.ActionArgs);
+import type {Route} from './+types/shopify.auth.login';
+
+export async function loader({context, request}: Route.LoaderArgs) {
+	return action({context, request} as Route.ActionArgs);
 }
 
 export default function AuthLogin({
 	actionData,
 	loaderData,
 }: Route.ComponentProps) {
-	const { errors } = actionData ?? loaderData ?? {};
+	const {errors} = actionData ?? loaderData ?? {};
 
-	const { t } = useTranslation();
+	const {t} = useTranslation();
 
 	return (
 		<>
@@ -23,17 +24,17 @@ export default function AuthLogin({
 			<script src={APP_BRIDGE_UI_URL} />
 
 			<s-page inlineSize="small">
-				<s-section heading={t("login")}>
-					<form method="post" style={{ minWidth: "250px" }}>
+				<s-section heading={t('login')}>
+					<form method="post" style={{minWidth: '250px'}}>
 						<s-stack gap="base">
 							<s-text-field
 								error={errors?.shop}
-								label={t("shopDomain")}
+								label={t('shopDomain')}
 								name="shop"
 								placeholder="example.myshopify.com"
 							/>
 							<s-button type="submit" variant="primary">
-								{t("login")}
+								{t('login')}
 							</s-button>
 						</s-stack>
 					</form>
@@ -43,32 +44,32 @@ export default function AuthLogin({
 	);
 }
 
-export async function action({ context, request }: Route.ActionArgs) {
+export async function action({context, request}: Route.ActionArgs) {
 	const apiKey = shopify.config(context).SHOPIFY_API_KEY;
 
 	const url = new URL(request.url);
-	let shop = url.searchParams.get("shop");
-	if (request.method === "GET" && !shop) {
-		return { apiKey };
+	let shop = url.searchParams.get('shop');
+	if (request.method === 'GET' && !shop) {
+		return {apiKey};
 	}
 
 	if (!shop) {
-		shop = (await request.formData()).get("shop") as string;
+		shop = (await request.formData()).get('shop') as string;
 	}
 	if (!shop) {
-		return { errors: { shop: "MISSING_SHOP" } };
+		return {errors: {shop: 'MISSING_SHOP'}};
 	}
 
 	const shopWithoutProtocol = shop
-		.replace(/^https?:\/\//, "")
-		.replace(/\/$/, "");
+		.replace(/^https?:\/\//, '')
+		.replace(/\/$/, '');
 	const shopWithDomain =
-		shop?.indexOf(".") === -1
+		shop?.indexOf('.') === -1
 			? `${shopWithoutProtocol}.myshopify.com`
 			: shopWithoutProtocol;
 	const sanitizedShop = shopify.utils.sanitizeShop(shopWithDomain);
 	if (!sanitizedShop) {
-		return { errors: { shop: "INVALID_SHOP" } };
+		return {errors: {shop: 'INVALID_SHOP'}};
 	}
 
 	const adminPath = shopify.utils.legacyUrlToShopAdminUrl(sanitizedShop);
@@ -76,4 +77,4 @@ export async function action({ context, request }: Route.ActionArgs) {
 	throw redirect(redirectUrl);
 }
 
-export { headers, links } from "./app";
+export {headers, links} from './app';

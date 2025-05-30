@@ -1,28 +1,29 @@
-import resources from "virtual:i18next-loader";
-import type { InitOptions, LanguageDetectorModule, Services } from "i18next";
+import resources from 'virtual:i18next-loader';
+import type {InitOptions, LanguageDetectorModule, Services} from 'i18next';
 
 const i18n = {
 	debug: false,
-	defaultNS: "app",
-	fallbackLng: "en",
+	defaultNS: 'app',
+	fallbackLng: 'en',
 	interpolation: {
-		escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
+		// react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
+		escapeValue: false,
 	},
-	ns: ["app", "polaris", "proxy"],
+	ns: ['app', 'proxy'],
 	resources,
-	supportedLngs: ["en"],
+	supportedLngs: ['en'],
 } satisfies InitOptions;
 
 export default i18n;
 
-export type DetectorOptions = {
+export interface DetectorOptions {
 	headers: Headers;
 	searchParams: URLSearchParams;
-};
+}
 
 export class LanguageDetector implements LanguageDetectorModule {
-	public type = "languageDetector" as const;
-	static type = "languageDetector" as const;
+	static type = 'languageDetector' as const;
+	public type = 'languageDetector' as const;
 
 	#options: DetectorOptions;
 	#i18n: InitOptions;
@@ -39,19 +40,21 @@ export class LanguageDetector implements LanguageDetectorModule {
 	public detect() {
 		let locale: string | null | undefined;
 
-		const param = "locale";
+		const param = 'locale';
 		if (this.#options?.searchParams?.has(param)) {
-			locale = this.#options.searchParams.get(param); // shopify admin
+			// shopify admin
+			locale = this.#options.searchParams.get(param);
 		}
 
-		const header = "accept-language";
+		const header = 'accept-language';
 		if (!locale && this.#options?.headers?.has(header)) {
+			// shopify storefront
 			locale = this.#options?.headers
 				.get(header)
 				?.match(/[a-z-_]{2,5}/i)
-				?.at(0); // shopify storefront
+				?.at(0);
 		}
-		locale = locale?.split("-").at(0);
+		locale = locale?.split('-').at(0);
 
 		const supportedLngs = this.#i18n?.supportedLngs || i18n.supportedLngs;
 		if (locale && !supportedLngs.includes(locale)) {
@@ -62,6 +65,6 @@ export class LanguageDetector implements LanguageDetectorModule {
 			const fallbackLng = this.#i18n?.fallbackLng || i18n.fallbackLng;
 			locale = Array.isArray(fallbackLng) ? fallbackLng[0] : fallbackLng;
 		}
-		return locale || "en";
+		return locale || 'en';
 	}
 }

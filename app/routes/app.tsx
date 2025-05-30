@@ -1,59 +1,59 @@
-import { NavMenu, useAppBridge } from "@shopify/app-bridge-react";
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { Link, Outlet, useNavigate, useNavigation } from "react-router";
+import {NavMenu, useAppBridge} from '@shopify/app-bridge-react';
+import {useEffect} from 'react';
+import {useTranslation} from 'react-i18next';
+import {Link, Outlet, useNavigate, useNavigation} from 'react-router';
 
-import { APP_BRIDGE_UI_URL, APP_BRIDGE_URL } from "~/const";
-import * as shopify from "~/shopify.server";
-import type { Route } from "./+types/app";
-import css from "./app.css?url";
+import {APP_BRIDGE_UI_URL, APP_BRIDGE_URL} from '~/const';
+import * as shopify from '~/shopify.server';
 
-export async function loader({ context, request }: Route.LoaderArgs) {
+import type {Route} from './+types/app';
+import css from './app.css?url';
+
+export async function loader({context, request}: Route.LoaderArgs) {
 	try {
 		await shopify.admin(context, request);
 
 		const config = shopify.config(context);
 		return {
-			appDebug: config.SHOPIFY_APP_LOG_LEVEL === "debug",
+			appDebug: config.SHOPIFY_APP_LOG_LEVEL === 'debug',
 			appHandle: config.SHOPIFY_APP_HANDLE,
 			apiKey: config.SHOPIFY_API_KEY,
 		};
-		// biome-ignore lint/suspicious/noExplicitAny: catch(err)
 	} catch (error: any) {
 		if (error instanceof Response) return error;
 
 		return new Response(error.message, {
 			status: error.status,
-			statusText: "Unauthorized",
+			statusText: 'Unauthorized',
 		});
 	}
 }
 
-export default function App({ loaderData }: Route.ComponentProps) {
-	const { appHandle, apiKey } = loaderData;
+export default function App({loaderData}: Route.ComponentProps) {
+	const {appHandle, apiKey} = loaderData;
 
 	const navigate = useNavigate();
 	useEffect(() => {
-		// biome-ignore lint/suspicious/noExplicitAny: upstream
 		const handleNavigate = (event: any) => {
-			const href = event.target.getAttribute("href");
+			const href = event.target.getAttribute('href');
 			if (href) navigate(href);
 		};
 
-		document.addEventListener("shopify:navigate", handleNavigate);
+		document.addEventListener('shopify:navigate', handleNavigate);
 		return () => {
-			document.removeEventListener("shopify:navigate", handleNavigate);
+			document.removeEventListener('shopify:navigate', handleNavigate);
 		};
 	}, [navigate]);
 
 	const shopify = useAppBridge();
 	const navigation = useNavigation();
-	const isNavigating = navigation.state !== "idle" || !!navigation.location;
+	const isNavigating =
+		navigation.state !== 'idle' || Boolean(navigation.location);
 	useEffect(() => {
 		shopify.loading(isNavigating);
 	}, [isNavigating, shopify]);
 
-	const { t } = useTranslation();
+	const {t} = useTranslation();
 
 	return (
 		<>
@@ -62,13 +62,13 @@ export default function App({ loaderData }: Route.ComponentProps) {
 
 			<NavMenu>
 				<Link rel="home" to="/app">
-					{t("app")}
+					{t('app')}
 				</Link>
 				<Link
 					target="_top"
 					to={`shopify://admin/charges/${appHandle}/pricing_plans`}
 				>
-					{t("pricingPlans")}
+					{t('pricingPlans')}
 				</Link>
 			</NavMenu>
 
@@ -79,15 +79,13 @@ export default function App({ loaderData }: Route.ComponentProps) {
 
 export function ErrorBoundary(error: Route.ErrorBoundaryProps) {
 	if (
-		error.constructor.name === "ErrorResponse" ||
-		error.constructor.name === "ErrorResponseImpl"
+		error.constructor.name === 'ErrorResponse' ||
+		error.constructor.name === 'ErrorResponseImpl'
 	) {
 		return (
 			<div
-				// biome-ignore lint/security/noDangerouslySetInnerHtml: framework
 				dangerouslySetInnerHTML={{
-					// biome-ignore lint/suspicious/noExplicitAny: upsteam
-					__html: (error as any).data || "Handling response",
+					__html: (error as any).data || 'Handling response',
 				}}
 			/>
 		);
@@ -95,7 +93,7 @@ export function ErrorBoundary(error: Route.ErrorBoundaryProps) {
 
 	throw error;
 }
-ErrorBoundary.displayName = "AppErrorBoundary";
+ErrorBoundary.displayName = 'AppErrorBoundary';
 
 export function headers({
 	parentHeaders,
@@ -115,22 +113,22 @@ export function headers({
 }
 
 export const links: Route.LinksFunction = () => [
-	{ href: "https://cdn.shopify.com", rel: "preconnect" },
-	{ as: "script", href: APP_BRIDGE_URL, rel: "preload" },
-	{ as: "script", href: APP_BRIDGE_UI_URL, rel: "preload" },
+	{href: 'https://cdn.shopify.com', rel: 'preconnect'},
+	{as: 'script', href: APP_BRIDGE_URL, rel: 'preload'},
+	{as: 'script', href: APP_BRIDGE_UI_URL, rel: 'preload'},
 	{
-		href: "https://cdn.shopify.com/static/fonts/inter/v4/styles.css",
-		precedence: "default",
-		rel: "stylesheet",
+		href: 'https://cdn.shopify.com/static/fonts/inter/v4/styles.css',
+		precedence: 'default',
+		rel: 'stylesheet',
 	},
 	{
 		href: css,
-		precedence: "default",
-		rel: "stylesheet",
+		precedence: 'default',
+		rel: 'stylesheet',
 	},
 ];
 
-export const meta: Route.MetaFunction = ({ data }: Route.MetaArgs) => [
-	data?.appDebug ? { name: "shopify-debug", content: "web-vitals" } : {},
-	{ name: "shopify-experimental-features", content: "keepAlive" },
+export const meta: Route.MetaFunction = ({data}: Route.MetaArgs) => [
+	data?.appDebug ? {name: 'shopify-debug', content: 'web-vitals'} : {},
+	{name: 'shopify-experimental-features', content: 'keepAlive'},
 ];

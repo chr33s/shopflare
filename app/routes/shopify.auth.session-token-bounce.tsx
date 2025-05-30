@@ -1,18 +1,19 @@
-import { redirect } from "react-router";
+import {redirect} from 'react-router';
 
-import { APP_BRIDGE_URL } from "~/const";
-import * as shopify from "~/shopify.server";
-import type { Route } from "./+types/shopify.auth.session-token-bounce";
+import {APP_BRIDGE_URL} from '~/const';
+import * as shopify from '~/shopify.server';
 
-export async function loader({ context, request }: Route.LoaderArgs) {
+import type {Route} from './+types/shopify.auth.session-token-bounce';
+
+export async function loader({context, request}: Route.LoaderArgs) {
 	const url = new URL(request.url);
-	const shop = shopify.utils.sanitizeShop(url.searchParams.get("shop")!);
+	const shop = shopify.utils.sanitizeShop(url.searchParams.get('shop')!);
 	if (!shop) {
-		return redirect("/shopify/auth/login");
+		return redirect('/shopify/auth/login');
 	}
 
 	const headers = new Headers({
-		"content-type": "text/html;charset=utf-8",
+		'Content-Type': 'text/html;charset=utf-8',
 	});
 	shopify.utils.addHeaders(request, headers);
 
@@ -22,6 +23,6 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 			<meta name="shopify-api-key" content="${config.SHOPIFY_API_KEY}" />
 			<script src="${APP_BRIDGE_URL}"></script>
 		</head>`,
-		{ headers },
+		{headers},
 	);
 }

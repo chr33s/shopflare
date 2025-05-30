@@ -1,10 +1,10 @@
-import { expect, test } from "vitest";
-import { render } from "vitest-browser-react";
+import {expect, test} from 'vitest';
+import {render} from 'vitest-browser-react';
 
-import Index from "./index";
+import Index from './index';
 
-test("loads and displays h1", async () => {
+test('loads and displays h1', async () => {
 	const screen = render(<Index />);
-	const heading = screen.getByTestId("h1");
-	await expect.element(heading).toHaveTextContent("ShopFlare");
+	const heading = screen.getByTestId('h1');
+	await expect.element(heading).toHaveTextContent('ShopFlare');
 });

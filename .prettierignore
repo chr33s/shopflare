@@ -1,0 +1,3 @@
+app/types/*.json
+app/types/*.d.ts
+worker-configuration.d.ts

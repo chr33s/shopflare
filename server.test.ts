@@ -3,28 +3,28 @@ import {
 	createExecutionContext,
 	env,
 	waitOnExecutionContext,
-} from "cloudflare:test";
-import { afterEach, expect, test, vi } from "vitest";
+} from 'cloudflare:test';
+import {afterEach, expect, test, vi} from 'vitest';
 
-import server from "./server";
+import server from './server';
 
 afterEach(() => {
 	vi.restoreAllMocks();
 });
 
-test("fetch", async () => {
-	const response = await SELF.fetch("http://example.com");
-	expect(await response.text()).toContain("<title>ShopFlare</title>");
+test('fetch', async () => {
+	const response = await SELF.fetch('http://example.com');
+	expect(await response.text()).toContain('<title>ShopFlare</title>');
 	expect(response.status).toBe(200);
 });
 
+// eslint-disable-next-line no-warning-comments
 // FIXME: upstream bundler issue
-test.skip("worker", async () => {
-	const request = new Request("http://example.com");
+test.skip('worker', async () => {
+	const request = new Request('http://example.com');
 	const ctx = createExecutionContext();
-	// biome-ignore lint/suspicious/noExplicitAny: upstream
 	const response = await server.fetch(request as any, env as Env, ctx);
 	await waitOnExecutionContext(ctx);
-	expect(await response.text()).toContain("<title>ShopFlare</title>");
+	expect(await response.text()).toContain('<title>ShopFlare</title>');
 	expect(response.status).toBe(200);
 });

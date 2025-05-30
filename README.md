@@ -44,7 +44,7 @@ npm install
 cp .env.example .env                                    # update vars to match your env values from partners.shopify.com (Apps > All Apps > Create App)
 # vi [wrangler.json, shopify.app.toml]                  # update vars[SHOPIFY_API_KEY, SHOPIFY_APP_URL], SHOPIFY_APP_URL is the cloudflare tunnel url (e.g. https://shopflare.trycloudflare.com) in development and the cloudflare worker url (e.g. https://shopflare.workers.dev) in other environments.
 npx wrangler secret put SHOPIFY_API_SECRET_KEY
-npx wrangler kv namespace create shopflare              # update wranglers.json#kv_namespaces[0].id 
+npx wrangler kv namespace create shopflare              # update wranglers.json#kv_namespaces[0].id
 gh secret set --app=actions CLOUDFLARE_API_TOKEN        # value from dash.cloudflare.com (Manage Account > Account API Tokens > Create Token)
 gh secret set --app=actions SHOPIFY_CLI_PARTNERS_TOKEN  # value from partners.shopify.com (Settings > CLI Token > Manage Tokens > Generate Token)
 gh variable set SHOPIFY_API_KEY
@@ -88,9 +88,9 @@ export async function loader({context, request}) {
   const {data, errors} = await client.request(`query { shop { name } }`);
 
   shopify.redirect(context, request, {shop, url});
-  shopify.session(context).get(sessionId);   // set(id, value | null);
+  shopify.session(context).get(sessionId); // set(id, value | null);
   shopify.utils.addCorsHeaders(context, request, responseHeaders);
-  shopify.client({ accessToken, shop }).admin(); // [admin | storefront](headers?)
+  shopify.client({accessToken, shop}).admin(); // [admin | storefront](headers?)
 }
 ```
 

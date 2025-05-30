@@ -1,12 +1,10 @@
 {
-	"biome.enabled": true,
-	"biome.lspBin": "node_modules/@biomejs/biome/bin/biome",
+	"eslint.enable": true,
+	"eslint.useFlatConfig": true,
 	"editor.codeActionsOnSave": {
-		"quickfix.biome": "explicit",
-		"source.fixAll.biome": "explicit",
-		"source.organizeImports.biome": "explicit"
+		"source.fixAll.eslint": "explicit"
 	},
-	"editor.defaultFormatter": "biomejs.biome",
+	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
 	"files.associations": {
 		".*.vars": "properties",
 		".env*": "properties"

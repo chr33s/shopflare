@@ -10,8 +10,7 @@ function addGitHook() {
 		"#!/usr/bin/env sh" \
 		"set -eu" \
 		"" \
-		"npx @biomejs/biome check --staged --files-ignore-unknown=true --no-errors-on-unmatched" \
-		"npx tsc --noEmit" \
+		"npm run check" \
 		> .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
 }

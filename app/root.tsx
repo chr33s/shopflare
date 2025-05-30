@@ -1,5 +1,5 @@
-import type { PropsWithChildren } from "react";
-import { useTranslation } from "react-i18next";
+import type {PropsWithChildren} from 'react';
+import {useTranslation} from 'react-i18next';
 import {
 	Links,
 	Meta,
@@ -7,24 +7,24 @@ import {
 	Scripts,
 	ScrollRestoration,
 	isRouteErrorResponse,
-} from "react-router";
+} from 'react-router';
 
-import type { Route } from "./+types/root";
+import type {Route} from './+types/root';
 
 export default function App() {
 	return <Outlet />;
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-	let message = "Oops!";
-	let details = "An unexpected error occurred.";
+export function ErrorBoundary({error}: Route.ErrorBoundaryProps) {
+	let message = 'Oops!';
+	let details = 'An unexpected error occurred.';
 	let stack: string | undefined;
 
 	if (isRouteErrorResponse(error)) {
-		message = error.status === 404 ? "404" : "Error";
+		message = error.status === 404 ? '404' : 'Error';
 		details =
 			error.status === 404
-				? "The requested page could not be found."
+				? 'The requested page could not be found.'
 				: error.statusText || details;
 	} else if (import.meta.env.DEV && error && error instanceof Error) {
 		details = error.message;
@@ -34,14 +34,14 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 	return (
 		<main
 			style={{
-				alignItems: "center",
-				display: "flex",
-				height: "100vh",
-				justifyContent: "center",
-				width: "100vw",
+				alignItems: 'center',
+				display: 'flex',
+				height: '100vh',
+				justifyContent: 'center',
+				width: '100vw',
 			}}
 		>
-			<div style={{ textAlign: "center" }}>
+			<div style={{textAlign: 'center'}}>
 				<h1>{message}</h1>
 				<p>{details}</p>
 				{stack && (
@@ -53,10 +53,10 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 		</main>
 	);
 }
-ErrorBoundary.displayName = "RootErrorBoundary";
+ErrorBoundary.displayName = 'RootErrorBoundary';
 
-export function Layout({ children }: PropsWithChildren) {
-	const { i18n } = useTranslation();
+export function Layout({children}: PropsWithChildren) {
+	const {i18n} = useTranslation();
 
 	return (
 		<html dir={i18n.dir()} lang={i18n.language} suppressHydrationWarning>
@@ -76,6 +76,6 @@ export function Layout({ children }: PropsWithChildren) {
 }
 
 export const meta: Route.MetaFunction = () => [
-	{ title: "ShopFlare" },
-	{ name: "description", content: "..." },
+	{title: 'ShopFlare'},
+	{name: 'description', content: '...'},
 ];

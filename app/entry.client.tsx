@@ -1,10 +1,10 @@
-import i18next from "i18next";
-import { StrictMode, startTransition } from "react";
-import { hydrateRoot } from "react-dom/client";
-import { I18nextProvider, initReactI18next } from "react-i18next";
-import { HydratedRouter } from "react-router/dom";
+import i18next from 'i18next';
+import {StrictMode, startTransition} from 'react';
+import {hydrateRoot} from 'react-dom/client';
+import {I18nextProvider, initReactI18next} from 'react-i18next';
+import {HydratedRouter} from 'react-router/dom';
 
-import i18n, { LanguageDetector } from "./i18n";
+import i18n, {LanguageDetector} from './i18n';
 
 async function hydrate() {
 	await i18next

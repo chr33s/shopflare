@@ -23,8 +23,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version-file: "package.json"
-          cache: "npm"
+          node-version-file: 'package.json'
+          cache: 'npm'
       - run: npm ci
       - run: npm install -g @shopify/cli@latest
       - run: npx shopify app build
@@ -48,8 +48,8 @@ jobs:
           name: extensions
       - uses: actions/setup-node@v4
         with:
-          node-version-file: "package.json"
-          cache: "npm"
+          node-version-file: 'package.json'
+          cache: 'npm'
       - run: npm install -g @shopify/cli@latest
       - run: npx shopify app deploy --force --message="${{ github.ref_name }}" --no-release --source-control-url="$COMMIT_URL" --version="deploy:${{ github.sha }}"
         env:
@@ -69,10 +69,9 @@ jobs:
           name: extensions
       - uses: actions/setup-node@v4
         with:
-          node-version-file: "package.json"
-          cache: "npm"
+          node-version-file: 'package.json'
+          cache: 'npm'
       - run: npm install -g @shopify/cli@latest
       - run: npx shopify app release --force --version="release:${{ github.sha }}"
         env:
           SHOPIFY_CLI_PARTNERS_TOKEN: ${{ secrets.SHOPIFY_CLI_PARTNERS_TOKEN }}
-
