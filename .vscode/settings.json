@@ -1,14 +1,13 @@
 {
-	"eslint.enable": true,
-	"eslint.useFlatConfig": true,
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": "explicit"
 	},
 	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+	"eslint.enable": true,
 	"files.associations": {
 		".*.vars": "properties",
 		".env*": "properties"
 	},
-	"typescript.tsdk": "node_modules/typescript/lib",
-	"typescript.enablePromptUseWorkspaceTsdk": true
+	"typescript.enablePromptUseWorkspaceTsdk": true,
+	"typescript.tsdk": "node_modules/typescript/lib"
 }
