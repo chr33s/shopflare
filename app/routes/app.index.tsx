@@ -10,9 +10,9 @@ import type {ShopQuery} from '~/types/admin.generated';
 import type {Route} from './+types/app.index';
 
 export async function loader({context, request}: Route.LoaderArgs) {
-	const {client} = await shopify.admin(context, request);
+	return shopify.handler(async () => {
+		const {client} = await shopify.admin(context, request);
 
-	try {
 		const {data, errors} = await client.request<ShopQuery>(/* GraphQL */ `
 			#graphql
 			query Shop {
@@ -28,28 +28,7 @@ export async function loader({context, request}: Route.LoaderArgs) {
 			data,
 			errors,
 		};
-	} catch (error) {
-		if (error instanceof Response) return error;
-		if (error instanceof shopify.Exception) {
-			switch (error.type) {
-				case 'GRAPHQL':
-					return {errors: error.errors};
-
-				default:
-					return new Response(error.message, {
-						status: error.status,
-					});
-			}
-		}
-
-		return data(
-			{
-				data: undefined,
-				errors: [{message: 'Unknown Error'}],
-			},
-			500,
-		);
-	}
+	});
 }
 
 export async function clientLoader({serverLoader}: Route.ClientLoaderArgs) {

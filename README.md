@@ -80,14 +80,18 @@ To split environments see [Cloudflare](https://developers.cloudflare.com/workers
 import * as shopify from '~/shopify.server';
 
 export async function loader({context, request}) {
-  const {client} = await shopify.admin(context, request); // shopify[admin | proxy | webhook](context, request);
-  const {data, errors} = await client.request(`query { shop { name } }`);
+  return shopify.handler(async () => {
+    const {client} = await shopify.admin(context, request); // shopify[admin | proxy | webhook](context, request);
+    const {data, errors} = await client.request(`query { shop { name } }`);
 
-  shopify.config(context);
-  shopify.client({accessToken, shop}).admin(); // [admin | storefront](headers?)
-  shopify.redirect(context, request, {shop, url});
-  shopify.session(context).get(sessionId); // set(id, value | null);
-  shopify.utils.addCorsHeaders(context, request, responseHeaders);
+    shopify.config(context);
+    shopify.client({accessToken, shop}).admin(); // [admin | storefront](headers?)
+    shopify.redirect(context, request, {shop, url});
+    shopify.session(context).get(sessionId); // set(id, value | null);
+    shopify.utils.addCorsHeaders(context, request, responseHeaders);
+
+    return {data, errors};
+  });
 }
 
 // Alternative (Backwards compatible)

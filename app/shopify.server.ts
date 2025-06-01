@@ -1,6 +1,10 @@
 import {createGraphQLClient} from '@shopify/graphql-client';
 import {type JWTPayload, jwtVerify} from 'jose';
-import {type AppLoadContext, redirect as routerRedirect} from 'react-router';
+import {
+	type AppLoadContext,
+	data,
+	redirect as routerRedirect,
+} from 'react-router';
 import * as v from 'valibot';
 
 import {API_VERSION, APP_BRIDGE_URL} from './const';
@@ -338,6 +342,37 @@ export class Exception extends Error {
 			errors: [],
 			...(options ?? {}),
 		});
+	}
+}
+
+export async function handler<T>(fn: () => Promise<T>) {
+	try {
+		return fn();
+	} catch (error) {
+		if (error instanceof Response) return error;
+		if (error instanceof Exception) {
+			switch (error.type) {
+				case 'GRAPHQL': {
+					return {
+						data: undefined,
+						errors: error.errors,
+					};
+				}
+
+				default: {
+					return new Response(error.message, {
+						status: error.status,
+					});
+				}
+			}
+		}
+		return data(
+			{
+				data: undefined,
+				errors: [{message: 'Unknown Error'}],
+			},
+			500,
+		);
 	}
 }
 
