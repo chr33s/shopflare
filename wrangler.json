@@ -1,7 +1,7 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "shopflare",
-	"compatibility_date": "2025-04-10",
+	"compatibility_date": "2025-06-01",
 	"main": "./server.ts",
 	"assets": {
 		"binding": "ASSETS",
@@ -13,7 +13,7 @@
 	},
 	"kv_namespaces": [
 		{
-			"binding": "SESSION_STORAGE",
+			"binding": "SESSION_KV",
 			"id": "?"
 		}
 	],
@@ -44,6 +44,7 @@
 	"vars": {
 		"NODE_VERSION": 22,
 		"SHOPIFY_API_KEY": "",
+		"SHOPIFY_APP_HANDLE": "",
 		"SHOPIFY_APP_URL": ""
 	}
 }

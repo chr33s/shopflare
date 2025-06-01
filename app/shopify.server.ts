@@ -568,7 +568,7 @@ export async function redirect(
 }
 
 export function session(context: AppLoadContext) {
-	const kv = context.cloudflare.env.SESSION_STORAGE;
+	const kv = context.cloudflare.env.SESSION_KV;
 
 	async function get(id: string) {
 		if (!id) return;
