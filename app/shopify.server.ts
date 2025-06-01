@@ -51,7 +51,7 @@ export async function admin(context: AppLoadContext, request: Request) {
 				});
 			}
 			decodedSessionToken = payload;
-		} catch (error) {
+		} catch {
 			const isDocumentRequest = !request.headers.has('Authorization');
 			if (isDocumentRequest) {
 				// Remove `id_token` from the query string to prevent an invalid session token sent to the redirect path.

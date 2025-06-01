@@ -1,7 +1,7 @@
 import {useAppBridge} from '@shopify/app-bridge-react';
 import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {data, useFetcher} from 'react-router';
+import {useFetcher} from 'react-router';
 
 import {API_VERSION} from '~/const';
 import * as shopify from '~/shopify.server';

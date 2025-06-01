@@ -87,7 +87,7 @@ export const links: Route.LinksFunction = () => [
 	},
 ];
 
-export const meta: Route.MetaFunction = ({data}: Route.MetaArgs) => [
+export const meta: Route.MetaFunction = () => [
 	{title: 'ShopFlare'},
 	{name: 'description', content: '...'},
 ];

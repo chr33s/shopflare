@@ -41,6 +41,13 @@ export default defineConfig([
 			'id-length': 'off',
 			'import-x/extensions': 'off',
 			'no-console': 'off',
+			'no-unused-vars': [
+				'error',
+				{
+					argsIgnorePattern: '^_',
+					varsIgnorePattern: '^_',
+				},
+			],
 			'react/react-in-jsx-scope': 'off',
 		},
 	},
