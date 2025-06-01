@@ -31,11 +31,10 @@ Familiarity with React, ReactRouter, Cloudflare, Shopify conventions.
 4. cloudflared cli `brew install cloudflared` (optional)
 5. Github cli `brew install gh` (optional)
 
-> [!NOTE]  
-> For wss:// to work on a cloudflare tunnel, you need to set "Additional application settings" > "HTTP Settings" > "HTTP Host Header" to match the service URL (e.g. 127.0.0.1), otherwise the tunnel returns a 502 http status & client connection fails
-
-> [!NOTE]  
-> To bypass caching set: Caching > Cache Rules ["Rule Name" = "bypass cache on tunnel", "Custom filter expression" = "", Field = Hostname, Operator = equals, Value = tunnel url, "Cache eligibility" = "Bypass cache", "Browser TTL" = "Bypass cache" ]
+> [!NOTE]
+>
+> - For wss:// to work on a cloudflare tunnel, you need to set "Additional application settings" > "HTTP Settings" > "HTTP Host Header" to match the service URL (e.g. 127.0.0.1), otherwise the tunnel returns a 502 http status & client connection fails
+> - To bypass caching set: Caching > Cache Rules ["Rule Name" = "bypass cache on tunnel", "Custom filter expression" = "", Field = Hostname, Operator = equals, Value = tunnel url, "Cache eligibility" = "Bypass cache", "Browser TTL" = "Bypass cache" ]
 
 ## Setup
 
@@ -87,10 +86,37 @@ export async function loader({context, request}) {
   const {client} = await shopify.admin(context, request); // shopify[admin | proxy | webhook](context, request);
   const {data, errors} = await client.request(`query { shop { name } }`);
 
+  shopify.config(context);
+  shopify.client({accessToken, shop}).admin(); // [admin | storefront](headers?)
   shopify.redirect(context, request, {shop, url});
   shopify.session(context).get(sessionId); // set(id, value | null);
   shopify.utils.addCorsHeaders(context, request, responseHeaders);
-  shopify.client({accessToken, shop}).admin(); // [admin | storefront](headers?)
+}
+
+// Alternative (Backwards compatible)
+
+import {createShopify} from '~/shopify.server';
+
+export async function loader({context, request}) {
+  const shopify = createShopify(context);
+  const client = shopify.admin(request);
+  const {data, errors} = await client.request(`query { shop { name } }`);
+
+  shopify.config;
+  shopify.redirect(request, {shop, url});
+  shopify.session.get(sessionId); // set(id, value | null);
+  shopify.utils.addCorsHeaders(request, responseHeaders);
+
+  const adminClient = createShopifyClient({
+    accessToken,
+    headers: {'X-Shopify-Access-Token': '?'},
+    shop,
+  });
+  const storefrontClient = createShopifyClient({
+    accessToken,
+    headers: {'X-Shopify-Storefront-Access-Token': '?'},
+    shop,
+  });
 }
 ```
 

@@ -258,6 +258,56 @@ export function config(context: AppLoadContext) {
 
 type Config = ReturnType<typeof config>;
 
+// NOTE: compatibility
+export function createShopify(context: AppLoadContext) {
+	return {
+		admin: (request: Request) =>
+			admin(context, request).then(({client}) => client),
+		config: config(context),
+		proxy: (request: Request) =>
+			proxy(context, request).then(({client}) => client),
+		redirect,
+		session: session(context),
+		utils: {
+			...utils,
+			addCorsHeaders: (request: Request, responseHeaders: Headers) =>
+				utils.addCorsHeaders(context, request, responseHeaders),
+			log: log(config(context).SHOPIFY_APP_LOG_LEVEL),
+			validateHmac: (data: string, hmac: string, encoding: UtilEncoding) =>
+				utils.validateHmac(context, {data, hmac, encoding}),
+		},
+		webhook: (request: Request) =>
+			webhook(context, request).then(({webhook}) => webhook),
+	};
+}
+
+// NOTE: compatibility
+export function createShopifyClient({
+	apiVersion = API_VERSION,
+	headers,
+	shop,
+}: {
+	apiVersion?: string;
+	headers: Record<string, string | string[]>;
+	shop: string;
+}) {
+	const admin = 'X-Shopify-Access-Token';
+	const storefront = 'X-Shopify-Storefront-Access-Token';
+	if (!headers[admin] && !headers[storefront]) {
+		throw new Exception(`Missing auth header [${admin}, ${storefront}]`, {
+			status: 401,
+			type: 'REQUEST',
+		});
+	}
+
+	const accessToken = (headers[admin] ?? headers[storefront]) as string;
+	return client({
+		accessToken,
+		apiVersion,
+		shop,
+	})[headers[storefront] ? 'storefront' : 'admin'](headers);
+}
+
 export class Exception extends Error {
 	errors?: unknown[];
 	status = 500;
