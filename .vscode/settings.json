@@ -8,7 +8,7 @@
 	},
 	"editor.defaultFormatter": "biomejs.biome",
 	"files.associations": {
-		".dev.vars*": "properties",
+		".*.vars": "properties",
 		".env*": "properties"
 	},
 	"typescript.tsdk": "node_modules/typescript/lib",
