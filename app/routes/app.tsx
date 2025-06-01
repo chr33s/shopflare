@@ -3,35 +3,19 @@ import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link, Outlet, useNavigate, useNavigation} from 'react-router';
 
-import {APP_BRIDGE_UI_URL, APP_BRIDGE_URL, APP_LINKS} from '~/const';
-import * as shopify from '~/shopify.server';
+import {
+	API_KEY,
+	APP_BRIDGE_UI_URL,
+	APP_BRIDGE_URL,
+	APP_HANDLE,
+	APP_LINKS,
+	APP_LOG_LEVEL,
+} from '~/const';
 import rootCss from '~/root.css?url';
 
 import type {Route} from './+types/app';
 
-export async function loader({context, request}: Route.LoaderArgs) {
-	try {
-		await shopify.admin(context, request);
-
-		const config = shopify.config(context);
-		return {
-			appDebug: config.SHOPIFY_APP_LOG_LEVEL === 'debug',
-			appHandle: config.SHOPIFY_APP_HANDLE,
-			apiKey: config.SHOPIFY_API_KEY,
-		};
-	} catch (error: any) {
-		if (error instanceof Response) return error;
-
-		return new Response(error.message, {
-			status: error.status,
-			statusText: 'Unauthorized',
-		});
-	}
-}
-
-export default function App({loaderData}: Route.ComponentProps) {
-	const {appHandle, apiKey} = loaderData;
-
+export default function App() {
 	const navigate = useNavigate();
 	useEffect(() => {
 		const handleNavigate = (event: any) => {
@@ -57,7 +41,7 @@ export default function App({loaderData}: Route.ComponentProps) {
 
 	return (
 		<>
-			<script data-api-key={apiKey} src={APP_BRIDGE_URL} />
+			<script data-api-key={API_KEY} src={APP_BRIDGE_URL} />
 			<script src={APP_BRIDGE_UI_URL} />
 
 			<NavMenu>
@@ -66,7 +50,7 @@ export default function App({loaderData}: Route.ComponentProps) {
 				</Link>
 				<Link
 					target="_top"
-					to={`shopify://admin/charges/${appHandle}/pricing_plans`}
+					to={`shopify://admin/charges/${APP_HANDLE}/pricing_plans`}
 				>
 					{t('pricingPlans')}
 				</Link>
@@ -121,7 +105,9 @@ export const links: Route.LinksFunction = () => [
 	},
 ];
 
-export const meta: Route.MetaFunction = ({data}: Route.MetaArgs) => [
-	data?.appDebug ? {name: 'shopify-debug', content: 'web-vitals'} : {},
+export const meta: Route.MetaFunction = () => [
+	APP_LOG_LEVEL === 'debug'
+		? {name: 'shopify-debug', content: 'web-vitals'}
+		: {},
 	{name: 'shopify-experimental-features', content: 'keepAlive'},
 ];

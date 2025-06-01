@@ -29,6 +29,7 @@ export async function loader({context, request}: Route.LoaderArgs) {
 			errors,
 		};
 	} catch (error) {
+		if (error instanceof Response) return error;
 		if (error instanceof shopify.Exception) {
 			switch (error.type) {
 				case 'GRAPHQL':

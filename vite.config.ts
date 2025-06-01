@@ -13,6 +13,17 @@ export default defineConfig(({mode}) => {
 	return {
 		base: app.href,
 		clearScreen: false,
+		define: [
+			'SHOPIFY_API_KEY',
+			'SHOPIFY_APP_HANDLE',
+			'SHOPIFY_APP_LOG_LEVEL',
+		].reduce(
+			(a, k) => ({
+				...a,
+				[`import.meta.env.${k}`]: JSON.stringify(env[k]),
+			}),
+			{},
+		),
 		plugins: [
 			i18nextLoader(i18nextLoaderOptions),
 			cloudflare({viteEnvironment: {name: 'ssr'}}),

@@ -1,7 +1,7 @@
 import {useTranslation} from 'react-i18next';
 import {Form, redirect} from 'react-router';
 
-import {APP_BRIDGE_UI_URL} from '~/const';
+import {API_KEY, APP_BRIDGE_UI_URL} from '~/const';
 import * as shopify from '~/shopify.server';
 
 import type {Route} from './+types/index';
@@ -45,13 +45,11 @@ export default function Index({actionData, loaderData}: Route.ComponentProps) {
 	);
 }
 
-export async function action({context, request}: Route.ActionArgs) {
-	const apiKey = shopify.config(context).SHOPIFY_API_KEY;
-
+export async function action({request}: Route.ActionArgs) {
 	const url = new URL(request.url);
 	let shop = url.searchParams.get('shop');
 	if (request.method === 'GET' && !shop) {
-		return {apiKey};
+		return {};
 	}
 
 	if (!shop) {
@@ -74,6 +72,6 @@ export async function action({context, request}: Route.ActionArgs) {
 	}
 
 	const adminPath = shopify.utils.legacyUrlToShopAdminUrl(sanitizedShop);
-	const redirectUrl = `https://${adminPath}/oauth/install?client_id=${apiKey}`;
+	const redirectUrl = `https://${adminPath}/oauth/install?client_id=${API_KEY}`;
 	throw redirect(redirectUrl);
 }
