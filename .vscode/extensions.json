@@ -3,6 +3,8 @@
 		"bierner.comment-tagged-templates",
 		"dbaeumer.vscode-eslint",
 		"EditorConfig.EditorConfig",
-		"GraphQL.vscode-graphql-syntax"
+		"esbenp.prettier-vscode",
+		"GraphQL.vscode-graphql-syntax",
+		"stylelint.vscode-stylelint"
 	]
 }

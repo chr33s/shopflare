@@ -7,9 +7,10 @@
 		"build": "shopify app build",
 		"check": "concurrently 'npm:check:*'",
 		"check:actions": "if command -v actionlint 2>&1 >/dev/null; then actionlint; fi",
-		"check:code": "npm run eslint",
+		"check:css": "npm run stylelint -- '**/*.css'",
+		"check:lint": "npm run eslint",
 		"check:format": "npm run prettier -- --check .",
-		"check:spell": "if command -v cspell 2>&1 >/dev/null; then cspell --gitignore --quiet .; fi",
+		"check:spell": "if command -v cspell 2>&1 >/dev/null; then cspell --cache --cache-location=./node_modules/cache/cspell --gitignore --quiet .; fi",
 		"check:types": "tsc",
 		"clean": "rm -rf .{react-router,shopify,wrangler} build node_modules/.{cache,mf,tmp,vite,vite-temp} && find . -type d -name __screenshots__ -exec rm -rf {} \\;",
 		"deploy": "concurrently 'npm:deploy:*'",
@@ -19,15 +20,17 @@
 		"dev:tunnel": "source .env && shopify app dev --tunnel-url=${SHOPIFY_APP_URL}:${PORT:-8080}",
 		"eslint": "node --experimental-strip-types --no-warnings=ExperimentalWarning $(npm root)/.bin/eslint --cache --cache-location=./node_modules/.cache/eslint --flag=unstable_native_nodejs_ts_config",
 		"fix": "concurrently 'npm:fix:*'",
-		"fix:code": "npm run eslint -- --fix",
+		"fix:css": "npm run stylelint -- --fix '**/*.css'",
 		"fix:format": "npm run prettier -- --write .",
+		"fix:lint": "npm run eslint -- --fix",
 		"gen": "concurrently 'npm:gen:*'",
 		"gen:code": "graphql-codegen --errors-only",
 		"gen:types": "wrangler types && react-router typegen",
 		"postinstall": "patch-package",
-		"prettier": "node --experimental-strip-types --no-warnings=ExperimentalWarning $(npm root)/.bin/prettier --cache --write .",
+		"prettier": "node --experimental-strip-types --no-warnings=ExperimentalWarning $(npm root)/.bin/prettier --cache .",
 		"preview": "vite preview",
 		"start": "wrangler dev",
+		"stylelint": "stylelint --ignore-path=.prettierignore",
 		"test": "vitest --run",
 		"test:e2e": "node --env-file=.env --env-file=.env.test $(npm root)/.bin/playwright test",
 		"tunnel": "source .env && cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}"
@@ -55,6 +58,8 @@
 		"@shopify/app-bridge-ui-types": "0.0.1",
 		"@shopify/eslint-plugin": "50.0.0",
 		"@shopify/prettier-config": "1.1.4",
+		"@shopify/stylelint-plugin": "15.0.2",
+		"@shopify/typescript-configs": "5.1.2",
 		"@types/react": "19.1.6",
 		"@types/react-dom": "19.1.5",
 		"@vitest/browser": "3.1.4",
@@ -63,6 +68,7 @@
 		"happy-dom": "17.5.6",
 		"playwright": "1.52.0",
 		"prettier": "3.5.3",
+		"stylelint": "16.20.0",
 		"typescript": "5.8.3",
 		"vite": "6.3.5",
 		"vite-plugin-i18next-loader": "3.1.2",
@@ -81,5 +87,10 @@
 	"bin": {
 		"shopflare": "./bin.sh"
 	},
-	"prettier": "@shopify/prettier-config"
+	"prettier": "@shopify/prettier-config",
+	"stylelint": {
+		"extends": [
+			"@shopify/stylelint-plugin/prettier"
+		]
+	}
 }

@@ -1,13 +1,16 @@
 {
 	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": "explicit"
+		"source.fixAll.eslint": "explicit",
+		"source.fixAll.stylelint": "explicit"
 	},
-	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"eslint.enable": true,
 	"files.associations": {
 		".*.vars": "properties",
 		".env*": "properties"
 	},
+	"prettier.enable": true,
+	"stylelint.enable": true,
 	"typescript.enablePromptUseWorkspaceTsdk": true,
 	"typescript.tsdk": "node_modules/typescript/lib"
 }
