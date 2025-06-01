@@ -509,7 +509,7 @@ export async function redirect(
 		case target !== '_self' && isEmbedded(request): {
 			const response = new Response(
 				/* html */ `<head>
-					<script data-api-key="${SHOPIFY_API_KEY}" src="${APP_BRIDGE_URL}" />
+					<script data-api-key="${SHOPIFY_API_KEY}" src="${APP_BRIDGE_URL}"></script>
 					<script>
 						window.open(
 							${JSON.stringify(windowUrl.toString())},
