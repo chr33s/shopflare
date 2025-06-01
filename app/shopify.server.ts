@@ -581,11 +581,11 @@ export function createShopify(context: AppLoadContext) {
 		}
 		const optionalHeaders = { subTopic: "X-Shopify-Sub-Topic" };
 		const headers = { ...requiredHeaders, ...optionalHeaders };
-		const webhook = Object.values(headers).reduce(
-			(headers, header) => ({
+		const webhook = Object.entries(headers).reduce(
+			(headers, [key, value]) => ({
 				// biome-ignore lint/performance/noAccumulatingSpread: upstream
 				...headers,
-				[header]: request.headers.get(header),
+				[key]: request.headers.get(value),
 			}),
 			{} as typeof headers,
 		);
