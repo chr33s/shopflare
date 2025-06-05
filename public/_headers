@@ -1,0 +1,5 @@
+/assets/*
+	Allow: GET, HEAD, POST, OPTIONS
+	Access-Control-Allow-Origin: *
+	Access-Control-Allow-Headers: *
+	Access-Control-Allow-Methods: *
