@@ -57,7 +57,7 @@ export default defineConfig((config) => {
 										),
 									},
 								],
-								include: ['server.test.ts', 'app/**/*.server.test.ts'],
+								include: ['app/server.test.ts', 'app/**/*.server.test.ts'],
 								name: 'server',
 								poolOptions: {
 									workers: {
