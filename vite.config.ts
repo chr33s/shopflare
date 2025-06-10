@@ -35,10 +35,8 @@ export default defineConfig(({mode}) => {
 		},
 		server: {
 			allowedHosts: [app.hostname],
-			cors: {
-				origin: true,
-				preflightContinue: true,
-			},
+			// pass cors handling to react-router
+			cors: false,
 			origin: app.origin,
 			port: Number(env.PORT || 8080),
 		},
