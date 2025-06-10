@@ -18,7 +18,7 @@
 		"deploy:shopify": "shopify app deploy --message=$(git rev-parse --abbrev-ref HEAD):$npm_package_version --version=$(git rev-parse HEAD)",
 		"dev": "shopify app dev --localhost-port=8080 --use-localhost",
 		"dev:tunnel": "source .env && shopify app dev --tunnel-url=${SHOPIFY_APP_URL}:${PORT:-8080}",
-		"eslint": "node --experimental-strip-types --no-warnings=ExperimentalWarning $(npm root)/.bin/eslint --cache --cache-location=./node_modules/.cache/eslint --flag=unstable_native_nodejs_ts_config",
+		"eslint": "npm run --silent tsx -- $(npm root)/.bin/eslint --cache --cache-location=./node_modules/.cache/eslint --flag=unstable_native_nodejs_ts_config",
 		"fix": "concurrently 'npm:fix:*'",
 		"fix:css": "npm run stylelint -- --fix '**/*.css'",
 		"fix:format": "npm run prettier -- --write .",
@@ -27,13 +27,14 @@
 		"gen:code": "graphql-codegen --errors-only",
 		"gen:types": "wrangler types && react-router typegen",
 		"logs": "wrangler tail",
-		"prettier": "node --experimental-strip-types --no-warnings=ExperimentalWarning $(npm root)/.bin/prettier --cache .",
+		"prettier": "npm run --silent tsx -- $(npm root)/.bin/prettier --cache .",
 		"preview": "vite preview",
 		"start": "wrangler dev",
 		"stylelint": "stylelint --ignore-path=.prettierignore",
 		"test": "vitest --run",
 		"test:e2e": "node --env-file=.env --env-file=.env.test $(npm root)/.bin/playwright test",
-		"tunnel": "source .env && cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}"
+		"tunnel": "source .env && cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}",
+		"tsx": "run () { node --experimental-strip-types --no-warnings=ExperimentalWarning ${@}; }; run"
 	},
 	"dependencies": {
 		"@shopify/graphql-client": "1.4.0",
