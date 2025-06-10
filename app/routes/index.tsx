@@ -7,6 +7,8 @@ import * as shopify from '~/shopify.server';
 import type {Route} from './+types/index';
 
 export async function loader({context, request}: Route.LoaderArgs) {
+	shopify.log.debug('routes/index#loader');
+
 	const url = new URL(request.url);
 	if (url.searchParams.has('shop')) {
 		return redirect(`/app?${url.searchParams.toString()}`);
@@ -46,6 +48,8 @@ export default function Index({actionData, loaderData}: Route.ComponentProps) {
 }
 
 export async function action({request}: Route.ActionArgs) {
+	shopify.log.debug('routes/app.proxy.index#action');
+
 	const url = new URL(request.url);
 	let shop = url.searchParams.get('shop');
 	if (request.method === 'GET' && !shop) {

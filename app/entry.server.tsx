@@ -42,7 +42,7 @@ export default async function handleRequest(
 				// eslint-disable-next-line no-param-reassign
 				responseStatus = 500;
 				if (!request.signal.aborted) {
-					console.error('entry.server.onError', error);
+					shopify.log.error('entry.server.onError', error);
 				}
 			},
 		},

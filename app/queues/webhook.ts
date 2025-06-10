@@ -8,6 +8,7 @@ export async function queue(
 ) {
 	for (const message of batch.messages) {
 		const {session, webhook} = message.body;
+		shopify.log.debug('queues/webhook', webhook.webhookId);
 
 		switch (webhook.topic) {
 			case 'APP_UNINSTALLED':

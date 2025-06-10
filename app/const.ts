@@ -15,5 +15,5 @@ export const APP_LINKS = [
 		rel: 'stylesheet',
 	},
 ];
-export const APP_LOG_LEVEL = import.meta.env.SHOPIFY_APP_LOG_LEVEL;
+export const APP_LOG_LEVEL = import.meta.env.SHOPIFY_APP_LOG_LEVEL ?? 'error';
 export const APP_URL = import.meta.env.SHOPIFY_APP_URL;

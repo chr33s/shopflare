@@ -5,7 +5,7 @@ import type {Route} from './+types/shopify.webhooks';
 export async function action({context, request}: Route.ActionArgs) {
 	try {
 		const {session, webhook} = await shopify.webhook(context, request);
-		console.log('routes/shopify.webhooks#action:', webhook.webhookId);
+		shopify.log.debug('routes/shopify.webhooks#action', webhook.webhookId);
 
 		if (context.cloudflare.env.WEBHOOK_QUEUE) {
 			await context.cloudflare.env.WEBHOOK_QUEUE.send(

@@ -7,7 +7,7 @@ import {
 } from 'react-router';
 import * as v from 'valibot';
 
-import {API_VERSION, APP_BRIDGE_URL} from './const';
+import {API_VERSION, APP_BRIDGE_URL, APP_LOG_LEVEL} from './const';
 
 export async function admin(context: AppLoadContext, request: Request) {
 	async function authenticate() {
@@ -248,10 +248,6 @@ export function config(context: AppLoadContext) {
 		SHOPIFY_API_KEY: v.pipe(v.string(), v.minLength(32)),
 		SHOPIFY_API_SECRET_KEY: v.pipe(v.string(), v.minLength(32)),
 		SHOPIFY_APP_HANDLE: v.string(),
-		SHOPIFY_APP_LOG_LEVEL: v.optional(
-			v.picklist(['debug', 'info', 'error']),
-			'error',
-		),
 		SHOPIFY_APP_TEST: v.optional(v.picklist(['0', '1']), '0'),
 		SHOPIFY_APP_URL: v.pipe(v.string(), v.url()),
 	});
@@ -259,8 +255,6 @@ export function config(context: AppLoadContext) {
 	const config = v.parse(schema, context.cloudflare.env);
 	return config;
 }
-
-type Config = ReturnType<typeof config>;
 
 // NOTE: compatibility
 export function createShopify(context: AppLoadContext) {
@@ -276,7 +270,7 @@ export function createShopify(context: AppLoadContext) {
 			...utils,
 			addCorsHeaders: (request: Request, responseHeaders: Headers) =>
 				utils.addCorsHeaders(context, request, responseHeaders),
-			log: log(config(context).SHOPIFY_APP_LOG_LEVEL),
+			log,
 			validateHmac: (data: string, hmac: string, encoding: UtilEncoding) =>
 				utils.validateHmac(context, {data, hmac, encoding}),
 		},
@@ -376,38 +370,36 @@ export async function handler<T>(fn: () => Promise<T>) {
 	}
 }
 
-export function log(level: Config['SHOPIFY_APP_LOG_LEVEL']) {
-	const log = {
+export const log = {
+	level: APP_LOG_LEVEL as 'error' | 'info' | 'debug',
+	levels: {
 		error: 0,
 		info: 1,
 		debug: 2,
-	};
+	},
+	noop() {},
 
-	function noop() {}
+	debug(...args: unknown[]) {
+		if (this.levels[this.level] >= this.levels.debug) {
+			return console.debug('log.debug', ...args);
+		}
+		return this.noop();
+	},
 
-	return {
-		debug(...args: unknown[]) {
-			if (log[level] >= log.debug) {
-				return console.debug('log.debug', ...args);
-			}
-			return noop;
-		},
+	info(...args: unknown[]) {
+		if (this.levels[this.level] >= this.levels.info) {
+			return console.info('log.info', ...args);
+		}
+		return this.noop;
+	},
 
-		info(...args: unknown[]) {
-			if (log[level] >= log.info) {
-				return console.info('log.info', ...args);
-			}
-			return noop;
-		},
-
-		error(...args: unknown[]) {
-			if (log[level] >= log.error) {
-				return console.error('log.error', ...args);
-			}
-			return noop;
-		},
-	};
-}
+	error(...args: unknown[]) {
+		if (this.levels[this.level] >= this.levels.error) {
+			return console.error('log.error', ...args);
+		}
+		return this.noop;
+	},
+};
 
 export async function proxy(context: AppLoadContext, request: Request) {
 	async function authenticate() {

@@ -31,7 +31,7 @@ test('config', () => {
 });
 
 test('log', () => {
-	expect(shopify.log('error')).toBeDefined();
+	expect(shopify.log.error).toBeDefined();
 });
 
 test('proxy', () => {

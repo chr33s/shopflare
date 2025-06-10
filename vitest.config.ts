@@ -15,6 +15,18 @@ export default defineConfig((config) => {
 	const env = loadEnv(config.mode, process.cwd(), '');
 
 	return {
+		define: [
+			'SHOPIFY_API_KEY',
+			'SHOPIFY_APP_HANDLE',
+			'SHOPIFY_APP_LOG_LEVEL',
+			'SHOPIFY_APP_URL',
+		].reduce(
+			(a, k) => ({
+				...a,
+				[`import.meta.env.${k}`]: JSON.stringify(env[k]),
+			}),
+			{},
+		),
 		optimizeDeps: {
 			include: ['react/jsx-dev-runtime'],
 		},

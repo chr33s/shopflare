@@ -14,7 +14,7 @@ type Step = WorkflowStep;
 
 export class WebhookWorkflow extends WorkflowEntrypoint<Env, Params> {
 	async run(event: Event, step: Step) {
-		console.log('workflows/webhook#run', event.payload);
+		shopify.log.debug('workflows/webhook#run', event.payload);
 
 		const context = {
 			cloudflare: {
@@ -32,7 +32,10 @@ export class WebhookWorkflow extends WorkflowEntrypoint<Env, Params> {
 	}
 
 	async APP_SCOPES_UPDATE(context: Context, event: Event, step: Step) {
-		console.log('workflows/webhook#APP_SCOPES_UPDATE', event.payload.webhook);
+		shopify.log.debug(
+			'workflows/webhook#APP_SCOPES_UPDATE',
+			event.payload.webhook,
+		);
 
 		const {session} = event.payload;
 		if (!session) return;
@@ -43,7 +46,10 @@ export class WebhookWorkflow extends WorkflowEntrypoint<Env, Params> {
 	}
 
 	async APP_UNINSTALLED(context: Context, event: Event, step: Step) {
-		console.log('workflows/webhook#APP_UNINSTALLED', event.payload.webhook);
+		shopify.log.debug(
+			'workflows/webhook#APP_UNINSTALLED',
+			event.payload.webhook,
+		);
 
 		const {session, webhook} = event.payload;
 		if (!session) return;
