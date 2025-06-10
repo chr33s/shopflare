@@ -30,6 +30,18 @@ jobs:
         env:
           SHOPIFY_API_KEY: ${{ vars.SHOPIFY_API_KEY }}
       - run: npm test
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: "package.json"
+          cache: "npm"
+      - uses: getsentry/action-release@v3
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ env.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ env.SENTRY_PROJECT }}
+        with:
+          sourcemaps: "./build"
+          version: ${{ github.sha }}
       - uses: actions/upload-artifact@v4
         with:
           name: build
