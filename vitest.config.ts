@@ -10,30 +10,19 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import {defineConfig, mergeConfig} from 'vitest/config';
 
 import i18nextLoaderOptions from './i18n.config';
+import {define} from './vite.config';
 
 export default defineConfig((config) => {
 	const env = loadEnv(config.mode, process.cwd(), '');
 
 	return {
-		define: [
-			'SHOPIFY_API_KEY',
-			'SHOPIFY_APP_HANDLE',
-			'SHOPIFY_APP_LOG_LEVEL',
-			'SHOPIFY_APP_URL',
-		].reduce(
-			(a, k) => ({
-				...a,
-				[`import.meta.env.${k}`]: JSON.stringify(env[k]),
-			}),
-			{},
-		),
+		define: define(env),
 		optimizeDeps: {
 			include: ['react/jsx-dev-runtime'],
 		},
 		plugins: [i18nextLoader(i18nextLoaderOptions), tsconfigPaths()],
 		test: {
 			css: true,
-			env,
 			projects: [
 				{
 					extends: './vitest.config.ts',
@@ -73,6 +62,7 @@ export default defineConfig((config) => {
 								name: 'server',
 								poolOptions: {
 									workers: {
+										isolatedStorage: false,
 										main: './build/server/index.js',
 										miniflare: {
 											compatibilityFlags: [
