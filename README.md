@@ -46,6 +46,9 @@ gh secret set --app=actions SHOPIFY_CLI_PARTNERS_TOKEN  # value from partners.sh
 gh variable set SHOPIFY_API_KEY
 ```
 
+> [!WARNING]
+> Either a workflow or a queue is required to handle webhooks, not both.
+
 ## Development
 
 ```sh
