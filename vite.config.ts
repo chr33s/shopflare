@@ -17,6 +17,7 @@ export default defineConfig(({mode}) => {
 			'SHOPIFY_API_KEY',
 			'SHOPIFY_APP_HANDLE',
 			'SHOPIFY_APP_LOG_LEVEL',
+			'SHOPIFY_APP_URL',
 		].reduce(
 			(a, k) => ({
 				...a,

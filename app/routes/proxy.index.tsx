@@ -6,10 +6,17 @@ import * as shopify from '~/shopify.server';
 import type {Route} from './+types/proxy.index';
 
 export async function loader({context, request}: Route.LoaderArgs) {
-	await shopify.proxy(context, request);
+	try {
+		await shopify.proxy(context, request);
 
-	const data = {};
-	return {data};
+		const data = {};
+		return {data};
+	} catch (error: any) {
+		throw new Response(error.message, {
+			status: error.status ?? 500,
+			statusText: 'Unauthorized',
+		});
+	}
 }
 
 export default function ProxyIndex() {

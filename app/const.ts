@@ -16,3 +16,4 @@ export const APP_LINKS = [
 	},
 ];
 export const APP_LOG_LEVEL = import.meta.env.SHOPIFY_APP_LOG_LEVEL;
+export const APP_URL = import.meta.env.SHOPIFY_APP_URL;

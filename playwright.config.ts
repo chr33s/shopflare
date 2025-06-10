@@ -18,7 +18,7 @@ export default defineConfig({
 		serviceWorkers: 'allow',
 	},
 	webServer: {
-		command: 'npm run dev',
+		command: 'npx react-router dev',
 		reuseExistingServer: true,
 		timeout: 10 * 1000,
 		url: appUrl,

@@ -4,8 +4,8 @@ import {describe, expect, test} from 'vitest';
 
 import * as shopify from '../shopify.server';
 
-import type {Route} from './+types/proxy';
-import {loader} from './proxy';
+import type {Route} from './+types/proxy.index';
+import {loader} from './proxy.index';
 
 const context = {
 	cloudflare: {env: {...env, SHOPIFY_APP_LOG_LEVEL: 'error'}},
@@ -15,10 +15,10 @@ describe('loader', () => {
 	test('error on param missing', async () => {
 		const url = new URL('http://localhost');
 		const request = new Request(url);
-		const response = (await loader({
+		const response = await catchLoaderResponse({
 			context,
 			request,
-		} as Route.LoaderArgs)) as Response;
+		});
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response?.ok).toBe(false);
@@ -31,10 +31,10 @@ describe('loader', () => {
 		url.searchParams.set('signature', '123');
 		url.searchParams.set('timestamp', `${Math.trunc(Date.now() / 1_000 - 91)}`);
 		const request = new Request(url, {method: 'POST'});
-		const response = (await loader({
+		const response = await catchLoaderResponse({
 			context,
 			request,
-		} as Route.LoaderArgs)) as Response;
+		});
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response?.ok).toBe(false);
@@ -47,10 +47,10 @@ describe('loader', () => {
 		url.searchParams.set('signature', '123');
 		url.searchParams.set('timestamp', `${Math.trunc(Date.now() / 1_000)}`);
 		const request = new Request(url, {method: 'POST'});
-		const response = (await loader({
+		const response = await catchLoaderResponse({
 			context,
 			request,
-		} as Route.LoaderArgs)) as Response;
+		});
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response?.ok).toBe(false);
@@ -67,10 +67,10 @@ describe('loader', () => {
 		);
 		url.searchParams.set('timestamp', `${Math.trunc(Date.now() / 1_000)}`);
 		const request = new Request(url, {method: 'POST'});
-		const response = (await loader({
+		const response = await catchLoaderResponse({
 			context,
 			request,
-		} as Route.LoaderArgs)) as Response;
+		});
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response?.ok).toBe(false);
@@ -88,10 +88,10 @@ describe('loader', () => {
 		url.searchParams.set('shop', shop);
 
 		const request = new Request(url, {method: 'POST'});
-		const response = (await loader({
+		const response = await catchLoaderResponse({
 			context,
 			request,
-		} as Route.LoaderArgs)) as Response;
+		});
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response?.ok).toBe(false);
@@ -118,18 +118,22 @@ describe('loader', () => {
 		url.searchParams.set('shop', shop);
 
 		const request = new Request(url, {body: '{}', method: 'POST'});
-		const response = await loader({
+		const response = await catchLoaderResponse({
 			context,
 			request,
-		} as Route.LoaderArgs);
-
-		expect(response).toStrictEqual({
-			appUrl: context.cloudflare.env.SHOPIFY_APP_URL,
 		});
+
+		expect(response).toStrictEqual({data: {}});
 
 		await session.set(shop, null);
 	});
 });
+
+function catchLoaderResponse(args: any) {
+	return Promise.resolve(loader(args as Route.LoaderArgs)).catch(
+		(err) => err,
+	) as Promise<Response>;
+}
 
 async function getHmac(searchParams: object) {
 	const params = Object.entries(searchParams)
