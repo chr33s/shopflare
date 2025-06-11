@@ -213,6 +213,7 @@ export function client({
 				'Content-Type': 'application/json',
 				...headers,
 			},
+			logger: log.debug,
 			url,
 		});
 	}
