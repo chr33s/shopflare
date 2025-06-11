@@ -11,8 +11,8 @@ declare namespace Cloudflare {
 		SHOPIFY_APP_HANDLE: string;
 		SHOPIFY_APP_LOG_LEVEL: string;
 		SHOPIFY_APP_URL: string;
-		WEBHOOK_QUEUE: Queue;
 		SHOPIFY_SERVICE: Service<import('./app/server.ts').ShopifyService>;
+		WEBHOOK_QUEUE: Queue<import('./app/queues/webhook.js').QueueMessage>;
 		ASSETS: Fetcher;
 		WEBHOOK_WORKFLOW: Workflow;
 	}
