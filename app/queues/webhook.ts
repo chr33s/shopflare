@@ -1,10 +1,8 @@
-import type {AppLoadContext} from 'react-router';
-
 import * as shopify from '~/shopify.server';
 
 export async function queue(
 	batch: MessageBatch<QueueMessage>,
-	context: AppLoadContext,
+	context: shopify.Context,
 ) {
 	for (const message of batch.messages) {
 		const {session, webhook} = message.body;

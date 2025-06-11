@@ -1,10 +1,9 @@
 import {env} from 'cloudflare:test';
-import type {AppLoadContext} from 'react-router';
 import {describe, expect, test} from 'vitest';
 
 import * as shopify from './shopify.server';
 
-const context = {cloudflare: {env}} as unknown as AppLoadContext;
+const context = {cloudflare: {env}} as unknown as shopify.Context;
 const request = new Request('http://localhost');
 
 test('admin', () => {

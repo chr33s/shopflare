@@ -9,7 +9,7 @@ import * as v from 'valibot';
 
 import {API_VERSION, APP_BRIDGE_URL, APP_LOG_LEVEL} from './const';
 
-export async function admin(context: AppLoadContext, request: Request) {
+export async function admin(context: Context, request: Request) {
 	async function authenticate() {
 		if (request.method === 'OPTIONS') {
 			const response = new Response(null, {
@@ -244,7 +244,7 @@ export function client({
 	};
 }
 
-export function config(context: AppLoadContext) {
+export function config(context: Context) {
 	const schema = v.object({
 		SHOPIFY_API_KEY: v.pipe(v.string(), v.minLength(32)),
 		SHOPIFY_API_SECRET_KEY: v.pipe(v.string(), v.minLength(32)),
@@ -257,8 +257,10 @@ export function config(context: AppLoadContext) {
 	return config;
 }
 
+export type Context = AppLoadContext;
+
 // NOTE: compatibility
-export function createShopify(context: AppLoadContext) {
+export function createShopify(context: Context) {
 	return {
 		admin: (request: Request) =>
 			admin(context, request).then(({client}) => client),
@@ -402,7 +404,7 @@ export const log = {
 	},
 };
 
-export async function proxy(context: AppLoadContext, request: Request) {
+export async function proxy(context: Context, request: Request) {
 	async function authenticate() {
 		const url = new URL(request.url);
 
@@ -466,7 +468,7 @@ export async function proxy(context: AppLoadContext, request: Request) {
 }
 
 export async function redirect(
-	context: AppLoadContext,
+	context: Context,
 	request: Request,
 	{
 		shop,
@@ -595,7 +597,7 @@ export async function redirect(
 	}
 }
 
-export function session(context: AppLoadContext) {
+export function session(context: Context) {
 	const kv = context.cloudflare.env.SESSION_KV;
 
 	async function get(id: string) {
@@ -626,11 +628,7 @@ export interface Session {
 type UtilEncoding = 'base64' | 'hex';
 
 export const utils = {
-	addCorsHeaders(
-		context: AppLoadContext,
-		request: Request,
-		responseHeaders: Headers,
-	) {
+	addCorsHeaders(context: Context, request: Request, responseHeaders: Headers) {
 		const origin = request.headers.get('Origin');
 		if (origin && origin !== config(context).SHOPIFY_APP_URL) {
 			if (!responseHeaders.has('Access-Control-Allow-Headers')) {
@@ -740,7 +738,7 @@ export const utils = {
 	},
 
 	async validateHmac(
-		context: AppLoadContext,
+		context: Context,
 		request: {data: string; hmac: string; encoding: UtilEncoding},
 	) {
 		const encoder = new TextEncoder();
@@ -770,7 +768,7 @@ export const utils = {
 	},
 };
 
-export async function webhook(context: AppLoadContext, request: Request) {
+export async function webhook(context: Context, request: Request) {
 	async function authenticate() {
 		const hmac = request.headers.get('X-Shopify-Hmac-Sha256');
 		if (!hmac) {

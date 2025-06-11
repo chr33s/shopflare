@@ -1,5 +1,4 @@
 import {env} from 'cloudflare:test';
-import type {AppLoadContext} from 'react-router';
 import {describe, expect, test} from 'vitest';
 
 import * as shopify from '../shopify.server';
@@ -9,7 +8,7 @@ import {loader} from './proxy.index';
 
 const context = {
 	cloudflare: {env: {...env, SHOPIFY_APP_LOG_LEVEL: 'error'}},
-} as unknown as AppLoadContext;
+} as unknown as shopify.Context;
 
 describe('loader', () => {
 	test('error on param missing', async () => {

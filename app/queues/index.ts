@@ -1,12 +1,10 @@
-import type {AppLoadContext} from 'react-router';
-
 import * as shopify from '~/shopify.server';
 
 import * as webhook from './webhook';
 
 export function queueHandler(
 	batch: MessageBatch<QueueHandlerMessage>,
-	context: AppLoadContext,
+	context: shopify.Context,
 ) {
 	shopify.log.debug('queues', batch);
 

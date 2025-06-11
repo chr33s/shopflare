@@ -3,12 +3,11 @@ import {
 	type WorkflowEvent,
 	type WorkflowStep,
 } from 'cloudflare:workers';
-import type {AppLoadContext} from 'react-router';
 
 import type {QueueMessage as Params} from '~/queues/webhook';
 import * as shopify from '~/shopify.server';
 
-type Context = AppLoadContext;
+type Context = shopify.Context;
 type Event = WorkflowEvent<Params>;
 type Step = WorkflowStep;
 

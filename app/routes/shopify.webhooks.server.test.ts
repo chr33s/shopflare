@@ -1,5 +1,4 @@
 import {env} from 'cloudflare:test';
-import type {AppLoadContext} from 'react-router';
 import {describe, expect, test} from 'vitest';
 
 import {API_VERSION} from '~/const';
@@ -9,7 +8,7 @@ import * as shopify from '../shopify.server';
 import type {Route} from './+types/shopify.webhooks';
 import {action} from './shopify.webhooks';
 
-const context = {cloudflare: {env}} as unknown as AppLoadContext;
+const context = {cloudflare: {env}} as unknown as shopify.Context;
 
 describe('action', () => {
 	test('error on header missing', async () => {
