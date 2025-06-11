@@ -30,4 +30,5 @@ export default {
 	},
 } satisfies ExportedHandler<Env, QueueHandlerMessage>;
 
+export * from '~/services';
 export * from '~/workflows';

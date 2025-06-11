@@ -122,6 +122,24 @@ export async function loader({context, request}) {
     shop,
   });
 }
+
+// Experimental RPC
+
+export async function loader({context, request}) {
+  // @ts-expect-error: upstream type bug
+  using api = env.SHOPIFY_SERVICE.api({shop});
+  const {data, errors} = await api.query({
+    query: /* GraphQL */ `
+      #graphql
+      query Shop {
+        shop {
+          name
+        }
+      }
+    `,
+  });
+  return {data, errors};
+}
 ```
 
 #### [proxy.tsx](./app/components/proxy.tsx)
