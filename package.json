@@ -89,7 +89,7 @@
 		"npm": ">=9.6.4"
 	},
 	"bin": {
-		"shopflare": "./bin.sh"
+		"shopflare": "npm run tsx cli.ts"
 	},
 	"prettier": "@shopify/prettier-config",
 	"stylelint": {
