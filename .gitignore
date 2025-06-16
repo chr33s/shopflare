@@ -4,6 +4,7 @@
 # Cloudflare
 /.wrangler
 .env*
+.*vars
 /dist/
 
 # React Router

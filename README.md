@@ -38,6 +38,7 @@ Familiarity with React, ReactRouter, Cloudflare, Shopify conventions.
 ```sh
 npm install
 cp .env.example .env                                    # update vars to match your env values from partners.shopify.com (Apps > All Apps > Create App)
+cp .example.vars .dev.vars                              # update vars to match your env values from partners.shopify.com (Apps > All Apps > Create App)
 # vi [wrangler.json, shopify.app.toml]                  # update vars[SHOPIFY_API_KEY, SHOPIFY_APP_URL], SHOPIFY_APP_URL is the cloudflare tunnel url (e.g. https://shopflare.trycloudflare.com) in development and the cloudflare worker url (e.g. https://shopflare.workers.dev) in other environments.
 npx wrangler secret put SHOPIFY_API_SECRET_KEY
 npx wrangler kv namespace create shopflare              # update wranglers.json#kv_namespaces[0].id
