@@ -25,7 +25,7 @@
 		"fix:lint": "npm run eslint -- --fix",
 		"gen": "concurrently 'npm:gen:*'",
 		"gen:code": "graphql-codegen --errors-only",
-		"gen:types": "wrangler types && react-router typegen",
+		"gen:types": "wrangler types && npm run prettier -- --write ./worker-configuration.d.ts && react-router typegen",
 		"logs": "wrangler tail",
 		"prettier": "npm run --silent tsx -- $(npm root)/.bin/prettier --cache .",
 		"preview": "vite preview",

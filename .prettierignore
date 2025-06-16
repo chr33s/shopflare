@@ -2,4 +2,3 @@ app/types/*.json
 app/types/*.d.ts
 build/**
 **/dist/
-worker-configuration.d.ts
