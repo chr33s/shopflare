@@ -479,7 +479,7 @@ export function createShopify(context: AppLoadContext) {
 					return null;
 				}
 
-				const regex = /admin\..+\/store\/([^\/]+)/;
+				const regex = /admin\..+\/store\/([^/]+)/;
 				const matches = sanitizedShop.match(regex);
 				if (matches && matches.length === 2) {
 					sanitizedShop = `${matches.at(1)}.myshopify.com`;

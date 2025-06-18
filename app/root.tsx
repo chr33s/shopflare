@@ -1,12 +1,12 @@
 import type { PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	isRouteErrorResponse,
 	Links,
 	Meta,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
-	isRouteErrorResponse,
 } from "react-router";
 
 import type { Route } from "./+types/root";

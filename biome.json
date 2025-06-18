@@ -7,22 +7,22 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": [
-			"**/+types/*",
-			"**/build/*",
-			"**/dist/*",
-			"**/generated/*",
-			"**/node_modules/*",
-			"**/types/*",
-			".react-router/*",
-			".shopify/*",
-			".wrangler/*",
-			"worker-configuration.d.ts"
+		"includes": [
+			"**",
+			"!**/+types/*",
+			"!**/build/*",
+			"!**/dist/*",
+			"!**/generated/*",
+			"!**/node_modules/*",
+			"!**/types/*",
+			"!.react-router/*",
+			"!.shopify/*",
+			"!.wrangler/*",
+			"!worker-configuration.d.ts"
 		]
 	},
 	"formatter": {
 		"enabled": true,
-		"ignore": ["package.json"],
 		"useEditorconfig": true,
 		"formatWithErrors": false,
 		"bracketSpacing": true
@@ -48,9 +48,6 @@
 				"noNonNullAssertion": "off"
 			}
 		}
-	},
-	"organizeImports": {
-		"enabled": true
 	},
 	"vcs": {
 		"enabled": true,

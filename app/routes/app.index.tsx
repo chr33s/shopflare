@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { data } from "react-router";
 
 import { API_VERSION } from "~/const";
-import { ShopifyException, createShopify } from "~/shopify.server";
+import { createShopify, ShopifyException } from "~/shopify.server";
 import type { ShopQuery } from "~/types/admin.generated";
 import type { Route } from "./+types/app.index";
 
@@ -96,6 +96,7 @@ export default function AppIndex({
 
 	return (
 		<Page title={t("app")}>
+			{/* biome-ignore lint/nursery/useUniqueElementIds: ... */}
 			<SaveBar id="savebar">
 				<button onClick={() => shopify.saveBar.hide("savebar")} type="reset" />
 				<button
