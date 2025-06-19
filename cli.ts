@@ -33,6 +33,7 @@ const commands = {
 	deploy,
 	help,
 	pull,
+	release,
 	server,
 	setup,
 	trigger,
@@ -104,6 +105,25 @@ async function pull() {
 				cause: install.code,
 			});
 		}
+	} catch (error: any) {
+		console.error(error.message);
+		process.exit(error.cause ?? 1);
+	}
+}
+
+async function release() {
+	try {
+		const types = ['patch', 'minor', 'major'] as const;
+		const type = args.positionals[1] as (typeof types)[number];
+		if (!(type in types)) {
+			throw new Error(`Invalid type: ${type}: ${JSON.stringify(types)}`);
+		}
+
+		await $(/* sh */ `npm run gen`);
+		await $(/* sh */ `git stash --all`);
+		await $(/* sh */ `npm version ${type}`);
+		await $(/* sh */ `git push --follow-tags`);
+		await $(/* sh */ `git stash pop`);
 	} catch (error: any) {
 		console.error(error.message);
 		process.exit(error.cause ?? 1);
