@@ -5,8 +5,8 @@ import {API_VERSION} from '~/const';
 
 import * as shopify from '../shopify.server';
 
-import type {Route} from './+types/shopify.webhooks';
-import {action} from './shopify.webhooks';
+import type {Route} from './+types/shopify.webhooks.$target';
+import {action} from './shopify.webhooks.$target';
 
 const context = {cloudflare: {env}} as unknown as shopify.Context;
 
