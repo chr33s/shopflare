@@ -38,6 +38,7 @@
 			}
 		]
 	},
+	"send_metrics": false,
 	"services": [
 		{
 			"binding": "SHOPIFY_SERVICE",
