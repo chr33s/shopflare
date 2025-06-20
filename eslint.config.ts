@@ -4,8 +4,8 @@ import {defineConfig, globalIgnores} from 'eslint/config';
 export default defineConfig([
 	globalIgnores([
 		'.react-router',
-		'.shopify',
-		'.wrangler',
+		'**/.shopify',
+		'**/.wrangler',
 		'**/dist/*',
 		'**/generated/*',
 		'app/types/*.json',
