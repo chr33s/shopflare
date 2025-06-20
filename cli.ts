@@ -51,7 +51,7 @@ if (command in commands) {
 async function deploy() {
 	try {
 		const cloudflare = await $(
-			/* sh */ `npm run deploy:cloudflare --env=${args.values.env}`,
+			/* sh */ `npm run deploy:cloudflare -- --env=${args.values.env}`,
 		);
 		if (cloudflare.code !== 0) {
 			throw new Error(cloudflare.stderr ?? cloudflare.stdout, {
@@ -59,7 +59,9 @@ async function deploy() {
 			});
 		}
 
-		const shopify = await $(/* sh */ `npm run deploy:shopify`);
+		const shopify = await $(
+			/* sh */ `npm run deploy:shopify -- --config=shopify.app.${args.values.env}.toml`,
+		);
 		if (shopify.code !== 0) {
 			throw new Error(shopify.stderr ?? shopify.stdout, {cause: shopify.code});
 		}
@@ -131,7 +133,12 @@ async function release() {
 }
 
 async function server() {
-	await $(/* sh */ `npm run dev`, {stdio: 'inherit'});
+	await $(
+		/* sh */ `npm run dev -- --config=shopify.app.${args.values.env}.toml`,
+		{
+			stdio: 'inherit',
+		},
+	);
 }
 
 async function setup() {
