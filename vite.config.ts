@@ -7,7 +7,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import i18nextLoaderOptions from './i18n.config';
 
 export default defineConfig(({mode}) => {
-	const env = loadEnv(mode, process.cwd(), '');
+	const env = loadEnv(mode, import.meta.dirname, '');
 	const app = new URL(env.HOST ?? env.SHOPIFY_APP_URL);
 
 	return {

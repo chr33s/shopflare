@@ -13,7 +13,7 @@ import i18nextLoaderOptions from './i18n.config';
 import {define} from './vite.config';
 
 export default defineConfig((config) => {
-	const env = loadEnv(config.mode, process.cwd(), '');
+	const env = loadEnv(config.mode, import.meta.dirname, '');
 
 	return {
 		define: define(env),

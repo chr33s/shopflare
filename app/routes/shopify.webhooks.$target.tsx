@@ -7,7 +7,7 @@ export async function action({context, params, request}: Route.ActionArgs) {
 		const {session, webhook} = await shopify.webhook(context, request);
 		shopify.log.debug('routes/shopify.webhooks#action', webhook.webhookId);
 
-		switch (params.target) {
+		switch (params?.target) {
 			default:
 			case 'queue': {
 				await context.cloudflare.env.WEBHOOK_QUEUE.send(
