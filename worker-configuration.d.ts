@@ -4,15 +4,15 @@
 declare namespace Cloudflare {
 	interface Env {
 		SESSION_KV: KVNamespace;
-		SHOPIFY_API_KEY: string;
 		NODE_VERSION: 22;
-		SHOPIFY_APP_HANDLE: 'shopflare';
+		SHOPIFY_API_KEY: '';
+		SHOPIFY_APP_HANDLE: '';
+		SHOPIFY_APP_URL: '';
 		SHOPIFY_API_SECRET_KEY: string;
-		SHOPIFY_APP_URL: string;
 		SHOPIFY_SERVICE: Service<import('./app/server.ts').ShopifyService>;
 		WEBHOOK_QUEUE: Queue<import('./app/queues/webhook.js').QueueMessage>;
 		ASSETS: Fetcher;
-		WEBHOOK_WORKFLOW: Workflow;
+		WEBHOOK_WORKFLOW: Workflow<import('./app/queues/webhook.js').QueueMessage>;
 	}
 }
 interface Env extends Cloudflare.Env {}
