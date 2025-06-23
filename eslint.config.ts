@@ -40,7 +40,7 @@ export default defineConfig([
 					modifiers: ['requiresQuotes'],
 				},
 			],
-			// enabled for valibot
+			// enabled for zod
 			'id-length': 'off',
 			'import-x/extensions': 'off',
 			'no-console': 'off',

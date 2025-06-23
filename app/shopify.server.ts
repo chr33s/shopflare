@@ -5,7 +5,7 @@ import {
 	data,
 	redirect as routerRedirect,
 } from 'react-router';
-import * as v from 'valibot';
+import * as z from 'zod/v4-mini';
 
 import {API_VERSION, APP_BRIDGE_URL, APP_LOG_LEVEL} from './const';
 
@@ -245,15 +245,15 @@ export function client({
 }
 
 export function config(context: Context) {
-	const schema = v.object({
-		SHOPIFY_API_KEY: v.pipe(v.string(), v.minLength(32)),
-		SHOPIFY_API_SECRET_KEY: v.pipe(v.string(), v.minLength(32)),
-		SHOPIFY_APP_HANDLE: v.string(),
-		SHOPIFY_APP_TEST: v.optional(v.picklist(['0', '1']), '0'),
-		SHOPIFY_APP_URL: v.pipe(v.string(), v.url()),
+	const schema = z.object({
+		SHOPIFY_API_KEY: z.string().check(z.minLength(32)),
+		SHOPIFY_API_SECRET_KEY: z.string().check(z.minLength(32)),
+		SHOPIFY_APP_HANDLE: z.string().check(z.minLength(1)),
+		SHOPIFY_APP_TEST: z._default(z.enum(['0', '1']), '0'),
+		SHOPIFY_APP_URL: z.string().check(z.url()),
 	});
 
-	const config = v.parse(schema, context.cloudflare.env);
+	const config = schema.parse(context.cloudflare.env);
 	return config;
 }
 
