@@ -39,9 +39,9 @@
 		"valibot": "1.1.0"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.0.4",
-		"@cloudflare/vite-plugin": "1.7.4",
-		"@cloudflare/vitest-pool-workers": "0.8.43",
+		"@biomejs/biome": "2.0.5",
+		"@cloudflare/vite-plugin": "1.7.5",
+		"@cloudflare/vitest-pool-workers": "0.8.46",
 		"@playwright/test": "1.53.1",
 		"@react-router/dev": "7.6.2",
 		"@shopify/api-codegen-preset": "1.1.8",
@@ -60,8 +60,8 @@
 		"vite-plugin-i18next-loader": "3.1.2",
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.2.4",
-		"vitest-browser-react": "0.3.0",
-		"wrangler": "4.20.5"
+		"vitest-browser-react": "1.0.0",
+		"wrangler": "4.21.2"
 	},
 	"optionalDependencies": {
 		"@shopify/cli": "3.81.2"
