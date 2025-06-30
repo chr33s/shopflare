@@ -1,6 +1,6 @@
 # ShopFlare
 
-Minimalist Shopify app using React Router (v7) running on cloudflare (worker, kv, analytics). Only essential features, no future changes other than core upgrades & platform alignment.
+Minimalist Shopify app using React Router (v7) running on cloudflare (worker, kv, queues|workflows). Only essential features, no future changes other than core upgrades & platform alignment.
 
 ## Rationale
 
