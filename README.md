@@ -3,7 +3,7 @@
 > [!TIP]  
 > [experimental](https://github.com/chr33s/shopflare/tree/experimental) branch tracks Next Gen Dev Platform changes, see [issue](https://github.com/chr33s/shopflare/issues/42)
 
-Minimalist Shopify app using React Router (v7) running on cloudflare (worker, kv, analytics). Only essential features, no future changes other than core upgrades & platform alignment.
+Minimalist Shopify app using React Router (v7) running on cloudflare (worker, kv, queue). Only essential features, no future changes other than core upgrades & platform alignment.
 
 ## Rationale
 
