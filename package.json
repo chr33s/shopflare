@@ -28,7 +28,7 @@
 	},
 	"dependencies": {
 		"@shopify/graphql-client": "1.4.0",
-		"i18next": "25.2.1",
+		"i18next": "25.3.0",
 		"isbot": "5.1.28",
 		"jose": "6.0.11",
 		"patch-package": "8.0.0",
@@ -40,9 +40,9 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.0.6",
-		"@cloudflare/vite-plugin": "1.7.5",
-		"@cloudflare/vitest-pool-workers": "0.8.47",
-		"@playwright/test": "1.53.1",
+		"@cloudflare/vite-plugin": "1.8.0",
+		"@cloudflare/vitest-pool-workers": "0.8.48",
+		"@playwright/test": "1.53.2",
 		"@react-router/dev": "7.6.3",
 		"@shopify/api-codegen-preset": "1.1.8",
 		"@shopify/app-bridge-react": "4.1.10",
@@ -54,9 +54,9 @@
 		"@vitest/browser": "3.2.4",
 		"concurrently": "9.2.0",
 		"happy-dom": "18.0.1",
-		"playwright": "1.53.1",
+		"playwright": "1.53.2",
 		"typescript": "5.8.3",
-		"vite": "6.3.5",
+		"vite": "7.0.0",
 		"vite-plugin-i18next-loader": "3.1.2",
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.2.4",
@@ -64,7 +64,7 @@
 		"wrangler": "4.22.0"
 	},
 	"optionalDependencies": {
-		"@shopify/cli": "3.81.2"
+		"@shopify/cli": "3.82.0"
 	},
 	"engines": {
 		"node": "^22.14.0",
