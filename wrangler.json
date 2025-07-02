@@ -46,6 +46,19 @@
 			"service": "shopflare"
 		}
 	],
+	"unsafe": {
+		"bindings": [
+			{
+				"name": "RATE_LIMITER",
+				"type": "ratelimit",
+				"namespace_id": "1000",
+				"simple": {
+					"limit": 100,
+					"period": 60
+				}
+			}
+		]
+	},
 	"upload_source_maps": true,
 	"vars": {
 		"NODE_VERSION": 22,

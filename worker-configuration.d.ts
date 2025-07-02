@@ -11,6 +11,7 @@ declare namespace Cloudflare {
 		SHOPIFY_API_SECRET_KEY: string;
 		SHOPIFY_SERVICE: Service<import('./app/server.ts').ShopifyService>;
 		WEBHOOK_QUEUE: Queue<import('./app/queues/webhook.js').QueueMessage>;
+		RATE_LIMITER: RateLimit;
 		ASSETS: Fetcher;
 		WEBHOOK_WORKFLOW: Workflow<import('./app/queues/webhook.js').QueueMessage>;
 	}

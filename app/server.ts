@@ -18,6 +18,10 @@ const requestHandler = createRequestHandler(
 
 export default {
 	async fetch(request, env, ctx) {
+		if (await rateLimited(request, env)) {
+			return new Response('Rate limit exceeded', {status: 429});
+		}
+
 		return requestHandler(request, {
 			cloudflare: {env, ctx},
 		});
@@ -29,6 +33,21 @@ export default {
 		});
 	},
 } satisfies ExportedHandler<Env, QueueHandlerMessage>;
+
+async function rateLimited(request: Request, env: Env) {
+	const url = new URL(request.url);
+	const key =
+		// shopify
+		url.searchParams.get('shop') ??
+		request.headers.get('x-Shopify-Shop-Domain') ??
+		// cloudflare
+		(request.cf?.hostMetadata as {customer_id: string}).customer_id ??
+		request.headers.get('CF-Worker') ??
+		// fallback
+		'unknown';
+	const {success} = await env.RATE_LIMITER.limit({key});
+	return !success || key === 'unknown';
+}
 
 export * from '~/services';
 export * from '~/workflows';
