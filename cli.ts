@@ -1,4 +1,4 @@
-import {spawn, type SpawnOptionsWithoutStdio} from 'child_process';
+import {spawn, type SpawnOptionsWithoutStdio} from 'node:child_process';
 import {access, open, readFile, writeFile} from 'node:fs/promises';
 import {parseArgs, parseEnv, type ParseArgsOptionsConfig} from 'node:util';
 
