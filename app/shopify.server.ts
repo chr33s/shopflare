@@ -7,6 +7,44 @@ import {
 } from 'react-router';
 import * as z from 'zod/v4-mini';
 
+import type {
+	MutationBulkOperationRunMutationArgs,
+	MutationBulkOperationRunQueryArgs,
+	MetafieldDefinitionIdentifierInput,
+	MetafieldDefinitionInput,
+	MetafieldInput,
+	MetafieldsSetInput,
+	MetaobjectDefinition,
+	MetaobjectHandleInput,
+	MetaobjectUpsertInput,
+	StagedMediaUploadTarget,
+} from '~/types/admin.types';
+import type {
+	BulkOperationCancelMutation,
+	BulkOperationRunMutationMutation,
+	BulkOperationRunQueryMutation,
+	CurrentBulkOperationQuery,
+	FileCreateMutation,
+	FileQuery,
+	MetafieldDefinitionUpdateMutation,
+	MetafieldDefinitionCreateMutation,
+	MetafieldDeleteMutation,
+	MetafieldDefinitionQuery,
+	MetafieldQuery,
+	MetafieldsQuery,
+	MetaobjectDefinitionCreateMutation,
+	MetaobjectDefinitionDeleteMutation,
+	MetaobjectDefinitionQuery,
+	MetaobjectDefinitionUpdateMutation,
+	MetaobjectDeleteMutation,
+	MetaobjectQuery,
+	MetaobjectsQuery,
+	MetaobjectUpsertMutation,
+	StagedUploadsCreateMutation,
+	MetafieldDefinitionDeleteMutation,
+	MetafieldsSetMutation,
+} from '~/types/admin.generated';
+
 import {API_VERSION, APP_BRIDGE_URL, APP_LOG_LEVEL} from './const';
 
 export async function admin(context: Context, request: Request) {
@@ -198,6 +236,214 @@ export async function admin(context: Context, request: Request) {
 	return authenticated;
 }
 
+export function bulkOperation(client: Client['admin']) {
+	async function query(query: string) {
+		await runQuery({query});
+		await process('QUERY');
+		return download('QUERY');
+	}
+
+	async function mutation(mutation: string, variables: object[]) {
+		const buffer = utils.JSONL.stringify(variables);
+		const digest = await crypto.subtle.digest(
+			{name: 'SHA-1'},
+			new TextEncoder().encode(JSON.stringify(variables)),
+		);
+		const key = utils.encode(digest, 'hex');
+		const filename = `shopflare.variables.${key}.jsonl`;
+		const file = new File([buffer], filename, {type: 'text/jsonl'});
+
+		const target = await upload(client).target(file);
+		const stagedUploadPath = target.parameters.find(
+			(v) => v.name === 'key',
+		)!.value;
+
+		await runMutation({mutation, stagedUploadPath});
+		await process('MUTATION');
+		return download('MUTATION');
+	}
+
+	return {
+		query,
+		mutation,
+	};
+
+	// @ts-expect-error full api compatibility
+	// eslint-disable-next-line no-unused-vars
+	async function cancel(id: string) {
+		return client()
+			.request<BulkOperationCancelMutation>(
+				/* GraphQL */ `
+					#graphql
+					mutation BulkOperationCancel($id: ID!) {
+						bulkOperationCancel(id: $id) {
+							bulkOperation {
+								errorCode
+								id
+								status
+								type
+							}
+							userErrors {
+								field
+								message
+							}
+						}
+					}
+				`,
+				{variables: {id}},
+			)
+			.then((res) => res.data?.bulkOperationCancel);
+	}
+
+	async function current(type: BulkOperationType) {
+		return client()
+			.request<CurrentBulkOperationQuery>(
+				/* GraphQL */ `
+					#graphql
+					query CurrentBulkOperation($type: BulkOperationType!) {
+						currentBulkOperation(type: $type) {
+							errorCode
+							id
+							type
+							status
+							url
+						}
+					}
+				`,
+				{variables: {type}},
+			)
+			.then((res) => res.data?.currentBulkOperation);
+	}
+
+	async function runMutation(args: MutationBulkOperationRunMutationArgs) {
+		return client()
+			.request<BulkOperationRunMutationMutation>(
+				/* GraphQL */ `
+					#graphql
+					mutation BulkOperationRunMutation(
+						$clientIdentifier: String
+						$groupObjects: Boolean!
+						$mutation: String!
+						$stagedUploadPath: String!
+					) {
+						bulkOperationRunMutation(
+							clientIdentifier: $clientIdentifier
+							groupObjects: $groupObjects
+							mutation: $mutation
+							stagedUploadPath: $stagedUploadPath
+						) {
+							bulkOperation {
+								errorCode
+								id
+								partialDataUrl
+								status
+								type
+								url
+							}
+							userErrors {
+								field
+								message
+							}
+						}
+					}
+				`,
+				{
+					variables: {
+						clientIdentifier: 'shopflare',
+						groupObjects: false,
+						...args,
+					},
+				},
+			)
+			.then((res) => res.data?.bulkOperationRunMutation);
+	}
+
+	async function runQuery(args: MutationBulkOperationRunQueryArgs) {
+		return client()
+			.request<BulkOperationRunQueryMutation>(
+				/* GraphQL */ `
+					#graphql
+					mutation BulkOperationRunQuery(
+						$groupObjects: Boolean!
+						$query: String!
+					) {
+						bulkOperationRunQuery(groupObjects: $groupObjects, query: $query) {
+							bulkOperation {
+								errorCode
+								id
+								partialDataUrl
+								status
+								type
+								url
+							}
+							userErrors {
+								field
+								message
+							}
+						}
+					}
+				`,
+				{
+					variables: {
+						groupObjects: false,
+						...args,
+					},
+				},
+			)
+			.then((res) => res.data?.bulkOperationRunQuery);
+	}
+
+	async function download(type: BulkOperationType) {
+		await process(type);
+
+		const data = await current(type);
+		if (!data?.url) return;
+
+		const file = await fetch(data.url);
+		if (!file.ok) return;
+
+		const text = await file.text();
+
+		const json = utils.JSONL.parse(text);
+		for (const obj of json) {
+			if (Object.prototype.toString.call(obj) !== '[object Object]') continue;
+			if (obj.__parentId) continue;
+
+			const parent = json.find((v) => v.id === obj.__parentId)!;
+			const parentKey = parent.id.split('/').at(3);
+
+			const child = Object.fromEntries(
+				Object.entries(obj).filter(([key]) => key !== '__parentId'),
+			);
+			const childKey = obj.id
+				.split('/')
+				.at(3)
+				?.replace(parentKey!, '')
+				.toLocaleLowerCase()
+				.concat('s')!;
+
+			parent[childKey] ??= [];
+			if (!Array.isArray(parent[childKey])) continue;
+			parent[childKey].push(child);
+		}
+		return json.filter((v) => !v.__parentId);
+	}
+
+	async function process(type: BulkOperationType) {
+		while (true) {
+			const data = await current(type);
+			const status = data?.status ?? '';
+			if (['CANCELING', 'CREATED', 'RUNNING'].includes(status)) {
+				await new Promise((resolve) => setTimeout(resolve, 500));
+				continue;
+			}
+			break;
+		}
+	}
+}
+
+export type BulkOperationType = 'QUERY' | 'MUTATION';
+
 export function client({
 	accessToken,
 	apiVersion = API_VERSION,
@@ -243,6 +489,8 @@ export function client({
 		storefront,
 	};
 }
+
+export type Client = ReturnType<typeof client>;
 
 export function config(context: Context) {
 	const schema = z.object({
@@ -403,6 +651,926 @@ export const log = {
 		return this.noop;
 	},
 };
+
+export async function metafield(client: Client['admin']) {
+	function definition() {
+		async function get(identifier: MetafieldDefinitionIdentifierInput) {
+			return client()
+				.request<MetafieldDefinitionQuery>(
+					/* GraphQL */ `
+						#graphql
+						query MetafieldDefinition(
+							$identifier: MetafieldDefinitionIdentifierInput!
+						) {
+							metafieldDefinition(identifier: $identifier) {
+								id
+							}
+						}
+					`,
+					{variables: {identifier}},
+				)
+				.then((res) => res.data?.metafieldDefinition);
+		}
+
+		async function set(
+			identifier: MetafieldDefinitionIdentifierInput,
+			definition: Omit<
+				MetafieldDefinitionInput,
+				'key' | 'namespace' | 'ownerType'
+			> | null,
+		) {
+			if (definition === null) {
+				return destroy(identifier);
+			}
+			const existing = await get(identifier);
+			return existing
+				? update({...identifier, ...definition})
+				: create({...identifier, ...definition});
+		}
+
+		return {
+			get,
+			set,
+		};
+
+		async function create(definition: MetafieldDefinitionInput) {
+			return client()
+				.request<MetafieldDefinitionCreateMutation>(
+					/* GraphQL */ `
+						#graphql
+						mutation MetafieldDefinitionCreate(
+							$definition: MetafieldDefinitionInput!
+						) {
+							metafieldDefinitionCreate(definition: $definition) {
+								createdDefinition {
+									id
+									name
+								}
+								userErrors {
+									code
+									field
+									message
+								}
+							}
+						}
+					`,
+					{variables: {definition}},
+				)
+				.then((res) => res.data?.metafieldDefinitionCreate);
+		}
+
+		async function update(definition: MetafieldDefinitionInput) {
+			return client()
+				.request<MetafieldDefinitionUpdateMutation>(
+					/* GraphQL */ `
+						#graphql
+						mutation MetafieldDefinitionUpdate(
+							$definition: MetafieldDefinitionUpdateInput!
+						) {
+							metafieldDefinitionUpdate(definition: $definition) {
+								updatedDefinition {
+									id
+									name
+								}
+								userErrors {
+									code
+									field
+									message
+								}
+							}
+						}
+					`,
+					{variables: {definition}},
+				)
+				.then((res) => res.data?.metafieldDefinitionUpdate);
+		}
+
+		async function destroy(
+			identifier: MetafieldDefinitionIdentifierInput,
+			cascade = false,
+		) {
+			return client()
+				.request<MetafieldDefinitionDeleteMutation>(
+					/* GraphQL */ `
+						#graphql
+						mutation MetafieldDefinitionDelete(
+							$identifier: MetafieldDefinitionIdentifierInput!
+							$deleteAllAssociatedMetafields: Boolean!
+						) {
+							metafieldDefinitionDelete(
+								identifier: $identifier
+								deleteAllAssociatedMetafields: $deleteAllAssociatedMetafields
+							) {
+								deletedDefinitionId
+								userErrors {
+									code
+									field
+									message
+								}
+							}
+						}
+					`,
+					{
+						variables: {
+							identifier,
+							deleteAllAssociatedMetafields: cascade,
+						},
+					},
+				)
+				.then((res) => res.data?.metafieldDefinitionDelete);
+		}
+	}
+
+	async function get<T extends MetafieldGetOne | MetafieldGetAll>(
+		identifier: T,
+	): Promise<
+		T extends MetafieldGetOne
+			? ReturnType<typeof getOne>
+			: ReturnType<typeof getAll>
+	> {
+		return (
+			'key' in identifier ? getOne(identifier) : getAll(identifier)
+		) as T extends MetafieldGetOne
+			? ReturnType<typeof getOne>
+			: ReturnType<typeof getAll>;
+	}
+
+	async function set(
+		identifier: MetafieldInput,
+		metafield: Omit<MetafieldsSetInput, 'key' | 'namespace' | 'ownerType'>,
+	) {
+		if (metafield === null) return destroy(identifier);
+
+		return client()
+			.request<MetafieldsSetMutation>(
+				/* GraphQL */ `
+					#graphql
+					mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
+						metafieldsSet(metafields: $metafields) {
+							metafields {
+								key
+								namespace
+								value
+								createdAt
+								updatedAt
+							}
+							userErrors {
+								code
+								field
+								message
+							}
+						}
+					}
+				`,
+				{variables: {metafields: [{...identifier, ...metafield}]}},
+			)
+			.then((res) => res.data?.metafieldsSet);
+	}
+
+	return {
+		definition,
+		get,
+		set,
+	};
+
+	async function destroy(identifier: MetafieldInput) {
+		return client()
+			.request<MetafieldDeleteMutation>(
+				/* GraphQL */ `
+					#graphql
+					mutation MetafieldDelete($metafields: [MetafieldIdentifierInput!]!) {
+						metafieldsDelete(metafields: $metafields) {
+							deletedMetafields {
+								key
+								namespace
+								ownerId
+							}
+							userErrors {
+								field
+								message
+							}
+						}
+					}
+				`,
+				{variables: {metafields: [identifier]}},
+			)
+			.then((res) => res.data?.metafieldsDelete);
+	}
+
+	async function getAll(identifier: MetafieldGetAll) {
+		return client()
+			.request<MetafieldsQuery>(
+				/* GraphQL */ `
+					#graphql
+					fragment MetafieldNodesFragment on HasMetafields {
+						metafields(
+							after: $cursor
+							first: $first
+							keys: $keys
+							namespace: $namespace
+						) {
+							nodes {
+								id
+								key
+								namespace
+								value
+							}
+						}
+					}
+
+					query Metafields(
+						$cursor: String
+						$first: Int = 10
+						$keys: [String!]
+						$namespace: String
+						$ownerId: ID!
+					) {
+						node(id: $ownerId) {
+							... on AppInstallation {
+								...MetafieldNodesFragment
+							}
+							... on Article {
+								...MetafieldNodesFragment
+							}
+							... on Blog {
+								...MetafieldNodesFragment
+							}
+							... on Collection {
+								...MetafieldNodesFragment
+							}
+							... on Company {
+								...MetafieldNodesFragment
+							}
+							... on CompanyLocation {
+								...MetafieldNodesFragment
+							}
+							... on Customer {
+								...MetafieldNodesFragment
+							}
+							... on DeliveryCustomization {
+								...MetafieldNodesFragment
+							}
+							... on DiscountAutomaticNode {
+								...MetafieldNodesFragment
+							}
+							... on DiscountCodeNode {
+								...MetafieldNodesFragment
+							}
+							... on DiscountNode {
+								...MetafieldNodesFragment
+							}
+							... on DraftOrder {
+								...MetafieldNodesFragment
+							}
+							... on Location {
+								...MetafieldNodesFragment
+							}
+							... on Market {
+								...MetafieldNodesFragment
+							}
+							... on Order {
+								...MetafieldNodesFragment
+							}
+							... on Page {
+								...MetafieldNodesFragment
+							}
+							... on PaymentCustomization {
+								...MetafieldNodesFragment
+							}
+							... on Product {
+								...MetafieldNodesFragment
+							}
+							... on ProductVariant {
+								...MetafieldNodesFragment
+							}
+							... on Shop {
+								...MetafieldNodesFragment
+							}
+						}
+					}
+				`,
+				{variables: identifier},
+			)
+			.then((res) => res.data?.node?.metafields.nodes);
+	}
+
+	async function getOne(identifier: MetafieldGetOne) {
+		return client()
+			.request<MetafieldQuery>(
+				/* GraphQL */ `
+					#graphql
+					fragment MetafieldNodeFragment on HasMetafields {
+						metafield(key: $key, namespace: $namespace) {
+							id
+							key
+							namespace
+							value
+						}
+					}
+
+					query Metafield($key: String!, $namespace: String, $ownerId: ID!) {
+						node(id: $ownerId) {
+							... on AppInstallation {
+								...MetafieldNodeFragment
+							}
+							... on Article {
+								...MetafieldNodeFragment
+							}
+							... on Blog {
+								...MetafieldNodeFragment
+							}
+							... on Collection {
+								...MetafieldNodeFragment
+							}
+							... on Company {
+								...MetafieldNodeFragment
+							}
+							... on CompanyLocation {
+								...MetafieldNodeFragment
+							}
+							... on Customer {
+								...MetafieldNodeFragment
+							}
+							... on DeliveryCustomization {
+								...MetafieldNodeFragment
+							}
+							... on DiscountAutomaticNode {
+								...MetafieldNodeFragment
+							}
+							... on DiscountCodeNode {
+								...MetafieldNodeFragment
+							}
+							... on DiscountNode {
+								...MetafieldNodeFragment
+							}
+							... on DraftOrder {
+								...MetafieldNodeFragment
+							}
+							... on Location {
+								...MetafieldNodeFragment
+							}
+							... on Market {
+								...MetafieldNodeFragment
+							}
+							... on Order {
+								...MetafieldNodeFragment
+							}
+							... on Page {
+								...MetafieldNodeFragment
+							}
+							... on PaymentCustomization {
+								...MetafieldNodeFragment
+							}
+							... on Product {
+								...MetafieldNodeFragment
+							}
+							... on ProductVariant {
+								...MetafieldNodeFragment
+							}
+							... on Shop {
+								...MetafieldNodeFragment
+							}
+						}
+					}
+				`,
+				{variables: identifier},
+			)
+			.then((res) => res.data?.node?.metafield);
+	}
+}
+
+export interface MetafieldGetAll {
+	cursor?: string;
+	first?: number;
+	keys?: string[];
+	namespace?: string;
+	ownerId: string;
+}
+
+export interface MetafieldGetOne {
+	key: string;
+}
+
+export async function metaobject(client: Client['admin']) {
+	function definition() {
+		async function get(id: string) {
+			return client()
+				.request<MetaobjectDefinitionQuery>(
+					/* GraphQL */ `
+						#graphql
+						query MetaobjectDefinition($id: ID!) {
+							metaobjectDefinition(id: $id) {
+								id
+							}
+						}
+					`,
+					{variables: {id}},
+				)
+				.then((res) => res.data?.metaobjectDefinition);
+		}
+
+		async function set(
+			id: string,
+			definition: Omit<MetaobjectDefinition, 'id'> | null,
+		) {
+			if (definition === null) {
+				return destroy(id);
+			}
+			const existing = await get(id);
+			return existing ? update({id, ...definition}) : create(definition);
+		}
+
+		return {
+			get,
+			set,
+		};
+
+		async function create(definition: Omit<MetaobjectDefinition, 'id'>) {
+			return client()
+				.request<MetaobjectDefinitionCreateMutation>(
+					/* GraphQL */ `
+						#graphql
+						mutation MetaobjectDefinitionCreate(
+							$definition: MetaobjectDefinitionCreateInput!
+						) {
+							metaobjectDefinitionCreate(definition: $definition) {
+								metaobjectDefinition {
+									name
+									type
+									fieldDefinitions {
+										name
+										key
+									}
+								}
+								userErrors {
+									code
+									field
+									message
+								}
+							}
+						}
+					`,
+					{variables: {definition}},
+				)
+				.then((res) => res.data?.metaobjectDefinitionCreate);
+		}
+
+		async function update(definition: MetaobjectDefinition) {
+			return client()
+				.request<MetaobjectDefinitionUpdateMutation>(
+					/* GraphQL */ `
+						#graphql
+						mutation MetaobjectDefinitionUpdate(
+							$id: ID!
+							$definition: MetaobjectDefinitionUpdateInput!
+						) {
+							metaobjectDefinitionUpdate(id: $id, definition: $definition) {
+								metaobjectDefinition {
+									id
+									name
+									displayNameKey
+									fieldDefinitions {
+										name
+										key
+										type {
+											name
+										}
+									}
+								}
+								userErrors {
+									code
+									field
+									message
+								}
+							}
+						}
+					`,
+					{variables: {definition}},
+				)
+				.then((res) => res.data?.metaobjectDefinitionUpdate);
+		}
+
+		async function destroy(id: string) {
+			return client()
+				.request<MetaobjectDefinitionDeleteMutation>(
+					/* GraphQL */ `
+						#graphql
+						mutation MetaobjectDefinitionDelete($id: ID!) {
+							metaobjectDefinitionDelete(id: $id) {
+								deletedId
+								userErrors {
+									code
+									field
+									message
+								}
+							}
+						}
+					`,
+					{variables: {id}},
+				)
+				.then((res) => res.data?.metaobjectDefinitionDelete);
+		}
+	}
+
+	async function get<T extends MetaobjectGetOne | MetaobjectGetAll>(
+		identifier: T,
+	): Promise<
+		T extends MetaobjectGetOne
+			? ReturnType<typeof getOne>
+			: ReturnType<typeof getAll>
+	> {
+		return (
+			'handle' in identifier ? getOne(identifier) : getAll(identifier)
+		) as T extends MetaobjectGetOne
+			? ReturnType<typeof getOne>
+			: ReturnType<typeof getAll>;
+	}
+
+	async function set(
+		handle: MetaobjectHandleInput,
+		metaobject: Omit<MetaobjectUpsertInput, 'handle'> | null,
+	) {
+		if (metaobject === null) return destroy(handle);
+
+		return client()
+			.request<MetaobjectUpsertMutation>(
+				/* GraphQL */ `
+					#graphql
+					mutation MetaobjectUpsert(
+						$handle: MetaobjectHandleInput!
+						$metaobject: MetaobjectUpsertInput!
+					) {
+						metaobjectUpsert(handle: $handle, metaobject: $metaobject) {
+							metaobject {
+								displayName
+								fields {
+									key
+									type
+									value
+								}
+								handle
+								id
+							}
+							userErrors {
+								code
+								field
+								message
+							}
+						}
+					}
+				`,
+				{variables: {handle, metaobject}},
+			)
+			.then((res) => res.data?.metaobjectUpsert);
+	}
+
+	return {
+		definition,
+		get,
+		set,
+	};
+
+	async function destroy(handle: MetaobjectHandleInput) {
+		const metaobject = await get({handle});
+		if (!metaobject) return;
+
+		return client()
+			.request<MetaobjectDeleteMutation>(
+				/* GraphQL */ `
+					#graphql
+					mutation MetaobjectDelete($id: ID!) {
+						metaobjectDelete(id: $id) {
+							deletedId
+							userErrors {
+								code
+								field
+								message
+							}
+						}
+					}
+				`,
+				{variables: {id: metaobject.id}},
+			)
+			.then((res) => res.data?.metaobjectDelete);
+	}
+
+	async function getOne({handle}: MetaobjectGetOne) {
+		return client()
+			.request<MetaobjectQuery>(
+				/* GraphQL */ `
+					#graphql
+					query Metaobject($handle: MetaobjectHandleInput!) {
+						metaobjectByHandle(handle: $handle) {
+							id
+						}
+					}
+				`,
+				{variables: {handle}},
+			)
+			.then((res) => res.data?.metaobjectByHandle);
+	}
+
+	async function getAll(identifier: MetaobjectGetAll) {
+		return client()
+			.request<MetaobjectsQuery>(
+				/* GraphQL */ `
+					#graphql
+					query Metaobjects(
+						$cursor: String
+						$first: Int = 10
+						$query: String
+						$type: String!
+					) {
+						metaobjects(
+							after: $cursor
+							first: $first
+							query: $query
+							type: $type
+						) {
+							nodes {
+								id
+							}
+						}
+					}
+				`,
+				{variables: identifier},
+			)
+			.then((res) => res.data?.metaobjects.nodes);
+	}
+}
+
+export interface MetaobjectGetAll {
+	cursor?: string;
+	first?: number;
+	query?: string;
+	type: string;
+}
+
+export interface MetaobjectGetOne {
+	handle: MetaobjectHandleInput;
+}
+
+export function upload(client: Client['admin']) {
+	async function stage(file: File) {
+		const res = await client().request<StagedUploadsCreateMutation>(
+			/* GraphQL */ `
+				#graphql
+				mutation StagedUploadsCreate($input: [StagedUploadInput!]!) {
+					stagedUploadsCreate(input: $input) {
+						stagedTargets {
+							url
+							resourceUrl
+							parameters {
+								name
+								value
+							}
+						}
+						userErrors {
+							field
+							message
+						}
+					}
+				}
+			`,
+			{
+				variables: {
+					input: [
+						{
+							filename: file.name,
+							httpMethod: 'POST',
+							mimeType: file.type,
+							resource: resource(file.type),
+						},
+					],
+				},
+			},
+		);
+
+		switch (true) {
+			case res.errors === undefined && res.data === undefined:
+			case res.errors !== undefined:
+				throw new Exception(res.errors?.message ?? 'Failed to stage upload', {
+					errors: res.errors?.graphQLErrors,
+					status: res.errors?.networkStatusCode ?? 500,
+					type: 'GRAPHQL',
+				});
+
+			case Boolean(res.data?.stagedUploadsCreate?.userErrors[0]):
+			case !res.data?.stagedUploadsCreate?.stagedTargets?.[0]:
+				throw new Exception(`Failed to stage upload`, {
+					errors: res.data?.stagedUploadsCreate?.userErrors,
+					status: 400,
+					type: 'GRAPHQL',
+				});
+		}
+
+		const target = res.data.stagedUploadsCreate.stagedTargets[0];
+		return target;
+	}
+
+	async function target(file: File) {
+		const target = await stage(file);
+
+		const body = new FormData();
+		target.parameters.forEach(({name, value}) => body.set(name, value));
+		body.set('file', file, file.name);
+
+		const res = await fetch(target.url, {
+			body,
+			method: 'POST',
+		});
+		if (!res.ok) {
+			throw new Exception(`Failed to upload data`, {
+				status: 500,
+				type: 'GRAPHQL',
+			});
+		}
+
+		return target;
+	}
+
+	async function process(file: File) {
+		const targeted = await target(file);
+		const created = await create(file, targeted);
+		const processed = await wait(created.id);
+		return processed;
+	}
+
+	return {
+		process,
+		stage,
+		target,
+	};
+
+	async function create(file: File, target: StagedMediaUploadTarget) {
+		const res = await client().request<FileCreateMutation>(
+			/* GraphQL */ `
+				#graphql
+				mutation FileCreate($files: [FileCreateInput!]!) {
+					fileCreate(files: $files) {
+						files {
+							fileErrors {
+								code
+								details
+								message
+							}
+							id
+						}
+						userErrors {
+							code
+							field
+							message
+						}
+					}
+				}
+			`,
+			{
+				variables: {
+					files: [
+						{
+							contentType: resource(file.type),
+							duplicateResolutionMode: 'REPLACE',
+							filename: file.name,
+							originalSource: target.resourceUrl,
+						},
+					],
+				},
+			},
+		);
+
+		switch (true) {
+			case res.errors === undefined && res.data === undefined:
+			case res.errors !== undefined:
+				throw new Exception(res.errors?.message ?? 'Failed to create upload', {
+					errors: res.errors?.graphQLErrors,
+					status: res.errors?.networkStatusCode ?? 500,
+					type: 'GRAPHQL',
+				});
+
+			case Boolean(res.data?.fileCreate?.userErrors[0]):
+			case Boolean(res.data?.fileCreate?.files?.[0].fileErrors[0]):
+			case !res.data?.fileCreate?.files?.[0]:
+				throw new Exception(`Failed to create upload`, {
+					errors:
+						res.data?.fileCreate?.userErrors ??
+						res.data?.fileCreate?.files?.[0].fileErrors,
+					status: 400,
+					type: 'GRAPHQL',
+				});
+		}
+
+		return res.data.fileCreate.files[0];
+	}
+
+	async function wait(id: string) {
+		while (true) {
+			const node = await client()
+				.request<FileQuery>(
+					/* GraphQL */ `
+						#graphql
+						query File($id: ID!) {
+							node(id: $id) {
+								... on GenericFile {
+									__typename
+									fileErrors {
+										code
+										details
+										message
+									}
+									fileStatus
+									id
+									url
+								}
+								... on MediaImage {
+									__typename
+									fileErrors {
+										code
+										details
+										message
+									}
+									fileStatus
+									id
+									image {
+										url
+									}
+								}
+								... on Model3d {
+									__typename
+									fileErrors {
+										code
+										details
+										message
+									}
+									fileStatus
+									id
+									originalSource {
+										url
+									}
+								}
+								... on Video {
+									__typename
+									fileErrors {
+										code
+										details
+										message
+									}
+									fileStatus
+									id
+									originalSource {
+										url
+									}
+								}
+							}
+						}
+					`,
+					{variables: {id}},
+				)
+				.then((res) => res.data?.node);
+			if (!node) return;
+
+			switch (node.fileStatus) {
+				case 'FAILED':
+					return;
+				case 'READY': {
+					let url: string | undefined;
+					switch (node.__typename) {
+						case 'GenericFile':
+							url = node.url;
+							break;
+						case 'MediaImage':
+							url = node.image?.url;
+							break;
+						case 'Model3d':
+						case 'Video':
+							url = node.originalSource?.url;
+							break;
+					}
+
+					return {
+						id: node.id,
+						url,
+					};
+				}
+			}
+
+			await new Promise((resolve) => setTimeout(resolve, 500));
+		}
+	}
+
+	function resource(type: File['type']) {
+		switch (true) {
+			case type.startsWith('image/'):
+			case type.startsWith('application/x-photoshop'):
+				return 'IMAGE';
+			case type.startsWith('model/'):
+				return 'MODEL_3D';
+			case type.startsWith('video/'):
+				return 'VIDEO';
+			default:
+				return 'FILE';
+		}
+	}
+}
 
 export async function proxy(context: Context, request: Request) {
 	async function authenticate() {
@@ -597,18 +1765,22 @@ export async function redirect(
 	}
 }
 
-export function session(context: Context) {
+export function session(context: Context, type: Sessiontype = 'admin') {
 	const kv = context.cloudflare.env.SESSION_KV;
+
+	function key(id: string) {
+		return `${type}:${id}`;
+	}
 
 	async function get(id: string) {
 		if (!id) return;
-		return kv.get<Session>(id, 'json');
+		return kv.get<Session>(key(id), 'json');
 	}
 
 	async function set(id: string, data: Session | null) {
-		if (data === null) return kv.delete(id);
+		if (data === null) return kv.delete(key(id));
 		if (!data) return;
-		return kv.put(id, JSON.stringify(data));
+		return kv.put(key(id), JSON.stringify(data));
 	}
 
 	return {
@@ -624,6 +1796,8 @@ export interface Session {
 	expires?: Date;
 	accessToken: string;
 }
+
+export type Sessiontype = 'admin' | 'storefront';
 
 type UtilEncoding = 'base64' | 'hex';
 
@@ -676,6 +1850,31 @@ export const utils = {
 					'',
 				);
 		}
+	},
+
+	gid(gid: string) {
+		const parts = gid.split('/');
+		return {
+			id: parts.at(-1),
+			ownerType: parts.at(-2),
+		};
+	},
+
+	gidFrom(ownerType: string, id: string) {
+		return `gid://shopify/${ownerType}/${id}`;
+	},
+
+	JSONL: {
+		parse(jsonl: string) {
+			return jsonl
+				.split('\n')
+				.filter((string) => string !== '')
+				.map<JSONL>((string) => JSON.parse(string));
+		},
+
+		stringify(array: object[]): string {
+			return array.map((object) => JSON.stringify(object)).join('\n');
+		},
 	},
 
 	legacyUrlToShopAdminUrl(shop: string) {
@@ -768,6 +1967,17 @@ export const utils = {
 	},
 };
 
+export type JSON =
+	| string
+	| number
+	| boolean
+	| null
+	| {[key: string]: JSON}
+	| JSON[];
+
+export type JSONL = Record<'__parentId' | 'id', string> &
+	Record<string, JSON | JSON[]>;
+
 export async function webhook(context: Context, request: Request) {
 	async function authenticate() {
 		const hmac = request.headers.get('X-Shopify-Hmac-Sha256');
@@ -779,7 +1989,7 @@ export async function webhook(context: Context, request: Request) {
 		}
 
 		const data = await request.clone().text();
-		if (data.length === 0) {
+		if (!data) {
 			throw new Exception('Webhook body is missing', {
 				status: 400,
 				type: 'REQUEST',

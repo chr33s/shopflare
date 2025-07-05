@@ -85,14 +85,25 @@ import * as shopify from '~/shopify.server';
 
 export async function loader({context, request}) {
   return shopify.handler(async () => {
-    const {client} = await shopify.admin(context, request); // shopify[admin | proxy | webhook](context, request);
-    const {data, errors} = await client.request(`query { shop { name } }`);
+    const {client} = await shopify.admin(context, request); // shopify[admin|proxy|webhook](context, request);
+    const {data, errors} = await client.request(/* GraphQL */ `
+      query {
+        shop {
+          name
+        }
+      }
+    `);
 
     shopify.config(context);
-    shopify.client({accessToken, shop}).admin(); // [admin | storefront](headers?)
-    shopify.redirect(context, request, {shop, url});
-    shopify.session(context).get(sessionId); // set(id, value | null);
+    await shopify.client({accessToken, shop}).admin(); // [admin | storefront](headers?)
+    await shopify.redirect(context, request, {shop, url});
+    await shopify.session(context).get(sessionId); // set(id, value | null);
     shopify.utils.addCorsHeaders(context, request, responseHeaders);
+
+    await shopify.bulkOperation(client).query(); // .mutation(mutation, variables);
+    await shopify.metafield(client).get(identifier); // .set(identifier, metafield || null);
+    await shopify.metaobject(client).get({handle}); // .set({handle}, metaobject || null);
+    await shopify.upload(client).process(file); // .[stage,target](file)
 
     return {data, errors};
   });
@@ -104,12 +115,18 @@ import {createShopify} from '~/shopify.server';
 
 export async function loader({context, request}) {
   const shopify = createShopify(context);
-  const client = shopify.admin(request);
-  const {data, errors} = await client.request(`query { shop { name } }`);
+  const client = await shopify.admin(request);
+  const {data, errors} = await client.request(/* GraphQL */ `
+    query {
+      shop {
+        name
+      }
+    }
+  `);
 
   shopify.config;
-  shopify.redirect(request, {shop, url});
-  shopify.session.get(sessionId); // set(id, value | null);
+  await shopify.redirect(request, {shop, url});
+  await shopify.session.get(sessionId); // set(id, value | null);
   shopify.utils.addCorsHeaders(request, responseHeaders);
 
   const adminClient = createShopifyClient({
@@ -123,23 +140,76 @@ export async function loader({context, request}) {
     shop,
   });
 }
+```
 
-// Experimental RPC
+#### Experimental
+
+```js
+import * as shopify from '~/shopify.server';
+
+// RPC
 
 export async function loader({context, request}) {
+  const {session} = await shopify.admin(context, request); // auth
+
   // @ts-expect-error: upstream type bug
-  using api = env.SHOPIFY_SERVICE.api({shop});
+  using api = env.SHOPIFY_SERVICE.api({shop: session.shop});
   const {data, errors} = await api.query({
-    query: /* GraphQL */ `
-      #graphql
-      query Shop {
-        shop {
-          name
-        }
-      }
-    `,
+    query: /* GraphQL */ `query Shop { shop { name } }`,
   });
   return {data, errors};
+}
+
+// DurableObject
+
+/// Direct api access
+
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    if (/[/]shopify[/](admin|storefront)([/])?/.test(url.pathname)) {
+      const id = env.SHOPIFY.idFromName(url.searchParams.get('shop'));
+      const stub = env.SHOPIFY.get(id);
+      return stub.fetch(request);
+    }
+    // ...
+  },
+}
+
+await fetch('/shopify/admin', { // app.admin
+  body: JSON.stingify({
+    operation: /* GraphQL */ `query Shop { shop { name } }`,
+    variables: undefined,
+  }),
+  credentials: 'include'
+  headers: {'Content-Type': 'application/json'},
+  method: 'POST',
+});
+
+await fetch('/shopify/storefront', { // app.proxy
+  body: JSON.stingify({
+    operation: /* GraphQL */ `query Shop { shop { name } }`,
+    variables: undefined,
+  }),
+  credentials: 'include'
+  method: 'POST',
+});
+
+/// Loader or Action
+
+export async function loader({context, request}) {
+  const shop = new URL(request.url).searchParams.get('shop');
+
+  const id = env.SHOPIFY.idFromName(shop);
+  const stub = env.SHOPIFY.get(id);
+  const client = await stub.client('admin');
+  return client().fetch(
+    /* GraphQL */ `query Shop { shop { name } }`,
+    {
+      signal: request.signal,
+      variables: undefined,
+    },
+  );
 }
 ```
 

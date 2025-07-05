@@ -49,5 +49,6 @@ async function rateLimited(request: Request, env: Env) {
 	return !success || key === 'unknown';
 }
 
+export * from '~/durable-objects';
 export * from '~/services';
 export * from '~/workflows';

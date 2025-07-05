@@ -13,7 +13,7 @@ function getConfig() {
 			default: shopifyApiProject({
 				apiType: ApiType.Admin,
 				apiVersion: API_VERSION,
-				documents: ['./app/**/*.{ts,tsx}'],
+				documents: ['./app/*.{ts,tsx}', './app/**/*.{ts,tsx}'],
 				outputDir: './app/types',
 			}),
 		},
