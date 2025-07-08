@@ -96,7 +96,6 @@ export default function AppIndex({
 
 	return (
 		<Page title={t("app")}>
-			{/* biome-ignore lint/nursery/useUniqueElementIds: ... */}
 			<SaveBar id="savebar">
 				<button onClick={() => shopify.saveBar.hide("savebar")} type="reset" />
 				<button
