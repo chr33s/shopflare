@@ -30,7 +30,7 @@ dev_store_url = "glue-dev-store.myshopify.com"
 include_config_on_deploy = true
 
 [webhooks]
-api_version = "2025-04"
+api_version = "2025-07"
 
   [[webhooks.subscriptions]]
   uri = "/shopify/webhooks"
