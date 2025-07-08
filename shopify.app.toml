@@ -26,7 +26,7 @@ redirect_urls = [ "https://local.chr33s.dev/shopify/auth/callback" ]
 
 [build]
 automatically_update_urls_on_dev = false
-dev_store_url = "glue-dev-store.myshopify.com"
+dev_store_url = "chr33s.myshopify.com"
 include_config_on_deploy = true
 
 [webhooks]
