@@ -142,68 +142,54 @@ export async function loader({context, request}) {
 }
 ```
 
-#### Experimental
+#### Experimental > DurableObject
 
 ```js
-import * as shopify from '~/shopify.server';
-
-// RPC
-
-export async function loader({context, request}) {
-  const {session} = await shopify.admin(context, request); // auth
-
-  // @ts-expect-error: upstream type bug
-  using api = env.SHOPIFY_SERVICE.api({shop: session.shop});
-  const {data, errors} = await api.query({
-    query: /* GraphQL */ `query Shop { shop { name } }`,
-  });
-  return {data, errors};
-}
-
-// DurableObject
-
 /// Direct api access
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (/[/]shopify[/](admin|storefront)([/])?/.test(url.pathname)) {
-      const id = env.SHOPIFY.idFromName(url.searchParams.get('shop'));
-      const stub = env.SHOPIFY.get(id);
+      const id = env.SHOPIFY_DURABLE_OBJECT.idFromName(url.searchParams.get('shop'));
+      const stub = env.SHOPIFY_DURABLE_OBJECT.get(id);
       return stub.fetch(request);
     }
-    // ...
+    // ... handler
   },
 }
 
-await fetch('/shopify/admin', { // app.admin
-  body: JSON.stingify({
-    operation: /* GraphQL */ `query Shop { shop { name } }`,
-    variables: undefined,
-  }),
-  credentials: 'include'
-  headers: {'Content-Type': 'application/json'},
-  method: 'POST',
-});
+function Component() {
+  useEffect(() => {
+    fetch('/shopify/admin', { // /shopify/storefront
+      body: JSON.stringify({
+        query: /* GraphQL */ `
+          #graphql
+          query Shop {
+            shop {
+              name
+            }
+          }
+        `,
+        variables: {},
+      }),
+      credentials: 'include'
+      method: 'POST',
+    })
+      .then<{data: ShopQuery}>((res) => res.json())
+      // ...
+  }, []);
 
-await fetch('/shopify/storefront', { // app.proxy
-  body: JSON.stingify({
-    operation: /* GraphQL */ `query Shop { shop { name } }`,
-    variables: undefined,
-  }),
-  credentials: 'include'
-  method: 'POST',
-});
+  // .... jsx
+}
 
-/// Loader or Action
-
-export async function loader({context, request}) {
+export async function action({context, request}) {
   const shop = new URL(request.url).searchParams.get('shop');
 
-  const id = env.SHOPIFY.idFromName(shop);
-  const stub = env.SHOPIFY.get(id);
+  const id = env.SHOPIFY_DURABLE_OBJECT.idFromName(shop);
+  const stub = env.SHOPIFY_DURABLE_OBJECT.get(id);
   const client = await stub.client('admin');
-  return client().fetch(
+  return client.fetch(
     /* GraphQL */ `query Shop { shop { name } }`,
     {
       signal: request.signal,

@@ -31,5 +31,4 @@ export default {
 } satisfies ExportedHandler<Env, QueueHandlerMessage>;
 
 export * from '~/durable-objects';
-export * from '~/services';
 export * from '~/workflows';

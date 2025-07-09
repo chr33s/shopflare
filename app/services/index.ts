@@ -1,1 +1,0 @@
-export {ShopifyService} from './shopify';

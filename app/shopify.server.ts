@@ -1,4 +1,4 @@
-import {createGraphQLClient} from '@shopify/graphql-client';
+import {type GraphQLClient, createGraphQLClient} from '@shopify/graphql-client';
 import {type JWTPayload, jwtVerify} from 'jose';
 import {
 	type AppLoadContext,
@@ -236,7 +236,7 @@ export async function admin(context: Context, request: Request) {
 	return authenticated;
 }
 
-export function bulkOperation(client: Client['admin']) {
+export function bulkOperation(client: Client) {
 	async function query(query: string) {
 		await runQuery({query});
 		await process('QUERY');
@@ -268,10 +268,10 @@ export function bulkOperation(client: Client['admin']) {
 		mutation,
 	};
 
-	// @ts-expect-error full api compatibility
+	// @ts-expect-error needed spec compliance
 	// eslint-disable-next-line no-unused-vars
 	async function cancel(id: string) {
-		return client()
+		return client
 			.request<BulkOperationCancelMutation>(
 				/* GraphQL */ `
 					#graphql
@@ -296,7 +296,7 @@ export function bulkOperation(client: Client['admin']) {
 	}
 
 	async function current(type: BulkOperationType) {
-		return client()
+		return client
 			.request<CurrentBulkOperationQuery>(
 				/* GraphQL */ `
 					#graphql
@@ -316,7 +316,7 @@ export function bulkOperation(client: Client['admin']) {
 	}
 
 	async function runMutation(args: MutationBulkOperationRunMutationArgs) {
-		return client()
+		return client
 			.request<BulkOperationRunMutationMutation>(
 				/* GraphQL */ `
 					#graphql
@@ -359,7 +359,7 @@ export function bulkOperation(client: Client['admin']) {
 	}
 
 	async function runQuery(args: MutationBulkOperationRunQueryArgs) {
-		return client()
+		return client
 			.request<BulkOperationRunQueryMutation>(
 				/* GraphQL */ `
 					#graphql
@@ -490,7 +490,7 @@ export function client({
 	};
 }
 
-export type Client = ReturnType<typeof client>;
+export type Client = GraphQLClient;
 
 export function config(context: Context) {
 	const schema = z.object({
@@ -652,10 +652,10 @@ export const log = {
 	},
 };
 
-export async function metafield(client: Client['admin']) {
+export async function metafield(client: Client) {
 	function definition() {
 		async function get(identifier: MetafieldDefinitionIdentifierInput) {
-			return client()
+			return client
 				.request<MetafieldDefinitionQuery>(
 					/* GraphQL */ `
 						#graphql
@@ -694,7 +694,7 @@ export async function metafield(client: Client['admin']) {
 		};
 
 		async function create(definition: MetafieldDefinitionInput) {
-			return client()
+			return client
 				.request<MetafieldDefinitionCreateMutation>(
 					/* GraphQL */ `
 						#graphql
@@ -720,7 +720,7 @@ export async function metafield(client: Client['admin']) {
 		}
 
 		async function update(definition: MetafieldDefinitionInput) {
-			return client()
+			return client
 				.request<MetafieldDefinitionUpdateMutation>(
 					/* GraphQL */ `
 						#graphql
@@ -749,7 +749,7 @@ export async function metafield(client: Client['admin']) {
 			identifier: MetafieldDefinitionIdentifierInput,
 			cascade = false,
 		) {
-			return client()
+			return client
 				.request<MetafieldDefinitionDeleteMutation>(
 					/* GraphQL */ `
 						#graphql
@@ -801,7 +801,7 @@ export async function metafield(client: Client['admin']) {
 	) {
 		if (metafield === null) return destroy(identifier);
 
-		return client()
+		return client
 			.request<MetafieldsSetMutation>(
 				/* GraphQL */ `
 					#graphql
@@ -834,7 +834,7 @@ export async function metafield(client: Client['admin']) {
 	};
 
 	async function destroy(identifier: MetafieldInput) {
-		return client()
+		return client
 			.request<MetafieldDeleteMutation>(
 				/* GraphQL */ `
 					#graphql
@@ -858,7 +858,7 @@ export async function metafield(client: Client['admin']) {
 	}
 
 	async function getAll(identifier: MetafieldGetAll) {
-		return client()
+		return client
 			.request<MetafieldsQuery>(
 				/* GraphQL */ `
 					#graphql
@@ -955,7 +955,7 @@ export async function metafield(client: Client['admin']) {
 	}
 
 	async function getOne(identifier: MetafieldGetOne) {
-		return client()
+		return client
 			.request<MetafieldQuery>(
 				/* GraphQL */ `
 					#graphql
@@ -1051,10 +1051,10 @@ export interface MetafieldGetOne {
 	key: string;
 }
 
-export async function metaobject(client: Client['admin']) {
+export async function metaobject(client: Client) {
 	function definition() {
 		async function get(id: string) {
-			return client()
+			return client
 				.request<MetaobjectDefinitionQuery>(
 					/* GraphQL */ `
 						#graphql
@@ -1086,7 +1086,7 @@ export async function metaobject(client: Client['admin']) {
 		};
 
 		async function create(definition: Omit<MetaobjectDefinition, 'id'>) {
-			return client()
+			return client
 				.request<MetaobjectDefinitionCreateMutation>(
 					/* GraphQL */ `
 						#graphql
@@ -1116,7 +1116,7 @@ export async function metaobject(client: Client['admin']) {
 		}
 
 		async function update(definition: MetaobjectDefinition) {
-			return client()
+			return client
 				.request<MetaobjectDefinitionUpdateMutation>(
 					/* GraphQL */ `
 						#graphql
@@ -1151,7 +1151,7 @@ export async function metaobject(client: Client['admin']) {
 		}
 
 		async function destroy(id: string) {
-			return client()
+			return client
 				.request<MetaobjectDefinitionDeleteMutation>(
 					/* GraphQL */ `
 						#graphql
@@ -1192,7 +1192,7 @@ export async function metaobject(client: Client['admin']) {
 	) {
 		if (metaobject === null) return destroy(handle);
 
-		return client()
+		return client
 			.request<MetaobjectUpsertMutation>(
 				/* GraphQL */ `
 					#graphql
@@ -1234,7 +1234,7 @@ export async function metaobject(client: Client['admin']) {
 		const metaobject = await get({handle});
 		if (!metaobject) return;
 
-		return client()
+		return client
 			.request<MetaobjectDeleteMutation>(
 				/* GraphQL */ `
 					#graphql
@@ -1255,7 +1255,7 @@ export async function metaobject(client: Client['admin']) {
 	}
 
 	async function getOne({handle}: MetaobjectGetOne) {
-		return client()
+		return client
 			.request<MetaobjectQuery>(
 				/* GraphQL */ `
 					#graphql
@@ -1271,7 +1271,7 @@ export async function metaobject(client: Client['admin']) {
 	}
 
 	async function getAll(identifier: MetaobjectGetAll) {
-		return client()
+		return client
 			.request<MetaobjectsQuery>(
 				/* GraphQL */ `
 					#graphql
@@ -1310,9 +1310,9 @@ export interface MetaobjectGetOne {
 	handle: MetaobjectHandleInput;
 }
 
-export function upload(client: Client['admin']) {
+export function upload(client: Client) {
 	async function stage(file: File) {
-		const res = await client().request<StagedUploadsCreateMutation>(
+		const res = await client.request<StagedUploadsCreateMutation>(
 			/* GraphQL */ `
 				#graphql
 				mutation StagedUploadsCreate($input: [StagedUploadInput!]!) {
@@ -1403,7 +1403,7 @@ export function upload(client: Client['admin']) {
 	};
 
 	async function create(file: File, target: StagedMediaUploadTarget) {
-		const res = await client().request<FileCreateMutation>(
+		const res = await client.request<FileCreateMutation>(
 			/* GraphQL */ `
 				#graphql
 				mutation FileCreate($files: [FileCreateInput!]!) {
@@ -1464,7 +1464,7 @@ export function upload(client: Client['admin']) {
 
 	async function wait(id: string) {
 		while (true) {
-			const node = await client()
+			const node = await client
 				.request<FileQuery>(
 					/* GraphQL */ `
 						#graphql

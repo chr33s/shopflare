@@ -53,13 +53,6 @@
 		]
 	},
 	"send_metrics": false,
-	"services": [
-		{
-			"binding": "SHOPIFY_SERVICE",
-			"entrypoint": "ShopifyService",
-			"service": "shopflare"
-		}
-	],
 	"upload_source_maps": true,
 	"vars": {
 		"NODE_VERSION": 22,

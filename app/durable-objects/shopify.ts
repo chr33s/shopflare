@@ -7,42 +7,37 @@ import * as shopify from '~/shopify.server';
 type ClientType = shopify.Sessiontype;
 
 export class ShopifyDurableObject extends DurableObject<Env> {
+	#client: shopify.Client;
 	#shop: string;
 
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
 
-		if (!ctx.id.name) throw new Error('No shop from ctx.id.name');
-		this.#shop = ctx.id.name;
+		const shop = ctx.id.name;
+		if (!shop) {
+			throw new shopify.Exception('No shop from ctx.id.name', {
+				status: 400,
+				type: 'REQUEST',
+			});
+		}
+		this.#shop = shop;
+
+		ctx.blockConcurrencyWhile(async () => {
+			this.#client = await this.client('admin');
+		});
 	}
 
 	async bulkOperation() {
-		const client = await this.client('admin');
-		return shopify.bulkOperation(client);
+		return shopify.bulkOperation(this.#client);
 	}
 
-	async client(type: ClientType) {
-		const session = await this.session(type);
-		if (!session) throw new Error(`No session for shop ${this.#shop}`);
-		return shopify.client({
+	async client(type: ClientType, headers?: Record<string, string | string[]>) {
+		const session = await this.#session(type);
+		const props = {
 			accessToken: session.accessToken,
 			shop: this.#shop,
-		})[type];
-	}
-
-	async metafield() {
-		const client = await this.client('admin');
-		return shopify.metafield(client);
-	}
-
-	async metaobject() {
-		const client = await this.client('admin');
-		return shopify.metaobject(client);
-	}
-
-	async upload(file: File) {
-		const client = await this.client('admin');
-		return shopify.upload(client).process(file);
+		};
+		return shopify.client(props)[type](headers);
 	}
 
 	async fetch(request: Request) {
@@ -100,7 +95,7 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 			}
 
 			const client = await this.client(params.client as ClientType);
-			return client().fetch(operation, {
+			return client.fetch(operation, {
 				headers: Object.fromEntries(request.headers),
 				keepalive: false,
 				signal: request.signal,
@@ -113,8 +108,39 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 		}
 	}
 
-	private async session(type: ClientType) {
+	async metafield() {
+		return shopify.metafield(this.#client);
+	}
+
+	async metaobject() {
+		return shopify.metaobject(this.#client);
+	}
+
+	async uninstall() {
+		return fetch(`https://${this.#shop}/admin/api_permissions/current.json`, {
+			headers: new Headers({
+				Accept: 'application/json',
+				'Content-Length': '0',
+				'Content-Type': 'application/json',
+				'X-Shopify-Access-Token': this.env.SHOPIFY_API_SECRET_KEY,
+			}),
+			method: 'DELETE',
+		}).then((res) => res.ok);
+	}
+
+	async upload() {
+		return shopify.upload(this.#client);
+	}
+
+	async #session(type: ClientType) {
 		const context = {cloudflare: {env: this.env}} as shopify.Context;
-		return shopify.session(context, type).get(this.#shop);
+		const session = await shopify.session(context, type).get(this.#shop);
+		if (!session) {
+			throw new shopify.Exception(`No ${type} session for shop ${this.#shop}`, {
+				status: 401,
+				type: 'REQUEST',
+			});
+		}
+		return session;
 	}
 }

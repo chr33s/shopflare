@@ -13,6 +13,7 @@
 			"~/*": ["./app/*"]
 		},
 		"rootDirs": [".", "./.react-router/types"],
+		"strictPropertyInitialization": false,
 		"target": "ES2022",
 		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
 		"types": [
