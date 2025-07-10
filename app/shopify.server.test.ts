@@ -29,8 +29,47 @@ test('config', () => {
 	expect(shopify.config(context)).toBeDefined();
 });
 
+describe('createShopify', () => {
+	test.todo('admin');
+	test.todo('config');
+	test.todo('proxy');
+	test.todo('redirect');
+	test.todo('session');
+	test.todo('utils');
+	test.todo('webhook');
+});
+
+describe('createShopifyClient', () => {
+	test.todo('admin');
+	test.todo('storefront');
+});
+
+test.todo('Exception');
+
+test.todo('handler');
+
 test('log', () => {
 	expect(shopify.log.error).toBeDefined();
+});
+
+describe('metafield', () => {
+	describe('definition', () => {
+		test.todo('get');
+		test.todo('set');
+	});
+
+	test.todo('get');
+	test.todo('set');
+});
+
+describe('metaobject', () => {
+	describe('definition', () => {
+		test.todo('get');
+		test.todo('set');
+	});
+
+	test.todo('get');
+	test.todo('set');
 });
 
 test('proxy', () => {
@@ -51,6 +90,12 @@ test('session', () => {
 	expect(shopify.session(context).set).toBeDefined();
 });
 
+describe('upload', () => {
+	test.todo('stage');
+	test.todo('target');
+	test.todo('process');
+});
+
 describe('utils', () => {
 	test('allowedDomains', () => {
 		expect(shopify.utils.allowedDomains).toBe(
@@ -64,6 +109,14 @@ describe('utils', () => {
 
 		expect(shopify.utils.encode(data, 'base64')).toBe('dGVzdA==');
 		expect(shopify.utils.encode(data, 'hex')).toBe('74657374');
+	});
+
+	test.todo('gid');
+	test.todo('gidFrom');
+
+	describe('JSONL', () => {
+		test.todo('parse');
+		test.todo('stringify');
 	});
 
 	test('legacyUrlToShopAdminUrl', () => {
