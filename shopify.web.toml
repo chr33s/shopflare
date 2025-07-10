@@ -1,4 +1,4 @@
-name = "app"
+port = 8080
 webhooks_path = "/shopify/webhooks"
 
 [commands]
