@@ -507,7 +507,7 @@ export function config(context: Context) {
 
 export type Context = AppLoadContext;
 
-// NOTE: compatibility
+// NOTE: @deprecated
 export function createShopify(context: Context) {
 	return {
 		admin: (request: Request) =>
@@ -530,7 +530,7 @@ export function createShopify(context: Context) {
 	};
 }
 
-// NOTE: compatibility
+// NOTE: @deprecated
 export function createShopifyClient({
 	apiVersion = API_VERSION,
 	headers,

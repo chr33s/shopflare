@@ -14,7 +14,7 @@ import rootCss from '~/root.css?url';
 
 import type {Route} from './+types/root';
 
-export default function App() {
+export default function Component() {
 	return <Outlet />;
 }
 
