@@ -1,7 +1,7 @@
-import {NavMenu, useAppBridge} from '@shopify/app-bridge-react';
+import {useAppBridge} from '@shopify/app-bridge-react';
 import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Link, Outlet, useNavigate, useNavigation} from 'react-router';
+import {Outlet, useNavigate, useNavigation} from 'react-router';
 
 import {
 	API_KEY,
@@ -44,17 +44,17 @@ export default function App() {
 			<script data-api-key={API_KEY} src={APP_BRIDGE_URL} />
 			<script src={APP_BRIDGE_UI_URL} />
 
-			<NavMenu>
-				<Link rel="home" to="/app">
+			<ui-nav-menu>
+				<a href="/" rel="home">
 					{t('app')}
-				</Link>
-				<Link
+				</a>
+				<a
+					href={`shopify://admin/charges/${APP_HANDLE}/pricing_plans`}
 					target="_top"
-					to={`shopify://admin/charges/${APP_HANDLE}/pricing_plans`}
 				>
 					{t('pricingPlans')}
-				</Link>
-			</NavMenu>
+				</a>
+			</ui-nav-menu>
 
 			<Outlet />
 		</>
