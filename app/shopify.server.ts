@@ -652,7 +652,7 @@ export const log = {
 	},
 };
 
-export async function metafield(client: Client) {
+export function metafield(client: Client) {
 	function definition() {
 		async function get(identifier: MetafieldDefinitionIdentifierInput) {
 			return client
@@ -781,23 +781,18 @@ export async function metafield(client: Client) {
 		}
 	}
 
-	async function get<T extends MetafieldGetOne | MetafieldGetAll>(
-		identifier: T,
-	): Promise<
-		T extends MetafieldGetOne
-			? ReturnType<typeof getOne>
-			: ReturnType<typeof getAll>
-	> {
-		return (
-			'key' in identifier ? getOne(identifier) : getAll(identifier)
-		) as T extends MetafieldGetOne
-			? ReturnType<typeof getOne>
-			: ReturnType<typeof getAll>;
+	async function get(identifier: MetafieldGetOne): ReturnType<typeof getOne>;
+	async function get(identifier: MetafieldGetAll): ReturnType<typeof getAll>;
+	async function get(identifier: MetafieldGetOne | MetafieldGetAll) {
+		return 'key' in identifier ? getOne(identifier) : getAll(identifier);
 	}
 
 	async function set(
 		identifier: MetafieldInput,
-		metafield: Omit<MetafieldsSetInput, 'key' | 'namespace' | 'ownerType'>,
+		metafield: Omit<
+			MetafieldsSetInput,
+			'key' | 'namespace' | 'ownerId' | 'value'
+		> & {value: MetafieldsSetInput['value'] | null},
 	) {
 		if (metafield === null) return destroy(identifier);
 
@@ -1049,9 +1044,11 @@ export interface MetafieldGetAll {
 
 export interface MetafieldGetOne {
 	key: string;
+	namespace?: string;
+	ownerId: string;
 }
 
-export async function metaobject(client: Client) {
+export function metaobject(client: Client) {
 	function definition() {
 		async function get(id: string) {
 			return client
@@ -1172,18 +1169,10 @@ export async function metaobject(client: Client) {
 		}
 	}
 
-	async function get<T extends MetaobjectGetOne | MetaobjectGetAll>(
-		identifier: T,
-	): Promise<
-		T extends MetaobjectGetOne
-			? ReturnType<typeof getOne>
-			: ReturnType<typeof getAll>
-	> {
-		return (
-			'handle' in identifier ? getOne(identifier) : getAll(identifier)
-		) as T extends MetaobjectGetOne
-			? ReturnType<typeof getOne>
-			: ReturnType<typeof getAll>;
+	async function get(identifier: MetaobjectGetOne): ReturnType<typeof getOne>;
+	async function get(identifier: MetaobjectGetAll): ReturnType<typeof getAll>;
+	async function get(identifier: MetaobjectGetAll | MetaobjectGetOne) {
+		return 'handle' in identifier ? getOne(identifier) : getAll(identifier);
 	}
 
 	async function set(
