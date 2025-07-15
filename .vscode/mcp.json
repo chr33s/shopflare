@@ -1,0 +1,55 @@
+{
+	"inputs": [],
+	"servers": {
+		"cloudflare-auditlogs": {
+			"args": ["mcp-remote@latest", "https://auditlogs.mcp.cloudflare.com/sse"],
+			"command": "npx"
+		},
+		"cloudflare-bindings": {
+			"args": ["mcp-remote@latest", "https://bindings.mcp.cloudflare.com/sse"],
+			"command": "npx"
+		},
+		"cloudflare-builds": {
+			"args": ["mcp-remote@latest", "https://builds.mcp.cloudflare.com/sse"],
+			"command": "npx"
+		},
+		"cloudflare-containers": {
+			"args": [
+				"mcp-remote@latest",
+				"https://containers.mcp.cloudflare.com/sse"
+			],
+			"command": "npx"
+		},
+		"cloudflare-dex": {
+			"args": ["mcp-remote@latest", "https://dex.mcp.cloudflare.com/sse"],
+			"command": "npx"
+		},
+		"cloudflare-docs": {
+			"args": ["mcp-remote@latest", "https://docs.mcp.cloudflare.com/sse"],
+			"command": "npx"
+		},
+		"cloudflare-graphql": {
+			"args": ["mcp-remote@latest", "https://graphql.mcp.cloudflare.com/sse"],
+			"command": "npx"
+		},
+		"cloudflare-logs": {
+			"args": ["mcp-remote@latest", "https://logs.mcp.cloudflare.com/sse"],
+			"command": "npx"
+		},
+		"cloudflare-observability": {
+			"args": [
+				"mcp-remote@latest",
+				"https://observability.mcp.cloudflare.com/sse"
+			],
+			"command": "npx"
+		},
+		"shopify-dev": {
+			"args": ["-y", "@shopify/dev-mcp@latest"],
+			"command": "npx",
+			"env": {
+				"OPT_OUT_INSTRUMENTATION": "true",
+				"POLARIS_UNIFIED": "true"
+			}
+		}
+	}
+}
