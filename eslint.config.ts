@@ -18,7 +18,6 @@ export default defineConfig([
 	...shopifyEslintPlugin.configs.prettier,
 	{
 		rules: {
-			// unblock for now
 			'@shopify/strict-component-boundaries': 'off',
 			'@shopify/jsx-no-hardcoded-content': 'off',
 			// enables Header({ 'Content-Type' })
@@ -39,8 +38,12 @@ export default defineConfig([
 					modifiers: ['requiresQuotes'],
 				},
 			],
-			// enabled for zod
-			'id-length': 'off',
+			'id-length': [
+				'error',
+				{
+					exceptions: ['_', 'a', 'b', 'i', 'k', 't', 'v', 'z', '$'],
+				},
+			],
 			'import-x/extensions': 'off',
 			'no-console': 'off',
 			'no-unused-vars': [
