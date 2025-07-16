@@ -545,18 +545,6 @@ export function client({
 	Partial<Record<'apiVersion', string>>) {
 	type Headers = Record<string, string | string[]>;
 
-	function client({url, headers}: {url: string; headers: Headers}) {
-		return createGraphQLClient({
-			customFetchApi: fetch,
-			headers: {
-				'Content-Type': 'application/json',
-				...headers,
-			},
-			logger: (...args: unknown[]) => log.debug(...args),
-			url,
-		});
-	}
-
 	function admin(headers?: Headers) {
 		return client({
 			url: `https://${shop}/admin/api/${apiVersion}/graphql.json`,
@@ -581,6 +569,18 @@ export function client({
 		admin,
 		storefront,
 	};
+
+	function client({url, headers}: {url: string; headers: Headers}) {
+		return createGraphQLClient({
+			customFetchApi: fetch,
+			headers: {
+				'Content-Type': 'application/json',
+				...headers,
+			},
+			logger: (...args: unknown[]) => log.debug(...args),
+			url,
+		});
+	}
 }
 
 export type Client = GraphQLClient;
@@ -1849,10 +1849,6 @@ export async function redirect(
 export function session(context: Context, type: Sessiontype = 'admin') {
 	const kv = context.cloudflare.env.SESSION_KV;
 
-	function key(id: string) {
-		return `${type}:${id}`;
-	}
-
 	async function get(id: string) {
 		if (!id) return;
 		return kv.get<Session>(key(id), 'json');
@@ -1868,6 +1864,10 @@ export function session(context: Context, type: Sessiontype = 'admin') {
 		get,
 		set,
 	};
+
+	function key(id: string) {
+		return `${type}:${id}`;
+	}
 }
 
 export interface Session {
