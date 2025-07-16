@@ -20,6 +20,7 @@ import type {
 	StagedMediaUploadTarget,
 } from '~/types/admin.types';
 import type {
+	BillingCheckQuery,
 	BulkOperationCancelMutation,
 	BulkOperationRunMutationMutation,
 	BulkOperationRunQueryMutation,
@@ -45,7 +46,7 @@ import type {
 	MetafieldsSetMutation,
 } from '~/types/admin.generated';
 
-import {API_VERSION, APP_BRIDGE_URL, APP_LOG_LEVEL} from './const';
+import {API_VERSION, APP_BRIDGE_URL, APP_HANDLE, APP_LOG_LEVEL} from './const';
 
 export async function admin(context: Context, request: Request) {
 	async function authenticate() {
@@ -234,6 +235,95 @@ export async function admin(context: Context, request: Request) {
 
 	const authenticated = await authenticate();
 	return authenticated;
+}
+
+export function billing(context: Context, request: Request) {
+	async function check(plans: string[]) {
+		const shop = utils.sanitizeShop(
+			new URL(request.url).searchParams.get('shop'),
+		)!;
+
+		if (await active(shop, plans)) return;
+
+		return redirect(context, request, {
+			shop,
+			url: `shopify://admin/charges/${APP_HANDLE}/pricing_plans`,
+		});
+	}
+
+	return {check};
+
+	async function active(shop: string, plans: string[]) {
+		const isTest = config(context).SHOPIFY_APP_TEST === '1';
+
+		const current = await session(context, 'admin').get(shop);
+		const admin = client({
+			accessToken: current?.accessToken!,
+			shop,
+		}).admin();
+
+		let cursor: string | undefined;
+		while (true) {
+			const {data, errors} = await admin.request<BillingCheckQuery>(
+				/* GraphQL */ `
+					#graphql
+					query BillingCheck($cursor: String) {
+						currentAppInstallation {
+							activeSubscriptions {
+								id
+								name
+								test
+								status
+							}
+							oneTimePurchases(
+								first: 250
+								sortKey: CREATED_AT
+								after: $cursor
+							) {
+								nodes {
+									id
+									name
+									test
+									status
+								}
+								pageInfo {
+									hasNextPage
+									endCursor
+								}
+							}
+						}
+					}
+				`,
+				{variables: {cursor}},
+			);
+			if (errors || !data) {
+				throw new Exception(errors?.message ?? 'Unknown server error', {
+					status: errors?.networkStatusCode ?? 500,
+					type: 'GRAPHQL',
+				});
+			}
+
+			const {activeSubscriptions, oneTimePurchases} =
+				data.currentAppInstallation;
+			if (
+				[...activeSubscriptions, ...oneTimePurchases.nodes].some(
+					(plan) =>
+						plans.includes(plan.name) &&
+						plan.status === 'ACTIVE' &&
+						plan.test === isTest,
+				)
+			) {
+				return true;
+			}
+
+			const {pageInfo} = oneTimePurchases;
+			if (pageInfo.hasNextPage && pageInfo.endCursor) {
+				cursor = pageInfo.endCursor;
+				continue;
+			}
+			return false;
+		}
+	}
 }
 
 export function bulkOperation(client: Client) {
