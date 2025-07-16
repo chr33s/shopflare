@@ -61,14 +61,14 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 			if (payload.aud !== this.env.SHOPIFY_API_KEY) {
 				throw new shopify.Exception('Session token had invalid API key', {
 					status: 401,
-					type: 'JWT',
+					type: 'REQUEST',
 				});
 			}
 
 			if (request.method !== 'POST') {
 				throw new shopify.Exception('Method Not Allowed', {
 					status: 405,
-					type: 'HTTP',
+					type: 'REQUEST',
 				});
 			}
 
@@ -79,7 +79,7 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 			if (!params) {
 				throw new shopify.Exception('Client Not Found', {
 					status: 404,
-					type: 'HTTP',
+					type: 'REQUEST',
 				});
 			}
 
@@ -90,7 +90,7 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 			if (!operation) {
 				throw new shopify.Exception('Missing body operation', {
 					status: 400,
-					type: 'HTTP',
+					type: 'REQUEST',
 				});
 			}
 

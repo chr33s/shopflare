@@ -86,7 +86,7 @@ export async function admin(context: Context, request: Request) {
 			if (payload.aud !== SHOPIFY_API_KEY) {
 				throw new Exception('Session token had invalid API key', {
 					status: 401,
-					type: 'JWT',
+					type: 'REQUEST',
 				});
 			}
 			decodedSessionToken = payload;
@@ -121,7 +121,7 @@ export async function admin(context: Context, request: Request) {
 		if (!shop) {
 			throw new Exception('Received invalid shop argument', {
 				status: 400,
-				type: 'SHOP',
+				type: 'REQUEST',
 			});
 		}
 
@@ -162,7 +162,7 @@ export async function admin(context: Context, request: Request) {
 					body.errors.graphQLErrors?.[0].message ?? 'GraphQL operation failed',
 					{
 						status: 400,
-						type: 'GRAPHQL',
+						type: 'RESPONSE',
 					},
 				);
 			}
@@ -188,7 +188,7 @@ export async function admin(context: Context, request: Request) {
 						`Shopify is throttling requests ${errorMessage}`,
 						{
 							status: response.status,
-							type: 'THROTTLING',
+							type: 'RESPONSE',
 							// retryAfter: response.headers.has("Retry-After") ? parseFloat(response.headers.get("Retry-After")) : undefined,
 						},
 					);
@@ -226,7 +226,10 @@ export async function admin(context: Context, request: Request) {
 
 		const current = await session(context).get(shop);
 		if (!current)
-			throw new Exception('No session found', {status: 401, type: 'SESSION'});
+			throw new Exception('No session found', {
+				status: 401,
+				type: 'REQUEST',
+			});
 		return {
 			client: client(current).admin(),
 			session: current,
@@ -299,7 +302,7 @@ export function billing(context: Context, request: Request) {
 			if (errors || !data) {
 				throw new Exception(errors?.message ?? 'Unknown server error', {
 					status: errors?.networkStatusCode ?? 500,
-					type: 'GRAPHQL',
+					type: errors?.networkStatusCode ? 'RESPONSE' : 'SERVER',
 				});
 			}
 
@@ -650,16 +653,7 @@ export function createShopifyClient({
 export class Exception extends Error {
 	errors?: unknown[];
 	status = 500;
-	type:
-		| 'GRAPHQL'
-		| 'HMAC'
-		| 'JWT'
-		| 'REQUEST'
-		| 'RESPONSE'
-		| 'SESSION'
-		| 'SERVER'
-		| 'SHOP'
-		| 'THROTTLING' = 'SERVER';
+	type: 'REQUEST' | 'RESPONSE' | 'SERVER' = 'SERVER';
 
 	constructor(
 		message: string,
@@ -687,7 +681,7 @@ export async function handler<T>(fn: () => Promise<T>) {
 		if (error instanceof Response) return error;
 		if (error instanceof Exception) {
 			switch (error.type) {
-				case 'GRAPHQL': {
+				case 'RESPONSE': {
 					return {
 						data: undefined,
 						errors: error.errors,
@@ -1431,7 +1425,7 @@ export function upload(client: Client) {
 				throw new Exception(res.errors?.message ?? 'Failed to stage upload', {
 					errors: res.errors?.graphQLErrors,
 					status: res.errors?.networkStatusCode ?? 500,
-					type: 'GRAPHQL',
+					type: res.errors?.networkStatusCode ? 'RESPONSE' : 'SERVER',
 				});
 
 			case Boolean(res.data?.stagedUploadsCreate?.userErrors[0]):
@@ -1439,7 +1433,7 @@ export function upload(client: Client) {
 				throw new Exception(`Failed to stage upload`, {
 					errors: res.data?.stagedUploadsCreate?.userErrors,
 					status: 400,
-					type: 'GRAPHQL',
+					type: 'RESPONSE',
 				});
 		}
 
@@ -1461,7 +1455,7 @@ export function upload(client: Client) {
 		if (!res.ok) {
 			throw new Exception(`Failed to upload data`, {
 				status: 500,
-				type: 'GRAPHQL',
+				type: 'RESPONSE',
 			});
 		}
 
@@ -1523,7 +1517,7 @@ export function upload(client: Client) {
 				throw new Exception(res.errors?.message ?? 'Failed to create upload', {
 					errors: res.errors?.graphQLErrors,
 					status: res.errors?.networkStatusCode ?? 500,
-					type: 'GRAPHQL',
+					type: res.errors?.networkStatusCode ? 'RESPONSE' : 'SERVER',
 				});
 
 			case Boolean(res.data?.fileCreate?.userErrors[0]):
@@ -1534,7 +1528,7 @@ export function upload(client: Client) {
 						res.data?.fileCreate?.userErrors ??
 						res.data?.fileCreate?.files?.[0].fileErrors,
 					status: 400,
-					type: 'GRAPHQL',
+					type: 'RESPONSE',
 				});
 		}
 
@@ -1692,18 +1686,26 @@ export async function proxy(context: Context, request: Request) {
 		if (!valid) {
 			throw new Exception('Invalid hmac', {
 				status: 401,
-				type: 'HMAC',
+				type: 'REQUEST',
 			});
 		}
 
 		// shop is value due to hmac validation
 		const shop = utils.sanitizeShop(url.searchParams.get('shop'));
-		if (!shop)
-			throw new Exception('No shop param', {status: 400, type: 'REQUEST'});
+		if (!shop) {
+			throw new Exception('No shop param', {
+				status: 400,
+				type: 'REQUEST',
+			});
+		}
 
 		const current = await session(context).get(shop);
-		if (!current)
-			throw new Exception('No session found', {status: 401, type: 'SESSION'});
+		if (!current) {
+			throw new Exception('No session found', {
+				status: 401,
+				type: 'REQUEST',
+			});
+		}
 		return {
 			client: client(current).admin(),
 			session: current,
@@ -2083,7 +2085,7 @@ export async function webhook(context: Context, request: Request) {
 		if (!valid) {
 			throw new Exception('Invalid hmac', {
 				status: 401,
-				type: 'HMAC',
+				type: 'REQUEST',
 			});
 		}
 
