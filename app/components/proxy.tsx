@@ -8,12 +8,9 @@ import {
 	useMemo,
 	useState,
 } from 'react';
-import {
-	Form as ReactRouterForm,
-	type FormProps as ReactRouterFormProps,
-} from 'react-router';
+import * as ReactRouter from 'react-router';
 
-export interface FormProps extends ReactRouterFormProps {
+export interface FormProps extends ReactRouter.FormProps {
 	action: string;
 }
 
@@ -29,9 +26,9 @@ export function Form(props: FormProps) {
 	const {children, action, ...otherProps} = props;
 
 	return (
-		<ReactRouterForm action={context.formatUrl(action, false)} {...otherProps}>
+		<ReactRouter.Form action={context.formatUrl(action, false)} {...otherProps}>
 			{children}
-		</ReactRouterForm>
+		</ReactRouter.Form>
 	);
 }
 
@@ -58,7 +55,6 @@ export interface LinkProps
 
 export function Link(props: LinkProps) {
 	const context = useContext(Context);
-
 	if (!context) {
 		throw new Error(
 			'Proxy.Link must be used within an Proxy.Provider component',
@@ -95,11 +91,11 @@ export function Provider(props: ProviderProps) {
 	);
 
 	return (
-		<Context.Provider value={value}>
+		<Context value={value}>
 			<base href={appUrl} />
 
 			{children}
-		</Context.Provider>
+		</Context>
 	);
 }
 
