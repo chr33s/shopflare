@@ -2,6 +2,7 @@ import {env} from 'cloudflare:test';
 import {describe, expect, test} from 'vitest';
 
 import {API_VERSION} from '~/const';
+import {getHmacFromBody as getHmac} from '~/utils.test';
 
 import * as shopify from '../shopify.server';
 
@@ -66,11 +67,11 @@ describe('action', () => {
 	});
 
 	test('error on missing headers', async () => {
+		const body = '123';
+		const hmac = await getHmac(body);
 		const request = new Request('http://localhost', {
-			body: '123',
-			headers: {
-				'X-Shopify-Hmac-Sha256': 'n4AEkjln23lncb9LphO+UPXo6yy8OqROUdN+Acw9yhE=',
-			},
+			body,
+			headers: {'X-Shopify-Hmac-Sha256': hmac},
 			method: 'POST',
 		});
 		const response = await action({context, request} as Route.ActionArgs);
@@ -132,21 +133,3 @@ describe('action', () => {
 		await session.set(shop, null);
 	});
 });
-
-async function getHmac(body: string) {
-	const encoder = new TextEncoder();
-	const key = await crypto.subtle.importKey(
-		'raw',
-		encoder.encode(context.cloudflare.env.SHOPIFY_API_SECRET_KEY),
-		{
-			name: 'HMAC',
-			hash: 'SHA-256',
-		},
-		true,
-		['sign'],
-	);
-	const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(body));
-	// base64
-	const hmac = btoa(String.fromCharCode(...new Uint8Array(signature)));
-	return hmac;
-}

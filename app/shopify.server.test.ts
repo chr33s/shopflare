@@ -1,6 +1,8 @@
 import {env} from 'cloudflare:test';
 import {describe, expect, test} from 'vitest';
 
+import {getHmacFromBody as getHmac} from '~/utils.test';
+
 import * as shopify from './shopify.server';
 
 const context = {cloudflare: {env}} as unknown as shopify.Context;
@@ -8,6 +10,10 @@ const request = new Request('http://localhost');
 
 test('admin', () => {
 	expect(shopify.admin(context, request)).toBeDefined();
+});
+
+describe('billing', () => {
+	test.todo('check');
 });
 
 describe('client', () => {
@@ -145,7 +151,7 @@ describe('utils', () => {
 
 	test('validateHmac', async () => {
 		const data = '123';
-		const hmac = 'n4AEkjln23lncb9LphO+UPXo6yy8OqROUdN+Acw9yhE=';
+		const hmac = await getHmac(data);
 		const encoding = 'base64';
 
 		expect.assertions(2);
