@@ -2,12 +2,13 @@ import {useTranslation} from 'react-i18next';
 
 import {Form} from '~/components/proxy';
 import * as shopify from '~/shopify.server';
+import {log} from '~/shopify.shared';
 
 import type {Route} from './+types/proxy.index';
 
 export async function loader({context, request}: Route.LoaderArgs) {
 	try {
-		shopify.log.debug('routes/app.proxy.index#loader');
+		log.debug('routes/app.proxy.index#loader');
 
 		await shopify.proxy(context, request);
 
@@ -37,9 +38,7 @@ export default function ProxyIndex() {
 			<h1>{t('proxy')}</h1>
 			<Form action="">
 				<button
-					onClick={() =>
-						console.debug('routes/proxy.index#component.proxy.click')
-					}
+					onClick={() => log.debug('routes/proxy.index#component.proxy.click')}
 					type="button"
 				>
 					{t('click')}
@@ -50,7 +49,7 @@ export default function ProxyIndex() {
 }
 
 export async function action(_: Route.ActionArgs) {
-	shopify.log.debug('routes/proxy.index#action');
+	log.debug('routes/proxy.index#action');
 
 	const data = {};
 	return {data};

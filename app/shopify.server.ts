@@ -46,7 +46,8 @@ import type {
 	MetafieldsSetMutation,
 } from '~/types/admin.generated';
 
-import {API_VERSION, APP_BRIDGE_URL, APP_HANDLE, APP_LOG_LEVEL} from './const';
+import {log} from './shopify.shared';
+import {API_VERSION, APP_BRIDGE_URL, APP_HANDLE} from './const';
 
 export async function admin(context: Context, request: Request) {
 	async function authenticate() {
@@ -705,36 +706,7 @@ export async function handler<T>(fn: () => Promise<T>) {
 	}
 }
 
-export const log = {
-	level: APP_LOG_LEVEL as 'error' | 'info' | 'debug',
-	levels: {
-		error: 0,
-		info: 1,
-		debug: 2,
-	},
-	noop() {},
-
-	debug(...args: unknown[]) {
-		if (this.levels[this.level] >= this.levels.debug) {
-			return console.debug('log.debug', ...args);
-		}
-		return this.noop();
-	},
-
-	info(...args: unknown[]) {
-		if (this.levels[this.level] >= this.levels.info) {
-			return console.info('log.info', ...args);
-		}
-		return this.noop;
-	},
-
-	error(...args: unknown[]) {
-		if (this.levels[this.level] >= this.levels.error) {
-			return console.error('log.error', ...args);
-		}
-		return this.noop;
-	},
-};
+export {log};
 
 export function metafield(client: Client) {
 	function definition() {

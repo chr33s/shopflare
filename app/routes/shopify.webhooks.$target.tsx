@@ -1,11 +1,12 @@
 import * as shopify from '~/shopify.server';
+import {log} from '~/shopify.shared';
 
 import type {Route} from './+types/shopify.webhooks.$target';
 
 export async function action({context, params, request}: Route.ActionArgs) {
 	try {
 		const {session, webhook} = await shopify.webhook(context, request);
-		shopify.log.debug('routes/shopify.webhooks#action', webhook.webhookId);
+		log.debug('routes/shopify.webhooks#action', webhook.webhookId);
 
 		switch (params?.target) {
 			default:

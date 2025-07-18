@@ -5,6 +5,7 @@ import {useFetcher} from 'react-router';
 
 import {API_VERSION} from '~/const';
 import * as shopify from '~/shopify.server';
+import {log} from '~/shopify.shared';
 import type {ShopQuery} from '~/types/admin.generated';
 
 import type {Route} from './+types/app.index';
@@ -22,7 +23,7 @@ export async function loader({context, request}: Route.LoaderArgs) {
 			}
 		`);
 
-		shopify.log.debug('routes/app.index#loader', {data, errors});
+		log.debug('routes/app.index#loader', {data, errors});
 
 		return {
 			data,
@@ -33,7 +34,7 @@ export async function loader({context, request}: Route.LoaderArgs) {
 
 export async function clientLoader({serverLoader}: Route.ClientLoaderArgs) {
 	const data = await serverLoader();
-	console.debug('routes/app.index#clientLoader', {data});
+	log.debug('routes/app.index#clientLoader', {data});
 	return data;
 }
 
@@ -42,7 +43,7 @@ export default function AppIndex({
 	loaderData,
 }: Route.ComponentProps) {
 	const {data, errors} = loaderData ?? actionData ?? {};
-	console.debug('routes/app.index#component', data);
+	log.debug('routes/app.index#component', data);
 
 	const {t} = useTranslation();
 
@@ -65,10 +66,8 @@ export default function AppIndex({
 			signal: controller.signal,
 		})
 			.then<{data: ShopQuery}>((res) => res.json())
-			.then((res) => console.debug('routes/app.index#component.useEffect', res))
-			.catch((err) =>
-				console.error('routes/app.index#component.useEffect', err),
-			);
+			.then((res) => log.debug('routes/app.index#component.useEffect', res))
+			.catch((err) => log.error('routes/app.index#component.useEffect', err));
 
 		return () => controller.abort();
 	}, []);
@@ -107,13 +106,13 @@ export default function AppIndex({
 					data-save-bar
 					method="POST"
 					onReset={(ev) => {
-						console.debug('routes/app.index#component.onReset', ev);
+						log.debug('routes/app.index#component.onReset', ev);
 						ev.currentTarget.reset();
 						shopify.saveBar.hide('savebar');
 					}}
 					onSubmit={(ev) => {
 						const formData = new FormData(ev.currentTarget);
-						console.debug(
+						log.debug(
 							'routes/app.index#component.onSubmit',
 							Object.fromEntries(formData),
 						);
@@ -135,7 +134,7 @@ export default function AppIndex({
 
 export async function clientAction({serverAction}: Route.ClientActionArgs) {
 	const data = await serverAction();
-	console.debug('routes/app.index#clientAction', data);
+	log.debug('routes/app.index#clientAction', data);
 	return data;
 }
 
@@ -143,7 +142,7 @@ export async function action({context, request}: Route.ActionArgs) {
 	await shopify.admin(context, request);
 
 	const data = Object.fromEntries(await request.formData());
-	shopify.log.debug('routes/app.index#action', {data});
+	log.debug('routes/app.index#action', {data});
 	return {data};
 }
 

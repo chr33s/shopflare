@@ -54,10 +54,6 @@ test.todo('Exception');
 
 test.todo('handler');
 
-test('log', () => {
-	expect(shopify.log.error).toBeDefined();
-});
-
 describe('metafield', () => {
 	describe('definition', () => {
 		test.todo('get');

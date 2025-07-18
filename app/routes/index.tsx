@@ -3,11 +3,12 @@ import {Form, redirect} from 'react-router';
 
 import {API_KEY, APP_BRIDGE_UI_URL} from '~/const';
 import * as shopify from '~/shopify.server';
+import {log} from '~/shopify.shared';
 
 import type {Route} from './+types/index';
 
 export async function loader({context, request}: Route.LoaderArgs) {
-	shopify.log.debug('routes/index#loader');
+	log.debug('routes/index#loader');
 
 	const url = new URL(request.url);
 	if (url.searchParams.has('shop')) {
@@ -48,7 +49,7 @@ export default function Index({actionData, loaderData}: Route.ComponentProps) {
 }
 
 export async function action({request}: Route.ActionArgs) {
-	shopify.log.debug('routes/app.proxy.index#action');
+	log.debug('routes/app.proxy.index#action');
 
 	const url = new URL(request.url);
 	let shop = url.searchParams.get('shop');
