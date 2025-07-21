@@ -1,4 +1,4 @@
-import * as shopify from '~/shopify.server';
+import * as shopify from '#app/shopify.server';
 
 export async function queue(
 	batch: MessageBatch<QueueMessage>,

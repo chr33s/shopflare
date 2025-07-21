@@ -1,7 +1,7 @@
 import {redirect} from 'react-router';
 
-import {API_KEY, APP_BRIDGE_URL} from '~/const';
-import * as shopify from '~/shopify.server';
+import {API_KEY, APP_BRIDGE_URL} from '#app/const';
+import * as shopify from '#app/shopify.server';
 
 import type {Route} from './+types/shopify.session-token-bounce';
 

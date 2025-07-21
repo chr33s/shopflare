@@ -9,8 +9,8 @@ import {
 	isRouteErrorResponse,
 } from 'react-router';
 
-import {APP_BRIDGE_URL, APP_LINKS} from '~/const';
-import rootCss from '~/root.css?url';
+import {APP_BRIDGE_URL, APP_LINKS} from '#app/const';
+import rootCss from '#app/root.css?url';
 
 import type {Route} from './+types/root';
 

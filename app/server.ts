@@ -1,6 +1,6 @@
 import {createRequestHandler} from 'react-router';
 
-import {type QueueHandlerMessage, queueHandler} from '~/queues';
+import {type QueueHandlerMessage, queueHandler} from '#app/queues';
 
 declare module 'cloudflare:test' {
 	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-empty-object-type
@@ -35,5 +35,5 @@ export default {
 	},
 } satisfies ExportedHandler<Env, QueueHandlerMessage>;
 
-export * from '~/durable-objects';
-export * from '~/workflows';
+export * from '#app/durable-objects';
+export * from '#app/workflows';

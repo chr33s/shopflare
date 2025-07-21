@@ -6,7 +6,6 @@ import {
 } from '@cloudflare/vitest-pool-workers/config';
 import {loadEnv} from 'vite';
 import i18nextLoader from 'vite-plugin-i18next-loader';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import {defineConfig, mergeConfig} from 'vitest/config';
 
 import i18nextLoaderOptions from './i18n.config';
@@ -20,7 +19,7 @@ export default defineConfig((config) => {
 		optimizeDeps: {
 			include: ['react/jsx-dev-runtime'],
 		},
-		plugins: [i18nextLoader(i18nextLoaderOptions), tsconfigPaths()],
+		plugins: [i18nextLoader(i18nextLoaderOptions)],
 		test: {
 			css: true,
 			projects: [

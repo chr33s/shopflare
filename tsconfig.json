@@ -10,7 +10,7 @@
 		"module": "ES2022",
 		"moduleResolution": "bundler",
 		"paths": {
-			"~/*": ["./app/*"]
+			"#app/*": ["./app/*"]
 		},
 		"rootDirs": [".", "./.react-router/types"],
 		"strictPropertyInitialization": false,

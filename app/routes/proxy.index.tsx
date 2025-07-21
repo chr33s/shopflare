@@ -1,8 +1,8 @@
 import {useTranslation} from 'react-i18next';
 
-import {Form} from '~/components/proxy';
-import * as shopify from '~/shopify.server';
-import {log} from '~/shopify.shared';
+import {Form} from '#app/components/proxy';
+import * as shopify from '#app/shopify.server';
+import {log} from '#app/shopify.shared';
 
 import type {Route} from './+types/proxy.index';
 

@@ -18,7 +18,7 @@ import type {
 	MetaobjectHandleInput,
 	MetaobjectUpsertInput,
 	StagedMediaUploadTarget,
-} from '~/types/admin.types';
+} from '#app/types/admin.types';
 import type {
 	BillingCheckQuery,
 	BulkOperationCancelMutation,
@@ -44,7 +44,7 @@ import type {
 	StagedUploadsCreateMutation,
 	MetafieldDefinitionDeleteMutation,
 	MetafieldsSetMutation,
-} from '~/types/admin.generated';
+} from '#app/types/admin.generated';
 
 import {log} from './shopify.shared';
 import {API_VERSION, APP_BRIDGE_URL, APP_HANDLE} from './const';

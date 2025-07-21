@@ -1,5 +1,5 @@
-import * as shopify from '~/shopify.server';
-import {log} from '~/shopify.shared';
+import * as shopify from '#app/shopify.server';
+import {log} from '#app/shopify.shared';
 
 import type {Route} from './+types/shopify.webhooks.$target';
 

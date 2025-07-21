@@ -3,10 +3,10 @@ import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useFetcher} from 'react-router';
 
-import {API_VERSION} from '~/const';
-import * as shopify from '~/shopify.server';
-import {log} from '~/shopify.shared';
-import type {ShopQuery} from '~/types/admin.generated';
+import {API_VERSION} from '#app/const';
+import * as shopify from '#app/shopify.server';
+import {log} from '#app/shopify.shared';
+import type {ShopQuery} from '#app/types/admin.generated';
 
 import type {Route} from './+types/app.index';
 

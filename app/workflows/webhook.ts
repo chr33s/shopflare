@@ -4,8 +4,8 @@ import {
 	type WorkflowStep,
 } from 'cloudflare:workers';
 
-import type {QueueMessage as Params} from '~/queues/webhook';
-import * as shopify from '~/shopify.server';
+import type {QueueMessage as Params} from '#app/queues/webhook';
+import * as shopify from '#app/shopify.server';
 
 type Context = shopify.Context;
 type Event = WorkflowEvent<Params>;

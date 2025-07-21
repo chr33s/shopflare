@@ -10,8 +10,8 @@ import {
 	APP_HANDLE,
 	APP_LINKS,
 	APP_LOG_LEVEL,
-} from '~/const';
-import rootCss from '~/root.css?url';
+} from '#app/const';
+import rootCss from '#app/root.css?url';
 
 import type {Route} from './+types/app';
 

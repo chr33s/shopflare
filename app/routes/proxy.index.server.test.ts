@@ -1,7 +1,7 @@
 import {env} from 'cloudflare:test';
 import {describe, expect, test} from 'vitest';
 
-import {getHmacFromSearchParams as getHmac} from '~/utils.test';
+import {getHmacFromSearchParams as getHmac} from '#app/utils.test';
 
 import * as shopify from '../shopify.server';
 

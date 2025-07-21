@@ -2,7 +2,7 @@ import type {RequestOptions} from '@shopify/graphql-client';
 import {DurableObject} from 'cloudflare:workers';
 import {type JWTPayload, jwtVerify} from 'jose';
 
-import * as shopify from '~/shopify.server';
+import * as shopify from '#app/shopify.server';
 
 type ClientType = shopify.Sessiontype;
 

@@ -1,9 +1,9 @@
 import {useTranslation} from 'react-i18next';
 import {Form, redirect} from 'react-router';
 
-import {API_KEY, APP_BRIDGE_UI_URL} from '~/const';
-import * as shopify from '~/shopify.server';
-import {log} from '~/shopify.shared';
+import {API_KEY, APP_BRIDGE_UI_URL} from '#app/const';
+import * as shopify from '#app/shopify.server';
+import {log} from '#app/shopify.shared';
 
 import type {Route} from './+types/index';
 

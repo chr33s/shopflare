@@ -1,8 +1,8 @@
 import {env} from 'cloudflare:test';
 import {describe, expect, test} from 'vitest';
 
-import {API_VERSION} from '~/const';
-import {getHmacFromBody as getHmac} from '~/utils.test';
+import {getHmacFromBody as getHmac} from '#app/utils.test';
+import {API_VERSION} from '#app/const';
 
 import * as shopify from '../shopify.server';
 
