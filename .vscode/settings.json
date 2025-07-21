@@ -4,8 +4,11 @@
 		"source.fixAll.eslint": "explicit",
 		"source.fixAll.stylelint": "explicit"
 	},
-	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
 	"eslint.enable": true,
+	"eslint.format.enable": true,
+	"eslint.ignoreUntitled": true,
+	"eslint.useFlatConfig": true,
 	"explorer.fileNesting.patterns": {
 		".env": ".env.*, .*.vars"
 	},
@@ -13,7 +16,6 @@
 		".*.vars": "properties",
 		".env*": "properties"
 	},
-	"prettier.enable": true,
 	"stylelint.enable": true,
 	"typescript.enablePromptUseWorkspaceTsdk": true,
 	"typescript.tsdk": "node_modules/typescript/lib"
