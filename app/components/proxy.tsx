@@ -10,9 +10,7 @@ import {
 } from 'react';
 import * as ReactRouter from 'react-router';
 
-export interface FormProps extends ReactRouter.FormProps {
-	action: string;
-}
+export type FormProps = ReactRouter.FormProps;
 
 export function Form(props: FormProps) {
 	const context = useContext(Context);

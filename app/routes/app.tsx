@@ -3,15 +3,7 @@ import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Outlet, useNavigate, useNavigation} from 'react-router';
 
-import {
-	API_KEY,
-	APP_BRIDGE_UI_URL,
-	APP_BRIDGE_URL,
-	APP_HANDLE,
-	APP_LINKS,
-	APP_LOG_LEVEL,
-} from '#app/const';
-import rootCss from '#app/root.css?url';
+import {APP_BRIDGE_URL, APP_HANDLE, APP_LINKS} from '#app/const';
 
 import type {Route} from './+types/app';
 
@@ -41,9 +33,6 @@ export default function App() {
 
 	return (
 		<>
-			<script data-api-key={API_KEY} src={APP_BRIDGE_URL} />
-			<script src={APP_BRIDGE_UI_URL} />
-
 			<ui-nav-menu>
 				<a href="/" rel="home">
 					{t('app')}
@@ -97,17 +86,5 @@ export function headers({
 }
 
 export const links: Route.LinksFunction = () => [
-	...APP_LINKS,
-	{
-		href: rootCss,
-		precedence: 'default',
-		rel: 'stylesheet',
-	},
-];
-
-export const meta: Route.MetaFunction = () => [
-	APP_LOG_LEVEL === 'debug'
-		? {name: 'shopify-debug', content: 'web-vitals'}
-		: {},
-	{name: 'shopify-experimental-features', content: 'keepAlive'},
+	...APP_LINKS.filter((link) => link.href === APP_BRIDGE_URL),
 ];

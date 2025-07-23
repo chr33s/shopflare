@@ -52,6 +52,12 @@
 			}
 		]
 	},
+	"routes": [
+		{
+			"custom_domain": true,
+			"pattern": "?"
+		}
+	],
 	"send_metrics": false,
 	"upload_source_maps": true,
 	"vars": {
@@ -60,6 +66,7 @@
 		"SHOPIFY_APP_HANDLE": "",
 		"SHOPIFY_APP_URL": ""
 	},
+	"workers_dev": false,
 	"workflows": [
 		{
 			"name": "shopflare-webhook",

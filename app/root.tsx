@@ -9,7 +9,7 @@ import {
 	isRouteErrorResponse,
 } from 'react-router';
 
-import {APP_BRIDGE_URL, APP_LINKS} from '#app/const';
+import {APP_BRIDGE_URL, APP_LINKS, APP_LOG_LEVEL} from '#app/const';
 import rootCss from '#app/root.css?url';
 
 import type {Route} from './+types/root';
@@ -19,41 +19,30 @@ export default function Component() {
 }
 
 export function ErrorBoundary({error}: Route.ErrorBoundaryProps) {
-	let message = 'Oops!';
-	let details = 'An unexpected error occurred.';
-	let stack: string | undefined;
-
+	let title = '500 Error';
+	let message = 'An unexpected error occurred.';
 	if (isRouteErrorResponse(error)) {
-		message = error.status === 404 ? '404' : 'Error';
-		details =
-			error.status === 404
-				? 'The requested page could not be found.'
-				: error.statusText || details;
-	} else if (import.meta.env.DEV && error && error instanceof Error) {
-		details = error.message;
+		title = `${error.status} Error`;
+		message = error.data.message ?? error.statusText ?? message;
+	}
+
+	let stack: string | undefined;
+	if (import.meta.env.DEV && error instanceof Error) {
+		message ??= error.message;
 		stack = error.stack;
 	}
 
 	return (
-		<main
-			style={{
-				alignItems: 'center',
-				display: 'flex',
-				height: '100vh',
-				justifyContent: 'center',
-				width: '100vw',
-			}}
-		>
-			<div style={{textAlign: 'center'}}>
-				<h1>{message}</h1>
-				<p>{details}</p>
+		<s-page inlineSize="small">
+			<s-section heading={title}>
+				<p>{message}</p>
 				{stack && (
 					<pre>
 						<code>{stack}</code>
 					</pre>
 				)}
-			</div>
-		</main>
+			</s-section>
+		</s-page>
 	);
 }
 ErrorBoundary.displayName = 'RootErrorBoundary';
@@ -90,4 +79,8 @@ export const links: Route.LinksFunction = () => [
 export const meta: Route.MetaFunction = () => [
 	{title: 'ShopFlare'},
 	{name: 'description', content: '...'},
+	APP_LOG_LEVEL === 'debug'
+		? {name: 'shopify-debug', content: 'web-vitals'}
+		: {},
+	{name: 'shopify-experimental-features', content: 'keepAlive'},
 ];

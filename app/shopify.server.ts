@@ -677,16 +677,24 @@ export class Exception extends Error {
 
 export async function handler<T>(fn: () => Promise<T>) {
 	try {
-		return fn();
+		return await fn();
 	} catch (error) {
 		if (error instanceof Response) return error;
 		if (error instanceof Exception) {
 			switch (error.type) {
-				case 'RESPONSE': {
-					return {
-						data: undefined,
-						errors: error.errors,
-					};
+				case 'RESPONSE':
+				case 'REQUEST': {
+					throw data(
+						{
+							data: undefined,
+							errors: error.errors,
+							message: error.message,
+						},
+						{
+							status: error.status,
+							statusText: 'TEST',
+						},
+					);
 				}
 
 				default: {
@@ -696,7 +704,7 @@ export async function handler<T>(fn: () => Promise<T>) {
 				}
 			}
 		}
-		return data(
+		throw data(
 			{
 				data: undefined,
 				errors: [{message: 'Unknown Error'}],
