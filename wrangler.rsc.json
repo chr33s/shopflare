@@ -1,0 +1,8 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "shopflare-rsc",
+	"main": "./app/entry.rsc.tsx",
+	"compatibility_date": "2025-06-17",
+	"compatibility_flags": ["nodejs_als"],
+	"workers_dev": false
+}

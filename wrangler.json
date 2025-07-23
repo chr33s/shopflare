@@ -2,7 +2,10 @@
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "shopflare",
 	"compatibility_date": "2025-06-17",
-	"main": "./app/server.ts",
+	"compatibility_flags": [
+		"nodejs_als"
+	],
+	"main": "./app/entry.ssr.tsx",
 	"assets": {
 		"binding": "ASSETS",
 		"directory": "./build/client"
@@ -29,7 +32,9 @@
 	"migrations": [
 		{
 			"tag": "v1",
-			"new_sqlite_classes": ["ShopifyDurableObject"]
+			"new_sqlite_classes": [
+				"ShopifyDurableObject"
+			]
 		}
 	],
 	"observability": {
@@ -52,7 +57,19 @@
 			}
 		]
 	},
+	"routes": [
+		{
+			"custom_domain": true,
+			"pattern": "?"
+		}
+	],
 	"send_metrics": false,
+	"services": [
+		{
+			"binding": "RSC",
+			"service": "shopflare-rsc"
+		}
+	],
 	"upload_source_maps": true,
 	"vars": {
 		"NODE_VERSION": 22,
@@ -60,6 +77,7 @@
 		"SHOPIFY_APP_HANDLE": "",
 		"SHOPIFY_APP_URL": ""
 	},
+	"workers_dev": false,
 	"workflows": [
 		{
 			"name": "shopflare-webhook",

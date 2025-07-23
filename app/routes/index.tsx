@@ -1,13 +1,15 @@
-import {useTranslation} from 'react-i18next';
-import {Form, redirect} from 'react-router';
+import {redirect} from 'react-router';
 
-import {API_KEY, APP_BRIDGE_UI_URL} from '#app/const';
+import {API_KEY} from '#app/const';
+import {appLoad} from '#app/context';
 import * as shopify from '#app/shopify.server';
 import {log} from '#app/shopify.shared';
 
+import {Component as Client} from './index.client';
 import type {Route} from './+types/index';
 
 export async function loader({context, request}: Route.LoaderArgs) {
+	console.log(context.get(appLoad));
 	log.debug('routes/index#loader');
 
 	const url = new URL(request.url);
@@ -18,34 +20,9 @@ export async function loader({context, request}: Route.LoaderArgs) {
 	return action({context, request} as Route.ActionArgs);
 }
 
-export default function Index({actionData, loaderData}: Route.ComponentProps) {
-	const {errors} = actionData ?? loaderData ?? {};
-
-	const {t} = useTranslation();
-
-	return (
-		<>
-			<script src={APP_BRIDGE_UI_URL} />
-
-			<s-page inlineSize="small">
-				<s-section heading={t('login')}>
-					<Form method="post" style={{minWidth: '250px'}}>
-						<s-stack gap="base">
-							<s-text-field
-								error={errors?.shop}
-								label={t('shopDomain')}
-								name="shop"
-								placeholder="example.myshopify.com"
-							/>
-							<s-button type="submit" variant="primary">
-								{t('login')}
-							</s-button>
-						</s-stack>
-					</Form>
-				</s-section>
-			</s-page>
-		</>
-	);
+export default async function Component(props: Route.ComponentProps) {
+	log.debug('routes/index#Component');
+	return <Client {...props} />;
 }
 
 export async function action({request}: Route.ActionArgs) {

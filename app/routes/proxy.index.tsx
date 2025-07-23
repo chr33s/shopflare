@@ -1,56 +1,37 @@
-import {useTranslation} from 'react-i18next';
-
-import {Form} from '#app/components/proxy';
 import * as shopify from '#app/shopify.server';
 import {log} from '#app/shopify.shared';
+import {Provider} from '#app/components/proxy';
+import {APP_URL} from '#app/const';
 
+import {Component as Client} from './proxy.index.client';
 import type {Route} from './+types/proxy.index';
 
 export async function loader({context, request}: Route.LoaderArgs) {
-	try {
-		log.debug('routes/app.proxy.index#loader');
+	return shopify.handler(async () => {
+		log.debug('routes/proxy.index.server#loader');
 
 		await shopify.proxy(context, request);
 
 		const data = {};
 		return {data};
-	} catch (error: any) {
-		throw new Response(error.message, {
-			status: error.status ?? 500,
-			statusText: 'Unauthorized',
-		});
-	}
+	});
 }
 
-export default function ProxyIndex() {
-	const {t} = useTranslation('proxy');
-
+export default async function Component(props: Route.ComponentProps) {
 	return (
-		<div
-			style={{
-				alignItems: 'center',
-				display: 'flex',
-				height: '100vh',
-				justifyContent: 'center',
-				width: '100vw',
-			}}
-		>
-			<h1>{t('proxy')}</h1>
-			<Form action="">
-				<button
-					onClick={() => log.debug('routes/proxy.index#component.proxy.click')}
-					type="button"
-				>
-					{t('click')}
-				</button>
-			</Form>
-		</div>
+		<Provider appUrl={APP_URL}>
+			<Client {...props} />
+		</Provider>
 	);
 }
 
-export async function action(_: Route.ActionArgs) {
-	log.debug('routes/proxy.index#action');
+export async function action({context, request}: Route.ActionArgs) {
+	return shopify.handler(async () => {
+		log.debug('routes/proxy.index.server#action');
 
-	const data = {};
-	return {data};
+		await shopify.proxy(context, request);
+
+		const data = {};
+		return {data};
+	});
 }

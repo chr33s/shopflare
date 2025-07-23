@@ -1,3 +1,5 @@
+'use client';
+
 import {
 	type AnchorHTMLAttributes,
 	type DetailedHTMLProps,
@@ -10,11 +12,7 @@ import {
 } from 'react';
 import * as ReactRouter from 'react-router';
 
-export interface FormProps extends ReactRouter.FormProps {
-	action: string;
-}
-
-export function Form(props: FormProps) {
+export function Form(props: ReactRouter.FormProps) {
 	const context = useContext(Context);
 
 	if (!context) {

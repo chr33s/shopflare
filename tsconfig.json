@@ -5,6 +5,7 @@
 		"baseUrl": ".",
 		"checkJs": true,
 		"composite": true,
+		"erasableSyntaxOnly": true,
 		"jsx": "react-jsx",
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],
 		"module": "ES2022",
@@ -22,6 +23,7 @@
 			"@shopify/app-bridge-ui-types",
 			"@vitest/browser/matchers",
 			"@vitest/browser/providers/playwright",
+			"@vitejs/plugin-rsc/types",
 			"vite/client"
 		],
 		"verbatimModuleSyntax": true
