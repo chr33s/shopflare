@@ -9,7 +9,7 @@ import {API_VERSION} from '#app/const';
 import {log} from '#app/shopify.shared';
 import type {ShopQuery} from '#app/types/admin.generated';
 
-import type {Route} from './+types/app.index';
+import type {Route} from './+types/app';
 
 export async function clientLoader({serverLoader}: Route.ClientLoaderArgs) {
 	const data = await serverLoader();

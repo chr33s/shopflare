@@ -4,7 +4,7 @@ import {useTranslation} from 'react-i18next';
 
 import {Form} from '#app/components/proxy';
 
-import type {Route} from './+types/proxy.index';
+import type {Route} from './+types/proxy';
 
 export function Component(_: Route.ComponentProps) {
 	const {t} = useTranslation('proxy');

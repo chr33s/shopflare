@@ -32,3 +32,8 @@ declare module 'react-router' {
 		unstable_viteEnvironmentApi: true;
 	}
 }
+
+declare module 'virtual:react-router-routes' {
+	const routes: any
+	export default routes
+}

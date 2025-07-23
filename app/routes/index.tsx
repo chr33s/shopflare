@@ -1,7 +1,6 @@
 import {redirect} from 'react-router';
 
 import {API_KEY} from '#app/const';
-import {appLoad} from '#app/context';
 import * as shopify from '#app/shopify.server';
 import {log} from '#app/shopify.shared';
 
@@ -9,7 +8,6 @@ import {Component as Client} from './index.client';
 import type {Route} from './+types/index';
 
 export async function loader({context, request}: Route.LoaderArgs) {
-	console.log(context.get(appLoad));
 	log.debug('routes/index#loader');
 
 	const url = new URL(request.url);

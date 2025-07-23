@@ -6,8 +6,7 @@ import {isRouteErrorResponse} from 'react-router';
 
 import {APP_BRIDGE_URL, APP_BRIDGE_UI_URL, APP_LOG_LEVEL} from '#app/const';
 
-import css from './layout.css?url';
-import type {Route} from './+types/index';
+import type {Route} from './+types/root';
 
 export function ErrorBoundary({error}: Route.ErrorBoundaryProps) {
 	let message = 'Oops!';
@@ -63,7 +62,6 @@ export function Component({children}: PropsWithChildren) {
 					<meta name="shopify-debug" content="web-vitals" />
 				)}
 				<meta name="shopify-experimental-features" content="keepAlive" />
-				<link href={css} precedence="default" rel="stylesheet" />
 				<link
 					href="https://cdn.shopify.com/static/fonts/inter/v4/styles.css"
 					precedence="default"

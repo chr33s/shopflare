@@ -1,7 +1,7 @@
 import {createRoot} from 'react-dom/client';
 import {test} from 'vitest';
 
-import Component from './layout';
+import Component from './root';
 
 test('component', () => {
 	const app = window.document.createElement('div');

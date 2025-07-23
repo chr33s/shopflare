@@ -1,16 +1,16 @@
 import type {PropsWithChildren} from 'react';
 import {Outlet} from 'react-router';
 
-import type {Route} from './+types/index';
-import {Component as Client} from './layout.client';
+import type {Route} from './+types/root';
+import {Component as Client} from './root.client';
 
-import './layout.css';
+import './root.css';
 
 export default function Component() {
 	return <Outlet />;
 }
 
-export {ErrorBoundary} from './layout.client';
+export {ErrorBoundary} from './root.client';
 
 export function headers({
 	parentHeaders,

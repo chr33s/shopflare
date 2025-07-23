@@ -8,8 +8,6 @@ import {
 	unstable_RSCStaticRouter as RSCStaticRouter,
 } from 'react-router';
 
-import {type QueueHandlerMessage, queueHandler} from '#app/queues';
-
 import * as shopify from './shopify.server';
 import i18n, {LanguageDetector} from './i18n';
 
@@ -67,13 +65,4 @@ export default {
 		shopify.utils.addHeaders(request, response.headers);
 		return response;
 	},
-
-	async queue(batch, env, ctx): Promise<void> {
-		return queueHandler(batch, {
-			cloudflare: {env, ctx},
-		});
-	},
-} satisfies ExportedHandler<Env, QueueHandlerMessage>;
-
-export * from '#app/durable-objects';
-export * from '#app/workflows';
+} satisfies ExportedHandler<Env>;

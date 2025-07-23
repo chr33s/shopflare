@@ -5,8 +5,8 @@ import {getHmacFromSearchParams as getHmac} from '#app/utils.test';
 
 import * as shopify from '../shopify.server';
 
-import type {Route} from './+types/proxy.index';
-import {loader} from './proxy.index';
+import type {Route} from './+types/proxy';
+import {loader} from './proxy';
 
 const context = {
 	cloudflare: {env: {...env, SHOPIFY_APP_LOG_LEVEL: 'error'}},

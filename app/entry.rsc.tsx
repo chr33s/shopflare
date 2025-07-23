@@ -10,9 +10,11 @@ import {
 	unstable_matchRSCServerRequest as matchRSCServerRequest,
 	unstable_RouterContextProvider as RouterContextProvider,
 } from 'react-router';
+import routes from 'virtual:react-router-routes';
+
+import {type QueueHandlerMessage, queueHandler} from '#app/queues';
 
 import * as shopify from './shopify.server';
-import {routes} from './routes/config';
 import {appLoad} from './context';
 
 export default {
@@ -39,4 +41,13 @@ export default {
 			routes,
 		});
 	},
-} satisfies ExportedHandler<Env>;
+
+	async queue(batch, env, ctx): Promise<void> {
+		return queueHandler(batch, {
+			cloudflare: {env, ctx},
+		});
+	},
+} satisfies ExportedHandler<Env, QueueHandlerMessage>;
+
+export * from '#app/durable-objects';
+export * from '#app/workflows';
