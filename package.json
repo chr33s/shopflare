@@ -27,24 +27,24 @@
 		"tunnel": "source .env && cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}"
 	},
 	"dependencies": {
-		"@shopify/graphql-client": "1.4.0",
+		"@shopify/graphql-client": "1.4.1",
 		"i18next": "25.3.2",
 		"isbot": "5.1.28",
-		"jose": "6.0.11",
+		"jose": "6.0.12",
 		"patch-package": "8.0.0",
 		"react": "19.1.0",
 		"react-dom": "19.1.0",
-		"react-i18next": "15.6.0",
-		"react-router": "7.6.3",
+		"react-i18next": "15.6.1",
+		"react-router": "7.7.0",
 		"valibot": "1.1.0"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.1.1",
-		"@cloudflare/vite-plugin": "1.9.4",
-		"@cloudflare/vitest-pool-workers": "0.8.53",
+		"@biomejs/biome": "2.1.2",
+		"@cloudflare/vite-plugin": "1.10.0",
+		"@cloudflare/vitest-pool-workers": "0.8.56",
 		"@playwright/test": "1.54.1",
-		"@react-router/dev": "7.6.3",
-		"@shopify/api-codegen-preset": "1.1.8",
+		"@react-router/dev": "7.7.0",
+		"@shopify/api-codegen-preset": "1.1.9",
 		"@shopify/app-bridge-react": "4.2.0",
 		"@shopify/app-bridge-types": "0.1.0",
 		"@shopify/polaris": "13.9.5",
@@ -56,12 +56,12 @@
 		"happy-dom": "18.0.1",
 		"playwright": "1.54.1",
 		"typescript": "5.8.3",
-		"vite": "7.0.4",
+		"vite": "7.0.5",
 		"vite-plugin-i18next-loader": "3.1.2",
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.2.4",
-		"vitest-browser-react": "1.0.0",
-		"wrangler": "4.24.3"
+		"vitest-browser-react": "1.0.1",
+		"wrangler": "4.25.1"
 	},
 	"optionalDependencies": {
 		"@shopify/cli": "3.82.1"
