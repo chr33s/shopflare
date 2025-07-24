@@ -1,5 +1,7 @@
 {
+	"chat.agent.maxRequests": 100,
 	"chat.mcp.discovery.enabled": true,
+	"chat.tools.autoApprove": true,
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": "explicit",
 		"source.fixAll.stylelint": "explicit"
