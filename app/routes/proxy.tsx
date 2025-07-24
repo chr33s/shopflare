@@ -10,5 +10,3 @@ export default function Proxy() {
 		</Provider>
 	);
 }
-
-export {links} from './app';

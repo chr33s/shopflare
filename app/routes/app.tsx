@@ -3,7 +3,7 @@ import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Outlet, useNavigate, useNavigation} from 'react-router';
 
-import {APP_BRIDGE_URL, APP_HANDLE, APP_LINKS} from '#app/const';
+import {APP_HANDLE} from '#app/const';
 
 import type {Route} from './+types/app';
 
@@ -84,6 +84,3 @@ export function headers({
 		...(actionHeaders ? Array.from(actionHeaders.entries()) : []),
 	]);
 }
-
-export const links: Route.LinksFunction = () =>
-	APP_LINKS.filter((link) => link.href === APP_BRIDGE_URL);
