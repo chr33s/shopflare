@@ -85,6 +85,5 @@ export function headers({
 	]);
 }
 
-export const links: Route.LinksFunction = () => [
-	...APP_LINKS.filter((link) => link.href === APP_BRIDGE_URL),
-];
+export const links: Route.LinksFunction = () =>
+	APP_LINKS.filter((link) => link.href === APP_BRIDGE_URL);

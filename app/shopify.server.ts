@@ -245,7 +245,13 @@ export function billing(context: Context, request: Request) {
 	async function check(plans: string[]) {
 		const shop = utils.sanitizeShop(
 			new URL(request.url).searchParams.get('shop'),
-		)!;
+		);
+		if (!shop) {
+			throw new Exception(`Shop ${shop} not found`, {
+				status: 400,
+				type: 'REQUEST',
+			});
+		}
 
 		if (await active(shop, plans)) return;
 
@@ -261,8 +267,14 @@ export function billing(context: Context, request: Request) {
 		const isTest = config(context).SHOPIFY_APP_TEST === '1';
 
 		const current = await session(context, 'admin').get(shop);
+		if (!current?.accessToken) {
+			throw new Exception(`Access token for ${shop} not found`, {
+				status: 400,
+				type: 'REQUEST',
+			});
+		}
 		const admin = client({
-			accessToken: current?.accessToken!,
+			accessToken: current?.accessToken,
 			shop,
 		}).admin();
 
@@ -670,7 +682,7 @@ export class Exception extends Error {
 		Object.assign(this, {
 			name: this.constructor.name,
 			errors: [],
-			...(options ?? {}),
+			...options,
 		});
 	}
 }
