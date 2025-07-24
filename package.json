@@ -45,7 +45,7 @@
 		"react-dom": "19.1.0",
 		"react-i18next": "15.6.1",
 		"react-router": "7.7.0",
-		"zod": "4.0.5"
+		"zod": "4.0.8"
 	},
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "1.10.0",
@@ -77,8 +77,8 @@
 		"wrangler": "4.25.1"
 	},
 	"optionalDependencies": {
-		"@shopify/cli": "3.82.1",
-		"@shopify/plugin-cloudflare": "3.82.1"
+		"@shopify/cli": "3.83.0",
+		"@shopify/plugin-cloudflare": "3.83.0"
 	},
 	"trustedDependencies": [
 		"@shopify/plugin-cloudflare"
