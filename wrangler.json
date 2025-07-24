@@ -66,12 +66,5 @@
 		"SHOPIFY_APP_HANDLE": "",
 		"SHOPIFY_APP_URL": ""
 	},
-	"workers_dev": false,
-	"workflows": [
-		{
-			"name": "shopflare-webhook",
-			"binding": "WEBHOOK_WORKFLOW",
-			"class_name": "WebhookWorkflow"
-		}
-	]
+	"workers_dev": false
 }

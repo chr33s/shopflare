@@ -14,7 +14,6 @@ declare namespace Cloudflare {
 		>;
 		WEBHOOK_QUEUE: Queue<import('./app/queues/webhook.js').QueueMessage>;
 		ASSETS: Fetcher;
-		WEBHOOK_WORKFLOW: Workflow<import('./app/queues/webhook.js').QueueMessage>;
 	}
 }
 interface Env extends Cloudflare.Env {}

@@ -1,6 +1,6 @@
 # ShopFlare
 
-Minimalist Shopify app using React Router (v7) running on cloudflare (worker, kv, queues|workflows). Only essential features, no future changes other than core upgrades & platform alignment.
+Minimalist Shopify app using React Router (v7) running on cloudflare (worker, kv, queues). Only essential features, no future changes other than core upgrades & platform alignment.
 
 ## Rationale
 
@@ -47,9 +47,6 @@ gh secret set --app=actions SHOPIFY_CLI_PARTNERS_TOKEN  # value from partners.sh
 gh variable set SHOPIFY_API_KEY
 ```
 
-> [!WARNING]
-> Either a workflow or a queue is required to handle webhooks, not both.
-
 ## Development
 
 ```sh
@@ -73,9 +70,9 @@ To split environments see [Cloudflare](https://developers.cloudflare.com/workers
 
 - [App Bridge](https://shopify.dev/docs/api/app-bridge-library/react-components)
 - [Cloudflare](https://developers.cloudflare.com)
-- [Polaris](https://polaris.shopify.com)
+- [Polaris](https://shopify.dev/docs/beta/next-gen-dev-platform/polaris)
 - [React](https://react.dev/reference/react)
-- [React Router](https://reactrouter.com/home)
+- [React Router](https://reactrouter.com/)
 - [Shopify](http://shopify.dev/)
 
 ### Usage

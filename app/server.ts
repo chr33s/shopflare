@@ -22,4 +22,3 @@ export default {
 } satisfies ExportedHandler<Env, QueueHandlerMessage>;
 
 export * from '#app/durable-objects';
-export * from '#app/workflows';

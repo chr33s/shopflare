@@ -17,6 +17,6 @@ export default [
 	]),
 	...prefix('shopify', [
 		route('session-token-bounce', './routes/shopify.session-token-bounce.tsx'),
-		route('webhooks/:target?', './routes/shopify.webhooks.$target.tsx'),
+		route('webhooks', './routes/shopify.webhooks.tsx'),
 	]),
 ] satisfies RouteConfig;
