@@ -1,4 +1,6 @@
+name = "app"
 port = 8080
+roles = []
 webhooks_path = "/shopify/webhooks"
 
 [commands]
