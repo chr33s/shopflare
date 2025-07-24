@@ -1,0 +1,6 @@
+#graphql
+query Metaobject($handle: MetaobjectHandleInput!) {
+	metaobjectByHandle(handle: $handle) {
+		id
+	}
+}

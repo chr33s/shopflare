@@ -1,0 +1,23 @@
+#graphql
+mutation MetaobjectUpsert(
+	$handle: MetaobjectHandleInput!
+	$metaobject: MetaobjectUpsertInput!
+) {
+	metaobjectUpsert(handle: $handle, metaobject: $metaobject) {
+		metaobject {
+			displayName
+			fields {
+				key
+				type
+				value
+			}
+			handle
+			id
+		}
+		userErrors {
+			code
+			field
+			message
+		}
+	}
+}

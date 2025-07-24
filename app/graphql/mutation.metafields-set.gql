@@ -1,0 +1,17 @@
+#graphql
+mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
+	metafieldsSet(metafields: $metafields) {
+		metafields {
+			key
+			namespace
+			value
+			createdAt
+			updatedAt
+		}
+		userErrors {
+			code
+			field
+			message
+		}
+	}
+}

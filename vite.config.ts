@@ -10,6 +10,7 @@ export default defineConfig(({mode}) => {
 	const app = new URL(env.HOST ?? env.SHOPIFY_APP_URL);
 
 	return {
+		assetsInclude: ['**/*.gql'],
 		base: app.href,
 		clearScreen: false,
 		define: define(env),

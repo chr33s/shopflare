@@ -1,0 +1,25 @@
+#graphql
+mutation MetaobjectDefinitionUpdate(
+	$id: ID!
+	$definition: MetaobjectDefinitionUpdateInput!
+) {
+	metaobjectDefinitionUpdate(id: $id, definition: $definition) {
+		metaobjectDefinition {
+			id
+			name
+			displayNameKey
+			fieldDefinitions {
+				name
+				key
+				type {
+					name
+				}
+			}
+		}
+		userErrors {
+			code
+			field
+			message
+		}
+	}
+}

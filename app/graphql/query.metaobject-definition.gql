@@ -1,0 +1,6 @@
+#graphql
+query MetaobjectDefinition($id: ID!) {
+	metaobjectDefinition(id: $id) {
+		id
+	}
+}

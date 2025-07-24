@@ -1,0 +1,71 @@
+#graphql
+query Metafields(
+	$cursor: String
+	$first: Int = 10
+	$keys: [String!]
+	$namespace: String
+	$ownerId: ID!
+) {
+	node(id: $ownerId) {
+		... on AppInstallation {
+			...MetafieldNodesFragment
+		}
+		... on Article {
+			...MetafieldNodesFragment
+		}
+		... on Blog {
+			...MetafieldNodesFragment
+		}
+		... on Collection {
+			...MetafieldNodesFragment
+		}
+		... on Company {
+			...MetafieldNodesFragment
+		}
+		... on CompanyLocation {
+			...MetafieldNodesFragment
+		}
+		... on Customer {
+			...MetafieldNodesFragment
+		}
+		... on DeliveryCustomization {
+			...MetafieldNodesFragment
+		}
+		... on DiscountAutomaticNode {
+			...MetafieldNodesFragment
+		}
+		... on DiscountCodeNode {
+			...MetafieldNodesFragment
+		}
+		... on DiscountNode {
+			...MetafieldNodesFragment
+		}
+		... on DraftOrder {
+			...MetafieldNodesFragment
+		}
+		... on Location {
+			...MetafieldNodesFragment
+		}
+		... on Market {
+			...MetafieldNodesFragment
+		}
+		... on Order {
+			...MetafieldNodesFragment
+		}
+		... on Page {
+			...MetafieldNodesFragment
+		}
+		... on PaymentCustomization {
+			...MetafieldNodesFragment
+		}
+		... on Product {
+			...MetafieldNodesFragment
+		}
+		... on ProductVariant {
+			...MetafieldNodesFragment
+		}
+		... on Shop {
+			...MetafieldNodesFragment
+		}
+	}
+}

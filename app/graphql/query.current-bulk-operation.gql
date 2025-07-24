@@ -1,0 +1,10 @@
+#graphql
+query CurrentBulkOperation($type: BulkOperationType!) {
+	currentBulkOperation(type: $type) {
+		errorCode
+		id
+		type
+		status
+		url
+	}
+}

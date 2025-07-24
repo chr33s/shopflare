@@ -1,0 +1,6 @@
+#graphql
+query MetafieldDefinition($identifier: MetafieldDefinitionIdentifierInput!) {
+	metafieldDefinition(identifier: $identifier) {
+		id
+	}
+}

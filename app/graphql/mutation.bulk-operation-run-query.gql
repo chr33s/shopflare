@@ -1,0 +1,17 @@
+#graphql
+mutation BulkOperationRunQuery($groupObjects: Boolean!, $query: String!) {
+	bulkOperationRunQuery(groupObjects: $groupObjects, query: $query) {
+		bulkOperation {
+			errorCode
+			id
+			partialDataUrl
+			status
+			type
+			url
+		}
+		userErrors {
+			field
+			message
+		}
+	}
+}

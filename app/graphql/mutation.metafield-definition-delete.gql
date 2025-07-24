@@ -1,0 +1,17 @@
+#graphql
+mutation MetafieldDefinitionDelete(
+	$identifier: MetafieldDefinitionIdentifierInput!
+	$deleteAllAssociatedMetafields: Boolean!
+) {
+	metafieldDefinitionDelete(
+		identifier: $identifier
+		deleteAllAssociatedMetafields: $deleteAllAssociatedMetafields
+	) {
+		deletedDefinitionId
+		userErrors {
+			code
+			field
+			message
+		}
+	}
+}

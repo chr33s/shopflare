@@ -14,11 +14,11 @@ import type {
 	MetafieldDefinitionInput,
 	MetafieldInput,
 	MetafieldsSetInput,
-	MetaobjectDefinition,
+	MetaobjectDefinition as MetaobjectDefinitionArgs,
 	MetaobjectHandleInput,
 	MetaobjectUpsertInput,
 	StagedMediaUploadTarget,
-} from '#app/types/admin.types';
+} from './types/admin.types';
 import type {
 	BillingCheckQuery,
 	BulkOperationCancelMutation,
@@ -44,10 +44,35 @@ import type {
 	StagedUploadsCreateMutation,
 	MetafieldDefinitionDeleteMutation,
 	MetafieldsSetMutation,
-} from '#app/types/admin.generated';
-
+} from './types/admin.generated';
 import {log} from './shopify.shared';
 import {API_VERSION, APP_BRIDGE_URL, APP_HANDLE} from './const';
+import BillingCheck from './graphql/query.billing-check.gql?raw';
+import BulkOperationCancel from './graphql/mutation.bulk-operation-cancel.gql?raw';
+import CurrentBulkOperation from './graphql/query.current-bulk-operation.gql?raw';
+import BulkOperationRunMutation from './graphql/mutation.bulk-operation-run-mutation.gql?raw';
+import BulkOperationRunQuery from './graphql/mutation.bulk-operation-run-query.gql?raw';
+import MetafieldDefinition from './graphql/query.metafield-definition.gql?raw';
+import MetafieldDefinitionCreate from './graphql/mutation.metafield-definition-create.gql?raw';
+import MetafieldDefinitionUpdate from './graphql/mutation.metafield-definition-update.gql?raw';
+import MetafieldDefinitionDelete from './graphql/mutation.metafield-definition-delete.gql?raw';
+import MetafieldsSet from './graphql/mutation.metafields-set.gql?raw';
+import MetafieldDelete from './graphql/mutation.metafield-delete.gql?raw';
+import MetafieldNodesFragment from './graphql/fragment.metafield-nodes.gql?raw';
+import Metafields from './graphql/query.metafields.gql?raw';
+import MetafieldNodeFragment from './graphql/fragment.metafield-node.gql?raw';
+import Metafield from './graphql/query.metafield.gql?raw';
+import MetaobjectDefinition from './graphql/query.metaobject-definition.gql?raw';
+import MetaobjectDefinitionCreate from './graphql/mutation.metaobject-definition-create.gql?raw';
+import MetaobjectDefinitionUpdate from './graphql/mutation.metaobject-definition-update.gql?raw';
+import MetaobjectDefinitionDelete from './graphql/mutation.metaobject-definition-delete.gql?raw';
+import MetaobjectUpsert from './graphql/mutation.metaobject-upsert.gql?raw';
+import MetaobjectDelete from './graphql/mutation.metaobject-delete.gql?raw';
+import Metaobject from './graphql/query.metaobject.gql?raw';
+import Metaobjects from './graphql/query.metaobjects.gql?raw';
+import StagedUploadsCreate from './graphql/mutation.staged-uploads-create.gql?raw';
+import FileCreate from './graphql/mutation.file-create.gql?raw';
+import FileNode from './graphql/query.file.gql?raw';
 
 export async function admin(context: Context, request: Request) {
 	async function authenticate() {
@@ -281,35 +306,7 @@ export function billing(context: Context, request: Request) {
 		let cursor: string | undefined;
 		while (true) {
 			const {data, errors} = await admin.request<BillingCheckQuery>(
-				/* GraphQL */ `
-					#graphql
-					query BillingCheck($cursor: String) {
-						currentAppInstallation {
-							activeSubscriptions {
-								id
-								name
-								test
-								status
-							}
-							oneTimePurchases(
-								first: 250
-								sortKey: CREATED_AT
-								after: $cursor
-							) {
-								nodes {
-									id
-									name
-									test
-									status
-								}
-								pageInfo {
-									hasNextPage
-									endCursor
-								}
-							}
-						}
-					}
-				`,
+				BillingCheck,
 				{variables: {cursor}},
 			);
 			if (errors || !data) {
@@ -378,124 +375,40 @@ export function bulkOperation(client: Client) {
 	// eslint-disable-next-line no-unused-vars
 	async function cancel(id: string) {
 		return client
-			.request<BulkOperationCancelMutation>(
-				/* GraphQL */ `
-					#graphql
-					mutation BulkOperationCancel($id: ID!) {
-						bulkOperationCancel(id: $id) {
-							bulkOperation {
-								errorCode
-								id
-								status
-								type
-							}
-							userErrors {
-								field
-								message
-							}
-						}
-					}
-				`,
-				{variables: {id}},
-			)
+			.request<BulkOperationCancelMutation>(BulkOperationCancel, {
+				variables: {id},
+			})
 			.then((res) => res.data?.bulkOperationCancel);
 	}
 
 	async function current(type: BulkOperationType) {
 		return client
-			.request<CurrentBulkOperationQuery>(
-				/* GraphQL */ `
-					#graphql
-					query CurrentBulkOperation($type: BulkOperationType!) {
-						currentBulkOperation(type: $type) {
-							errorCode
-							id
-							type
-							status
-							url
-						}
-					}
-				`,
-				{variables: {type}},
-			)
+			.request<CurrentBulkOperationQuery>(CurrentBulkOperation, {
+				variables: {type},
+			})
 			.then((res) => res.data?.currentBulkOperation);
 	}
 
 	async function runMutation(args: MutationBulkOperationRunMutationArgs) {
 		return client
-			.request<BulkOperationRunMutationMutation>(
-				/* GraphQL */ `
-					#graphql
-					mutation BulkOperationRunMutation(
-						$clientIdentifier: String
-						$groupObjects: Boolean!
-						$mutation: String!
-						$stagedUploadPath: String!
-					) {
-						bulkOperationRunMutation(
-							clientIdentifier: $clientIdentifier
-							groupObjects: $groupObjects
-							mutation: $mutation
-							stagedUploadPath: $stagedUploadPath
-						) {
-							bulkOperation {
-								errorCode
-								id
-								partialDataUrl
-								status
-								type
-								url
-							}
-							userErrors {
-								field
-								message
-							}
-						}
-					}
-				`,
-				{
-					variables: {
-						clientIdentifier: 'shopflare',
-						groupObjects: false,
-						...args,
-					},
+			.request<BulkOperationRunMutationMutation>(BulkOperationRunMutation, {
+				variables: {
+					clientIdentifier: 'shopflare',
+					groupObjects: false,
+					...args,
 				},
-			)
+			})
 			.then((res) => res.data?.bulkOperationRunMutation);
 	}
 
 	async function runQuery(args: MutationBulkOperationRunQueryArgs) {
 		return client
-			.request<BulkOperationRunQueryMutation>(
-				/* GraphQL */ `
-					#graphql
-					mutation BulkOperationRunQuery(
-						$groupObjects: Boolean!
-						$query: String!
-					) {
-						bulkOperationRunQuery(groupObjects: $groupObjects, query: $query) {
-							bulkOperation {
-								errorCode
-								id
-								partialDataUrl
-								status
-								type
-								url
-							}
-							userErrors {
-								field
-								message
-							}
-						}
-					}
-				`,
-				{
-					variables: {
-						groupObjects: false,
-						...args,
-					},
+			.request<BulkOperationRunQueryMutation>(BulkOperationRunQuery, {
+				variables: {
+					groupObjects: false,
+					...args,
 				},
-			)
+			})
 			.then((res) => res.data?.bulkOperationRunQuery);
 	}
 
@@ -732,19 +645,9 @@ export function metafield(client: Client) {
 	function definition() {
 		async function get(identifier: MetafieldDefinitionIdentifierInput) {
 			return client
-				.request<MetafieldDefinitionQuery>(
-					/* GraphQL */ `
-						#graphql
-						query MetafieldDefinition(
-							$identifier: MetafieldDefinitionIdentifierInput!
-						) {
-							metafieldDefinition(identifier: $identifier) {
-								id
-							}
-						}
-					`,
-					{variables: {identifier}},
-				)
+				.request<MetafieldDefinitionQuery>(MetafieldDefinition, {
+					variables: {identifier},
+				})
 				.then((res) => res.data?.metafieldDefinition);
 		}
 
@@ -771,53 +674,17 @@ export function metafield(client: Client) {
 
 		async function create(definition: MetafieldDefinitionInput) {
 			return client
-				.request<MetafieldDefinitionCreateMutation>(
-					/* GraphQL */ `
-						#graphql
-						mutation MetafieldDefinitionCreate(
-							$definition: MetafieldDefinitionInput!
-						) {
-							metafieldDefinitionCreate(definition: $definition) {
-								createdDefinition {
-									id
-									name
-								}
-								userErrors {
-									code
-									field
-									message
-								}
-							}
-						}
-					`,
-					{variables: {definition}},
-				)
+				.request<MetafieldDefinitionCreateMutation>(MetafieldDefinitionCreate, {
+					variables: {definition},
+				})
 				.then((res) => res.data?.metafieldDefinitionCreate);
 		}
 
 		async function update(definition: MetafieldDefinitionInput) {
 			return client
-				.request<MetafieldDefinitionUpdateMutation>(
-					/* GraphQL */ `
-						#graphql
-						mutation MetafieldDefinitionUpdate(
-							$definition: MetafieldDefinitionUpdateInput!
-						) {
-							metafieldDefinitionUpdate(definition: $definition) {
-								updatedDefinition {
-									id
-									name
-								}
-								userErrors {
-									code
-									field
-									message
-								}
-							}
-						}
-					`,
-					{variables: {definition}},
-				)
+				.request<MetafieldDefinitionUpdateMutation>(MetafieldDefinitionUpdate, {
+					variables: {definition},
+				})
 				.then((res) => res.data?.metafieldDefinitionUpdate);
 		}
 
@@ -826,33 +693,12 @@ export function metafield(client: Client) {
 			cascade = false,
 		) {
 			return client
-				.request<MetafieldDefinitionDeleteMutation>(
-					/* GraphQL */ `
-						#graphql
-						mutation MetafieldDefinitionDelete(
-							$identifier: MetafieldDefinitionIdentifierInput!
-							$deleteAllAssociatedMetafields: Boolean!
-						) {
-							metafieldDefinitionDelete(
-								identifier: $identifier
-								deleteAllAssociatedMetafields: $deleteAllAssociatedMetafields
-							) {
-								deletedDefinitionId
-								userErrors {
-									code
-									field
-									message
-								}
-							}
-						}
-					`,
-					{
-						variables: {
-							identifier,
-							deleteAllAssociatedMetafields: cascade,
-						},
+				.request<MetafieldDefinitionDeleteMutation>(MetafieldDefinitionDelete, {
+					variables: {
+						identifier,
+						deleteAllAssociatedMetafields: cascade,
 					},
-				)
+				})
 				.then((res) => res.data?.metafieldDefinitionDelete);
 		}
 	}
@@ -873,28 +719,9 @@ export function metafield(client: Client) {
 		if (metafield === null) return destroy(identifier);
 
 		return client
-			.request<MetafieldsSetMutation>(
-				/* GraphQL */ `
-					#graphql
-					mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
-						metafieldsSet(metafields: $metafields) {
-							metafields {
-								key
-								namespace
-								value
-								createdAt
-								updatedAt
-							}
-							userErrors {
-								code
-								field
-								message
-							}
-						}
-					}
-				`,
-				{variables: {metafields: [{...identifier, ...metafield}]}},
-			)
+			.request<MetafieldsSetMutation>(MetafieldsSet, {
+				variables: {metafields: [{...identifier, ...metafield}]},
+			})
 			.then((res) => res.data?.metafieldsSet);
 	}
 
@@ -906,119 +733,18 @@ export function metafield(client: Client) {
 
 	async function destroy(identifier: MetafieldInput) {
 		return client
-			.request<MetafieldDeleteMutation>(
-				/* GraphQL */ `
-					#graphql
-					mutation MetafieldDelete($metafields: [MetafieldIdentifierInput!]!) {
-						metafieldsDelete(metafields: $metafields) {
-							deletedMetafields {
-								key
-								namespace
-								ownerId
-							}
-							userErrors {
-								field
-								message
-							}
-						}
-					}
-				`,
-				{variables: {metafields: [identifier]}},
-			)
+			.request<MetafieldDeleteMutation>(MetafieldDelete, {
+				variables: {metafields: [identifier]},
+			})
 			.then((res) => res.data?.metafieldsDelete);
 	}
 
 	async function getAll(identifier: MetafieldGetAll) {
 		return client
 			.request<MetafieldsQuery>(
-				/* GraphQL */ `
-					#graphql
-					fragment MetafieldNodesFragment on HasMetafields {
-						metafields(
-							after: $cursor
-							first: $first
-							keys: $keys
-							namespace: $namespace
-						) {
-							nodes {
-								id
-								key
-								namespace
-								value
-							}
-						}
-					}
-
-					query Metafields(
-						$cursor: String
-						$first: Int = 10
-						$keys: [String!]
-						$namespace: String
-						$ownerId: ID!
-					) {
-						node(id: $ownerId) {
-							... on AppInstallation {
-								...MetafieldNodesFragment
-							}
-							... on Article {
-								...MetafieldNodesFragment
-							}
-							... on Blog {
-								...MetafieldNodesFragment
-							}
-							... on Collection {
-								...MetafieldNodesFragment
-							}
-							... on Company {
-								...MetafieldNodesFragment
-							}
-							... on CompanyLocation {
-								...MetafieldNodesFragment
-							}
-							... on Customer {
-								...MetafieldNodesFragment
-							}
-							... on DeliveryCustomization {
-								...MetafieldNodesFragment
-							}
-							... on DiscountAutomaticNode {
-								...MetafieldNodesFragment
-							}
-							... on DiscountCodeNode {
-								...MetafieldNodesFragment
-							}
-							... on DiscountNode {
-								...MetafieldNodesFragment
-							}
-							... on DraftOrder {
-								...MetafieldNodesFragment
-							}
-							... on Location {
-								...MetafieldNodesFragment
-							}
-							... on Market {
-								...MetafieldNodesFragment
-							}
-							... on Order {
-								...MetafieldNodesFragment
-							}
-							... on Page {
-								...MetafieldNodesFragment
-							}
-							... on PaymentCustomization {
-								...MetafieldNodesFragment
-							}
-							... on Product {
-								...MetafieldNodesFragment
-							}
-							... on ProductVariant {
-								...MetafieldNodesFragment
-							}
-							... on Shop {
-								...MetafieldNodesFragment
-							}
-						}
-					}
+				`
+					${MetafieldNodesFragment}
+					${Metafields}
 				`,
 				{variables: identifier},
 			)
@@ -1028,81 +754,9 @@ export function metafield(client: Client) {
 	async function getOne(identifier: MetafieldGetOne) {
 		return client
 			.request<MetafieldQuery>(
-				/* GraphQL */ `
-					#graphql
-					fragment MetafieldNodeFragment on HasMetafields {
-						metafield(key: $key, namespace: $namespace) {
-							id
-							key
-							namespace
-							value
-						}
-					}
-
-					query Metafield($key: String!, $namespace: String, $ownerId: ID!) {
-						node(id: $ownerId) {
-							... on AppInstallation {
-								...MetafieldNodeFragment
-							}
-							... on Article {
-								...MetafieldNodeFragment
-							}
-							... on Blog {
-								...MetafieldNodeFragment
-							}
-							... on Collection {
-								...MetafieldNodeFragment
-							}
-							... on Company {
-								...MetafieldNodeFragment
-							}
-							... on CompanyLocation {
-								...MetafieldNodeFragment
-							}
-							... on Customer {
-								...MetafieldNodeFragment
-							}
-							... on DeliveryCustomization {
-								...MetafieldNodeFragment
-							}
-							... on DiscountAutomaticNode {
-								...MetafieldNodeFragment
-							}
-							... on DiscountCodeNode {
-								...MetafieldNodeFragment
-							}
-							... on DiscountNode {
-								...MetafieldNodeFragment
-							}
-							... on DraftOrder {
-								...MetafieldNodeFragment
-							}
-							... on Location {
-								...MetafieldNodeFragment
-							}
-							... on Market {
-								...MetafieldNodeFragment
-							}
-							... on Order {
-								...MetafieldNodeFragment
-							}
-							... on Page {
-								...MetafieldNodeFragment
-							}
-							... on PaymentCustomization {
-								...MetafieldNodeFragment
-							}
-							... on Product {
-								...MetafieldNodeFragment
-							}
-							... on ProductVariant {
-								...MetafieldNodeFragment
-							}
-							... on Shop {
-								...MetafieldNodeFragment
-							}
-						}
-					}
+				`
+					${MetafieldNodeFragment}
+					${Metafield}
 				`,
 				{variables: identifier},
 			)
@@ -1128,23 +782,15 @@ export function metaobject(client: Client) {
 	function definition() {
 		async function get(id: string) {
 			return client
-				.request<MetaobjectDefinitionQuery>(
-					/* GraphQL */ `
-						#graphql
-						query MetaobjectDefinition($id: ID!) {
-							metaobjectDefinition(id: $id) {
-								id
-							}
-						}
-					`,
-					{variables: {id}},
-				)
+				.request<MetaobjectDefinitionQuery>(MetaobjectDefinition, {
+					variables: {id},
+				})
 				.then((res) => res.data?.metaobjectDefinition);
 		}
 
 		async function set(
 			id: string,
-			definition: Omit<MetaobjectDefinition, 'id'> | null,
+			definition: Omit<MetaobjectDefinitionArgs, 'id'> | null,
 		) {
 			if (definition === null) {
 				return destroy(id);
@@ -1158,66 +804,19 @@ export function metaobject(client: Client) {
 			set,
 		};
 
-		async function create(definition: Omit<MetaobjectDefinition, 'id'>) {
+		async function create(definition: Omit<MetaobjectDefinitionArgs, 'id'>) {
 			return client
 				.request<MetaobjectDefinitionCreateMutation>(
-					/* GraphQL */ `
-						#graphql
-						mutation MetaobjectDefinitionCreate(
-							$definition: MetaobjectDefinitionCreateInput!
-						) {
-							metaobjectDefinitionCreate(definition: $definition) {
-								metaobjectDefinition {
-									name
-									type
-									fieldDefinitions {
-										name
-										key
-									}
-								}
-								userErrors {
-									code
-									field
-									message
-								}
-							}
-						}
-					`,
+					MetaobjectDefinitionCreate,
 					{variables: {definition}},
 				)
 				.then((res) => res.data?.metaobjectDefinitionCreate);
 		}
 
-		async function update(definition: MetaobjectDefinition) {
+		async function update(definition: MetaobjectDefinitionArgs) {
 			return client
 				.request<MetaobjectDefinitionUpdateMutation>(
-					/* GraphQL */ `
-						#graphql
-						mutation MetaobjectDefinitionUpdate(
-							$id: ID!
-							$definition: MetaobjectDefinitionUpdateInput!
-						) {
-							metaobjectDefinitionUpdate(id: $id, definition: $definition) {
-								metaobjectDefinition {
-									id
-									name
-									displayNameKey
-									fieldDefinitions {
-										name
-										key
-										type {
-											name
-										}
-									}
-								}
-								userErrors {
-									code
-									field
-									message
-								}
-							}
-						}
-					`,
+					MetaobjectDefinitionUpdate,
 					{variables: {definition}},
 				)
 				.then((res) => res.data?.metaobjectDefinitionUpdate);
@@ -1226,19 +825,7 @@ export function metaobject(client: Client) {
 		async function destroy(id: string) {
 			return client
 				.request<MetaobjectDefinitionDeleteMutation>(
-					/* GraphQL */ `
-						#graphql
-						mutation MetaobjectDefinitionDelete($id: ID!) {
-							metaobjectDefinitionDelete(id: $id) {
-								deletedId
-								userErrors {
-									code
-									field
-									message
-								}
-							}
-						}
-					`,
+					MetaobjectDefinitionDelete,
 					{variables: {id}},
 				)
 				.then((res) => res.data?.metaobjectDefinitionDelete);
@@ -1258,34 +845,9 @@ export function metaobject(client: Client) {
 		if (metaobject === null) return destroy(handle);
 
 		return client
-			.request<MetaobjectUpsertMutation>(
-				/* GraphQL */ `
-					#graphql
-					mutation MetaobjectUpsert(
-						$handle: MetaobjectHandleInput!
-						$metaobject: MetaobjectUpsertInput!
-					) {
-						metaobjectUpsert(handle: $handle, metaobject: $metaobject) {
-							metaobject {
-								displayName
-								fields {
-									key
-									type
-									value
-								}
-								handle
-								id
-							}
-							userErrors {
-								code
-								field
-								message
-							}
-						}
-					}
-				`,
-				{variables: {handle, metaobject}},
-			)
+			.request<MetaobjectUpsertMutation>(MetaobjectUpsert, {
+				variables: {handle, metaobject},
+			})
 			.then((res) => res.data?.metaobjectUpsert);
 	}
 
@@ -1300,66 +862,21 @@ export function metaobject(client: Client) {
 		if (!metaobject) return;
 
 		return client
-			.request<MetaobjectDeleteMutation>(
-				/* GraphQL */ `
-					#graphql
-					mutation MetaobjectDelete($id: ID!) {
-						metaobjectDelete(id: $id) {
-							deletedId
-							userErrors {
-								code
-								field
-								message
-							}
-						}
-					}
-				`,
-				{variables: {id: metaobject.id}},
-			)
+			.request<MetaobjectDeleteMutation>(MetaobjectDelete, {
+				variables: {id: metaobject.id},
+			})
 			.then((res) => res.data?.metaobjectDelete);
 	}
 
 	async function getOne({handle}: MetaobjectGetOne) {
 		return client
-			.request<MetaobjectQuery>(
-				/* GraphQL */ `
-					#graphql
-					query Metaobject($handle: MetaobjectHandleInput!) {
-						metaobjectByHandle(handle: $handle) {
-							id
-						}
-					}
-				`,
-				{variables: {handle}},
-			)
+			.request<MetaobjectQuery>(Metaobject, {variables: {handle}})
 			.then((res) => res.data?.metaobjectByHandle);
 	}
 
 	async function getAll(identifier: MetaobjectGetAll) {
 		return client
-			.request<MetaobjectsQuery>(
-				/* GraphQL */ `
-					#graphql
-					query Metaobjects(
-						$cursor: String
-						$first: Int = 10
-						$query: String
-						$type: String!
-					) {
-						metaobjects(
-							after: $cursor
-							first: $first
-							query: $query
-							type: $type
-						) {
-							nodes {
-								id
-							}
-						}
-					}
-				`,
-				{variables: identifier},
-			)
+			.request<MetaobjectsQuery>(Metaobjects, {variables: identifier})
 			.then((res) => res.data?.metaobjects.nodes);
 	}
 }
@@ -1378,25 +895,7 @@ export interface MetaobjectGetOne {
 export function upload(client: Client) {
 	async function stage(file: File) {
 		const res = await client.request<StagedUploadsCreateMutation>(
-			/* GraphQL */ `
-				#graphql
-				mutation StagedUploadsCreate($input: [StagedUploadInput!]!) {
-					stagedUploadsCreate(input: $input) {
-						stagedTargets {
-							url
-							resourceUrl
-							parameters {
-								name
-								value
-							}
-						}
-						userErrors {
-							field
-							message
-						}
-					}
-				}
-			`,
+			StagedUploadsCreate,
 			{
 				variables: {
 					input: [
@@ -1468,40 +967,18 @@ export function upload(client: Client) {
 	};
 
 	async function create(file: File, target: StagedMediaUploadTarget) {
-		const res = await client.request<FileCreateMutation>(
-			/* GraphQL */ `
-				#graphql
-				mutation FileCreate($files: [FileCreateInput!]!) {
-					fileCreate(files: $files) {
-						files {
-							fileErrors {
-								code
-								details
-								message
-							}
-							id
-						}
-						userErrors {
-							code
-							field
-							message
-						}
-					}
-				}
-			`,
-			{
-				variables: {
-					files: [
-						{
-							contentType: resource(file.type),
-							duplicateResolutionMode: 'REPLACE',
-							filename: file.name,
-							originalSource: target.resourceUrl,
-						},
-					],
-				},
+		const res = await client.request<FileCreateMutation>(FileCreate, {
+			variables: {
+				files: [
+					{
+						contentType: resource(file.type),
+						duplicateResolutionMode: 'REPLACE',
+						filename: file.name,
+						originalSource: target.resourceUrl,
+					},
+				],
 			},
-		);
+		});
 
 		switch (true) {
 			case res.errors === undefined && res.data === undefined:
@@ -1530,66 +1007,7 @@ export function upload(client: Client) {
 	async function wait(id: string) {
 		while (true) {
 			const node = await client
-				.request<FileQuery>(
-					/* GraphQL */ `
-						#graphql
-						query File($id: ID!) {
-							node(id: $id) {
-								... on GenericFile {
-									__typename
-									fileErrors {
-										code
-										details
-										message
-									}
-									fileStatus
-									id
-									url
-								}
-								... on MediaImage {
-									__typename
-									fileErrors {
-										code
-										details
-										message
-									}
-									fileStatus
-									id
-									image {
-										url
-									}
-								}
-								... on Model3d {
-									__typename
-									fileErrors {
-										code
-										details
-										message
-									}
-									fileStatus
-									id
-									originalSource {
-										url
-									}
-								}
-								... on Video {
-									__typename
-									fileErrors {
-										code
-										details
-										message
-									}
-									fileStatus
-									id
-									originalSource {
-										url
-									}
-								}
-							}
-						}
-					`,
-					{variables: {id}},
-				)
+				.request<FileQuery>(FileNode, {variables: {id}})
 				.then((res) => res.data?.node);
 			if (!node) return;
 

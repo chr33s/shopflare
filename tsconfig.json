@@ -33,7 +33,6 @@
 		"**/*",
 		"**/.server/**/*",
 		"**/.client/**/*",
-		"node_modules/vite-plugin-i18next-loader/typings/*",
-		"worker-configuration.d.ts"
+		"node_modules/vite-plugin-i18next-loader/typings/*"
 	]
 }

@@ -1,0 +1,16 @@
+#graphql
+mutation MetafieldDefinitionUpdate(
+	$definition: MetafieldDefinitionUpdateInput!
+) {
+	metafieldDefinitionUpdate(definition: $definition) {
+		updatedDefinition {
+			id
+			name
+		}
+		userErrors {
+			code
+			field
+			message
+		}
+	}
+}

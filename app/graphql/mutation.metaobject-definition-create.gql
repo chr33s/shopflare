@@ -1,0 +1,20 @@
+#graphql
+mutation MetaobjectDefinitionCreate(
+	$definition: MetaobjectDefinitionCreateInput!
+) {
+	metaobjectDefinitionCreate(definition: $definition) {
+		metaobjectDefinition {
+			name
+			type
+			fieldDefinitions {
+				name
+				key
+			}
+		}
+		userErrors {
+			code
+			field
+			message
+		}
+	}
+}

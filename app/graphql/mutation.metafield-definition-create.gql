@@ -1,0 +1,14 @@
+#graphql
+mutation MetafieldDefinitionCreate($definition: MetafieldDefinitionInput!) {
+	metafieldDefinitionCreate(definition: $definition) {
+		createdDefinition {
+			id
+			name
+		}
+		userErrors {
+			code
+			field
+			message
+		}
+	}
+}

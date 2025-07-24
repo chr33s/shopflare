@@ -7,6 +7,7 @@ import {API_VERSION} from '#app/const';
 import * as shopify from '#app/shopify.server';
 import {log} from '#app/shopify.shared';
 import type {ShopQuery} from '#app/types/admin.generated';
+import Shop from '#app/graphql/query.shop.gql?raw';
 
 import type {Route} from './+types/app.index';
 
@@ -14,14 +15,7 @@ export async function loader({context, request}: Route.LoaderArgs) {
 	return shopify.handler(async () => {
 		const {client} = await shopify.admin(context, request);
 
-		const {data, errors} = await client.request<ShopQuery>(/* GraphQL */ `
-			#graphql
-			query Shop {
-				shop {
-					name
-				}
-			}
-		`);
+		const {data, errors} = await client.request<ShopQuery>(Shop);
 
 		log.debug('routes/app.index#loader', {data, errors});
 
@@ -52,14 +46,7 @@ export default function AppIndex({
 
 		fetch(`shopify:admin/api/${API_VERSION}/graphql.json`, {
 			body: JSON.stringify({
-				query: /* GraphQL */ `
-					#graphql
-					query Shop {
-						shop {
-							name
-						}
-					}
-				`,
+				query: Shop,
 				variables: {},
 			}),
 			method: 'POST',

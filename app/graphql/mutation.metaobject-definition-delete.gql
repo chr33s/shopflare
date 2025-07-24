@@ -1,0 +1,11 @@
+#graphql
+mutation MetaobjectDefinitionDelete($id: ID!) {
+	metaobjectDefinitionDelete(id: $id) {
+		deletedId
+		userErrors {
+			code
+			field
+			message
+		}
+	}
+}

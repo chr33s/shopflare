@@ -1,0 +1,55 @@
+#graphql
+query File($id: ID!) {
+	node(id: $id) {
+		... on GenericFile {
+			__typename
+			fileErrors {
+				code
+				details
+				message
+			}
+			fileStatus
+			id
+			url
+		}
+		... on MediaImage {
+			__typename
+			fileErrors {
+				code
+				details
+				message
+			}
+			fileStatus
+			id
+			image {
+				url
+			}
+		}
+		... on Model3d {
+			__typename
+			fileErrors {
+				code
+				details
+				message
+			}
+			fileStatus
+			id
+			originalSource {
+				url
+			}
+		}
+		... on Video {
+			__typename
+			fileErrors {
+				code
+				details
+				message
+			}
+			fileStatus
+			id
+			originalSource {
+				url
+			}
+		}
+	}
+}

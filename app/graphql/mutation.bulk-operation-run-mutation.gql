@@ -1,0 +1,27 @@
+#graphql
+mutation BulkOperationRunMutation(
+	$clientIdentifier: String
+	$groupObjects: Boolean!
+	$mutation: String!
+	$stagedUploadPath: String!
+) {
+	bulkOperationRunMutation(
+		clientIdentifier: $clientIdentifier
+		groupObjects: $groupObjects
+		mutation: $mutation
+		stagedUploadPath: $stagedUploadPath
+	) {
+		bulkOperation {
+			errorCode
+			id
+			partialDataUrl
+			status
+			type
+			url
+		}
+		userErrors {
+			field
+			message
+		}
+	}
+}

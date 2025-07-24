@@ -1,4 +1,3 @@
-app/types/*.json
-app/types/*.d.ts
+app/types/*
 build/**
 **/dist/

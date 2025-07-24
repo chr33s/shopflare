@@ -1,0 +1,15 @@
+#graphql
+mutation BulkOperationCancel($id: ID!) {
+	bulkOperationCancel(id: $id) {
+		bulkOperation {
+			errorCode
+			id
+			status
+			type
+		}
+		userErrors {
+			field
+			message
+		}
+	}
+}

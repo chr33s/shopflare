@@ -1,0 +1,9 @@
+#graphql
+fragment MetafieldNodeFragment on HasMetafields {
+	metafield(key: $key, namespace: $namespace) {
+		id
+		key
+		namespace
+		value
+	}
+}

@@ -1,0 +1,6 @@
+#graphql
+query Shop {
+	shop {
+		name
+	}
+}

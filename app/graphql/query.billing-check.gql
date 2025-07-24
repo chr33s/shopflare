@@ -1,0 +1,23 @@
+#graphql
+query BillingCheck($cursor: String) {
+	currentAppInstallation {
+		activeSubscriptions {
+			id
+			name
+			test
+			status
+		}
+		oneTimePurchases(first: 250, sortKey: CREATED_AT, after: $cursor) {
+			nodes {
+				id
+				name
+				test
+				status
+			}
+			pageInfo {
+				hasNextPage
+				endCursor
+			}
+		}
+	}
+}
