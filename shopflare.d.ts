@@ -1,33 +1,17 @@
-import type {
-	UIModalAttributes,
-	UITitleBarAttributes,
-	UISaveBarAttributes,
-	UINavMenuAttributes,
-} from '@shopify/app-bridge-types';
-
-declare module '*.json' {
-	const content: string;
-	export default content;
-}
-
-declare module '*.gql' {
-	const content: string;
-	export default content;
-}
+import type * as AppBridge from '@shopify/app-bridge-types';
 
 declare module 'cloudflare:test' {
 	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-empty-object-type
 	interface ProvidedEnv extends Env {}
 }
-
 declare module 'react' {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
 	export namespace JSX {
 		export interface IntrinsicElements {
-			'ui-modal': UIModalAttributes;
-			'ui-title-bar': UITitleBarAttributes;
-			'ui-save-bar': UISaveBarAttributes;
-			'ui-nav-menu': UINavMenuAttributes;
+			'ui-modal': AppBridge.UIModalAttributes;
+			'ui-title-bar': AppBridge.UITitleBarAttributes;
+			'ui-save-bar': AppBridge.UISaveBarAttributes;
+			'ui-nav-menu': AppBridge.UINavMenuAttributes;
 		}
 	}
 }
