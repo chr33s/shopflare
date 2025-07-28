@@ -1,9 +1,8 @@
 import {env} from 'cloudflare:test';
 import {describe, expect, test} from 'vitest';
 
-import {getHmacFromBody as getHmac} from '#app/utils.test';
 import {API_VERSION} from '#app/const';
-
+import {getHmacFromBody as getHmac} from '#app/utils.test';
 import * as shopify from '../shopify.server';
 
 import type {Route} from './+types/shopify.webhooks';
@@ -87,8 +86,8 @@ describe('action', () => {
 			body: '123',
 			headers: {
 				'X-Shopify-API-Version': API_VERSION,
-				'X-Shopify-Shop-Domain': 'test.myshopify.com',
 				'X-Shopify-Hmac-Sha256': await getHmac('123'),
+				'X-Shopify-Shop-Domain': 'test.myshopify.com',
 				'X-Shopify-Topic': 'app/uninstalled',
 				'X-Shopify-Webhook-Id': 'test',
 			},
@@ -116,8 +115,8 @@ describe('action', () => {
 			body: '123',
 			headers: {
 				'X-Shopify-API-Version': API_VERSION,
-				'X-Shopify-Shop-Domain': shop,
 				'X-Shopify-Hmac-Sha256': await getHmac('123'),
+				'X-Shopify-Shop-Domain': shop,
 				'X-Shopify-Topic': 'app/uninstalled',
 				'X-Shopify-Webhook-Id': 'test',
 			},

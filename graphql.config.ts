@@ -2,7 +2,6 @@ import fs from 'node:fs';
 
 import {ApiType, shopifyApiProject} from '@shopify/api-codegen-preset';
 import type {IGraphQLProject, IGraphQLProjects} from 'graphql-config';
-
 import {API_VERSION} from './app/const';
 
 type Config = IGraphQLProject & IGraphQLProjects;
@@ -38,8 +37,8 @@ function getConfig() {
 			continue;
 		}
 		config.projects[entry] = {
-			schema,
 			documents: [`${extensionPath}/**/*.graphql`],
+			schema,
 		};
 	}
 

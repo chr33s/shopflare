@@ -4,10 +4,10 @@ import {useTranslation} from 'react-i18next';
 import {useFetcher} from 'react-router';
 
 import {API_VERSION} from '#app/const';
+import Shop from '#app/graphql/query.shop.gql?raw';
 import * as shopify from '#app/shopify.server';
 import {log} from '#app/shopify.shared';
 import type {ShopQuery} from '#app/types/admin.generated';
-import Shop from '#app/graphql/query.shop.gql?raw';
 
 import type {Route} from './+types/app.index';
 

@@ -1,5 +1,5 @@
-import resources from 'virtual:i18next-loader';
 import type {InitOptions, LanguageDetectorModule, Services} from 'i18next';
+import resources from 'virtual:i18next-loader';
 
 const i18n = {
 	debug: false,

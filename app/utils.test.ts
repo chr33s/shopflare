@@ -16,8 +16,8 @@ export async function getHmacFromSearchParams(searchParams: object) {
 		'raw',
 		encoder.encode(env.SHOPIFY_API_SECRET_KEY),
 		{
-			name: 'HMAC',
 			hash: 'SHA-256',
+			name: 'HMAC',
 		},
 		true,
 		['sign'],
@@ -43,8 +43,8 @@ export async function getHmacFromBody(body: string) {
 		'raw',
 		encoder.encode(env.SHOPIFY_API_SECRET_KEY),
 		{
-			name: 'HMAC',
 			hash: 'SHA-256',
+			name: 'HMAC',
 		},
 		true,
 		['sign'],

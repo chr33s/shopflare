@@ -37,7 +37,6 @@ export default async function handleRequest(
 			<ServerRouter context={routerContext} url={request.url} />
 		</I18nextProvider>,
 		{
-			signal: request.signal,
 			onError(error: unknown) {
 				// eslint-disable-next-line no-param-reassign
 				responseStatus = 500;
@@ -45,6 +44,7 @@ export default async function handleRequest(
 					shopify.log.error('entry.server.onError', error);
 				}
 			},
+			signal: request.signal,
 		},
 	);
 

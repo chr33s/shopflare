@@ -1,6 +1,6 @@
 import {spawn, type SpawnOptionsWithoutStdio} from 'node:child_process';
 import {access, open, readFile, writeFile} from 'node:fs/promises';
-import {parseArgs, parseEnv, type ParseArgsOptionsConfig} from 'node:util';
+import {parseArgs, type ParseArgsOptionsConfig, parseEnv} from 'node:util';
 
 const options: ParseArgsOptionsConfig = {
 	env: {
@@ -314,8 +314,8 @@ async function $(cmd: string, options?: $Options): Promise<$> {
 		command.on('close', (code) =>
 			resolve({
 				code: code ?? 1,
-				stdout: Buffer.concat(stdout).toString(),
 				stderr: Buffer.concat(stderr).toString(),
+				stdout: Buffer.concat(stdout).toString(),
 			}),
 		);
 		command.on('error', (error) => reject(error));

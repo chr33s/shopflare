@@ -27,8 +27,8 @@ export default defineConfig((config) => {
 					extends: './vitest.config.ts',
 					test: {
 						browser: {
-							headless: true,
 							enabled: true,
+							headless: true,
 							instances: [{browser: 'webkit'}],
 							provider: 'playwright',
 						},

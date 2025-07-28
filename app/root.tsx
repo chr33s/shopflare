@@ -1,23 +1,22 @@
 import type {PropsWithChildren} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
+	isRouteErrorResponse,
 	Links,
 	Meta,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
-	isRouteErrorResponse,
 } from 'react-router';
 
 import {
 	API_KEY,
-	APP_BRIDGE_URL,
 	APP_BRIDGE_UI_URL,
+	APP_BRIDGE_URL,
 	APP_LOG_LEVEL,
 	SHOPIFY_CDN,
 } from '#app/const';
 import rootCss from '#app/root.css?url';
-
 import type {Route} from './+types/root';
 
 export default function Component() {

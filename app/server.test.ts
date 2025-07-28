@@ -1,7 +1,7 @@
 import {
-	SELF,
 	createExecutionContext,
 	env,
+	SELF,
 	waitOnExecutionContext,
 } from 'cloudflare:test';
 import {afterEach, expect, test, vi} from 'vitest';

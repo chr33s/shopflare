@@ -2,7 +2,6 @@ import {env} from 'cloudflare:test';
 import {describe, expect, test} from 'vitest';
 
 import {getHmacFromBody as getHmac} from '#app/utils.test';
-
 import * as shopify from './shopify.server';
 
 const context = {cloudflare: {env}} as unknown as shopify.Context;
@@ -81,8 +80,8 @@ test('proxy', () => {
 test('redirect', () => {
 	expect(
 		shopify.redirect(context, request, {
-			url: '/',
 			shop: 'test.myshopify.com',
+			url: '/',
 		}),
 	).toBeDefined();
 });
@@ -152,13 +151,13 @@ describe('utils', () => {
 
 		expect.assertions(2);
 		expect(
-			await shopify.utils.validateHmac(context, {data, hmac, encoding}),
+			await shopify.utils.validateHmac(context, {data, encoding, hmac}),
 		).toBe(true);
 		expect(
 			await shopify.utils.validateHmac(context, {
 				data: '124',
-				hmac,
 				encoding,
+				hmac,
 			}),
 		).toBe(false);
 	});

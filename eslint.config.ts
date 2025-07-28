@@ -18,12 +18,14 @@ export default defineConfig([
 	...shopifyEslintPlugin.configs.prettier,
 	{
 		rules: {
-			'@shopify/strict-component-boundaries': 'off',
 			'@shopify/jsx-no-hardcoded-content': 'off',
+			'@shopify/strict-component-boundaries': 'off',
 			// enables Header({ 'Content-Type' })
 			'@typescript-eslint/naming-convention': [
 				'error',
 				{
+					format: null,
+					modifiers: ['requiresQuotes'],
 					selector: [
 						'classProperty',
 						'objectLiteralProperty',
@@ -34,8 +36,6 @@ export default defineConfig([
 						'accessor',
 						'enumMember',
 					],
-					format: null,
-					modifiers: ['requiresQuotes'],
 				},
 			],
 			'id-length': [
@@ -45,6 +45,24 @@ export default defineConfig([
 				},
 			],
 			'import-x/extensions': 'off',
+			'import-x/order': [
+				'error',
+				{
+					alphabetize: {
+						caseInsensitive: true,
+						order: 'asc',
+					},
+					groups: ['builtin', 'external', 'parent', 'sibling', 'index'],
+					named: true,
+					pathGroups: [
+						{
+							group: 'parent',
+							pattern: '#app/**',
+							position: 'before',
+						},
+					],
+				},
+			],
 			'no-console': 'off',
 			'no-unused-vars': [
 				'error',
@@ -54,6 +72,8 @@ export default defineConfig([
 				},
 			],
 			'react/react-in-jsx-scope': 'off',
+			'sort-keys': ['error', 'asc', {caseSensitive: false}],
+			'sort-vars': 'error',
 		},
 	},
 ]);

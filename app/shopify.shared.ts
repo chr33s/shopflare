@@ -1,5 +1,6 @@
 import {APP_LOG_LEVEL} from './const';
 
+/* eslint-disable sort-keys */
 export const log = {
 	level: APP_LOG_LEVEL as 'error' | 'info' | 'debug',
 	levels: {
@@ -30,3 +31,4 @@ export const log = {
 		return this.noop;
 	},
 };
+/* eslint-enable sort-keys */

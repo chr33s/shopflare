@@ -1,4 +1,4 @@
-import {type GraphQLClient, createGraphQLClient} from '@shopify/graphql-client';
+import {createGraphQLClient, type GraphQLClient} from '@shopify/graphql-client';
 import {type JWTPayload, jwtVerify} from 'jose';
 import {
 	type AppLoadContext,
@@ -7,18 +7,34 @@ import {
 } from 'react-router';
 import * as z from 'zod/mini';
 
-import type {
-	MutationBulkOperationRunMutationArgs,
-	MutationBulkOperationRunQueryArgs,
-	MetafieldDefinitionIdentifierInput,
-	MetafieldDefinitionInput,
-	MetafieldInput,
-	MetafieldsSetInput,
-	MetaobjectDefinition as MetaobjectDefinitionArgs,
-	MetaobjectHandleInput,
-	MetaobjectUpsertInput,
-	StagedMediaUploadTarget,
-} from './types/admin.types';
+import {API_VERSION, APP_BRIDGE_URL, APP_HANDLE} from './const';
+import MetafieldNodeFragment from './graphql/fragment.metafield-node.gql?raw';
+import MetafieldNodesFragment from './graphql/fragment.metafield-nodes.gql?raw';
+import BulkOperationCancel from './graphql/mutation.bulk-operation-cancel.gql?raw';
+import BulkOperationRunMutation from './graphql/mutation.bulk-operation-run-mutation.gql?raw';
+import BulkOperationRunQuery from './graphql/mutation.bulk-operation-run-query.gql?raw';
+import FileCreate from './graphql/mutation.file-create.gql?raw';
+import MetafieldDefinitionCreate from './graphql/mutation.metafield-definition-create.gql?raw';
+import MetafieldDefinitionDelete from './graphql/mutation.metafield-definition-delete.gql?raw';
+import MetafieldDefinitionUpdate from './graphql/mutation.metafield-definition-update.gql?raw';
+import MetafieldDelete from './graphql/mutation.metafield-delete.gql?raw';
+import MetafieldsSet from './graphql/mutation.metafields-set.gql?raw';
+import MetaobjectDefinitionCreate from './graphql/mutation.metaobject-definition-create.gql?raw';
+import MetaobjectDefinitionDelete from './graphql/mutation.metaobject-definition-delete.gql?raw';
+import MetaobjectDefinitionUpdate from './graphql/mutation.metaobject-definition-update.gql?raw';
+import MetaobjectDelete from './graphql/mutation.metaobject-delete.gql?raw';
+import MetaobjectUpsert from './graphql/mutation.metaobject-upsert.gql?raw';
+import StagedUploadsCreate from './graphql/mutation.staged-uploads-create.gql?raw';
+import BillingCheck from './graphql/query.billing-check.gql?raw';
+import CurrentBulkOperation from './graphql/query.current-bulk-operation.gql?raw';
+import FileNode from './graphql/query.file.gql?raw';
+import MetafieldDefinition from './graphql/query.metafield-definition.gql?raw';
+import Metafield from './graphql/query.metafield.gql?raw';
+import Metafields from './graphql/query.metafields.gql?raw';
+import MetaobjectDefinition from './graphql/query.metaobject-definition.gql?raw';
+import Metaobject from './graphql/query.metaobject.gql?raw';
+import Metaobjects from './graphql/query.metaobjects.gql?raw';
+import {log} from './shopify.shared';
 import type {
 	BillingCheckQuery,
 	BulkOperationCancelMutation,
@@ -27,12 +43,14 @@ import type {
 	CurrentBulkOperationQuery,
 	FileCreateMutation,
 	FileQuery,
-	MetafieldDefinitionUpdateMutation,
 	MetafieldDefinitionCreateMutation,
-	MetafieldDeleteMutation,
+	MetafieldDefinitionDeleteMutation,
 	MetafieldDefinitionQuery,
+	MetafieldDefinitionUpdateMutation,
+	MetafieldDeleteMutation,
 	MetafieldQuery,
 	MetafieldsQuery,
+	MetafieldsSetMutation,
 	MetaobjectDefinitionCreateMutation,
 	MetaobjectDefinitionDeleteMutation,
 	MetaobjectDefinitionQuery,
@@ -42,37 +60,19 @@ import type {
 	MetaobjectsQuery,
 	MetaobjectUpsertMutation,
 	StagedUploadsCreateMutation,
-	MetafieldDefinitionDeleteMutation,
-	MetafieldsSetMutation,
 } from './types/admin.generated';
-import {log} from './shopify.shared';
-import {API_VERSION, APP_BRIDGE_URL, APP_HANDLE} from './const';
-import BillingCheck from './graphql/query.billing-check.gql?raw';
-import BulkOperationCancel from './graphql/mutation.bulk-operation-cancel.gql?raw';
-import CurrentBulkOperation from './graphql/query.current-bulk-operation.gql?raw';
-import BulkOperationRunMutation from './graphql/mutation.bulk-operation-run-mutation.gql?raw';
-import BulkOperationRunQuery from './graphql/mutation.bulk-operation-run-query.gql?raw';
-import MetafieldDefinition from './graphql/query.metafield-definition.gql?raw';
-import MetafieldDefinitionCreate from './graphql/mutation.metafield-definition-create.gql?raw';
-import MetafieldDefinitionUpdate from './graphql/mutation.metafield-definition-update.gql?raw';
-import MetafieldDefinitionDelete from './graphql/mutation.metafield-definition-delete.gql?raw';
-import MetafieldsSet from './graphql/mutation.metafields-set.gql?raw';
-import MetafieldDelete from './graphql/mutation.metafield-delete.gql?raw';
-import MetafieldNodesFragment from './graphql/fragment.metafield-nodes.gql?raw';
-import Metafields from './graphql/query.metafields.gql?raw';
-import MetafieldNodeFragment from './graphql/fragment.metafield-node.gql?raw';
-import Metafield from './graphql/query.metafield.gql?raw';
-import MetaobjectDefinition from './graphql/query.metaobject-definition.gql?raw';
-import MetaobjectDefinitionCreate from './graphql/mutation.metaobject-definition-create.gql?raw';
-import MetaobjectDefinitionUpdate from './graphql/mutation.metaobject-definition-update.gql?raw';
-import MetaobjectDefinitionDelete from './graphql/mutation.metaobject-definition-delete.gql?raw';
-import MetaobjectUpsert from './graphql/mutation.metaobject-upsert.gql?raw';
-import MetaobjectDelete from './graphql/mutation.metaobject-delete.gql?raw';
-import Metaobject from './graphql/query.metaobject.gql?raw';
-import Metaobjects from './graphql/query.metaobjects.gql?raw';
-import StagedUploadsCreate from './graphql/mutation.staged-uploads-create.gql?raw';
-import FileCreate from './graphql/mutation.file-create.gql?raw';
-import FileNode from './graphql/query.file.gql?raw';
+import type {
+	MetafieldDefinitionIdentifierInput,
+	MetafieldDefinitionInput,
+	MetafieldInput,
+	MetafieldsSetInput,
+	MetaobjectDefinition as MetaobjectDefinitionArgs,
+	MetaobjectHandleInput,
+	MetaobjectUpsertInput,
+	MutationBulkOperationRunMutationArgs,
+	MutationBulkOperationRunQueryArgs,
+	StagedMediaUploadTarget,
+} from './types/admin.types';
 
 export async function admin(context: Context, request: Request) {
 	async function authenticate() {
@@ -155,20 +155,20 @@ export async function admin(context: Context, request: Request) {
 			client_id: SHOPIFY_API_KEY,
 			client_secret: SHOPIFY_API_SECRET_KEY,
 			grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
-			subject_token: encodedSessionToken,
-			subject_token_type: 'urn:ietf:params:oauth:token-type:id_token',
 			requested_token_type:
 				'urn:shopify:params:oauth:token-type:offline-access-token',
+			subject_token: encodedSessionToken,
+			subject_token_type: 'urn:ietf:params:oauth:token-type:id_token',
 		};
 
 		const response = await fetch(`https://${shop}/admin/oauth/access_token`, {
-			method: 'POST',
 			body: JSON.stringify(body),
 			headers: new Headers({
 				Accept: 'application/json',
 				'Content-Type': 'application/json',
 			}),
 			signal: AbortSignal.timeout(1_000),
+			method: 'POST',
 		});
 		if (!response.ok) {
 			const body: any = await response.json();
@@ -241,13 +241,13 @@ export async function admin(context: Context, request: Request) {
 			scope: string;
 		}>();
 		await session(context).set(shop, {
-			id: shop,
-			shop,
-			scope: accessTokenResponse.scope,
+			accessToken: accessTokenResponse.access_token,
 			expires: accessTokenResponse.expires_in
 				? new Date(Date.now() + accessTokenResponse.expires_in * 1000)
 				: undefined,
-			accessToken: accessTokenResponse.access_token,
+			id: shop,
+			scope: accessTokenResponse.scope,
+			shop,
 		});
 
 		const current = await session(context).get(shop);
@@ -367,8 +367,8 @@ export function bulkOperation(client: Client) {
 	}
 
 	return {
-		query,
 		mutation,
+		query,
 	};
 
 	// @ts-expect-error needed spec compliance
@@ -473,21 +473,21 @@ export function client({
 
 	function admin(headers?: Headers) {
 		return client({
-			url: `https://${shop}/admin/api/${apiVersion}/graphql.json`,
 			headers: {
 				'X-Shopify-Access-Token': accessToken,
 				...headers,
 			},
+			url: `https://${shop}/admin/api/${apiVersion}/graphql.json`,
 		});
 	}
 
 	function storefront(headers?: Headers) {
 		return client({
-			url: `https://${shop}/api/${apiVersion}/graphql.json`,
 			headers: {
 				'X-Shopify-Storefront-Access-Token': accessToken,
 				...headers,
 			},
+			url: `https://${shop}/api/${apiVersion}/graphql.json`,
 		});
 	}
 
@@ -542,7 +542,7 @@ export function createShopify(context: Context) {
 				utils.addCorsHeaders(context, request, responseHeaders),
 			log,
 			validateHmac: (data: string, hmac: string, encoding: UtilEncoding) =>
-				utils.validateHmac(context, {data, hmac, encoding}),
+				utils.validateHmac(context, {data, encoding, hmac}),
 		},
 		webhook: (request: Request) =>
 			webhook(context, request).then(({webhook}) => webhook),
@@ -593,8 +593,8 @@ export class Exception extends Error {
 
 		Object.setPrototypeOf(this, new.target.prototype);
 		Object.assign(this, {
-			name: this.constructor.name,
 			errors: [],
+			name: this.constructor.name,
 			...options,
 		});
 	}
@@ -695,8 +695,8 @@ export function metafield(client: Client) {
 			return client
 				.request<MetafieldDefinitionDeleteMutation>(MetafieldDefinitionDelete, {
 					variables: {
-						identifier,
 						deleteAllAssociatedMetafields: cascade,
+						identifier,
 					},
 				})
 				.then((res) => res.data?.metafieldDefinitionDelete);
@@ -1090,8 +1090,8 @@ export async function proxy(context: Context, request: Request) {
 
 		const valid = await utils.validateHmac(context, {
 			data,
-			hmac,
 			encoding: 'hex',
+			hmac,
 		});
 		if (!valid) {
 			throw new Exception('Invalid hmac', {
@@ -1436,8 +1436,8 @@ export const utils = {
 			'raw',
 			encoder.encode(config(context).SHOPIFY_API_SECRET_KEY),
 			{
-				name: 'HMAC',
 				hash: 'SHA-256',
+				name: 'HMAC',
 			},
 			false,
 			['sign'],
@@ -1489,8 +1489,8 @@ export async function webhook(context: Context, request: Request) {
 
 		const valid = await utils.validateHmac(context, {
 			data,
-			hmac,
 			encoding: 'base64',
+			hmac,
 		});
 		if (!valid) {
 			throw new Exception('Invalid hmac', {
