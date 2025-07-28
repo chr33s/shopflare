@@ -38,6 +38,7 @@
 		"upsteam",
 		"workerd",
 		"zod",
+		"vite",
 		"xlink"
 	],
 	"language": "en",
