@@ -1,0 +1,147 @@
+diff --git a/node_modules/@shopify/app-bridge-types/dist/shopify.ts b/node_modules/@shopify/app-bridge-types/dist/shopify.ts
+index ed282a0..06f6d18 100644
+--- a/node_modules/@shopify/app-bridge-types/dist/shopify.ts
++++ b/node_modules/@shopify/app-bridge-types/dist/shopify.ts
+@@ -210,7 +210,7 @@ export interface Collection extends Resource {
+         description?: string | null;
+         title?: string | null;
+     };
+-    sortOrder: CollectionSortOrder;
++    sortOrder: typeof CollectionSortOrder;
+     storefrontId: string;
+     templateSuffix?: string | null;
+     title: string;
+@@ -223,16 +223,16 @@ interface CollectionRule {
+     relation: string;
+ }
+ 
+-enum CollectionSortOrder {
+-    Manual = "MANUAL",
+-    BestSelling = "BEST_SELLING",
+-    AlphaAsc = "ALPHA_ASC",
+-    AlphaDesc = "ALPHA_DESC",
+-    PriceDesc = "PRICE_DESC",
+-    PriceAsc = "PRICE_ASC",
+-    CreatedDesc = "CREATED_DESC",
+-    Created = "CREATED",
+-    MostRelevant = "MOST_RELEVANT"
++const CollectionSortOrder = {
++    Manual: "MANUAL",
++    BestSelling: "BEST_SELLING",
++    AlphaAsc: "ALPHA_ASC",
++    AlphaDesc: "ALPHA_DESC",
++    PriceDesc: "PRICE_DESC",
++    PriceAsc: "PRICE_ASC",
++    CreatedDesc: "CREATED_DESC",
++    Created: "CREATED",
++    MostRelevant: "MOST_RELEVANT"
+ }
+ 
+ interface Customer {
+@@ -372,11 +372,11 @@ interface Filters {
+ 
+ type Finish = (data?: any) => void;
+ 
+-enum FulfillmentServiceType {
+-    GiftCard = "GIFT_CARD",
+-    Manual = "MANUAL",
+-    ThirdParty = "THIRD_PARTY"
+-}
++const FulfillmentServiceType = {
++    GiftCard: "GIFT_CARD",
++    Manual: "MANUAL",
++    ThirdParty: "THIRD_PARTY"
++} as const;
+ 
+ interface Header {
+     /**
+@@ -771,14 +771,14 @@ export interface Product extends Resource {
+     variants: Partial<ProductVariant>[];
+     vendor: string;
+     updatedAt: string;
+-    status: ProductStatus;
++    status: typeof ProductStatus;
+ }
+ 
+-enum ProductStatus {
+-    Active = "ACTIVE",
+-    Archived = "ARCHIVED",
+-    Draft = "DRAFT"
+-}
++const ProductStatus = {
++    Active: "ACTIVE",
++    Archived: "ARCHIVED",
++    Draft: "DRAFT"
++} as const;
+ 
+ export interface ProductVariant extends Resource {
+     availableForSale: boolean;
+@@ -791,14 +791,14 @@ export interface ProductVariant extends Resource {
+         inventoryManagement: boolean;
+         productBased: boolean;
+         serviceName: string;
+-        type: FulfillmentServiceType;
++        type: typeof FulfillmentServiceType;
+     };
+     image?: Image_2 | null;
+     inventoryItem: {
+         id: string;
+     };
+     inventoryManagement: ProductVariantInventoryManagement;
+-    inventoryPolicy: ProductVariantInventoryPolicy;
++    inventoryPolicy: typeof ProductVariantInventoryPolicy;
+     inventoryQuantity?: number | null;
+     position: number;
+     price: Money;
+@@ -811,20 +811,22 @@ export interface ProductVariant extends Resource {
+     taxable: boolean;
+     title: string;
+     weight?: number | null;
+-    weightUnit: WeightUnit;
++    weightUnit: typeof WeightUnit;
+     updatedAt: string;
+ }
+ 
+-enum ProductVariantInventoryManagement {
+-    Shopify = "SHOPIFY",
+-    NotManaged = "NOT_MANAGED",
+-    FulfillmentService = "FULFILLMENT_SERVICE"
+-}
++const ProductVariantInventoryManagement = {
++    Shopify: "SHOPIFY",
++    NotManaged: "NOT_MANAGED",
++    FulfillmentService: "FULFILLMENT_SERVICE"
++} as const;
+ 
+-enum ProductVariantInventoryPolicy {
+-    Deny = "DENY",
+-    Continue = "CONTINUE"
+-}
++type ProductVariantInventoryManagement = typeof ProductVariantInventoryManagement[keyof typeof ProductVariantInventoryManagement];
++
++const ProductVariantInventoryPolicy = {
++    Deny: "DENY",
++    Continue: "CONTINUE"
++} as const;
+ 
+ type Progress = 'incomplete' | 'partiallyComplete' | 'complete';
+ 
+@@ -1323,12 +1325,12 @@ interface WebVitalsMetric {
+     value: number;
+ }
+ 
+-enum WeightUnit {
+-    Kilograms = "KILOGRAMS",
+-    Grams = "GRAMS",
+-    Pounds = "POUNDS",
+-    Ounces = "OUNCES"
+-}
++const WeightUnit = {
++    Kilograms: "KILOGRAMS",
++    Grams: "GRAMS",
++    Pounds: "POUNDS",
++    Ounces: "OUNCES"
++} as const;
+ 
+ type WithSelection<T> = T & {
+     /**

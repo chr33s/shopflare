@@ -167,8 +167,8 @@ export async function admin(context: Context, request: Request) {
 				Accept: 'application/json',
 				'Content-Type': 'application/json',
 			}),
-			signal: AbortSignal.timeout(1_000),
 			method: 'POST',
+			signal: AbortSignal.timeout(1_000),
 		});
 		if (!response.ok) {
 			const body: any = await response.json();
