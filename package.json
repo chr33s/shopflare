@@ -101,6 +101,10 @@
 	"stylelint": {
 		"extends": [
 			"@shopify/stylelint-plugin/prettier"
+		],
+		"ignoreFiles": [
+			"./build/**",
+			"**/dist/**"
 		]
 	}
 }

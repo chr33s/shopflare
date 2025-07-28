@@ -24,6 +24,8 @@
 		".*.vars": "properties",
 		".env*": "properties"
 	},
+	"files.insertFinalNewline": true,
+	"files.trimFinalNewlines": false,
 	"stylelint.enable": true,
 	"typescript.enablePromptUseWorkspaceTsdk": true,
 	"typescript.tsdk": "node_modules/typescript/lib"
