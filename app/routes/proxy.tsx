@@ -30,7 +30,7 @@ export async function action({context, request}: Route.ActionArgs) {
 	return shopify.handler(async () => {
 		log.debug('routes/proxy.index.server#action');
 
-		await shopify.proxy(context, request);
+		await shopify.proxy(context.get(appLoad), request);
 
 		const data = {};
 		return {data};

@@ -33,7 +33,7 @@ export default async function Component(props: Route.ComponentProps) {
 }
 
 export async function action({context, request}: Route.ActionArgs) {
-	await shopify.admin(context, request);
+	await shopify.admin(context.get(appLoad), request);
 
 	const data = Object.fromEntries(await request.formData());
 	log.debug('routes/app.index#action', {data});

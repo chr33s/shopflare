@@ -4,6 +4,7 @@ export default {
 	// Config options...
 	future: {
 		unstable_optimizeDeps: true,
+		unstable_middleware: true,
 		unstable_splitRouteModules: true,
 		unstable_viteEnvironmentApi: true,
 	},

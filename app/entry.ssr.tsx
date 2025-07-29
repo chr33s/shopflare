@@ -13,8 +13,6 @@ import i18n, {LanguageDetector} from './i18n';
 
 export default {
 	async fetch(request, env, _ctx) {
-		// TODO: const context = { cloudflare: {env, ctx} }
-
 		await i18next
 			.use(initReactI18next)
 			.use(LanguageDetector)

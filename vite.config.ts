@@ -22,6 +22,7 @@ export default defineConfig(({mode}) => {
 		define: define(env),
 		environments: {
 			client: {
+				build: {outDir: 'build/client'},
 				optimizeDeps: {
 					include: [
 						'react-router',
@@ -30,6 +31,7 @@ export default defineConfig(({mode}) => {
 				},
 			},
 			ssr: {
+				build: {outDir: 'build/ssr'},
 				optimizeDeps: {
 					include: [
 						'react-router > cookie',
@@ -39,6 +41,7 @@ export default defineConfig(({mode}) => {
 				},
 			},
 			rsc: {
+				build: {outDir: 'build/rsc'},
 				optimizeDeps: {
 					include: [
 						'react-router > cookie',
@@ -181,6 +184,7 @@ function generateRoutesCode(config: {
 			continue;
 		}
 		code += '{';
+		// eslint-disable-next-line no-warning-comments
 		// TODO: route-module transform
 		code += `lazy: () => import(${JSON.stringify(
 			path.resolve(config.appDirectory, route.file),

@@ -1,3 +1,4 @@
+import {appLoad} from '#app/context';
 import * as shopify from '#app/shopify.server';
 import {log} from '#app/shopify.shared';
 
@@ -5,13 +6,14 @@ import type {Route} from './+types/shopify.webhooks.$target';
 
 export async function action({context, params, request}: Route.ActionArgs) {
 	try {
-		const {session, webhook} = await shopify.webhook(context, request);
+		const appLoadContext = context.get(appLoad);
+		const {session, webhook} = await shopify.webhook(appLoadContext, request);
 		log.debug('routes/shopify.webhooks#action', webhook.webhookId);
 
 		switch (params?.target) {
 			default:
 			case 'queue': {
-				await context.cloudflare.env.WEBHOOK_QUEUE.send(
+				await appLoadContext.cloudflare.env.WEBHOOK_QUEUE.send(
 					{session, webhook},
 					{contentType: 'json'},
 				);
@@ -19,7 +21,7 @@ export async function action({context, params, request}: Route.ActionArgs) {
 			}
 
 			case 'workflow': {
-				await context.cloudflare.env.WEBHOOK_WORKFLOW.create({
+				await appLoadContext.cloudflare.env.WEBHOOK_WORKFLOW.create({
 					id: webhook.webhookId,
 					params: {session, webhook},
 				});

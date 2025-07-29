@@ -1,15 +1,19 @@
 import {env} from 'cloudflare:test';
+import {unstable_RouterContextProvider as RouterContextProvider} from 'react-router';
 import {describe, expect, test} from 'vitest';
 
 import {getHmacFromBody as getHmac} from '#app/utils.test';
 import {API_VERSION} from '#app/const';
+import {appLoad} from '#app/context';
 
 import * as shopify from '../shopify.server';
 
 import type {Route} from './+types/shopify.webhooks.$target';
 import {action} from './shopify.webhooks.$target';
 
-const context = {cloudflare: {env}} as unknown as shopify.Context;
+const context = new RouterContextProvider(
+	new Map([[appLoad, {cloudflare: {env}}]]),
+);
 
 describe('action', () => {
 	test('error on header missing', async () => {
@@ -104,7 +108,7 @@ describe('action', () => {
 
 	test('success', async () => {
 		const shop = 'test.myshopify.com';
-		const session = shopify.session(context);
+		const session = shopify.session(context.get(appLoad));
 		await session.set(shop, {
 			accessToken: '123',
 			id: shop,

@@ -1,7 +1,6 @@
 import {
-	type AppLoadContext,
 	unstable_createContext as createContext,
+	type AppLoadContext,
 } from 'react-router';
 
-export type AppLoad = AppLoadContext;
-export const appLoad = createContext<AppLoad>();
+export const appLoad = createContext<AppLoadContext>();

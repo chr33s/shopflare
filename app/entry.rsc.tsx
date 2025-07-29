@@ -19,9 +19,6 @@ import {appLoad} from './context';
 
 export default {
 	async fetch(request, env, ctx) {
-		const requestContext = new RouterContextProvider();
-		requestContext.set(appLoad, {cloudflare: {env, ctx}});
-
 		return matchRSCServerRequest({
 			createTemporaryReferenceSet,
 			decodeAction,
@@ -36,8 +33,15 @@ export default {
 				});
 			},
 			loadServerAction,
+			onError(error: unknown) {
+				if (!request.signal.aborted) {
+					shopify.log.error('entry.rsc.onError', error);
+				}
+			},
 			request,
-			requestContext,
+			requestContext: new RouterContextProvider(
+				new Map([[appLoad, {cloudflare: {env, ctx}}]]),
+			),
 			routes,
 		});
 	},

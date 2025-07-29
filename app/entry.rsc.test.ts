@@ -6,7 +6,7 @@ import {
 } from 'cloudflare:test';
 import {afterEach, expect, test, vi} from 'vitest';
 
-import server from './server';
+import server from './entry.rsc';
 
 afterEach(() => {
 	vi.restoreAllMocks();
