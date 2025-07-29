@@ -42,11 +42,11 @@
 		"i18next": "25.3.2",
 		"isbot": "5.1.28",
 		"jose": "6.0.12",
-		"react": "19.1.0",
-		"react-dom": "19.1.0",
+		"react": "19.1.1",
+		"react-dom": "19.1.1",
 		"react-i18next": "15.6.1",
 		"react-router": "7.7.1",
-		"zod": "4.0.10"
+		"zod": "4.0.11"
 	},
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "1.10.1",
@@ -65,7 +65,7 @@
 		"@types/react-dom": "19.1.6",
 		"@vitest/browser": "3.2.4",
 		"concurrently": "9.2.0",
-		"eslint": "9.31.0",
+		"eslint": "9.32.0",
 		"happy-dom": "18.0.1",
 		"lockfile-lint": "4.14.1",
 		"patch-package": "8.0.0",
@@ -80,8 +80,8 @@
 		"wrangler": "4.26.0"
 	},
 	"optionalDependencies": {
-		"@shopify/cli": "3.83.0",
-		"@shopify/plugin-cloudflare": "3.83.0"
+		"@shopify/cli": "3.83.1",
+		"@shopify/plugin-cloudflare": "3.83.1"
 	},
 	"trustedDependencies": [
 		"@shopify/plugin-cloudflare"
