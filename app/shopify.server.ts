@@ -609,7 +609,7 @@ export async function handler<T>(fn: () => Promise<T>) {
 			switch (error.type) {
 				case 'RESPONSE':
 				case 'REQUEST': {
-					throw data(
+					return data(
 						{
 							data: undefined,
 							errors: error.errors,
