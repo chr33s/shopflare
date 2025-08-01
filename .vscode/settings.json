@@ -13,8 +13,8 @@
 	"eslint.useFlatConfig": true,
 	"explorer.fileNesting.patterns": {
 		".env": ".env.*, .*.vars",
-		"*.ts": "${capture}*.css, ${capture}*.test.ts, ${capture}*.test.tsx",
-		"*.tsx": "${capture}*.css, ${capture}*.test.ts, ${capture}*.test.tsx",
+		"*.ts": "${capture}.css, ${capture}.module.css, ${capture}.e2e.test.ts, ${capture}.server.test.ts",
+		"*.tsx": "${capture}.css, ${capture}.browser.test.tsx, ${capture}.client.test.tsx, ${capture}.e2e.test.ts, ${capture}.server.test.ts",
 		"package.json": ".editorconfig, .gitignore, .npmrc, .prettierignore, *.config.ts, *.d.ts, *.d.cts, cspell.json, package-lock.json, tsconfig*.json",
 		"README.md": "CHANGELOG.md, CONTRIBUTING.md, LICENSE.md, SECURITY.md",
 		"shopify.app.toml": "shopify.app*.toml, shopify.theme*.toml, shopify.web.toml",
