@@ -108,8 +108,8 @@ describe('utils', () => {
 		const encoder = new TextEncoder();
 		const data = encoder.encode('test');
 
-		expect(shopify.utils.encode(data, 'base64')).toBe('dGVzdA==');
-		expect(shopify.utils.encode(data, 'hex')).toBe('74657374');
+		expect(shopify.utils.encode(data.buffer, 'base64')).toBe('dGVzdA==');
+		expect(shopify.utils.encode(data.buffer, 'hex')).toBe('74657374');
 	});
 
 	test.todo('gid');

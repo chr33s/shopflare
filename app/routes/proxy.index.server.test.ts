@@ -1,4 +1,5 @@
 import {env} from 'cloudflare:test';
+import {UNSAFE_DataWithResponseInit as DataWithResponseInit} from 'react-router';
 import {describe, expect, test} from 'vitest';
 
 import {getHmacFromSearchParams as getHmac} from '#app/utils.test';
@@ -20,10 +21,9 @@ describe('loader', () => {
 			request,
 		});
 
-		expect(response).toBeInstanceOf(Response);
-		expect(response?.ok).toBe(false);
-		expect(response?.status).toBe(400);
-		expect(await response?.text()).toBe('Proxy signature param is missing');
+		expect(response.type).toBe('DataWithResponseInit');
+		expect(response.init?.status).toBe(400);
+		expect(response.data?.message).toBe('Proxy signature param is missing');
 	});
 
 	test('error on proxy timestamp is expired', async () => {
@@ -36,10 +36,9 @@ describe('loader', () => {
 			request,
 		});
 
-		expect(response).toBeInstanceOf(Response);
-		expect(response?.ok).toBe(false);
-		expect(response?.status).toBe(400);
-		expect(await response?.text()).toBe('Proxy timestamp param is expired');
+		expect(response.type).toBe('DataWithResponseInit');
+		expect(response.init?.status).toBe(400);
+		expect(response.data?.message).toBe('Proxy timestamp param is expired');
 	});
 
 	test('error on encoded byte length mismatch', async () => {
@@ -52,10 +51,9 @@ describe('loader', () => {
 			request,
 		});
 
-		expect(response).toBeInstanceOf(Response);
-		expect(response?.ok).toBe(false);
-		expect(response?.status).toBe(401);
-		expect(await response?.text()).toBe('Invalid hmac');
+		expect(response.type).toBe('DataWithResponseInit');
+		expect(response.init?.status).toBe(401);
+		expect(response.data?.message).toBe('Invalid hmac');
 	});
 
 	test('error on invalid hmac', async () => {
@@ -72,10 +70,9 @@ describe('loader', () => {
 			request,
 		});
 
-		expect(response).toBeInstanceOf(Response);
-		expect(response?.ok).toBe(false);
-		expect(response?.status).toBe(401);
-		expect(await response?.text()).toBe('Invalid hmac');
+		expect(response.type).toBe('DataWithResponseInit');
+		expect(response.init?.status).toBe(401);
+		expect(response.data?.message).toBe('Invalid hmac');
 	});
 
 	test('error on no session access token', async () => {
@@ -93,10 +90,9 @@ describe('loader', () => {
 			request,
 		});
 
-		expect(response).toBeInstanceOf(Response);
-		expect(response?.ok).toBe(false);
-		expect(response?.status).toBe(401);
-		expect(await response?.text()).toBe('No session found');
+		expect(response.type).toBe('DataWithResponseInit');
+		expect(response.init?.status).toBe(401);
+		expect(response.data?.message).toBe('No session found');
 	});
 
 	test('success', async () => {
@@ -132,5 +128,5 @@ describe('loader', () => {
 function catchLoaderResponse(args: any) {
 	return Promise.resolve(loader(args as Route.LoaderArgs)).catch(
 		(err) => err,
-	) as Promise<Response>;
+	) as Promise<DataWithResponseInit<{message: string}>>;
 }
