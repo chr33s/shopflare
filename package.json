@@ -51,11 +51,11 @@
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "1.11.0",
 		"@cloudflare/vitest-pool-workers": "0.8.59",
-		"@playwright/test": "1.54.1",
+		"@playwright/test": "1.54.2",
 		"@react-router/dev": "7.7.1",
 		"@shopify/api-codegen-preset": "1.1.9",
-		"@shopify/app-bridge-react": "4.2.0",
-		"@shopify/app-bridge-types": "0.1.0",
+		"@shopify/app-bridge-react": "4.2.1",
+		"@shopify/app-bridge-types": "0.2.0",
 		"@shopify/app-bridge-ui-types": "0.2.1",
 		"@shopify/eslint-plugin": "50.0.0",
 		"@shopify/prettier-config": "1.1.4",
@@ -69,7 +69,7 @@
 		"happy-dom": "18.0.1",
 		"lockfile-lint": "4.14.1",
 		"patch-package": "8.0.0",
-		"playwright": "1.54.1",
+		"playwright": "1.54.2",
 		"prettier": "3.6.2",
 		"stylelint": "16.23.0",
 		"typescript": "5.9.2",
@@ -80,8 +80,8 @@
 		"wrangler": "4.27.0"
 	},
 	"optionalDependencies": {
-		"@shopify/cli": "3.83.1",
-		"@shopify/plugin-cloudflare": "3.83.1"
+		"@shopify/cli": "3.83.2",
+		"@shopify/plugin-cloudflare": "3.83.2"
 	},
 	"trustedDependencies": [
 		"@shopify/plugin-cloudflare"
