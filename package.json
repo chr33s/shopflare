@@ -33,8 +33,7 @@
 		"start": "wrangler dev",
 		"stylelint": "stylelint --cache --cache-location=./node_modules/.cache/stylelint --ignore-path=.prettierignore",
 		"test": "vitest --run",
-		"test:e2e": "node --env-file=.env --env-file=.env.test $(npm root)/.bin/playwright test",
-		"tunnel": "source .env && cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}"
+		"test:e2e": "node --env-file=.env --env-file=.env.test $(npm root)/.bin/playwright test"
 	},
 	"dependencies": {
 		"@shopify/graphql-client": "1.4.1",
@@ -73,17 +72,17 @@
 		"stylelint": "16.23.0",
 		"typescript": "5.9.2",
 		"vite": "7.0.6",
+		"vite-plugin-cloudflare-tunnel": "1.0.10",
 		"vite-plugin-i18next-loader": "3.1.2",
 		"vitest": "3.2.4",
 		"vitest-browser-react": "1.0.1",
 		"wrangler": "4.27.0"
 	},
 	"optionalDependencies": {
-		"@shopify/cli": "3.83.2",
-		"@shopify/plugin-cloudflare": "3.83.2"
+		"@shopify/cli": "3.83.2"
 	},
 	"trustedDependencies": [
-		"@shopify/plugin-cloudflare"
+		"vite-plugin-cloudflare-tunnel"
 	],
 	"engines": {
 		"node": "^22.18.0"

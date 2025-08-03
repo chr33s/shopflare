@@ -24,7 +24,8 @@
 			"@shopify/app-bridge-ui-types",
 			"@vitest/browser/matchers",
 			"@vitest/browser/providers/playwright",
-			"vite/client"
+			"vite/client",
+			"vite-plugin-cloudflare-tunnel/virtual"
 		],
 		"verbatimModuleSyntax": true
 	},

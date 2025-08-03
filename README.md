@@ -25,13 +25,13 @@ Familiarity with React, ReactRouter, Cloudflare, Shopify conventions.
 1. Cloudflare account
 2. Shopify Partner account
 3. Node.js & NPM see package.json#engines `brew install node@22`
-4. cloudflared cli `brew install cloudflared` (optional)
-5. Github cli `brew install gh` (optional)
+4. Github cli `brew install gh` (optional)
 
 > [!NOTE]
 >
 > - For wss:// to work on a cloudflare tunnel, you need to set "Additional application settings" > "HTTP Settings" > "HTTP Host Header" to match the service URL (e.g. 127.0.0.1), otherwise the tunnel returns a 502 http status & client connection fails
 > - To bypass caching set: Caching > Cache Rules ["Rule Name" = "bypass cache on tunnel", "Custom filter expression" = "", Field = Hostname, Operator = equals, Value = tunnel url, "Cache eligibility" = "Bypass cache", "Browser TTL" = "Bypass cache" ]
+> - For named tunnels, create an api token with the following permissions: Account level: `Cloudflare Tunnel:Edit` & Zone level: `SSL and Certificates:Edit`, `DNS:Edit`
 
 ## Setup
 

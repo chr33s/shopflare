@@ -1,6 +1,7 @@
 import {cloudflare} from '@cloudflare/vite-plugin';
 import {reactRouter} from '@react-router/dev/vite';
 import {defineConfig, loadEnv} from 'vite';
+import cloudflareTunnel from 'vite-plugin-cloudflare-tunnel';
 import i18nextLoader from 'vite-plugin-i18next-loader';
 
 import i18nextLoaderOptions from './i18n.config';
@@ -8,6 +9,7 @@ import i18nextLoaderOptions from './i18n.config';
 export default defineConfig(({mode}) => {
 	const env = loadEnv(mode, import.meta.dirname, '');
 	const app = new URL(env.HOST ?? env.SHOPIFY_APP_URL);
+	const port = Number(env.PORT || 8080);
 
 	return {
 		assetsInclude: ['**/*.gql'],
@@ -17,6 +19,14 @@ export default defineConfig(({mode}) => {
 		plugins: [
 			i18nextLoader(i18nextLoaderOptions),
 			cloudflare({viteEnvironment: {name: 'ssr'}}),
+			cloudflareTunnel({
+				apiToken: env.CLOUDFLARE_API_TOKEN,
+				cleanup: {autoCleanup: false},
+				enabled: Boolean(env.CLOUDFLARE_API_TOKEN),
+				hostname: app.hostname,
+				port,
+				tunnelName: 'shopflare',
+			}),
 			reactRouter(),
 		],
 		resolve: {
@@ -27,7 +37,7 @@ export default defineConfig(({mode}) => {
 			// pass cors handling to react-router
 			cors: false,
 			origin: app.origin,
-			port: Number(env.PORT || 8080),
+			port,
 		},
 		ssr: {
 			resolve: {
