@@ -2,6 +2,8 @@
 	"chat.agent.maxRequests": 100,
 	"chat.mcp.discovery.enabled": true,
 	"chat.tools.autoApprove": true,
+	"diffEditor.diffAlgorithm": "advanced",
+	"diffEditor.experimental.showMoves": true,
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": "explicit",
 		"source.fixAll.stylelint": "explicit"
@@ -13,7 +15,7 @@
 	"eslint.useFlatConfig": true,
 	"explorer.fileNesting.patterns": {
 		".env": ".env.*, .*.vars",
-		"*.ts": "${capture}.css, ${capture}.module.css, ${capture}.e2e.test.ts, ${capture}.server.test.ts",
+		"*.ts": "${capture}.css, ${capture}.module.css, ${capture}.test.ts, ${capture}.e2e.test.ts, ${capture}.server.test.ts",
 		"*.tsx": "${capture}.css, ${capture}.browser.test.tsx, ${capture}.client.test.tsx, ${capture}.e2e.test.ts, ${capture}.server.test.ts",
 		"package.json": ".editorconfig, .gitignore, .npmrc, .prettierignore, *.config.ts, *.d.ts, *.d.cts, cspell.json, package-lock.json, tsconfig*.json",
 		"README.md": "CHANGELOG.md, CONTRIBUTING.md, LICENSE.md, SECURITY.md",
