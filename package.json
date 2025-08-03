@@ -19,7 +19,7 @@
 		"deploy:shopify": "shopify app deploy --message=$(git rev-parse --abbrev-ref HEAD):$npm_package_version --version=$(git rev-parse HEAD)",
 		"dev": "shopify app dev --localhost-port=8080 --use-localhost",
 		"dev:tunnel": "source .env && shopify app dev --tunnel-url=${SHOPIFY_APP_URL}:${PORT:-8080}",
-		"eslint": "npm run --silent tsx -- $(npm root)/.bin/eslint --cache --cache-location=./node_modules/.cache/eslint --flag=unstable_native_nodejs_ts_config",
+		"eslint": "eslint --cache --cache-location=./node_modules/.cache/eslint --flag=unstable_native_nodejs_ts_config",
 		"fix": "concurrently --group 'npm:fix:*'",
 		"fix:css": "npm run --silent stylelint -- --fix '**/*.css'",
 		"fix:format": "npm run --silent prettier -- --write .",
@@ -28,14 +28,13 @@
 		"graphql-codegen": "node --env-file=.env $(npm root)/.bin/graphql-codegen --errors-only",
 		"logs": "wrangler tail",
 		"postinstall": "patch-package",
-		"prettier": "npm run --silent tsx -- $(npm root)/.bin/prettier --cache --log-level=error",
+		"prettier": "prettier --cache --log-level=error",
 		"preview": "vite preview",
 		"start": "wrangler dev",
 		"stylelint": "stylelint --cache --cache-location=./node_modules/.cache/stylelint --ignore-path=.prettierignore",
 		"test": "vitest --run",
 		"test:e2e": "node --env-file=.env --env-file=.env.test $(npm root)/.bin/playwright test",
-		"tunnel": "source .env && cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}",
-		"tsx": "run () { node --experimental-strip-types --no-warnings=ExperimentalWarning ${@}; }; run"
+		"tunnel": "source .env && cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}"
 	},
 	"dependencies": {
 		"@shopify/graphql-client": "1.4.1",
@@ -87,7 +86,7 @@
 		"@shopify/plugin-cloudflare"
 	],
 	"engines": {
-		"node": "^22.0.0"
+		"node": "^22.18.0"
 	},
 	"imports": {
 		"#app/*": [
@@ -98,7 +97,7 @@
 		"extensions/*"
 	],
 	"bin": {
-		"shopflare": "npm run tsx cli.ts"
+		"shopflare": "node cli.ts"
 	},
 	"prettier": "@shopify/prettier-config",
 	"stylelint": {
