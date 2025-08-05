@@ -20,8 +20,8 @@ const requestHandler = createRequestHandler(
 export default Sentry.withSentry(
 	(env: Env) => ({
 		dsn: env.SENTRY_DSN,
-		environment: env.ENVIRONMENT,
-		release: env.VERSION,
+		environment: env.SHOPIFY_APP_ENV,
+		release: env.CF_VERSION_METADATA.id,
 	}),
 	{
 		async fetch(request, env, ctx) {

@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/browser";
+import * as Sentry from "@sentry/react";
 
 Sentry.init({
 	defaultIntegrations: false,
@@ -7,7 +7,7 @@ Sentry.init({
 	// eslint-disable-next-line no-process-env
 	environment: process.env.ENVIRONMENT,
 	// eslint-disable-next-line no-process-env
-	release: process.env.npm_package_version ?? "0.0.0",
+	release: process.env.npm_package_version,
 });
 
 self.addEventListener("unhandledrejection", (error) => {

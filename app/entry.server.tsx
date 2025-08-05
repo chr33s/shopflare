@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/react-router";
+import * as Sentry from "@sentry/react";
 import { createInstance } from "i18next";
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
@@ -15,6 +15,9 @@ import { createShopify } from "./shopify.server";
 Sentry.init({
 	dsn: import.meta.env.SENTRY_DSN,
 	environment: import.meta.env.ENVIRONMENT,
+	integrations: [
+		Sentry.consoleLoggingIntegration({ levels: ["log", "error", "warn"] }),
+	],
 	release: import.meta.env.VERSION,
 });
 

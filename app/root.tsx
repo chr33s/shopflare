@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/react-router";
+import * as Sentry from "@sentry/react";
 import type { PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 import {

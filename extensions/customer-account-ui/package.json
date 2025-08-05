@@ -1,16 +1,16 @@
 {
-  "name": "customer-account-ui",
-  "private": true,
-  "version": "1.0.0",
-  "license": "UNLICENSED",
-  "dependencies": {
-    "@sentry/browser": "^9.43.0",
-    "@shopify/ui-extensions": "2025.4.x",
-    "@shopify/ui-extensions-react": "2025.4.x",
-    "react": "^18.0.0",
-    "react-reconciler": "0.29.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.0.0"
-  }
+	"name": "customer-account-ui",
+	"private": true,
+	"version": "1.0.0",
+	"license": "UNLICENSED",
+	"dependencies": {
+		"@sentry/react": "10.1.0",
+		"@shopify/ui-extensions": "2025.4.x",
+		"@shopify/ui-extensions-react": "2025.4.x",
+		"react": "^18.0.0",
+		"react-reconciler": "0.29.0"
+	},
+	"devDependencies": {
+		"@types/react": "^18.0.0"
+	}
 }
