@@ -48,8 +48,8 @@
 		"zod": "4.0.14"
 	},
 	"devDependencies": {
-		"@cloudflare/vite-plugin": "1.11.0",
-		"@cloudflare/vitest-pool-workers": "0.8.59",
+		"@cloudflare/vite-plugin": "1.11.1",
+		"@cloudflare/vitest-pool-workers": "0.8.60",
 		"@playwright/test": "1.54.2",
 		"@react-router/dev": "7.7.1",
 		"@shopify/api-codegen-preset": "1.1.9",
@@ -76,7 +76,7 @@
 		"vite-plugin-i18next-loader": "3.1.2",
 		"vitest": "3.2.4",
 		"vitest-browser-react": "1.0.1",
-		"wrangler": "4.27.0"
+		"wrangler": "4.28.0"
 	},
 	"optionalDependencies": {
 		"@shopify/cli": "3.83.2",
