@@ -534,7 +534,8 @@ export function createShopify(context: Context) {
 		config: config(context),
 		proxy: (request: Request) =>
 			proxy(context, request).then(({client}) => client),
-		redirect,
+		redirect: (request: Request, init: Redirect) =>
+			redirect(context, request, init),
 		session: session(context),
 		utils: {
 			...utils,
@@ -1126,19 +1127,16 @@ export async function proxy(context: Context, request: Request) {
 	return authenticated;
 }
 
+interface Redirect extends ResponseInit {
+	url: string;
+	shop?: string;
+	target?: '_self' | '_parent' | '_blank' | '_top';
+}
+
 export async function redirect(
 	context: Context,
 	request: Request,
-	{
-		shop,
-		url,
-		target,
-		...init
-	}: ResponseInit & {
-		url: string;
-		shop: string;
-		target?: '_self' | '_parent' | '_blank' | '_top';
-	},
+	{shop, url, target, ...init}: Redirect,
 ) {
 	const headers = new Headers({
 		'content-type': 'text/html;charset=utf-8',
@@ -1163,7 +1161,11 @@ export async function redirect(
 	const adminLinkRegExp = /^shopify:\/*admin\//i;
 	const isAdminLink = adminLinkRegExp.test(url);
 	if (isAdminLink) {
-		const shopHandle = shop.replace('.myshopify.com', '');
+		const shopUrl =
+			utils.sanitizeShop(
+				shop ?? new URL(request.url).searchParams.get('shop'),
+			) ?? '';
+		const shopHandle = shopUrl.replace('.myshopify.com', '');
 		const adminUri = url.replace(adminLinkRegExp, '/');
 		windowUrl = new URL(
 			`https://admin.shopify.com/store/${shopHandle}${adminUri}`,
