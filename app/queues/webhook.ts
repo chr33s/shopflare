@@ -9,10 +9,7 @@ export async function queue(
 		shopify.log.debug('queues/webhook', webhook.webhookId);
 
 		switch (webhook.topic) {
-			case 'APP_UNINSTALLED':
-				if (session) {
-					await shopify.session(context).set(session.id, null);
-				}
+			case 'APP_INSTALLED':
 				break;
 
 			case 'APP_SCOPES_UPDATE':
@@ -21,6 +18,12 @@ export async function queue(
 						...session,
 						scope: (webhook.payload as {current: string[]}).current.toString(),
 					});
+				}
+				break;
+
+			case 'APP_UNINSTALLED':
+				if (session) {
+					await shopify.session(context).set(session.id, null);
 				}
 				break;
 		}
@@ -32,7 +35,7 @@ export async function queue(
 export interface QueueMessage {
 	session: shopify.Session;
 	webhook: {
-		subTopic: string;
+		subTopic?: string;
 		apiVersion: string;
 		domain: string;
 		hmac: string;

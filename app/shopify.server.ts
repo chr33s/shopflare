@@ -251,11 +251,41 @@ export async function admin(context: Context, request: Request) {
 		});
 
 		const current = await session(context).get(shop);
-		if (!current)
+		if (!current) {
 			throw new Exception('No session found', {
 				status: 401,
 				type: 'REQUEST',
 			});
+		}
+
+		const installKey = `install:${shop}`;
+		const installed = await context.cloudflare.env.SESSION_KV.get(installKey);
+		if (!installed) {
+			context.cloudflare.ctx.waitUntil(
+				(async () => {
+					const installTimestamp = new Date().toJSON();
+
+					// synthetic webhook
+					const webhook = {
+						apiVersion: API_VERSION,
+						domain: shop,
+						hmac: 'n/a',
+						payload: {timestamp: installTimestamp},
+						topic: 'APP_INSTALLED',
+						webhookId: crypto.randomUUID(),
+					};
+					context.cloudflare.env.WEBHOOK_QUEUE.send(
+						{session: current, webhook},
+						{contentType: 'json'},
+					);
+					await context.cloudflare.env.SESSION_KV.put(
+						installKey,
+						installTimestamp,
+					);
+				})(),
+			);
+		}
+
 		return {
 			client: client(current).admin(),
 			session: current,
