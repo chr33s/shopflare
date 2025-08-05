@@ -6,7 +6,6 @@
 		"baseUrl": ".",
 		"checkJs": true,
 		"composite": true,
-		"erasableSyntaxOnly": true,
 		"jsx": "react-jsx",
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],
 		"module": "ES2022",
