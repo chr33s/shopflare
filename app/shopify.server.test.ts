@@ -24,8 +24,8 @@ describe("utils", () => {
 		const encoder = new TextEncoder();
 		const data = encoder.encode("test");
 
-		expect(utils.encode(data, "base64")).toBe("dGVzdA==");
-		expect(utils.encode(data, "hex")).toBe("74657374");
+		expect(utils.encode(data.buffer, "base64")).toBe("dGVzdA==");
+		expect(utils.encode(data.buffer, "hex")).toBe("74657374");
 	});
 
 	test("legacyUrlToShopAdminUrl", () => {
