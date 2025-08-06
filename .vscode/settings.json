@@ -27,7 +27,6 @@
 		".env*": "properties"
 	},
 	"files.insertFinalNewline": true,
-	"files.trimFinalNewlines": false,
 	"stylelint.enable": true,
 	"terminal.integrated.suggest.enabled": true,
 	"typescript.enablePromptUseWorkspaceTsdk": true,

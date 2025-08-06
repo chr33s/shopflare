@@ -1,3 +1,4 @@
+import 'react-router';
 import type * as AppBridge from '@shopify/app-bridge-types';
 
 declare module 'cloudflare:test' {
