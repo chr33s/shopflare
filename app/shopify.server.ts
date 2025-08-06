@@ -329,11 +329,12 @@ export function billing(context: Context, request: Request) {
 			});
 		}
 		const admin = client({
-			accessToken: current?.accessToken,
+			accessToken: current.accessToken,
 			shop,
 		}).admin();
 
 		let cursor: string | undefined;
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		while (true) {
 			const {data, errors} = await admin.request<BillingCheckQuery>(
 				BillingCheck,
@@ -479,6 +480,7 @@ export function bulkOperation(client: Client) {
 	}
 
 	async function process(type: BulkOperationType) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		while (true) {
 			const data = await current(type);
 			const status = data?.status ?? '';
@@ -742,10 +744,11 @@ export function metafield(client: Client) {
 
 	async function set(
 		identifier: MetafieldInput,
-		metafield: Omit<
-			MetafieldsSetInput,
-			'key' | 'namespace' | 'ownerId' | 'value'
-		> & {value: MetafieldsSetInput['value'] | null},
+		metafield:
+			| (Omit<MetafieldsSetInput, 'key' | 'namespace' | 'ownerId' | 'value'> & {
+					value: MetafieldsSetInput['value'] | null;
+			  })
+			| null,
 	) {
 		if (metafield === null) return destroy(identifier);
 
@@ -1036,6 +1039,7 @@ export function upload(client: Client) {
 	}
 
 	async function wait(id: string) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		while (true) {
 			const node = await client
 				.request<FileQuery>(FileNode, {variables: {id}})
@@ -1163,7 +1167,7 @@ interface Redirect extends ResponseInit {
 	target?: '_self' | '_parent' | '_blank' | '_top';
 }
 
-export async function redirect(
+export function redirect(
 	context: Context,
 	request: Request,
 	{shop, url, target, ...init}: Redirect,
@@ -1260,7 +1264,7 @@ export async function redirect(
 		}
 
 		default: {
-			throw routerRedirect(url, init);
+			return routerRedirect(url, init);
 		}
 	}
 
@@ -1298,7 +1302,6 @@ export function session(context: Context, type: Sessiontype = 'admin') {
 
 	async function set(id: string, data: Session | null) {
 		if (data === null) return kv.delete(key(id));
-		if (!data) return;
 		return kv.put(key(id), JSON.stringify(data));
 	}
 
@@ -1404,7 +1407,7 @@ export const utils = {
 		const shopUrl = shop.replace(/^https?:\/\//, '').replace(/\/$/, '');
 		const regExp = /(.+)\.myshopify\.com$/;
 
-		const matches = shopUrl.match(regExp);
+		const matches = regExp.exec(shopUrl);
 		if (matches && matches.length === 2) {
 			const shopName = matches[1];
 			return `admin.shopify.com/store/${shopName}`;
@@ -1443,7 +1446,7 @@ export const utils = {
 			}
 
 			const regex = /admin\..+\/store\/([^/]+)/;
-			const matches = sanitizedShop.match(regex);
+			const matches = regex.exec(sanitizedShop);
 			if (matches && matches.length === 2) {
 				sanitizedShop = `${matches.at(1)}.myshopify.com`;
 			} else {

@@ -45,7 +45,7 @@ const commands = {
 if (command in commands) {
 	await commands[command]();
 } else {
-	await commands.help();
+	commands.help();
 }
 
 async function deploy() {
@@ -54,7 +54,7 @@ async function deploy() {
 			/* sh */ `npm run deploy:cloudflare -- --env=${args.values.env}`,
 		);
 		if (cloudflare.code !== 0) {
-			throw new Error(cloudflare.stderr ?? cloudflare.stdout, {
+			throw new Error(cloudflare.stderr || cloudflare.stdout, {
 				cause: cloudflare.code,
 			});
 		}
@@ -63,7 +63,7 @@ async function deploy() {
 			/* sh */ `npm run deploy:shopify -- --config=shopify.app.${args.values.env}.toml`,
 		);
 		if (shopify.code !== 0) {
-			throw new Error(shopify.stderr ?? shopify.stdout, {cause: shopify.code});
+			throw new Error(shopify.stderr || shopify.stdout, {cause: shopify.code});
 		}
 	} catch (error: any) {
 		console.error(error.message);
@@ -71,7 +71,7 @@ async function deploy() {
 	}
 }
 
-async function help() {
+function help() {
 	console.log('commands: npx shopflare', Object.keys(commands));
 }
 
@@ -170,7 +170,7 @@ async function trigger() {
 							--workflows=.github/workflows/${workflow}.yml
 				`);
 				if (cmd.code !== 0) {
-					throw new Error(cmd.stderr ?? cmd.stdout, {cause: cmd.code});
+					throw new Error(cmd.stderr || cmd.stdout, {cause: cmd.code});
 				}
 				console.log(cmd.stdout);
 				break;
@@ -190,7 +190,7 @@ async function trigger() {
 						--topic=${topic}
 				`);
 				if (cmd.code !== 0) {
-					throw new Error(cmd.stderr ?? cmd.stdout, {cause: cmd.code});
+					throw new Error(cmd.stderr || cmd.stdout, {cause: cmd.code});
 				}
 				console.log(cmd.stdout);
 				break;
@@ -263,12 +263,12 @@ async function use() {
 		const trimmedLine = line.trim();
 		if (!trimmedLine || trimmedLine.startsWith('#')) continue;
 		if (trimmedLine.startsWith('[') && trimmedLine.endsWith(']')) {
-			prefix = trimmedLine.replace(/\[+|\]+/g, '').toUpperCase() ?? '';
+			prefix = trimmedLine.replace(/\[+|\]+/g, '').toUpperCase() || '';
 			continue;
 		}
 
-		const lineParts = trimmedLine
-			.match(/(\w+)\s*=\s*"?(\[?[^\s\]"]+\]?)"?/i)
+		const lineParts = /(\w+)\s*=\s*"?(\[?[^\s\]"]+\]?)"?/i
+			.exec(trimmedLine)
 			?.slice(1, 3);
 		if (lineParts?.length !== 2) continue;
 

@@ -24,6 +24,10 @@ test('loads and displays h1', async () => {
 				return {};
 			},
 			Component: Index as any,
+			HydrateFallback: () => null,
+			loader() {
+				return {};
+			},
 			path: '/',
 		},
 	]);

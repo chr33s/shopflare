@@ -33,7 +33,7 @@ export async function queue(
 }
 
 export interface QueueMessage {
-	session: shopify.Session;
+	session?: shopify.Session;
 	webhook: {
 		subTopic?: string;
 		apiVersion: string;

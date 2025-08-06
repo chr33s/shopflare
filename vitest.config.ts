@@ -61,7 +61,7 @@ export default defineConfig((config) => {
 								name: 'server',
 								poolOptions: {
 									workers: {
-										isolatedStorage: false,
+										isolatedStorage: true,
 										main: './build/server/index.js',
 										miniflare: {
 											compatibilityFlags: [

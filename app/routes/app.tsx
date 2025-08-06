@@ -73,7 +73,7 @@ export function headers({
 	loaderHeaders,
 	actionHeaders,
 	errorHeaders,
-}: Route.HeadersArgs) {
+}: Partial<Route.HeadersArgs>) {
 	if (errorHeaders && Array.from(errorHeaders.entries()).length > 0) {
 		return errorHeaders;
 	}

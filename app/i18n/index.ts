@@ -25,8 +25,8 @@ export class LanguageDetector implements LanguageDetectorModule {
 	static type = 'languageDetector' as const;
 	public type = 'languageDetector' as const;
 
-	#options: DetectorOptions;
-	#i18n: InitOptions;
+	readonly #options?: DetectorOptions;
+	readonly #i18n?: InitOptions;
 
 	constructor(
 		_services: Services,
@@ -41,15 +41,15 @@ export class LanguageDetector implements LanguageDetectorModule {
 		let locale: string | null | undefined;
 
 		const param = 'locale';
-		if (this.#options?.searchParams?.has(param)) {
+		if (this.#options?.searchParams.has(param)) {
 			// shopify admin
 			locale = this.#options.searchParams.get(param);
 		}
 
 		const header = 'accept-language';
-		if (!locale && this.#options?.headers?.has(header)) {
+		if (!locale && this.#options?.headers.has(header)) {
 			// shopify storefront
-			locale = this.#options?.headers
+			locale = this.#options.headers
 				.get(header)
 				?.match(/[a-z-_]{2,5}/i)
 				?.at(0);

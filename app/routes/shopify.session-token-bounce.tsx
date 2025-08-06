@@ -5,7 +5,7 @@ import * as shopify from '#app/shopify.server';
 
 import type {Route} from './+types/shopify.session-token-bounce';
 
-export async function loader({request}: Route.LoaderArgs) {
+export function loader({request}: Route.LoaderArgs) {
 	const url = new URL(request.url);
 	const shop = shopify.utils.sanitizeShop(url.searchParams.get('shop')!);
 	if (!shop) return redirect('/');

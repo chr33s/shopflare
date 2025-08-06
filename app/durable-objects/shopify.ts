@@ -8,7 +8,7 @@ type ClientType = shopify.Sessiontype;
 
 export class ShopifyDurableObject extends DurableObject<Env> {
 	#client: shopify.Client;
-	#shop: string;
+	readonly #shop: string;
 
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
@@ -27,7 +27,7 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 		});
 	}
 
-	async bulkOperation() {
+	bulkOperation() {
 		return shopify.bulkOperation(this.#client);
 	}
 
@@ -108,11 +108,11 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 		}
 	}
 
-	async metafield() {
+	metafield() {
 		return shopify.metafield(this.#client);
 	}
 
-	async metaobject() {
+	metaobject() {
 		return shopify.metaobject(this.#client);
 	}
 
@@ -128,7 +128,7 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 		}).then((res) => res.ok);
 	}
 
-	async upload() {
+	upload() {
 		return shopify.upload(this.#client);
 	}
 

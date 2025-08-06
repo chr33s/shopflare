@@ -28,12 +28,12 @@ export function ErrorBoundary({error}: Route.ErrorBoundaryProps) {
 	let message = 'An unexpected error occurred.';
 	if (isRouteErrorResponse(error)) {
 		title = `${error.status} Error`;
-		message = error.data.message ?? error.statusText ?? message;
+		message = error.data?.message ?? error.statusText ?? message;
 	}
 
 	let stack: string | undefined;
 	if (import.meta.env.DEV && error instanceof Error) {
-		message ??= error.message;
+		message = error.message;
 		stack = error.stack;
 	}
 

@@ -1,3 +1,4 @@
+import graphqlPlugin from '@graphql-eslint/eslint-plugin';
 import shopifyEslintPlugin from '@shopify/eslint-plugin';
 import {defineConfig, globalIgnores} from 'eslint/config';
 
@@ -14,9 +15,18 @@ export default defineConfig([
 		'worker-configuration.d.ts',
 	]),
 	...shopifyEslintPlugin.configs.typescript,
+	...shopifyEslintPlugin.configs['typescript-type-checking'],
 	...shopifyEslintPlugin.configs.react,
 	...shopifyEslintPlugin.configs.prettier,
 	{
+		languageOptions: {
+			parserOptions: {
+				project: 'tsconfig.json',
+			},
+		},
+	},
+	{
+		ignores: ['**/*.gql'],
 		rules: {
 			'@shopify/jsx-no-hardcoded-content': 'off',
 			'@shopify/strict-component-boundaries': 'off',
@@ -74,6 +84,14 @@ export default defineConfig([
 			'react/react-in-jsx-scope': 'off',
 			'sort-keys': ['error', 'asc', {caseSensitive: false}],
 			'sort-vars': 'error',
+		},
+	},
+	{
+		files: ['**/*.gql'],
+		languageOptions: {parser: graphqlPlugin.parser},
+		plugins: {'@graphql-eslint': graphqlPlugin},
+		rules: {
+			'spaced-comment': 'off',
 		},
 	},
 ]);

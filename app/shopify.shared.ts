@@ -21,14 +21,14 @@ export const log = {
 		if (this.levels[this.level] >= this.levels.info) {
 			return console.info('log.info', ...args);
 		}
-		return this.noop;
+		return this.noop();
 	},
 
 	error(...args: unknown[]) {
 		if (this.levels[this.level] >= this.levels.error) {
 			return console.error('log.error', ...args);
 		}
-		return this.noop;
+		return this.noop();
 	},
 };
 /* eslint-enable sort-keys */

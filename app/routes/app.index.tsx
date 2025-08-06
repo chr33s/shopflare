@@ -36,7 +36,7 @@ export default function AppIndex({
 	actionData,
 	loaderData,
 }: Route.ComponentProps) {
-	const {data, errors} = loaderData ?? actionData ?? {};
+	const {data, errors} = actionData || loaderData;
 	log.debug('routes/app.index#component', data);
 
 	const {t} = useTranslation();
@@ -63,13 +63,15 @@ export default function AppIndex({
 
 	const shopify = useAppBridge();
 
-	const debug = errors ? JSON.stringify(errors, null, 2) : data?.shop?.name;
+	const debug = errors ? JSON.stringify(errors, null, 2) : data?.shop.name;
 
 	return (
 		<s-page inlineSize="small">
 			<ui-title-bar title={t('app')}>
 				<button
-					onClick={() => shopify.modal.show('modal')}
+					onClick={() => {
+						shopify.modal.show('modal');
+					}}
 					type="button"
 					variant="primary"
 				>
@@ -81,7 +83,12 @@ export default function AppIndex({
 					<s-paragraph>{t('message')}</s-paragraph>
 				</s-box>
 				<ui-title-bar title={t('title')}>
-					<button onClick={() => shopify.modal.hide('modal')} type="button">
+					<button
+						onClick={() => {
+							shopify.modal.hide('modal');
+						}}
+						type="button"
+					>
 						{t('close')}
 					</button>
 				</ui-title-bar>
@@ -130,7 +137,11 @@ export async function action({context, request}: Route.ActionArgs) {
 
 	const data = Object.fromEntries(await request.formData());
 	log.debug('routes/app.index#action', {data});
-	return {data};
+	return {
+		// SILENCE types through case
+		data: data as unknown as ShopQuery,
+		errors: null,
+	};
 }
 
 export {headers} from './app';

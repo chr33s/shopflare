@@ -78,12 +78,12 @@ test('proxy', () => {
 });
 
 test('redirect', () => {
-	expect(
-		shopify.redirect(context, request, {
-			shop: 'test.myshopify.com',
-			url: '/',
-		}),
-	).toBeDefined();
+	const response = shopify.redirect(context, request, {
+		shop: 'test.myshopify.com',
+		url: '/',
+	});
+	expect(response).toBeInstanceOf(Response);
+	expect(response.status).toBe(302);
 });
 
 test('session', () => {
@@ -104,7 +104,7 @@ describe('utils', () => {
 		);
 	});
 
-	test('encode', async () => {
+	test('encode', () => {
 		const encoder = new TextEncoder();
 		const data = encoder.encode('test');
 

@@ -7,7 +7,7 @@ import i18nextLoaderOptions from './i18n.config';
 
 export default defineConfig(({mode}) => {
 	const env = loadEnv(mode, import.meta.dirname, '');
-	const app = new URL(env.HOST ?? env.SHOPIFY_APP_URL);
+	const app = new URL(env.HOST || env.SHOPIFY_APP_URL);
 
 	return {
 		assetsInclude: ['**/*.gql'],

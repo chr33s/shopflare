@@ -19,7 +19,7 @@
 		"deploy:shopify": "shopify app deploy --message=$(git rev-parse --abbrev-ref HEAD):$npm_package_version --version=$(git rev-parse HEAD)",
 		"dev": "shopify app dev --localhost-port=8080 --use-localhost",
 		"dev:tunnel": "source .env && shopify app dev --tunnel-url=${SHOPIFY_APP_URL}:${PORT:-8080}",
-		"eslint": "eslint --cache --cache-location=./node_modules/.cache/eslint --flag=unstable_native_nodejs_ts_config",
+		"eslint": "node --env-file=.env $(npm root)/.bin/eslint --cache --cache-location=./node_modules/.cache/eslint --flag=unstable_native_nodejs_ts_config",
 		"fix": "concurrently --group 'npm:fix:*'",
 		"fix:css": "npm run --silent stylelint -- --fix '**/*.css'",
 		"fix:format": "npm run --silent prettier -- --write .",
@@ -49,6 +49,7 @@
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "1.11.1",
 		"@cloudflare/vitest-pool-workers": "0.8.60",
+		"@graphql-eslint/eslint-plugin": "4.4.0",
 		"@playwright/test": "1.54.2",
 		"@react-router/dev": "7.7.1",
 		"@shopify/api-codegen-preset": "1.1.9",

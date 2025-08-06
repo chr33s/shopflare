@@ -19,7 +19,7 @@ export async function loader({context, request}: Route.LoaderArgs) {
 }
 
 export default function Index({actionData, loaderData}: Route.ComponentProps) {
-	const {errors} = actionData ?? loaderData ?? {};
+	const {errors} = actionData ?? loaderData;
 
 	const {t} = useTranslation();
 
@@ -67,10 +67,9 @@ export async function action({request}: Route.ActionArgs) {
 	const shopWithoutProtocol = shop
 		.replace(/^https?:\/\//, '')
 		.replace(/\/$/, '');
-	const shopWithDomain =
-		shop?.indexOf('.') === -1
-			? `${shopWithoutProtocol}.myshopify.com`
-			: shopWithoutProtocol;
+	const shopWithDomain = shop.includes('.')
+		? shopWithoutProtocol
+		: `${shopWithoutProtocol}.myshopify.com`;
 	const sanitizedShop = shopify.utils.sanitizeShop(shopWithDomain);
 	if (!sanitizedShop) {
 		return {errors: {shop: 'INVALID_SHOP'}};
