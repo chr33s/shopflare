@@ -55,7 +55,7 @@
 		},
 		"zod": {
 			"type": "sse",
-			"url": "https://mcp.inkeep.com/zod/mcp"
+			"url": "https://gitmcp.io/colinhacks/zod"
 		}
 	}
 }
