@@ -26,6 +26,11 @@ export async function queue(
 					await shopify.session(context).set(session.id, null);
 				}
 				break;
+
+			case 'CUSTOMER_DATA_REQUEST':
+			case 'CUSTOMER_REDACT':
+			case 'SHOP_REDACT':
+				break;
 		}
 
 		message.ack();
