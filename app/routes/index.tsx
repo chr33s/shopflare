@@ -49,7 +49,7 @@ export default function Index({actionData, loaderData}: Route.ComponentProps) {
 }
 
 export async function action({request}: Route.ActionArgs) {
-	log.debug('routes/app.proxy.index#action');
+	log.debug('routes/app.index#action');
 
 	const url = new URL(request.url);
 	let shop = url.searchParams.get('shop');
