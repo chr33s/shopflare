@@ -53,6 +53,10 @@
 				"POLARIS_UNIFIED": "true"
 			}
 		},
+		"vitest": {
+			"type": "sse",
+			"url": "https://gitmcp.io/vitest-dev/vitest"
+		},
 		"zod": {
 			"type": "sse",
 			"url": "https://gitmcp.io/colinhacks/zod"
