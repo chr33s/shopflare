@@ -1,4 +1,3 @@
-import {env} from 'cloudflare:test';
 import {UNSAFE_DataWithResponseInit as DataWithResponseInit} from 'react-router';
 import {describe, expect, test} from 'vitest';
 
@@ -75,10 +74,8 @@ describe('loader', () => {
 	});
 
 	test('success', async () => {
-		const context = {cloudflare: {env}} as unknown as shopify.Context;
-
 		const shop = 'test.myshopify.com';
-		await shopify.session(context).set(shop, {
+		await shopify.session().set(shop, {
 			accessToken: '123',
 			id: shop,
 			scope: 'read_products',
@@ -96,13 +93,12 @@ describe('loader', () => {
 		const response = await runLoader({request});
 		expect(response).toStrictEqual({data: {}});
 
-		await shopify.session(context).set(shop, null);
+		await shopify.session().set(shop, null);
 	});
 });
 
 async function runLoader(args?: Partial<Route.LoaderArgs>) {
 	const textArgs = {
-		context: {cloudflare: {env}},
 		request: new Request('http://localhost'),
 		...args,
 	} as Route.LoaderArgs;

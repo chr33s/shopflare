@@ -1,14 +1,12 @@
-import {env} from 'cloudflare:test';
 import {describe, expect, test} from 'vitest';
 
 import {getHmacFromBody as getHmac} from '#app/utils.test';
 import * as shopify from './shopify.server';
 
-const context = {cloudflare: {env}} as unknown as shopify.Context;
 const request = new Request('http://localhost');
 
 test('admin', () => {
-	expect(shopify.admin(context, request)).toBeDefined();
+	expect(shopify.admin(request)).toBeDefined();
 });
 
 describe('billing', () => {
@@ -31,7 +29,7 @@ describe('client', () => {
 });
 
 test('config', () => {
-	expect(shopify.config(context)).toBeDefined();
+	expect(shopify.config()).toBeDefined();
 });
 
 describe('createShopify', () => {
@@ -74,11 +72,11 @@ describe('metaobject', () => {
 });
 
 test('proxy', () => {
-	expect(shopify.proxy(context, request)).toBeDefined();
+	expect(shopify.proxy(request)).toBeDefined();
 });
 
 test('redirect', () => {
-	const response = shopify.redirect(context, request, {
+	const response = shopify.redirect(request, {
 		shop: 'test.myshopify.com',
 		url: '/',
 	});
@@ -87,8 +85,8 @@ test('redirect', () => {
 });
 
 test('session', () => {
-	expect(shopify.session(context).get).toBeDefined();
-	expect(shopify.session(context).set).toBeDefined();
+	expect(shopify.session().get).toBeDefined();
+	expect(shopify.session().set).toBeDefined();
 });
 
 describe('upload', () => {
@@ -150,11 +148,9 @@ describe('utils', () => {
 		const encoding = 'base64';
 
 		expect.assertions(2);
+		expect(await shopify.utils.validateHmac({data, encoding, hmac})).toBe(true);
 		expect(
-			await shopify.utils.validateHmac(context, {data, encoding, hmac}),
-		).toBe(true);
-		expect(
-			await shopify.utils.validateHmac(context, {
+			await shopify.utils.validateHmac({
 				data: '124',
 				encoding,
 				hmac,
@@ -164,5 +160,5 @@ describe('utils', () => {
 });
 
 test('webhook', () => {
-	expect(shopify.webhook(context, request)).toBeDefined();
+	expect(shopify.webhook(request)).toBeDefined();
 });

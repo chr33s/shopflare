@@ -1,5 +1,5 @@
-import 'react-router';
 import type * as AppBridge from '@shopify/app-bridge-types';
+import 'react-router';
 
 declare module 'cloudflare:test' {
 	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-empty-object-type
@@ -19,13 +19,8 @@ declare module 'react' {
 }
 
 declare module 'react-router' {
-	export interface AppLoadContext {
-		cloudflare: {
-			ctx: ExecutionContext;
-			env: Env;
-		};
-	}
 	export interface Future {
+		unstable_middleware: true;
 		unstable_viteEnvironmentApi: true;
 	}
 }

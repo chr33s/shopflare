@@ -133,8 +133,7 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 	}
 
 	async #session(type: ClientType) {
-		const context = {cloudflare: {env: this.env}} as shopify.Context;
-		const session = await shopify.session(context, type).get(this.#shop);
+		const session = await shopify.session(type).get(this.#shop);
 		if (!session) {
 			throw new shopify.Exception(`No ${type} session for shop ${this.#shop}`, {
 				status: 401,

@@ -2,11 +2,7 @@ import i18next from 'i18next';
 import {isbot} from 'isbot';
 import {renderToReadableStream} from 'react-dom/server';
 import {I18nextProvider, initReactI18next} from 'react-i18next';
-import {
-	type AppLoadContext,
-	type EntryContext,
-	ServerRouter,
-} from 'react-router';
+import {type EntryContext, ServerRouter} from 'react-router';
 
 import i18n, {LanguageDetector} from './i18n';
 import * as shopify from './shopify.server';
@@ -16,7 +12,6 @@ export default async function handleRequest(
 	responseStatus: number,
 	responseHeaders: Headers,
 	routerContext: EntryContext,
-	_loadContext: AppLoadContext,
 ) {
 	shopify.utils.addHeaders(request, responseHeaders);
 

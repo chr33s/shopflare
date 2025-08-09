@@ -1,9 +1,6 @@
 import * as shopify from '#app/shopify.server';
 
-export async function queue(
-	batch: MessageBatch<QueueMessage>,
-	context: shopify.Context,
-) {
+export async function queue(batch: MessageBatch<QueueMessage>) {
 	for (const message of batch.messages) {
 		const {session, webhook} = message.body;
 		shopify.log.debug('queues/webhook', webhook.webhookId);
@@ -14,7 +11,7 @@ export async function queue(
 
 			case 'APP_SCOPES_UPDATE':
 				if (session) {
-					await shopify.session(context).set(session.id, {
+					await shopify.session().set(session.id, {
 						...session,
 						scope: (webhook.payload as {current: string[]}).current.toString(),
 					});
@@ -23,7 +20,7 @@ export async function queue(
 
 			case 'APP_UNINSTALLED':
 				if (session) {
-					await shopify.session(context).set(session.id, null);
+					await shopify.session().set(session.id, null);
 				}
 				break;
 

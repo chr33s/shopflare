@@ -6,11 +6,11 @@ import {log} from '#app/shopify.shared';
 
 import type {Route} from './+types/proxy.index';
 
-export async function loader({context, request}: Route.LoaderArgs) {
+export async function loader({request}: Route.LoaderArgs) {
 	return shopify.handler(async () => {
 		log.debug('routes/proxy.index#loader');
 
-		await shopify.proxy(context, request);
+		await shopify.proxy(request);
 
 		const data = {};
 		return {data};
@@ -34,11 +34,11 @@ export default function ProxyIndex() {
 	);
 }
 
-export async function action({context, request}: Route.ActionArgs) {
+export async function action({request}: Route.ActionArgs) {
 	return shopify.handler(async () => {
 		log.debug('routes/proxy.index#action');
 
-		await shopify.proxy(context, request);
+		await shopify.proxy(request);
 
 		const data = {};
 		return {data};

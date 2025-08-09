@@ -19,20 +19,12 @@ export default defineConfig(({mode}) => {
 			cloudflare({viteEnvironment: {name: 'ssr'}}),
 			reactRouter(),
 		],
-		resolve: {
-			mainFields: ['browser', 'module', 'main'],
-		},
 		server: {
 			allowedHosts: [app.hostname],
 			// pass cors handling to react-router
 			cors: false,
 			origin: app.origin,
 			port: Number(env.PORT || 8080),
-		},
-		ssr: {
-			resolve: {
-				conditions: ['workerd', 'worker', 'browser'],
-			},
 		},
 	};
 });

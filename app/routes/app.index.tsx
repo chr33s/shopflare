@@ -11,9 +11,9 @@ import type {ShopQuery} from '#app/types/admin.generated';
 
 import type {Route} from './+types/app.index';
 
-export async function loader({context, request}: Route.LoaderArgs) {
+export async function loader({request}: Route.LoaderArgs) {
 	return shopify.handler(async () => {
-		const {client} = await shopify.admin(context, request);
+		const {client} = await shopify.admin(request);
 
 		const {data, errors} = await client.request<ShopQuery>(Shop);
 
@@ -132,8 +132,8 @@ export async function clientAction({serverAction}: Route.ClientActionArgs) {
 	return data;
 }
 
-export async function action({context, request}: Route.ActionArgs) {
-	await shopify.admin(context, request);
+export async function action({request}: Route.ActionArgs) {
+	await shopify.admin(request);
 
 	const data = Object.fromEntries(await request.formData());
 	log.debug('routes/app.index#action', {data});

@@ -1,9 +1,4 @@
-import {fileURLToPath} from 'node:url';
-
-import {
-	defineWorkersConfig,
-	defineWorkersProject,
-} from '@cloudflare/vitest-pool-workers/config';
+import {defineWorkersProject} from '@cloudflare/vitest-pool-workers/config';
 import {loadEnv} from 'vite';
 import i18nextLoader from 'vite-plugin-i18next-loader';
 import {defineConfig, mergeConfig} from 'vitest/config';
@@ -16,15 +11,14 @@ export default defineConfig((config) => {
 
 	return {
 		define: define(env),
-		optimizeDeps: {
-			include: ['react/jsx-dev-runtime'],
-		},
 		plugins: [i18nextLoader(i18nextLoaderOptions)],
 		test: {
 			css: true,
+			// globalSetup: ['./vitest.global-setup.ts'],
 			projects: [
 				{
 					extends: './vitest.config.ts',
+					plugins: [cloudflareWorkersPlugin()],
 					test: {
 						browser: {
 							enabled: true,
@@ -44,41 +38,53 @@ export default defineConfig((config) => {
 						name: 'client',
 					},
 				},
-				defineWorkersConfig(
-					mergeConfig(
-						{extends: './vitest.config.ts'},
-						defineWorkersProject({
-							test: {
-								alias: [
-									{
-										find: 'virtual:react-router/server-build',
-										replacement: fileURLToPath(
-											new URL('./build/server/index.js', import.meta.url),
-										),
+				mergeConfig(
+					{extends: './vitest.config.ts'},
+					defineWorkersProject({
+						test: {
+							include: ['app/*server.test.ts', 'app/**/*server.test.ts'],
+							name: 'server',
+							poolOptions: {
+								workers: {
+									isolatedStorage: true,
+									main: './build/server/index.js',
+									miniflare: {
+										compatibilityFlags: [
+											'nodejs_compat',
+											'service_binding_extra_handlers',
+										],
 									},
-								],
-								include: ['app/server.test.ts', 'app/**/*.server.test.ts'],
-								name: 'server',
-								poolOptions: {
-									workers: {
-										isolatedStorage: true,
-										main: './build/server/index.js',
-										miniflare: {
-											compatibilityFlags: [
-												'nodejs_compat',
-												'service_binding_extra_handlers',
-											],
-										},
-										singleWorker: true,
-										wrangler: {configPath: './wrangler.json'},
-									},
+									singleWorker: true,
+									wrangler: {configPath: './wrangler.json'},
 								},
 							},
-						}),
-					),
+						},
+					}),
 				),
 			],
 			watch: false,
 		},
 	};
 });
+
+function cloudflareWorkersPlugin() {
+	const virtualModuleId = 'cloudflare:workers';
+	const resolvedVirtualModuleId = `\0${virtualModuleId}`;
+
+	return {
+		load(id: string) {
+			if (id === resolvedVirtualModuleId) {
+				return `
+					export const env = import.meta.env;
+					export const waitUntil = Promise.resolve;
+				`;
+			}
+		},
+		name: virtualModuleId,
+		resolveId(id: string) {
+			if (id === virtualModuleId) {
+				return resolvedVirtualModuleId;
+			}
+		},
+	};
+}

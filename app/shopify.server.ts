@@ -1,10 +1,7 @@
 import {createGraphQLClient, type GraphQLClient} from '@shopify/graphql-client';
+import {env, waitUntil} from 'cloudflare:workers';
 import {type JWTPayload, jwtVerify} from 'jose';
-import {
-	type AppLoadContext,
-	data,
-	redirect as routerRedirect,
-} from 'react-router';
+import {data, redirect as routerRedirect} from 'react-router';
 import * as z from 'zod/mini';
 
 import {API_VERSION, APP_BRIDGE_URL, APP_HANDLE} from './const';
@@ -74,7 +71,7 @@ import type {
 	StagedMediaUploadTarget,
 } from './types/admin.types';
 
-export async function admin(context: Context, request: Request) {
+export async function admin(request: Request) {
 	async function authenticate() {
 		if (request.method === 'OPTIONS') {
 			const response = new Response(null, {
@@ -83,12 +80,11 @@ export async function admin(context: Context, request: Request) {
 				}),
 				status: 204,
 			});
-			utils.addCorsHeaders(context, request, response.headers);
+			utils.addCorsHeaders(request, response.headers);
 			throw response;
 		}
 
-		const {SHOPIFY_API_KEY, SHOPIFY_API_SECRET_KEY, SHOPIFY_APP_URL} =
-			config(context);
+		const {SHOPIFY_API_KEY, SHOPIFY_API_SECRET_KEY, SHOPIFY_APP_URL} = config();
 
 		const url = new URL(request.url);
 		let encodedSessionToken = null;
@@ -139,7 +135,7 @@ export async function admin(context: Context, request: Request) {
 				status: 401,
 				statusText: 'Unauthorized',
 			});
-			utils.addCorsHeaders(context, request, response.headers);
+			utils.addCorsHeaders(request, response.headers);
 			throw response;
 		}
 
@@ -240,7 +236,7 @@ export async function admin(context: Context, request: Request) {
 			expires_in?: number;
 			scope: string;
 		}>();
-		await session(context).set(shop, {
+		await session().set(shop, {
 			accessToken: accessTokenResponse.access_token,
 			expires: accessTokenResponse.expires_in
 				? new Date(Date.now() + accessTokenResponse.expires_in * 1000)
@@ -250,7 +246,7 @@ export async function admin(context: Context, request: Request) {
 			shop,
 		});
 
-		const current = await session(context).get(shop);
+		const current = await session().get(shop);
 		if (!current) {
 			throw new Exception('No session found', {
 				status: 401,
@@ -259,9 +255,9 @@ export async function admin(context: Context, request: Request) {
 		}
 
 		const installKey = `install:${shop}`;
-		const installed = await context.cloudflare.env.SESSION_KV.get(installKey);
+		const installed = await env.SESSION_KV.get(installKey);
 		if (!installed) {
-			context.cloudflare.ctx.waitUntil(
+			waitUntil(
 				(async () => {
 					const installTimestamp = new Date().toJSON();
 
@@ -274,14 +270,11 @@ export async function admin(context: Context, request: Request) {
 						topic: 'APP_INSTALLED',
 						webhookId: crypto.randomUUID(),
 					};
-					context.cloudflare.env.WEBHOOK_QUEUE.send(
+					env.WEBHOOK_QUEUE.send(
 						{session: current, webhook},
 						{contentType: 'json'},
 					);
-					await context.cloudflare.env.SESSION_KV.put(
-						installKey,
-						installTimestamp,
-					);
+					await env.SESSION_KV.put(installKey, installTimestamp);
 				})(),
 			);
 		}
@@ -296,7 +289,7 @@ export async function admin(context: Context, request: Request) {
 	return authenticated;
 }
 
-export function billing(context: Context, request: Request) {
+export function billing(request: Request) {
 	async function check(plans: string[]) {
 		const shop = utils.sanitizeShop(
 			new URL(request.url).searchParams.get('shop'),
@@ -310,7 +303,7 @@ export function billing(context: Context, request: Request) {
 
 		if (await active(shop, plans)) return;
 
-		return redirect(context, request, {
+		return redirect(request, {
 			shop,
 			url: `shopify://admin/charges/${APP_HANDLE}/pricing_plans`,
 		});
@@ -319,9 +312,9 @@ export function billing(context: Context, request: Request) {
 	return {check};
 
 	async function active(shop: string, plans: string[]) {
-		const isTest = config(context).SHOPIFY_APP_TEST === '1';
+		const isTest = config().SHOPIFY_APP_TEST === '1';
 
-		const current = await session(context, 'admin').get(shop);
+		const current = await session('admin').get(shop);
 		if (!current?.accessToken) {
 			throw new Exception(`Access token for ${shop} not found`, {
 				status: 400,
@@ -543,7 +536,7 @@ export function client({
 
 export type Client = GraphQLClient;
 
-export function config(context: Context) {
+export function config() {
 	const schema = z.object({
 		SHOPIFY_API_KEY: z.string().check(z.minLength(32)),
 		SHOPIFY_API_SECRET_KEY: z.string().check(z.minLength(32)),
@@ -552,33 +545,28 @@ export function config(context: Context) {
 		SHOPIFY_APP_URL: z.string().check(z.url()),
 	});
 
-	const config = schema.parse(context.cloudflare.env);
+	const config = schema.parse(env);
 	return config;
 }
 
-export type Context = AppLoadContext;
-
 // NOTE: @deprecated
-export function createShopify(context: Context) {
+export function createShopify() {
 	return {
-		admin: (request: Request) =>
-			admin(context, request).then(({client}) => client),
-		config: config(context),
-		proxy: (request: Request) =>
-			proxy(context, request).then(({client}) => client),
-		redirect: (request: Request, init: Redirect) =>
-			redirect(context, request, init),
-		session: session(context),
+		admin: (request: Request) => admin(request).then(({client}) => client),
+		config: config(),
+		proxy: (request: Request) => proxy(request).then(({client}) => client),
+		redirect: (request: Request, init: Redirect) => redirect(request, init),
+		session: session(),
 		utils: {
 			...utils,
 			addCorsHeaders: (request: Request, responseHeaders: Headers) =>
-				utils.addCorsHeaders(context, request, responseHeaders),
+				utils.addCorsHeaders(request, responseHeaders),
 			log,
 			validateHmac: (data: string, hmac: string, encoding: UtilEncoding) =>
-				utils.validateHmac(context, {data, encoding, hmac}),
+				utils.validateHmac({data, encoding, hmac}),
 		},
 		webhook: (request: Request) =>
-			webhook(context, request).then(({webhook}) => webhook),
+			webhook(request).then(({webhook}) => webhook),
 	};
 }
 
@@ -1090,7 +1078,7 @@ export function upload(client: Client) {
 	}
 }
 
-export async function proxy(context: Context, request: Request) {
+export async function proxy(request: Request) {
 	async function authenticate() {
 		const url = new URL(request.url);
 
@@ -1123,7 +1111,7 @@ export async function proxy(context: Context, request: Request) {
 			.sort((a, b) => a.localeCompare(b))
 			.join('');
 
-		const valid = await utils.validateHmac(context, {
+		const valid = await utils.validateHmac({
 			data,
 			encoding: 'hex',
 			hmac,
@@ -1144,7 +1132,7 @@ export async function proxy(context: Context, request: Request) {
 			});
 		}
 
-		const current = await session(context).get(shop);
+		const current = await session().get(shop);
 		if (!current) {
 			throw new Exception('No session found', {
 				status: 401,
@@ -1168,7 +1156,6 @@ interface Redirect extends ResponseInit {
 }
 
 export function redirect(
-	context: Context,
 	request: Request,
 	{shop, url, target, ...init}: Redirect,
 ) {
@@ -1177,7 +1164,7 @@ export function redirect(
 		...init.headers,
 	});
 
-	const {SHOPIFY_API_KEY, SHOPIFY_APP_URL} = config(context);
+	const {SHOPIFY_API_KEY, SHOPIFY_APP_URL} = config();
 
 	let windowTarget = target ?? '_self';
 	let windowUrl = new URL(url, SHOPIFY_APP_URL);
@@ -1247,7 +1234,7 @@ export function redirect(
 					headers,
 				},
 			);
-			utils.addCorsHeaders(context, request, response.headers);
+			utils.addCorsHeaders(request, response.headers);
 			throw response;
 		}
 
@@ -1259,7 +1246,7 @@ export function redirect(
 				status: 401,
 				statusText: 'Unauthorized',
 			});
-			utils.addCorsHeaders(context, request, response.headers);
+			utils.addCorsHeaders(request, response.headers);
 			throw response;
 		}
 
@@ -1292,8 +1279,8 @@ export function redirect(
 	}
 }
 
-export function session(context: Context, type: Sessiontype = 'admin') {
-	const kv = context.cloudflare.env.SESSION_KV;
+export function session(type: Sessiontype = 'admin') {
+	const kv = env.SESSION_KV;
 
 	async function get(id: string) {
 		if (!id) return;
@@ -1328,9 +1315,9 @@ export type Sessiontype = 'admin' | 'storefront';
 type UtilEncoding = 'base64' | 'hex';
 
 export const utils = {
-	addCorsHeaders(context: Context, request: Request, responseHeaders: Headers) {
+	addCorsHeaders(request: Request, responseHeaders: Headers) {
 		const origin = request.headers.get('Origin');
-		if (origin && origin !== config(context).SHOPIFY_APP_URL) {
+		if (origin && origin !== config().SHOPIFY_APP_URL) {
 			if (!responseHeaders.has('Access-Control-Allow-Headers')) {
 				responseHeaders.set('Access-Control-Allow-Headers', 'Authorization');
 			}
@@ -1462,14 +1449,15 @@ export const utils = {
 		return sanitizedShop;
 	},
 
-	async validateHmac(
-		context: Context,
-		request: {data: string; hmac: string; encoding: UtilEncoding},
-	) {
+	async validateHmac(request: {
+		data: string;
+		hmac: string;
+		encoding: UtilEncoding;
+	}) {
 		const encoder = new TextEncoder();
 		const key = await crypto.subtle.importKey(
 			'raw',
-			encoder.encode(config(context).SHOPIFY_API_SECRET_KEY),
+			encoder.encode(config().SHOPIFY_API_SECRET_KEY),
 			{
 				hash: 'SHA-256',
 				name: 'HMAC',
@@ -1504,7 +1492,7 @@ export type JSON =
 export type JSONL = Record<'__parentId' | 'id', string> &
 	Record<string, JSON | JSON[]>;
 
-export async function webhook(context: Context, request: Request) {
+export async function webhook(request: Request) {
 	async function authenticate() {
 		const hmac = request.headers.get('X-Shopify-Hmac-Sha256');
 		if (!hmac) {
@@ -1522,7 +1510,7 @@ export async function webhook(context: Context, request: Request) {
 			});
 		}
 
-		const valid = await utils.validateHmac(context, {
+		const valid = await utils.validateHmac({
 			data,
 			encoding: 'base64',
 			hmac,
@@ -1561,7 +1549,7 @@ export async function webhook(context: Context, request: Request) {
 			{} as typeof headers,
 		);
 
-		const current = await session(context).get(webhook.domain);
+		const current = await session().get(webhook.domain);
 		if (!current) {
 			throw new Exception('No session found', {status: 401, type: 'SESSION'});
 		}

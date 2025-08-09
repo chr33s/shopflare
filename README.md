@@ -38,7 +38,6 @@ Familiarity with React, ReactRouter, Cloudflare, Shopify conventions.
 ```sh
 npm install
 cp .env.example .env                                    # update vars to match your env values from partners.shopify.com (Apps > All Apps > Create App)
-cp .example.vars .dev.vars                              # update vars to match your env values from partners.shopify.com (Apps > All Apps > Create App)
 # vi [wrangler.json, shopify.app.toml]                  # update vars[SHOPIFY_API_KEY, SHOPIFY_APP_URL], SHOPIFY_APP_URL is the cloudflare tunnel url (e.g. https://shopflare.trycloudflare.com) in development and the cloudflare worker url (e.g. https://shopflare.workers.dev) in other environments.
 npx wrangler secret put SHOPIFY_API_SECRET_KEY
 npx wrangler kv namespace create shopflare              # update wranglers.json#kv_namespaces[0].id
@@ -80,9 +79,9 @@ To split environments see [Cloudflare](https://developers.cloudflare.com/workers
 ```js
 import * as shopify from '~/shopify.server';
 
-export async function loader({context, request}) {
+export async function loader({request}) {
   return shopify.handler(async () => {
-    const {client} = await shopify.admin(context, request); // shopify[admin|proxy|webhook](context, request);
+    const {client} = await shopify.admin(request); // shopify[admin|proxy|webhook](request);
     const {data, errors} = await client.request(/* GraphQL */ `
       query {
         shop {
@@ -91,11 +90,11 @@ export async function loader({context, request}) {
       }
     `);
 
-    shopify.config(context);
+    shopify.config();
     await shopify.client({accessToken, shop}).admin(); // [admin | storefront](headers?)
-    await shopify.redirect(context, request, {shop, url});
-    await shopify.session(context).get(sessionId); // set(id, value | null);
-    shopify.utils.addCorsHeaders(context, request, responseHeaders);
+    await shopify.redirect(request, {shop, url});
+    await shopify.session('admin').get(sessionId); // set(id, value | null);
+    shopify.utils.addCorsHeaders(request, responseHeaders);
 
     await shopify.bulkOperation(client).query(); // .mutation(mutation, variables);
     await shopify.metafield(client).get(identifier); // .set(identifier, metafield || null);
@@ -110,8 +109,8 @@ export async function loader({context, request}) {
 
 import {createShopify} from '~/shopify.server';
 
-export async function loader({context, request}) {
-  const shopify = createShopify(context);
+export async function loader({request}) {
+  const shopify = createShopify();
   const client = await shopify.admin(request);
   const {data, errors} = await client.request(/* GraphQL */ `
     query {
@@ -180,7 +179,7 @@ function Component() {
   // .... jsx
 }
 
-export async function action({context, request}) {
+export async function action({request}) {
   const shop = new URL(request.url).searchParams.get('shop');
 
   const id = env.SHOPIFY_DURABLE_OBJECT.idFromName(shop);

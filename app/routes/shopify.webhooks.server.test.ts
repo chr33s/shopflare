@@ -1,4 +1,3 @@
-import {env} from 'cloudflare:test';
 import {describe, expect, test} from 'vitest';
 
 import {API_VERSION} from '#app/const';
@@ -8,12 +7,10 @@ import * as shopify from '../shopify.server';
 import type {Route} from './+types/shopify.webhooks';
 import {action} from './shopify.webhooks';
 
-const context = {cloudflare: {env}} as unknown as shopify.Context;
-
 describe('action', () => {
 	test('error on header missing', async () => {
 		const request = new Request('http://localhost', {method: 'POST'});
-		const response = await action({context, request} as Route.ActionArgs);
+		const response = await action({request} as Route.ActionArgs);
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response.ok).toBe(false);
@@ -26,7 +23,7 @@ describe('action', () => {
 			headers: {'X-Shopify-Hmac-Sha256': '123'},
 			method: 'POST',
 		});
-		const response = await action({context, request} as Route.ActionArgs);
+		const response = await action({request} as Route.ActionArgs);
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response.ok).toBe(false);
@@ -40,7 +37,7 @@ describe('action', () => {
 			headers: {'X-Shopify-Hmac-Sha256': '123'},
 			method: 'POST',
 		});
-		const response = await action({context, request} as Route.ActionArgs);
+		const response = await action({request} as Route.ActionArgs);
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response.ok).toBe(false);
@@ -57,7 +54,7 @@ describe('action', () => {
 			},
 			method: 'POST',
 		});
-		const response = await action({context, request} as Route.ActionArgs);
+		const response = await action({request} as Route.ActionArgs);
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response.ok).toBe(false);
@@ -73,7 +70,7 @@ describe('action', () => {
 			headers: {'X-Shopify-Hmac-Sha256': hmac},
 			method: 'POST',
 		});
-		const response = await action({context, request} as Route.ActionArgs);
+		const response = await action({request} as Route.ActionArgs);
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response.ok).toBe(false);
@@ -93,7 +90,7 @@ describe('action', () => {
 			},
 			method: 'POST',
 		});
-		const response = await action({context, request} as Route.ActionArgs);
+		const response = await action({request} as Route.ActionArgs);
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response.ok).toBe(false);
@@ -103,7 +100,7 @@ describe('action', () => {
 
 	test('success', async () => {
 		const shop = 'test.myshopify.com';
-		const session = shopify.session(context);
+		const session = shopify.session();
 		await session.set(shop, {
 			accessToken: '123',
 			id: shop,
@@ -122,7 +119,7 @@ describe('action', () => {
 			},
 			method: 'POST',
 		});
-		const response = await action({context, request} as Route.ActionArgs);
+		const response = await action({request} as Route.ActionArgs);
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response.ok).toBe(true);

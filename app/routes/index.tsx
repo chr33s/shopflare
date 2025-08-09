@@ -7,7 +7,7 @@ import {log} from '#app/shopify.shared';
 
 import type {Route} from './+types/index';
 
-export async function loader({context, request}: Route.LoaderArgs) {
+export async function loader({request}: Route.LoaderArgs) {
 	log.debug('routes/index#loader');
 
 	const url = new URL(request.url);
@@ -15,7 +15,7 @@ export async function loader({context, request}: Route.LoaderArgs) {
 		return redirect(`/app?${url.searchParams.toString()}`);
 	}
 
-	return action({context, request} as Route.ActionArgs);
+	return action({request} as Route.ActionArgs);
 }
 
 export default function Index({actionData, loaderData}: Route.ComponentProps) {

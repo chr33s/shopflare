@@ -1,4 +1,7 @@
-import {createRequestHandler} from 'react-router';
+import {
+	createRequestHandler,
+	unstable_RouterContextProvider as RouterContextProvider,
+} from 'react-router';
 
 import {queueHandler, type QueueHandlerMessage} from '#app/queues';
 
@@ -8,16 +11,13 @@ const fetchHandler = createRequestHandler(
 );
 
 export default {
-	async fetch(request, env, ctx) {
-		return fetchHandler(request, {
-			cloudflare: {ctx, env},
-		});
+	async fetch(request) {
+		const context = new RouterContextProvider();
+		return fetchHandler(request, context);
 	},
 
-	async queue(batch, env, ctx): Promise<void> {
-		return queueHandler(batch, {
-			cloudflare: {ctx, env},
-		});
+	async queue(batch): Promise<void> {
+		return queueHandler(batch);
 	},
 } satisfies ExportedHandler<Env, QueueHandlerMessage>;
 
