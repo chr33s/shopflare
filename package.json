@@ -27,7 +27,7 @@
 		"gen": "concurrently --names='wrangler,graphql,react-router' 'wrangler types' 'npm:graphql-codegen -- --project=admin' 'react-router typegen'",
 		"graphql-codegen": "node --env-file=.env $(npm root)/.bin/graphql-codegen --errors-only",
 		"logs": "wrangler tail",
-		"prettier": "prettier --cache --log-level=error",
+		"prettier": "prettier --cache --cache-location=./node_modules/.cache/prettier --log-level=error",
 		"preview": "vite preview",
 		"start": "wrangler dev",
 		"stylelint": "stylelint --cache --cache-location=./node_modules/.cache/stylelint --ignore-path=.prettierignore",
