@@ -21,6 +21,7 @@
 			"@cloudflare/vitest-pool-workers",
 			"@shopify/app-bridge-types",
 			"@shopify/app-bridge-ui-types",
+			"@vitejs/plugin-rsc/types",
 			"@vitest/browser/matchers",
 			"@vitest/browser/providers/playwright",
 			"vite/client"

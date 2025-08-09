@@ -1,0 +1,56 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "shopflare-rsc",
+	"main": "./app/entry.rsc.tsx",
+	"compatibility_date": "2025-06-17",
+	"compatibility_flags": ["nodejs_als"],
+	"durable_objects": {
+		"bindings": [
+			{
+				"class_name": "ShopifyDurableObject",
+				"name": "SHOPIFY_DURABLE_OBJECT"
+			}
+		]
+	},
+	"kv_namespaces": [
+		{
+			"binding": "SESSION_KV",
+			"id": "?"
+		}
+	],
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["ShopifyDurableObject"]
+		}
+	],
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1
+	},
+	"placement": {
+		"mode": "smart"
+	},
+	"queues": {
+		"consumers": [
+			{
+				"queue": "shopflare"
+			}
+		],
+		"producers": [
+			{
+				"queue": "shopflare",
+				"binding": "WEBHOOK_QUEUE"
+			}
+		]
+	},
+	"send_metrics": false,
+	"upload_source_maps": true,
+	"vars": {
+		"NODE_VERSION": 22,
+		"SHOPIFY_API_KEY": "?",
+		"SHOPIFY_APP_HANDLE": "shopflare",
+		"SHOPIFY_APP_URL": "https://localhost:8080"
+	},
+	"workers_dev": false
+}

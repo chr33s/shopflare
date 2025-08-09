@@ -4,5 +4,5 @@ roles = []
 webhooks_path = "/shopify/webhooks"
 
 [commands]
-build = "npx react-router build"
-dev = "npx react-router dev"
+build = "npx vite build"
+dev = "npx vite dev"

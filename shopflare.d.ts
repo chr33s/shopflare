@@ -25,6 +25,11 @@ declare module 'react-router' {
 	}
 }
 
+declare module 'virtual:react-router-routes' {
+	const routes: any;
+	export default routes;
+}
+
 declare module 'vite/client' {
 	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-empty-object-type
 	interface ViteTypeOptions {}
