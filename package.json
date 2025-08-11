@@ -37,14 +37,14 @@
 	},
 	"dependencies": {
 		"@shopify/graphql-client": "1.4.1",
-		"i18next": "25.3.2",
+		"i18next": "25.3.4",
 		"isbot": "5.1.29",
 		"jose": "6.0.12",
 		"react": "19.1.1",
 		"react-dom": "19.1.1",
 		"react-i18next": "15.6.1",
 		"react-router": "7.8.0",
-		"zod": "4.0.15"
+		"zod": "4.0.17"
 	},
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "1.11.2",
@@ -64,7 +64,7 @@
 		"@types/react-dom": "19.1.7",
 		"@vitest/browser": "3.2.4",
 		"concurrently": "9.2.0",
-		"eslint": "9.32.0",
+		"eslint": "9.33.0",
 		"happy-dom": "18.0.1",
 		"lockfile-lint": "4.14.1",
 		"playwright": "1.54.2",
