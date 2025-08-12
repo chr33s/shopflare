@@ -23,7 +23,6 @@
 		"wrangler.json": "wrangler*.json, worker-configuration.d.ts"
 	},
 	"files.associations": {
-		".*.vars": "properties",
 		".env*": "properties"
 	},
 	"files.insertFinalNewline": true,
