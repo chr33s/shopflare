@@ -19,7 +19,6 @@
 		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
 		"types": [
 			"@cloudflare/vitest-pool-workers",
-			"@shopify/app-bridge-types",
 			"@shopify/app-bridge-ui-types",
 			"@vitest/browser/matchers",
 			"@vitest/browser/providers/playwright",
