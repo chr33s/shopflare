@@ -12,8 +12,14 @@ export default defineConfig(({mode}) => {
 	return {
 		assetsInclude: ['**/*.gql'],
 		base: app.href,
+		build: {
+			assetsInlineLimit: 0,
+		},
 		clearScreen: false,
 		define: define(env),
+		optimizeDeps: {
+			include: ['@shopify/app-bridge-react'],
+		},
 		plugins: [
 			i18nextLoader(i18nextLoaderOptions),
 			cloudflare({viteEnvironment: {name: 'ssr'}}),
@@ -23,8 +29,13 @@ export default defineConfig(({mode}) => {
 			allowedHosts: [app.hostname],
 			// pass cors handling to react-router
 			cors: false,
+			fs: {
+				// See https://vitejs.dev/config/server-options.html#server-fs-allow for more information
+				allow: ['app', 'node_modules'],
+			},
 			origin: app.origin,
 			port: Number(env.PORT || 8080),
+			preflightContinue: true,
 		},
 	};
 });
