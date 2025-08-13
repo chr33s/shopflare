@@ -47,8 +47,8 @@
 		"zod": "4.0.17"
 	},
 	"devDependencies": {
-		"@cloudflare/vite-plugin": "1.11.2",
-		"@cloudflare/vitest-pool-workers": "0.8.61",
+		"@cloudflare/vite-plugin": "1.11.3",
+		"@cloudflare/vitest-pool-workers": "0.8.62",
 		"@graphql-eslint/eslint-plugin": "4.4.0",
 		"@playwright/test": "1.54.2",
 		"@react-router/dev": "7.8.0",
@@ -59,7 +59,7 @@
 		"@shopify/prettier-config": "1.1.4",
 		"@shopify/stylelint-plugin": "15.0.2",
 		"@shopify/typescript-configs": "5.1.2",
-		"@types/react": "19.1.9",
+		"@types/react": "19.1.10",
 		"@types/react-dom": "19.1.7",
 		"@vitest/browser": "3.2.4",
 		"concurrently": "9.2.0",
@@ -70,11 +70,11 @@
 		"prettier": "3.6.2",
 		"stylelint": "16.23.1",
 		"typescript": "5.9.2",
-		"vite": "7.1.1",
+		"vite": "7.1.2",
 		"vite-plugin-i18next-loader": "3.1.2",
 		"vitest": "3.2.4",
 		"vitest-browser-react": "1.0.1",
-		"wrangler": "4.28.1"
+		"wrangler": "4.29.0"
 	},
 	"optionalDependencies": {
 		"@shopify/cli": "3.83.3",
