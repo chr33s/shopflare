@@ -506,6 +506,16 @@ export function client({
 		});
 	}
 
+	function customer(headers?: Headers) {
+		return client({
+			headers: {
+				Authorization: accessToken,
+				...headers,
+			},
+			url: `https://shopify.com/${shop}/account/customer/api/${apiVersion}/graphql.json`,
+		});
+	}
+
 	function storefront(headers?: Headers) {
 		return client({
 			headers: {
@@ -518,6 +528,7 @@ export function client({
 
 	return {
 		admin,
+		customer,
 		storefront,
 	};
 
@@ -535,6 +546,82 @@ export function client({
 }
 
 export type Client = GraphQLClient;
+
+export function customer(request: Request) {
+	async function authenticate() {
+		if (request.method === 'OPTIONS') {
+			const response = new Response(null, {
+				headers: new Headers({
+					'Access-Control-Max-Age': '7200',
+				}),
+				status: 204,
+			});
+			utils.addCorsHeaders(request, response.headers);
+			throw response;
+		}
+
+		const {SHOPIFY_API_KEY, SHOPIFY_API_SECRET_KEY} = config();
+
+		let encodedSessionToken = null;
+		let decodedSessionToken = null;
+		try {
+			encodedSessionToken =
+				request.headers.get('Authorization')?.replace('Bearer ', '') ?? '';
+
+			const {payload} = await jwtVerify<JWTPayload & {dest: string}>(
+				encodedSessionToken,
+				new TextEncoder().encode(SHOPIFY_API_SECRET_KEY),
+				{
+					algorithms: ['HS256'],
+					clockTolerance: 10,
+				},
+			);
+
+			// The exp and nbf fields are validated by the JWT library
+			if (payload.aud !== SHOPIFY_API_KEY) {
+				throw new Exception('Session token had invalid API key', {
+					status: 401,
+					type: 'REQUEST',
+				});
+			}
+			decodedSessionToken = payload;
+		} catch {
+			const response = new Response(undefined, {
+				headers: new Headers({
+					'X-Shopify-Retry-Invalid-Session-Request': '1',
+				}),
+				status: 401,
+				statusText: 'Unauthorized',
+			});
+			utils.addCorsHeaders(request, response.headers);
+			throw response;
+		}
+
+		const shop = utils.sanitizeShop(new URL(decodedSessionToken.dest).hostname);
+		if (!shop) {
+			throw new Exception('Received invalid shop argument', {
+				status: 400,
+				type: 'REQUEST',
+			});
+		}
+
+		const current = await session('customer').get(shop);
+		if (!current) {
+			throw new Exception('No session found', {
+				status: 401,
+				type: 'REQUEST',
+			});
+		}
+
+		return {
+			client: client(current).customer(),
+			id: decodedSessionToken.sub,
+			session: current,
+		};
+	}
+
+	return {authenticate};
+}
 
 export function config() {
 	const schema = z.object({
@@ -1310,7 +1397,7 @@ export interface Session {
 	accessToken: string;
 }
 
-export type Sessiontype = 'admin' | 'storefront';
+export type Sessiontype = 'admin' | 'customer' | 'storefront';
 
 type UtilEncoding = 'base64' | 'hex';
 
