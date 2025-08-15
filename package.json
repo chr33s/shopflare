@@ -37,7 +37,7 @@
 	},
 	"dependencies": {
 		"@shopify/graphql-client": "1.4.1",
-		"i18next": "25.3.4",
+		"i18next": "25.3.6",
 		"isbot": "5.1.29",
 		"jose": "6.0.12",
 		"react": "19.1.1",
@@ -47,8 +47,8 @@
 		"zod": "4.0.17"
 	},
 	"devDependencies": {
-		"@cloudflare/vite-plugin": "1.11.3",
-		"@cloudflare/vitest-pool-workers": "0.8.62",
+		"@cloudflare/vite-plugin": "1.11.5",
+		"@cloudflare/vitest-pool-workers": "0.8.64",
 		"@graphql-eslint/eslint-plugin": "4.4.0",
 		"@playwright/test": "1.54.2",
 		"@react-router/dev": "7.8.0",
@@ -74,7 +74,7 @@
 		"vite-plugin-i18next-loader": "3.1.2",
 		"vitest": "3.2.4",
 		"vitest-browser-react": "1.0.1",
-		"wrangler": "4.29.0"
+		"wrangler": "4.30.0"
 	},
 	"optionalDependencies": {
 		"@shopify/cli": "3.83.3",
