@@ -559,7 +559,7 @@ export function customer(request: Request) {
 			throw response;
 		}
 
-		const shop = utils.sanitizeShop(new URL(decodedSessionToken.dest).hostname);
+		const shop = utils.sanitizeShop(decodedSessionToken.dest);
 		if (!shop) {
 			throw new Exception('Received invalid shop argument', {
 				status: 400,
