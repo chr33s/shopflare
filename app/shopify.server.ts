@@ -73,16 +73,7 @@ import type {
 
 export async function admin(request: Request) {
 	async function authenticate() {
-		if (request.method === 'OPTIONS') {
-			const response = new Response(null, {
-				headers: new Headers({
-					'Access-Control-Max-Age': '7200',
-				}),
-				status: 204,
-			});
-			utils.addCorsHeaders(request, response.headers);
-			throw response;
-		}
+		utils.handleOptions(request);
 
 		const {SHOPIFY_API_KEY, SHOPIFY_API_SECRET_KEY, SHOPIFY_APP_URL} = config();
 
@@ -90,28 +81,17 @@ export async function admin(request: Request) {
 		let encodedSessionToken = null;
 		let decodedSessionToken = null;
 		try {
-			encodedSessionToken =
-				request.headers.get('Authorization')?.replace('Bearer ', '') ||
-				url.searchParams.get('id_token') ||
-				'';
-
-			const {payload} = await jwtVerify<JWTPayload & {dest: string}>(
-				encodedSessionToken,
-				new TextEncoder().encode(SHOPIFY_API_SECRET_KEY),
-				{
-					algorithms: ['HS256'],
-					clockTolerance: 10,
-				},
-			);
-
-			// The exp and nbf fields are validated by the JWT library
-			if (payload.aud !== SHOPIFY_API_KEY) {
-				throw new Exception('Session token had invalid API key', {
+			encodedSessionToken = utils.getToken(request);
+			decodedSessionToken = await utils.verifyToken(encodedSessionToken, {
+				key: SHOPIFY_API_KEY,
+				secretKey: SHOPIFY_API_SECRET_KEY,
+			});
+			if (!decodedSessionToken) {
+				throw new Exception('Invalid session token', {
 					status: 401,
 					type: 'REQUEST',
 				});
 			}
-			decodedSessionToken = payload;
 		} catch {
 			const isDocumentRequest = !request.headers.has('Authorization');
 			if (isDocumentRequest) {
@@ -549,42 +529,24 @@ export type Client = GraphQLClient;
 
 export function customer(request: Request) {
 	async function authenticate() {
-		if (request.method === 'OPTIONS') {
-			const response = new Response(null, {
-				headers: new Headers({
-					'Access-Control-Max-Age': '7200',
-				}),
-				status: 204,
-			});
-			utils.addCorsHeaders(request, response.headers);
-			throw response;
-		}
+		utils.handleOptions(request);
 
 		const {SHOPIFY_API_KEY, SHOPIFY_API_SECRET_KEY} = config();
 
 		let encodedSessionToken = null;
 		let decodedSessionToken = null;
 		try {
-			encodedSessionToken =
-				request.headers.get('Authorization')?.replace('Bearer ', '') ?? '';
-
-			const {payload} = await jwtVerify<JWTPayload & {dest: string}>(
-				encodedSessionToken,
-				new TextEncoder().encode(SHOPIFY_API_SECRET_KEY),
-				{
-					algorithms: ['HS256'],
-					clockTolerance: 10,
-				},
-			);
-
-			// The exp and nbf fields are validated by the JWT library
-			if (payload.aud !== SHOPIFY_API_KEY) {
-				throw new Exception('Session token had invalid API key', {
+			encodedSessionToken = utils.getToken(request);
+			decodedSessionToken = await utils.verifyToken(encodedSessionToken, {
+				key: SHOPIFY_API_KEY,
+				secretKey: SHOPIFY_API_SECRET_KEY,
+			});
+			if (!decodedSessionToken) {
+				throw new Exception('Invalid session token', {
 					status: 401,
 					type: 'REQUEST',
 				});
 			}
-			decodedSessionToken = payload;
 		} catch {
 			const response = new Response(undefined, {
 				headers: new Headers({
@@ -615,7 +577,7 @@ export function customer(request: Request) {
 
 		return {
 			client: client(current).customer(),
-			id: decodedSessionToken.sub,
+			customer: {id: decodedSessionToken.sub},
 			session: current,
 		};
 	}
@@ -635,6 +597,8 @@ export function config() {
 	const config = schema.parse(env);
 	return config;
 }
+
+export type Config = ReturnType<typeof config>;
 
 // NOTE: @deprecated
 export function createShopify() {
@@ -1452,6 +1416,14 @@ export const utils = {
 		}
 	},
 
+	getToken(request: Request) {
+		return (
+			request.headers.get('Authorization')?.replace('Bearer ', '') ||
+			new URL(request.url).searchParams.get('id_token') ||
+			''
+		);
+	},
+
 	gid(gid: string) {
 		const parts = gid.split('/');
 		return {
@@ -1462,6 +1434,19 @@ export const utils = {
 
 	gidFrom(ownerType: string, id: string) {
 		return `gid://shopify/${ownerType}/${id}`;
+	},
+
+	handleOptions(request: Request) {
+		if (request.method !== 'OPTIONS') return;
+
+		const response = new Response(null, {
+			headers: new Headers({
+				'Access-Control-Max-Age': '7200',
+			}),
+			status: 204,
+		});
+		utils.addCorsHeaders(request, response.headers);
+		throw response;
 	},
 
 	JSONL: {
@@ -1565,6 +1550,25 @@ export const utils = {
 
 		const valid = (crypto.subtle as any).timingSafeEqual(bufA, bufB) as boolean;
 		return valid;
+	},
+
+	async verifyToken(
+		encoded: string,
+		config: Record<'key' | 'secretKey', string>,
+	) {
+		const {payload: decoded} = await jwtVerify<JWTPayload & {dest: string}>(
+			encoded,
+			new TextEncoder().encode(config.secretKey),
+			{
+				algorithms: ['HS256'],
+				clockTolerance: 10,
+			},
+		);
+
+		// The exp and nbf fields are validated by the JWT library
+		if (decoded.aud !== config.key) return null;
+
+		return decoded;
 	},
 };
 

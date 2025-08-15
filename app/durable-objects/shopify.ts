@@ -1,6 +1,5 @@
 import type {RequestOptions} from '@shopify/graphql-client';
 import {DurableObject} from 'cloudflare:workers';
-import {type JWTPayload, jwtVerify} from 'jose';
 
 import * as shopify from '#app/shopify.server';
 
@@ -42,24 +41,16 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 
 	async fetch(request: Request) {
 		try {
-			const url = new URL(request.url);
-
-			const encodedSessionToken =
-				request.headers.get('Authorization')?.replace('Bearer ', '') ||
-				url.searchParams.get('id_token') ||
-				'';
-			const {payload} = await jwtVerify<JWTPayload & {dest: string}>(
+			const encodedSessionToken = shopify.utils.getToken(request);
+			const decodedSessionToken = await shopify.utils.verifyToken(
 				encodedSessionToken,
-				new TextEncoder().encode(this.env.SHOPIFY_API_SECRET_KEY),
 				{
-					algorithms: ['HS256'],
-					clockTolerance: 10,
+					key: this.env.SHOPIFY_API_KEY,
+					secretKey: this.env.SHOPIFY_API_SECRET_KEY,
 				},
 			);
-
-			// The exp and nbf fields are validated by the JWT library
-			if (payload.aud !== this.env.SHOPIFY_API_KEY) {
-				throw new shopify.Exception('Session token had invalid API key', {
+			if (!decodedSessionToken) {
+				throw new shopify.Exception('Invalid session token', {
 					status: 401,
 					type: 'REQUEST',
 				});
