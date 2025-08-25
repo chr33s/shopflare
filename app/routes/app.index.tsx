@@ -93,11 +93,12 @@ export default function AppIndex({
 	}, []);
 
 	const shopify = useAppBridge();
+	const id = "savebar";
 
 	return (
 		<Page title={t("app")}>
-			<SaveBar id="savebar">
-				<button onClick={() => shopify.saveBar.hide("savebar")} type="reset" />
+			<SaveBar id={id}>
+				<button onClick={() => shopify.saveBar.hide(id)} type="reset" />
 				<button
 					onClick={() => console.log("savebar.click.primary")}
 					type="submit"
@@ -108,7 +109,7 @@ export default function AppIndex({
 			<Text as="p">
 				{errors ? JSON.stringify(errors, null, 2) : data?.shop?.name}
 			</Text>
-			<Button onClick={() => shopify.saveBar.show("savebar")}>click</Button>
+			<Button onClick={() => shopify.saveBar.show(id)}>click</Button>
 		</Page>
 	);
 }
