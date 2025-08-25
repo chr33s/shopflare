@@ -147,8 +147,8 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (/[/]shopify[/](admin|storefront)([/])?/.test(url.pathname)) {
-      const id = env.SHOPIFY_DURABLE_OBJECT.idFromName(url.searchParams.get('shop'));
-      const stub = env.SHOPIFY_DURABLE_OBJECT.get(id);
+      const shop = url.searchParams.get('shop');
+      const stub = env.SHOPIFY_DURABLE_OBJECT.getByName(shop);
       return stub.fetch(request);
     }
     // ... handler
@@ -181,9 +181,7 @@ function Component() {
 
 export async function action({request}) {
   const shop = new URL(request.url).searchParams.get('shop');
-
-  const id = env.SHOPIFY_DURABLE_OBJECT.idFromName(shop);
-  const stub = env.SHOPIFY_DURABLE_OBJECT.get(id);
+  const stub = env.SHOPIFY_DURABLE_OBJECT.getByName(shop);
   const client = await stub.client('admin');
   return client.fetch(
     /* GraphQL */ `query Shop { shop { name } }`,
