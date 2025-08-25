@@ -59,6 +59,7 @@ export default function AppIndex({ actionData, loaderData }: Route.ComponentProp
 	const fetcher = useFetcher();
 
 	const shopify = useAppBridge();
+	const id = "savebar";
 
 	const debug = errors ? JSON.stringify(errors, null, 2) : data?.shop.name;
 
