@@ -1,34 +1,24 @@
 import {APP_LOG_LEVEL} from './const';
 
-/* eslint-disable sort-keys */
-export const log = {
-	level: APP_LOG_LEVEL as 'error' | 'info' | 'debug',
-	levels: {
+function createLog(level: 'error' | 'warn' | 'info' | 'debug') {
+	const levels = {
+		debug: 3,
 		error: 0,
-		info: 1,
-		debug: 2,
-	},
-	noop() {},
+		info: 2,
+		warn: 1,
+	} as const;
+	const envLevel = (APP_LOG_LEVEL ?? 'error') as typeof level;
 
-	debug(...args: unknown[]) {
-		if (this.levels[this.level] >= this.levels.debug) {
-			return console.debug('log.debug', ...args);
+	return (...args: unknown[]) => {
+		if (levels[level] >= levels[envLevel]) {
+			return console[level](...args);
 		}
-		return this.noop();
-	},
+	};
+}
 
-	info(...args: unknown[]) {
-		if (this.levels[this.level] >= this.levels.info) {
-			return console.info('log.info', ...args);
-		}
-		return this.noop();
-	},
-
-	error(...args: unknown[]) {
-		if (this.levels[this.level] >= this.levels.error) {
-			return console.error('log.error', ...args);
-		}
-		return this.noop();
-	},
+export const log = {
+	debug: createLog('debug'),
+	error: createLog('error'),
+	info: createLog('info'),
+	warn: createLog('warn'),
 };
-/* eslint-enable sort-keys */

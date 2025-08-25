@@ -32,7 +32,7 @@ declare module 'vite/client' {
 	interface ImportMetaEnv {
 		readonly SHOPIFY_API_KEY: string;
 		readonly SHOPIFY_APP_HANDLE: string;
-		readonly SHOPIFY_APP_LOG_LEVEL: string;
+		readonly SHOPIFY_APP_LOG_LEVEL: 'error' | 'warn' | 'info' | 'debug';
 		readonly SHOPIFY_APP_URL: string;
 	}
 
