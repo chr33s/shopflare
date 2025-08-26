@@ -37,7 +37,7 @@
 		"logs": "wrangler tail",
 		"preview": "vite preview",
 		"start": "wrangler dev",
-		"test": "vitest --run",
+		"test": "vitest --run --silent",
 		"test:e2e": "node --env-file=.env --env-file=.env.test $(npm root)/.bin/playwright test",
 		"tunnel": "source .env && cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}"
 	},
