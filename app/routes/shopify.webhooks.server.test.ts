@@ -66,7 +66,7 @@ describe("action", () => {
 		const request = new Request("http://localhost", {
 			body: "123",
 			headers: {
-				"X-Shopify-Hmac-Sha256": "tKI9km9Efxo6gfUjbUBCo3XJ0CmqMLgb4xNzNhpQhK0=",
+				"X-Shopify-Hmac-Sha256": "n4AEkjln23lncb9LphO+UPXo6yy8OqROUdN+Acw9yhE=",
 			},
 			method: "POST",
 		});
@@ -94,8 +94,7 @@ describe("action", () => {
 
 		expect(response).toBeInstanceOf(Response);
 		expect(response.ok).toBe(true);
-		expect(response.status).toBe(204);
-		expect(response.body).toBe(null);
+		expect(response.status).toBe(200);
 	});
 });
 

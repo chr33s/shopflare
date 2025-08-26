@@ -22,7 +22,7 @@
 		"postinstall": "patch-package",
 		"prepare": "[[ $NODE_ENV = 'production' ]] && exit 0; cp node_modules/@shopify/polaris/locales/en.json ./app/i18n/en/polaris.json && biome check --write ./app/i18n/en/polaris.json",
 		"start": "wrangler dev",
-		"test": "vitest --run",
+		"test": "vitest --run --silent",
 		"test:e2e": "node --env-file=.env --env-file=.env.test $(npm root)/.bin/playwright test",
 		"tunnel": "source .env && cloudflared tunnel --no-autoupdate run --token=${CLOUDFLARE_API_TOKEN}"
 	},

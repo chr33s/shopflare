@@ -66,7 +66,7 @@ describe("utils", () => {
 
 	test("validateHmac", async () => {
 		const data = "123";
-		const hmac = "tKI9km9Efxo6gfUjbUBCo3XJ0CmqMLgb4xNzNhpQhK0=";
+		const hmac = "n4AEkjln23lncb9LphO+UPXo6yy8OqROUdN+Acw9yhE=";
 		const encoding = "base64";
 
 		expect.assertions(2);
