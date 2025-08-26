@@ -642,33 +642,22 @@ const Log = {
 	error: 0,
 	info: 1,
 	debug: 2,
-};
+} as const;
 type LogLevel = keyof typeof Log;
 
-function createLogger(level: LogLevel) {
-	function noop() {}
+export function createLogger(level: LogLevel) {
+	function logger(...args: unknown[]) {
+		for (const key of Object.keys(Log)) {
+			if (Log[level] >= Log[key as LogLevel]) {
+				return console[level](...args);
+			}
+		}
+	}
 
 	return {
-		debug(...args: unknown[]) {
-			if (Log[level] >= Log.debug) {
-				return console.debug("log.debug", ...args);
-			}
-			return noop;
-		},
-
-		info(...args: unknown[]) {
-			if (Log[level] >= Log.info) {
-				return console.info("log.info", ...args);
-			}
-			return noop;
-		},
-
-		error(...args: unknown[]) {
-			if (Log[level] >= Log.error) {
-				return console.error("log.error", ...args);
-			}
-			return noop;
-		},
+		debug: logger,
+		error: logger,
+		info: logger,
 	};
 }
 

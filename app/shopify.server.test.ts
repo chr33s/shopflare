@@ -1,10 +1,26 @@
 import { env } from "node:process";
 import type { AppLoadContext } from "react-router";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
-import { createShopify } from "./shopify.server";
+import { createLogger, createShopify } from "./shopify.server";
 
 const context = { cloudflare: { env } } as unknown as AppLoadContext;
+
+test("createLogger", () => {
+	for (const level of ["error", "info", "debug"] as const) {
+		const consoleMock = vi
+			.spyOn(console, level)
+			.mockImplementation(() => () => {});
+
+		const log = createLogger(level);
+		log[level]("test log");
+
+		expect(consoleMock).toHaveBeenCalledOnce();
+		expect(consoleMock).toHaveBeenLastCalledWith("test log");
+
+		consoleMock.mockReset();
+	}
+});
 
 test("createShopify", () => {
 	const shopify = createShopify(context);
