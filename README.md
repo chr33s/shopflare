@@ -4,10 +4,9 @@ Minimalist Shopify app using React Router (v7) running on cloudflare (worker, kv
 
 ## Rationale
 
-- @shopify/shopify-[api,app-remix] to complex (to much abstraction)
-- Simple starter, than focusses on the basics
-- Small code surface, easier audit
-- Stability over features
+- Needed a simple starter, than focusses on the basics (optional extensions [shoputils](https://github.com/chr33s/shoputils))
+- @shopify/shopify-[api,app-remix/react-router] was to complex due to platform abstractions
+- Wanted small code surface, easier audit, that focussed on stability over features
 - Modular, extendable, tree shakable (remove factory functions) -> smaller bundle size
 - Minimally opinionated, by supporting only:
   1.  Embedded app use-case
