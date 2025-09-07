@@ -1,6 +1,7 @@
 import {cloudflare} from '@cloudflare/vite-plugin';
 import {reactRouter} from '@react-router/dev/vite';
 import {defineConfig, loadEnv} from 'vite';
+import babel from 'vite-plugin-babel';
 import i18nextLoader from 'vite-plugin-i18next-loader';
 
 import i18nextLoaderOptions from './i18n.config';
@@ -24,6 +25,13 @@ export default defineConfig(({mode}) => {
 			i18nextLoader(i18nextLoaderOptions),
 			cloudflare({viteEnvironment: {name: 'ssr'}}),
 			reactRouter(),
+			babel({
+				babelConfig: {
+					plugins: [['babel-plugin-react-compiler']],
+					presets: ['@babel/preset-typescript'],
+				},
+				filter: /\.[jt]sx?$/,
+			}),
 		],
 		server: {
 			allowedHosts: [app.hostname],

@@ -81,6 +81,7 @@ export default defineConfig([
 					varsIgnorePattern: '^_',
 				},
 			],
+			'react-hooks/react-compiler': 'error',
 			'react/react-in-jsx-scope': 'off',
 			'sort-keys': ['error', 'asc', {caseSensitive: false}],
 			'sort-vars': 'error',
