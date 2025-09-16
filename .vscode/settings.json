@@ -1,6 +1,11 @@
 {
 	"chat.agent.maxRequests": 100,
-	"chat.mcp.discovery.enabled": true,
+	"chat.mcp.discovery.enabled": {
+		"claude-desktop": true,
+		"windsurf": true,
+		"cursor-global": true,
+		"cursor-workspace": true
+	},
 	"chat.tools.autoApprove": true,
 	"diffEditor.diffAlgorithm": "advanced",
 	"diffEditor.experimental.showMoves": true,

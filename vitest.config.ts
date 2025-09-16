@@ -1,3 +1,4 @@
+import {fileURLToPath} from 'node:url';
 import {defineWorkersProject} from '@cloudflare/vitest-pool-workers/config';
 import {loadEnv} from 'vite';
 import i18nextLoader from 'vite-plugin-i18next-loader';
@@ -42,18 +43,20 @@ export default defineConfig((config) => {
 					{extends: './vitest.config.ts'},
 					defineWorkersProject({
 						test: {
+							alias: [
+								{
+									find: 'virtual:react-router/server-build',
+									replacement: fileURLToPath(
+										new URL('./build/server/index.js', import.meta.url),
+									),
+								},
+							],
 							include: ['app/*server.test.ts', 'app/**/*server.test.ts'],
 							name: 'server',
 							poolOptions: {
 								workers: {
 									isolatedStorage: true,
 									main: './build/server/index.js',
-									miniflare: {
-										compatibilityFlags: [
-											'nodejs_compat',
-											'service_binding_extra_handlers',
-										],
-									},
 									singleWorker: true,
 									wrangler: {configPath: './wrangler.json'},
 								},

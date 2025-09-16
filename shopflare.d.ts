@@ -20,8 +20,11 @@ declare module 'react' {
 
 declare module 'react-router' {
 	export interface Future {
-		unstable_middleware: true;
 		unstable_viteEnvironmentApi: true;
+		v8_middleware: true;
+	}
+	export interface RouterContextProvider {
+		cloudflare?: {env: Env; ctx: ExecutionContext};
 	}
 }
 
