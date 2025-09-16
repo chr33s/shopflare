@@ -68,7 +68,8 @@ To split environments see [Cloudflare](https://developers.cloudflare.com/workers
 
 - [App Bridge](https://shopify.dev/docs/api/app-bridge-library/react-components)
 - [Cloudflare](https://developers.cloudflare.com)
-- [Polaris](https://shopify.dev/docs/beta/next-gen-dev-platform/polaris)
+- [Next Gen Dev Platform](https://shopify.dev/docs/beta/next-gen-dev-platform)
+- [Polaris](https://storybook.polaris-admin.shopify.dev/)
 - [React](https://react.dev/reference/react)
 - [React Router](https://reactrouter.com/)
 - [Shopify](http://shopify.dev/)
