@@ -1,7 +1,7 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "shopflare",
-	"compatibility_date": "2025-06-17",
+	"compatibility_date": "2025-09-17",
 	"main": "./app/server.ts",
 	"assets": {
 		"binding": "ASSETS",
