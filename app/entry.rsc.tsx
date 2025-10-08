@@ -7,8 +7,8 @@ import {
 	renderToReadableStream,
 } from '@vitejs/plugin-rsc/rsc';
 import {
+	RouterContextProvider,
 	unstable_matchRSCServerRequest as matchRSCServerRequest,
-	unstable_RouterContextProvider as RouterContextProvider,
 } from 'react-router';
 import routes from 'virtual:react-router-routes';
 
