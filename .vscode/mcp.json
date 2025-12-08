@@ -5,9 +5,9 @@
 			"type": "sse",
 			"url": "https://docs.mcp.cloudflare.com/sse"
 		},
-		"react": {
+		"preact": {
 			"type": "sse",
-			"url": "https://gitmcp.io/facebook/react"
+			"url": "https://gitmcp.io/preactjs/preact"
 		},
 		"react-router": {
 			"type": "sse",

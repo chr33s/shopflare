@@ -1,40 +1,34 @@
-import i18next from 'i18next';
-import {startTransition, StrictMode} from 'react';
-import {hydrateRoot} from 'react-dom/client';
-import {I18nextProvider, initReactI18next} from 'react-i18next';
-import {HydratedRouter} from 'react-router/dom';
+import i18next from "i18next";
+import { hydrate } from "preact";
+import { startTransition } from "preact/compat";
+import { I18nextProvider, initReactI18next } from "react-i18next";
+import { HydratedRouter } from "react-router/dom";
 
-import i18n, {LanguageDetector} from './i18n';
+import i18n, { LanguageDetector } from "./i18n";
 
-async function hydrate() {
-	await i18next
-		.use(initReactI18next)
-		.use(LanguageDetector)
-		.init({
-			...i18n,
-			detection: {
-				searchParams: new URL(window.location.href).searchParams,
-			},
-		});
+async function main() {
+  await i18next
+    .use(initReactI18next)
+    .use(LanguageDetector)
+    .init({
+      ...i18n,
+      detection: {
+        searchParams: new URL(window.location.href).searchParams,
+      },
+    });
 
-	startTransition(() => {
-		hydrateRoot(
-			document,
-			<I18nextProvider i18n={i18next}>
-				<StrictMode>
-					<HydratedRouter />
-				</StrictMode>
-			</I18nextProvider>,
-		);
-	});
+  startTransition(() => {
+    hydrate(
+      <I18nextProvider i18n={i18next}>
+        <HydratedRouter />
+      </I18nextProvider>,
+      document,
+    );
+  });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 if (window.requestIdleCallback) {
-	// eslint-disable-next-line @typescript-eslint/no-misused-promises
-	window.requestIdleCallback(hydrate);
+  window.requestIdleCallback(main);
 } else {
-	// Safari doesn't support requestIdleCallback - https://caniuse.com/requestidlecallback
-	// eslint-disable-next-line @typescript-eslint/no-misused-promises
-	window.setTimeout(hydrate, 1);
+  window.setTimeout(main, 1);
 }

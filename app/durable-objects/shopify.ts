@@ -1,136 +1,133 @@
-import type {RequestOptions} from '@shopify/graphql-client';
-import {DurableObject} from 'cloudflare:workers';
+import type { RequestOptions } from "@shopify/graphql-client";
+import { DurableObject } from "cloudflare:workers";
 
-import * as shopify from '#app/shopify.server';
+import * as shopify from "#app/shopify.server";
 
 type ClientType = shopify.Sessiontype;
 
 export class ShopifyDurableObject extends DurableObject<Env> {
-	#client: shopify.Client;
-	readonly #shop: string;
+  #client: shopify.Client;
+  readonly #shop: string;
 
-	constructor(ctx: DurableObjectState, env: Env) {
-		super(ctx, env);
+  constructor(ctx: DurableObjectState, env: Env) {
+    super(ctx, env);
 
-		const shop = ctx.id.name;
-		if (!shop) {
-			throw new shopify.Exception('No shop from ctx.id.name', {
-				status: 400,
-				type: 'REQUEST',
-			});
-		}
-		this.#shop = shop;
+    const shop = ctx.id.name;
+    if (!shop) {
+      throw new shopify.Exception("No shop from ctx.id.name", {
+        status: 400,
+        type: "REQUEST",
+      });
+    }
+    this.#shop = shop;
 
-		ctx.blockConcurrencyWhile(async () => {
-			this.#client = await this.client('admin');
-		});
-	}
+    void ctx.blockConcurrencyWhile(async () => {
+      this.#client = await this.client("admin");
+    });
+  }
 
-	bulkOperation() {
-		return shopify.bulkOperation(this.#client);
-	}
+  bulkOperation() {
+    return shopify.bulkOperation(this.#client);
+  }
 
-	async client(type: ClientType, headers?: Record<string, string | string[]>) {
-		const session = await this.#session(type);
-		const props = {
-			accessToken: session.accessToken,
-			shop: this.#shop,
-		};
-		return shopify.client(props)[type](headers);
-	}
+  async client(type: ClientType, headers?: Record<string, string | string[]>) {
+    const session = await this.#session(type);
+    const props = {
+      accessToken: session.accessToken,
+      shop: this.#shop,
+    };
+    return shopify.client(props)[type](headers);
+  }
 
-	async fetch(request: Request) {
-		try {
-			const encodedSessionToken = shopify.utils.getToken(request);
-			const decodedSessionToken = await shopify.utils.verifyToken(
-				encodedSessionToken,
-				{
-					key: this.env.SHOPIFY_API_KEY,
-					secretKey: this.env.SHOPIFY_API_SECRET_KEY,
-				},
-			);
-			if (!decodedSessionToken) {
-				throw new shopify.Exception('Invalid session token', {
-					status: 401,
-					type: 'REQUEST',
-				});
-			}
+  async fetch(request: Request) {
+    try {
+      const encodedSessionToken = shopify.utils.getToken(request);
+      const decodedSessionToken = await shopify.utils.verifyToken(encodedSessionToken, {
+        key: this.env.SHOPIFY_API_KEY,
+        secretKey: this.env.SHOPIFY_API_SECRET_KEY,
+      });
+      if (!decodedSessionToken) {
+        throw new shopify.Exception("Invalid session token", {
+          status: 401,
+          type: "REQUEST",
+        });
+      }
 
-			if (request.method !== 'POST') {
-				throw new shopify.Exception('Method Not Allowed', {
-					status: 405,
-					type: 'REQUEST',
-				});
-			}
+      if (request.method !== "POST") {
+        throw new shopify.Exception("Method Not Allowed", {
+          status: 405,
+          type: "REQUEST",
+        });
+      }
 
-			const pattern = new URLPattern({
-				pathname: '/shopify/:client{/:protocol}?',
-			});
-			const params = pattern.exec(request.url)?.pathname.groups;
-			if (!params) {
-				throw new shopify.Exception('Client Not Found', {
-					status: 404,
-					type: 'REQUEST',
-				});
-			}
+      const pattern = new URLPattern({
+        pathname: "/shopify/:client{/:protocol}?",
+      });
+      const params = pattern.exec(request.url)?.pathname.groups;
+      if (!params) {
+        throw new shopify.Exception("Client Not Found", {
+          status: 404,
+          type: "REQUEST",
+        });
+      }
 
-			const {operation, variables} = await request.json<{
-				operation: string;
-				variables?: RequestOptions['variables'];
-			}>();
-			if (!operation) {
-				throw new shopify.Exception('Missing body operation', {
-					status: 400,
-					type: 'REQUEST',
-				});
-			}
+      const { operation, variables } = await request.json<{
+        operation: string;
+        variables?: RequestOptions["variables"];
+      }>();
+      if (!operation) {
+        throw new shopify.Exception("Missing body operation", {
+          status: 400,
+          type: "REQUEST",
+        });
+      }
 
-			const client = await this.client(params.client as ClientType);
-			return client.fetch(operation, {
-				headers: Object.fromEntries(request.headers),
-				keepalive: false,
-				signal: request.signal,
-				variables,
-			});
-		} catch (error: any) {
-			return new Response(error.message ?? 'Unknown Error', {
-				status: error.cause ?? 500,
-			});
-		}
-	}
+      const client = await this.client(params.client as ClientType);
+      return client.fetch(operation, {
+        headers: Object.fromEntries(request.headers),
+        keepalive: false,
+        signal: request.signal,
+        variables,
+      });
+    } catch (error: any) {
+      return new Response(error.message ?? "Unknown Error", {
+        status: error.cause ?? 500,
+      });
+    }
+  }
 
-	metafield() {
-		return shopify.metafield(this.#client);
-	}
+  metafield() {
+    return shopify.metafield(this.#client);
+  }
 
-	metaobject() {
-		return shopify.metaobject(this.#client);
-	}
+  metaobject() {
+    return shopify.metaobject(this.#client);
+  }
 
-	async uninstall() {
-		return fetch(`https://${this.#shop}/admin/api_permissions/current.json`, {
-			headers: new Headers({
-				Accept: 'application/json',
-				'Content-Length': '0',
-				'Content-Type': 'application/json',
-				'X-Shopify-Access-Token': this.env.SHOPIFY_API_SECRET_KEY,
-			}),
-			method: 'DELETE',
-		}).then((res) => res.ok);
-	}
+  async uninstall() {
+    return fetch(`https://${this.#shop}/admin/api_permissions/current.json`, {
+      headers: new Headers({
+        Accept: "application/json",
+        "Content-Length": "0",
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": this.env.SHOPIFY_API_SECRET_KEY,
+      }),
+      method: "DELETE",
+    }).then((res) => res.ok);
+  }
 
-	upload() {
-		return shopify.upload(this.#client);
-	}
+  upload() {
+    return shopify.upload(this.#client);
+  }
 
-	async #session(type: ClientType) {
-		const session = await shopify.session(type).get(this.#shop);
-		if (!session) {
-			throw new shopify.Exception(`No ${type} session for shop ${this.#shop}`, {
-				status: 401,
-				type: 'REQUEST',
-			});
-		}
-		return session;
-	}
+  async #session(type: ClientType) {
+    const session = await shopify.session(type).get(this.#shop);
+    if (!session) {
+      throw new shopify.Exception(`No ${type} session for shop ${this.#shop}`, {
+        status: 401,
+        type: "REQUEST",
+      });
+    }
+    return session;
+  }
 }

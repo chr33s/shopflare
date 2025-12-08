@@ -1,1 +1,1 @@
-export {ShopifyDurableObject} from './shopify';
+export { ShopifyDurableObject } from "./shopify";

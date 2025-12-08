@@ -1,6 +1,6 @@
-import {expect, test} from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
-test('loads', async ({page}) => {
-	await page.goto('/');
-	await expect(page).toHaveTitle(/ShopFlare/);
+test("loads", async ({ page }) => {
+  await page.goto("/");
+  await expect(page).toHaveTitle(/ShopFlare/);
 });
