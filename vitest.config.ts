@@ -15,7 +15,7 @@ export default defineConfig((config) => {
 		plugins: [i18nextLoader(i18nextLoaderOptions)],
 		test: {
 			css: true,
-			// globalSetup: ['./vitest.global-setup.ts'],
+			globalSetup: ['./vitest.global-setup.ts'],
 			projects: [
 				{
 					extends: './vitest.config.ts',

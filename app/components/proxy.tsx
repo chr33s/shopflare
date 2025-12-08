@@ -43,11 +43,10 @@ interface ContextProps {
 
 export const Context = createContext<ContextProps | null>(null);
 
-export interface LinkProps
-	extends DetailedHTMLProps<
-		AnchorHTMLAttributes<HTMLAnchorElement>,
-		HTMLAnchorElement
-	> {
+export interface LinkProps extends DetailedHTMLProps<
+	AnchorHTMLAttributes<HTMLAnchorElement>,
+	HTMLAnchorElement
+> {
 	href: string;
 }
 
