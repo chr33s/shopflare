@@ -4,8 +4,8 @@ export default {
 	// Config options...
 	future: {
 		unstable_optimizeDeps: true,
-		unstable_splitRouteModules: true,
-		unstable_viteEnvironmentApi: true,
+		v8_splitRouteModules: true,
+		v8_viteEnvironmentApi: true,
 	},
 	// Fixes hot-reload on proxy paths
 	routeDiscovery: { mode: "initial" },

@@ -63,6 +63,10 @@ export default defineConfig((config) => {
 										main: "./build/server/index.js",
 										miniflare: {
 											compatibilityFlags: [
+												"enable_nodejs_fs_module",
+												"enable_nodejs_http_modules",
+												"enable_nodejs_perf_hooks_module",
+												"enable_nodejs_tty_module",
 												"nodejs_compat",
 												"service_binding_extra_handlers",
 											],
