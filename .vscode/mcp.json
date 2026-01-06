@@ -2,8 +2,8 @@
 	"inputs": [],
 	"servers": {
 		"cloudflare-docs": {
-			"type": "sse",
-			"url": "https://docs.mcp.cloudflare.com/sse"
+			"type": "http",
+			"url": "https://docs.mcp.cloudflare.com/mcp"
 		},
 		"react": {
 			"type": "sse",
@@ -17,8 +17,7 @@
 			"args": ["@shopify/dev-mcp@latest"],
 			"command": "npx",
 			"env": {
-				"OPT_OUT_INSTRUMENTATION": "true",
-				"POLARIS_UNIFIED": "true"
+				"OPT_OUT_INSTRUMENTATION": "true"
 			}
 		},
 		"vitest": {
