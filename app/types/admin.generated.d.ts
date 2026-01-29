@@ -60,7 +60,6 @@ export type BulkOperationRunMutationMutationVariables = AdminTypes.Exact<{
 	clientIdentifier?: AdminTypes.InputMaybe<
 		AdminTypes.Scalars['String']['input']
 	>;
-	groupObjects: AdminTypes.Scalars['Boolean']['input'];
 	mutation: AdminTypes.Scalars['String']['input'];
 	stagedUploadPath: AdminTypes.Scalars['String']['input'];
 }>;
@@ -80,7 +79,6 @@ export type BulkOperationRunMutationMutation = {
 };
 
 export type BulkOperationRunQueryMutationVariables = AdminTypes.Exact<{
-	groupObjects: AdminTypes.Scalars['Boolean']['input'];
 	query: AdminTypes.Scalars['String']['input'];
 }>;
 
@@ -547,11 +545,11 @@ interface GeneratedMutationTypes {
 		return: BulkOperationCancelMutation;
 		variables: BulkOperationCancelMutationVariables;
 	};
-	'mutation BulkOperationRunMutation($clientIdentifier: String, $groupObjects: Boolean!, $mutation: String!, $stagedUploadPath: String!) {\n  bulkOperationRunMutation(\n    clientIdentifier: $clientIdentifier\n    groupObjects: $groupObjects\n    mutation: $mutation\n    stagedUploadPath: $stagedUploadPath\n  ) {\n    bulkOperation {\n      errorCode\n      id\n      partialDataUrl\n      status\n      type\n      url\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}': {
+	'mutation BulkOperationRunMutation($clientIdentifier: String, $mutation: String!, $stagedUploadPath: String!) {\n  bulkOperationRunMutation(\n    clientIdentifier: $clientIdentifier\n    mutation: $mutation\n    stagedUploadPath: $stagedUploadPath\n  ) {\n    bulkOperation {\n      errorCode\n      id\n      partialDataUrl\n      status\n      type\n      url\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}': {
 		return: BulkOperationRunMutationMutation;
 		variables: BulkOperationRunMutationMutationVariables;
 	};
-	'mutation BulkOperationRunQuery($groupObjects: Boolean!, $query: String!) {\n  bulkOperationRunQuery(groupObjects: $groupObjects, query: $query) {\n    bulkOperation {\n      errorCode\n      id\n      partialDataUrl\n      status\n      type\n      url\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}': {
+	'mutation BulkOperationRunQuery($query: String!) {\n  bulkOperationRunQuery(query: $query) {\n    bulkOperation {\n      errorCode\n      id\n      partialDataUrl\n      status\n      type\n      url\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}': {
 		return: BulkOperationRunQueryMutation;
 		variables: BulkOperationRunQueryMutationVariables;
 	};

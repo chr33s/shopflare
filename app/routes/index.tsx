@@ -1,7 +1,7 @@
 import {useTranslation} from 'react-i18next';
 import {Form, redirect} from 'react-router';
 
-import {API_KEY, APP_BRIDGE_UI_URL} from '#app/const';
+import {API_KEY, APP_POLARIS_URL} from '#app/const';
 import * as shopify from '#app/shopify.server';
 import {log} from '#app/shopify.shared';
 
@@ -25,7 +25,7 @@ export default function Index({actionData, loaderData}: Route.ComponentProps) {
 
 	return (
 		<>
-			<script src={APP_BRIDGE_UI_URL} />
+			<script src={APP_POLARIS_URL} />
 
 			<s-page inlineSize="small">
 				<s-section heading={t('login')}>

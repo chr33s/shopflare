@@ -11,9 +11,9 @@ import {
 
 import {
 	API_KEY,
-	APP_BRIDGE_UI_URL,
 	APP_BRIDGE_URL,
 	APP_LOG_LEVEL,
+	APP_POLARIS_URL,
 	SHOPIFY_CDN,
 } from '#app/const';
 import rootCss from '#app/root.css?url';
@@ -68,7 +68,7 @@ export function Layout({children}: PropsWithChildren) {
 				<meta name="shopify-experimental-features" content="keepAlive" />
 				<link href={SHOPIFY_CDN} rel="preconnect" />
 				<script src={APP_BRIDGE_URL} rel="preload" />
-				<script src={APP_BRIDGE_UI_URL} rel="preload" />
+				<script src={APP_POLARIS_URL} rel="preload" />
 				<title>ShopFlare</title>
 				<Meta />
 				<Links />

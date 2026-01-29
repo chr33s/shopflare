@@ -398,7 +398,6 @@ export function bulkOperation(client: Client) {
 			.request<BulkOperationRunMutationMutation>(BulkOperationRunMutation, {
 				variables: {
 					clientIdentifier: 'shopflare',
-					groupObjects: false,
 					...args,
 				},
 			})
@@ -408,10 +407,7 @@ export function bulkOperation(client: Client) {
 	async function runQuery(args: MutationBulkOperationRunQueryArgs) {
 		return client
 			.request<BulkOperationRunQueryMutation>(BulkOperationRunQuery, {
-				variables: {
-					groupObjects: false,
-					...args,
-				},
+				variables: {...args},
 			})
 			.then((res) => res.data?.bulkOperationRunQuery);
 	}

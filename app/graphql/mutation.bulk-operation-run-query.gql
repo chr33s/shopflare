@@ -1,6 +1,6 @@
 #graphql
-mutation BulkOperationRunQuery($groupObjects: Boolean!, $query: String!) {
-	bulkOperationRunQuery(groupObjects: $groupObjects, query: $query) {
+mutation BulkOperationRunQuery($query: String!) {
+	bulkOperationRunQuery(query: $query) {
 		bulkOperation {
 			errorCode
 			id

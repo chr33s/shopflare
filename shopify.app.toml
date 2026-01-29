@@ -30,7 +30,7 @@ dev_store_url = "chr33s.myshopify.com"
 include_config_on_deploy = true
 
 [webhooks]
-api_version = "2025-07"
+api_version = "2026-01"
 
   [[webhooks.subscriptions]]
   uri = "/shopify/webhooks"
