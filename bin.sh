@@ -24,7 +24,7 @@ function triggerWebhook() {
 	topic=${1:-'app/uninstalled'}
 	npx shopify app webhook trigger \
 		--address=http://localhost:8080/shopify/webhooks \
-		--api-version=2025-07 \
+		--api-version=2026-01 \
 		--client-secret=${SHOPIFY_API_SECRET_KEY} \
 		--delivery-method=http \
 		--topic=${topic}
