@@ -1,7 +1,7 @@
-import type {RequestOptions} from '@shopify/graphql-client';
-import {DurableObject} from 'cloudflare:workers';
+import type { RequestOptions } from "@shopify/graphql-client";
+import { DurableObject } from "cloudflare:workers";
 
-import * as shopify from '#app/shopify.server';
+import * as shopify from "#app/shopify.server";
 
 type ClientType = shopify.Sessiontype;
 
@@ -14,15 +14,15 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 
 		const shop = ctx.id.name;
 		if (!shop) {
-			throw new shopify.Exception('No shop from ctx.id.name', {
+			throw new shopify.Exception("No shop from ctx.id.name", {
 				status: 400,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 		this.#shop = shop;
 
-		ctx.blockConcurrencyWhile(async () => {
-			this.#client = await this.client('admin');
+		void ctx.blockConcurrencyWhile(async () => {
+			this.#client = await this.client("admin");
 		});
 	}
 
@@ -42,46 +42,43 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 	async fetch(request: Request) {
 		try {
 			const encodedSessionToken = shopify.utils.getToken(request);
-			const decodedSessionToken = await shopify.utils.verifyToken(
-				encodedSessionToken,
-				{
-					key: this.env.SHOPIFY_API_KEY,
-					secretKey: this.env.SHOPIFY_API_SECRET_KEY,
-				},
-			);
+			const decodedSessionToken = await shopify.utils.verifyToken(encodedSessionToken, {
+				key: this.env.SHOPIFY_API_KEY,
+				secretKey: this.env.SHOPIFY_API_SECRET_KEY,
+			});
 			if (!decodedSessionToken) {
-				throw new shopify.Exception('Invalid session token', {
+				throw new shopify.Exception("Invalid session token", {
 					status: 401,
-					type: 'REQUEST',
+					type: "REQUEST",
 				});
 			}
 
-			if (request.method !== 'POST') {
-				throw new shopify.Exception('Method Not Allowed', {
+			if (request.method !== "POST") {
+				throw new shopify.Exception("Method Not Allowed", {
 					status: 405,
-					type: 'REQUEST',
+					type: "REQUEST",
 				});
 			}
 
 			const pattern = new URLPattern({
-				pathname: '/shopify/:client{/:protocol}?',
+				pathname: "/shopify/:client{/:protocol}?",
 			});
 			const params = pattern.exec(request.url)?.pathname.groups;
 			if (!params) {
-				throw new shopify.Exception('Client Not Found', {
+				throw new shopify.Exception("Client Not Found", {
 					status: 404,
-					type: 'REQUEST',
+					type: "REQUEST",
 				});
 			}
 
-			const {operation, variables} = await request.json<{
+			const { operation, variables } = await request.json<{
 				operation: string;
-				variables?: RequestOptions['variables'];
+				variables?: RequestOptions["variables"];
 			}>();
 			if (!operation) {
-				throw new shopify.Exception('Missing body operation', {
+				throw new shopify.Exception("Missing body operation", {
 					status: 400,
-					type: 'REQUEST',
+					type: "REQUEST",
 				});
 			}
 
@@ -93,7 +90,7 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 				variables,
 			});
 		} catch (error: any) {
-			return new Response(error.message ?? 'Unknown Error', {
+			return new Response(error.message ?? "Unknown Error", {
 				status: error.cause ?? 500,
 			});
 		}
@@ -110,12 +107,12 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 	async uninstall() {
 		return fetch(`https://${this.#shop}/admin/api_permissions/current.json`, {
 			headers: new Headers({
-				Accept: 'application/json',
-				'Content-Length': '0',
-				'Content-Type': 'application/json',
-				'X-Shopify-Access-Token': this.env.SHOPIFY_API_SECRET_KEY,
+				Accept: "application/json",
+				"Content-Length": "0",
+				"Content-Type": "application/json",
+				"X-Shopify-Access-Token": this.env.SHOPIFY_API_SECRET_KEY,
 			}),
-			method: 'DELETE',
+			method: "DELETE",
 		}).then((res) => res.ok);
 	}
 
@@ -128,7 +125,7 @@ export class ShopifyDurableObject extends DurableObject<Env> {
 		if (!session) {
 			throw new shopify.Exception(`No ${type} session for shop ${this.#shop}`, {
 				status: 401,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 		return session;

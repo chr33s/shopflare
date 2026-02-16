@@ -1,5 +1,5 @@
 ---
-applyTo: 'app/**/*'
+applyTo: "app/**/*"
 ---
 
 [..](https://shopify.dev/llms.txt)

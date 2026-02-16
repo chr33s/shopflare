@@ -1,13 +1,13 @@
-import {createRoutesStub} from 'react-router';
-import {expect, test, vi} from 'vitest';
-import {render} from 'vitest-browser-react';
+import { createRoutesStub } from "react-router";
+import { expect, test, vi } from "vitest";
+import { render } from "vitest-browser-react";
 
-import Index from './index';
+import Index from "./index";
 
-vi.mock('react-i18next', () => ({
+vi.mock("react-i18next", () => ({
 	initReactI18next: {
 		init: () => {},
-		type: '3rdParty',
+		type: "3rdParty",
 	},
 	useTranslation: () => ({
 		i18n: {
@@ -17,7 +17,7 @@ vi.mock('react-i18next', () => ({
 	}),
 }));
 
-test('loads and displays h1', async () => {
+test("loads and displays h1", async () => {
 	const Stub = createRoutesStub([
 		{
 			action() {
@@ -28,11 +28,11 @@ test('loads and displays h1', async () => {
 			loader() {
 				return {};
 			},
-			path: '/',
+			path: "/",
 		},
 	]);
 
-	const screen = render(<Stub initialEntries={['/']} />);
-	const label = screen.getByText('login');
+	const screen = render(<Stub initialEntries={["/"]} />);
+	const label = screen.getByText("login");
 	await expect.element(label).toBeVisible();
 });

@@ -1,54 +1,42 @@
-import type {InitOptions, Services} from 'i18next';
-import {describe, expect, test} from 'vitest';
+import type { InitOptions, Services } from "i18next";
+import { describe, expect, test } from "vitest";
 
-import {LanguageDetector} from './index';
+import { LanguageDetector } from "./index";
 
-describe('detect', () => {
+describe("detect", () => {
 	const services = {} as Services;
 	const initOptions = {
-		fallbackLng: 'zz',
-		supportedLngs: ['aa', 'bb'],
+		fallbackLng: "zz",
+		supportedLngs: ["aa", "bb"],
 	} as InitOptions;
 
-	test('searchParams', () => {
+	test("searchParams", () => {
 		const detectorOptions = {
-			headers: new Headers({'Accept-Language': 'aa'}),
-			searchParams: new URLSearchParams({locale: 'bb'}),
+			headers: new Headers({ "Accept-Language": "aa" }),
+			searchParams: new URLSearchParams({ locale: "bb" }),
 		};
-		const languageDetector = new LanguageDetector(
-			services,
-			detectorOptions,
-			initOptions,
-		);
+		const languageDetector = new LanguageDetector(services, detectorOptions, initOptions);
 
-		expect(languageDetector.detect()).toBe('bb');
+		expect(languageDetector.detect()).toBe("bb");
 	});
 
-	test('headers', () => {
+	test("headers", () => {
 		const detectorOptions = {
-			headers: new Headers({'Accept-Language': 'aa'}),
+			headers: new Headers({ "Accept-Language": "aa" }),
 			searchParams: new URLSearchParams({}),
 		};
-		const languageDetector = new LanguageDetector(
-			services,
-			detectorOptions,
-			initOptions,
-		);
+		const languageDetector = new LanguageDetector(services, detectorOptions, initOptions);
 
-		expect(languageDetector.detect()).toBe('aa');
+		expect(languageDetector.detect()).toBe("aa");
 	});
 
-	test('fallback', () => {
+	test("fallback", () => {
 		const detectorOptions = {
-			headers: new Headers({'Accept-Language': 'cc'}),
-			searchParams: new URLSearchParams({locale: 'dd'}),
+			headers: new Headers({ "Accept-Language": "cc" }),
+			searchParams: new URLSearchParams({ locale: "dd" }),
 		};
-		const languageDetector = new LanguageDetector(
-			services,
-			detectorOptions,
-			initOptions,
-		);
+		const languageDetector = new LanguageDetector(services, detectorOptions, initOptions);
 
-		expect(languageDetector.detect()).toBe('zz');
+		expect(languageDetector.detect()).toBe("zz");
 	});
 });

@@ -1,7 +1,5 @@
 #graphql
-mutation MetaobjectDefinitionCreate(
-	$definition: MetaobjectDefinitionCreateInput!
-) {
+mutation MetaobjectDefinitionCreate($definition: MetaobjectDefinitionCreateInput!) {
 	metaobjectDefinitionCreate(definition: $definition) {
 		metaobjectDefinition {
 			name

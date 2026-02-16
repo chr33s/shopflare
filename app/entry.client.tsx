@@ -1,10 +1,10 @@
-import i18next from 'i18next';
-import {startTransition, StrictMode} from 'react';
-import {hydrateRoot} from 'react-dom/client';
-import {I18nextProvider, initReactI18next} from 'react-i18next';
-import {HydratedRouter} from 'react-router/dom';
+import i18next from "i18next";
+import { startTransition, StrictMode } from "react";
+import { hydrateRoot } from "react-dom/client";
+import { I18nextProvider, initReactI18next } from "react-i18next";
+import { HydratedRouter } from "react-router/dom";
 
-import i18n, {LanguageDetector} from './i18n';
+import i18n, { LanguageDetector } from "./i18n";
 
 async function hydrate() {
 	await i18next
@@ -29,12 +29,9 @@ async function hydrate() {
 	});
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 if (window.requestIdleCallback) {
-	// eslint-disable-next-line @typescript-eslint/no-misused-promises
 	window.requestIdleCallback(hydrate);
 } else {
 	// Safari doesn't support requestIdleCallback - https://caniuse.com/requestidlecallback
-	// eslint-disable-next-line @typescript-eslint/no-misused-promises
 	window.setTimeout(hydrate, 1);
 }

@@ -1,8 +1,5 @@
 #graphql
-mutation MetaobjectDefinitionUpdate(
-	$id: ID!
-	$definition: MetaobjectDefinitionUpdateInput!
-) {
+mutation MetaobjectDefinitionUpdate($id: ID!, $definition: MetaobjectDefinitionUpdateInput!) {
 	metaobjectDefinitionUpdate(id: $id, definition: $definition) {
 		metaobjectDefinition {
 			id

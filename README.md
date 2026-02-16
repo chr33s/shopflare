@@ -1,3 +1,6 @@
+> [!NOTE]  
+> [v2](https://github.com/chr33s/shopflare/tree/v2) branch tracks Polaris React changes
+
 # ShopFlare
 
 Minimalist Shopify app using React Router (v7) running on cloudflare (worker, kv, queues). Only essential features, no future changes other than core upgrades & platform alignment.
@@ -77,12 +80,12 @@ To split environments see [Cloudflare](https://developers.cloudflare.com/workers
 ### Usage
 
 ```js
-import * as shopify from '~/shopify.server';
+import * as shopify from "~/shopify.server";
 
-export async function loader({request}) {
+export async function loader({ request }) {
   return shopify.handler(async () => {
-    const {client} = await shopify.admin(request); // shopify[admin|proxy|webhook](request);
-    const {data, errors} = await client.request(/* GraphQL */ `
+    const { client } = await shopify.admin(request); // shopify[admin|proxy|webhook](request);
+    const { data, errors } = await client.request(/* GraphQL */ `
       query {
         shop {
           name
@@ -91,28 +94,28 @@ export async function loader({request}) {
     `);
 
     shopify.config();
-    await shopify.client({accessToken, shop}).admin(); // [admin | storefront](headers?)
-    await shopify.redirect(request, {shop, url});
-    await shopify.session('admin').get(sessionId); // set(id, value | null);
+    await shopify.client({ accessToken, shop }).admin(); // [admin | storefront](headers?)
+    await shopify.redirect(request, { shop, url });
+    await shopify.session("admin").get(sessionId); // set(id, value | null);
     shopify.utils.addCorsHeaders(request, responseHeaders);
 
     await shopify.bulkOperation(client).query(); // .mutation(mutation, variables);
     await shopify.metafield(client).get(identifier); // .set(identifier, metafield || null);
-    await shopify.metaobject(client).get({handle}); // .set({handle}, metaobject || null);
+    await shopify.metaobject(client).get({ handle }); // .set({handle}, metaobject || null);
     await shopify.upload(client).process(file); // .[stage,target](file)
 
-    return {data, errors};
+    return { data, errors };
   });
 }
 
 // Alternative (Backwards compatible)
 
-import {createShopify} from '~/shopify.server';
+import { createShopify } from "~/shopify.server";
 
-export async function loader({request}) {
+export async function loader({ request }) {
   const shopify = createShopify();
   const client = await shopify.admin(request);
-  const {data, errors} = await client.request(/* GraphQL */ `
+  const { data, errors } = await client.request(/* GraphQL */ `
     query {
       shop {
         name
@@ -121,18 +124,18 @@ export async function loader({request}) {
   `);
 
   shopify.config;
-  await shopify.redirect(request, {shop, url});
+  await shopify.redirect(request, { shop, url });
   await shopify.session.get(sessionId); // set(id, value | null);
   shopify.utils.addCorsHeaders(request, responseHeaders);
 
   const adminClient = createShopifyClient({
     accessToken,
-    headers: {'X-Shopify-Access-Token': '?'},
+    headers: { "X-Shopify-Access-Token": "?" },
     shop,
   });
   const storefrontClient = createShopifyClient({
     accessToken,
-    headers: {'X-Shopify-Storefront-Access-Token': '?'},
+    headers: { "X-Shopify-Storefront-Access-Token": "?" },
     shop,
   });
 }
@@ -204,4 +207,4 @@ Follow [Shopify App Proxy](https://shopify.dev/docs/api/shopify-app-remix/v3/app
 
 ## Copyright
 
-Copyright (c) 2025 chr33s. See LICENSE.md for further details.
+Copyright (c) 2026 chr33s. See license for further details.

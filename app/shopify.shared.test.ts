@@ -1,7 +1,7 @@
-import {expect, test} from 'vitest';
+import { expect, test } from "vitest";
 
-import * as shopify from './shopify.shared';
+import * as shopify from "./shopify.shared";
 
-test('log', () => {
+test("log", () => {
 	expect(shopify.log.error()).toBeDefined();
 });

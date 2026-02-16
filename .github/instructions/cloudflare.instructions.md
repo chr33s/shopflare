@@ -1,5 +1,5 @@
 ---
-applyTo: 'app/**/*.ts'
+applyTo: "app/**/*.ts"
 ---
 
 [..](https://developers.cloudflare.com/llms.txt)

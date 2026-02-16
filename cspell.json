@@ -1,13 +1,6 @@
 {
 	"caseSensitive": false,
-	"ignorePaths": [
-		"**/types",
-		"**/dist",
-		"**/node_modules",
-		"build",
-		"patches",
-		"worker-configuration.d.ts"
-	],
+	"ignorePaths": ["**/types", "**/dist", "**/node_modules", "build", "worker-configuration.d.ts"],
 	"ignoreWords": [
 		"accesstoken",
 		"autoupdate",
@@ -28,6 +21,8 @@
 		"noopen",
 		"nosniff",
 		"nullglob",
+		"oxfmt",
+		"oxlint",
 		"picklist",
 		"sessiontype",
 		"shopflare",
@@ -36,6 +31,7 @@
 		"supportedLngs",
 		"savebar",
 		"stingify",
+		"tsgolint",
 		"typegen",
 		"upsteam",
 		"workerd",

@@ -3,19 +3,19 @@ import {
 	createContext,
 	createRequestHandler,
 	RouterContextProvider,
-} from 'react-router';
+} from "react-router";
 
-import {queueHandler, type QueueHandlerMessage} from '#app/queues';
+import { queueHandler, type QueueHandlerMessage } from "#app/queues";
 
 const fetchHandler = createRequestHandler(
-	() => import('virtual:react-router/server-build'),
+	() => import("virtual:react-router/server-build"),
 	import.meta.env.MODE,
 );
 
 export default {
 	async fetch(request, env, ctx) {
 		const appLoadContext = createContext<AppLoadContext>({
-			cloudflare: {ctx, env},
+			cloudflare: { ctx, env },
 		});
 		const context = new RouterContextProvider();
 		Object.assign(context, appLoadContext);
@@ -27,4 +27,4 @@ export default {
 	},
 } satisfies ExportedHandler<Env, QueueHandlerMessage>;
 
-export * from '#app/durable-objects';
+export * from "#app/durable-objects";

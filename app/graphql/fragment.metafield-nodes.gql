@@ -1,11 +1,6 @@
 #graphql
 fragment MetafieldNodesFragment on HasMetafields {
-	metafields(
-		after: $cursor
-		first: $first
-		keys: $keys
-		namespace: $namespace
-	) {
+	metafields(after: $cursor, first: $first, keys: $keys, namespace: $namespace) {
 		nodes {
 			id
 			key

@@ -1,5 +1,5 @@
 ---
-applyTo: 'app/**/*'
+applyTo: "app/**/*"
 ---
 
 [graphql](https://raw.githubusercontent.com/graphql/graphql-spec/refs/heads/main/spec/GraphQL.md)

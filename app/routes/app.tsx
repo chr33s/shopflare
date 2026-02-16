@@ -1,47 +1,43 @@
-import {useAppBridge} from '@shopify/app-bridge-react';
-import {useEffect} from 'react';
-import {useTranslation} from 'react-i18next';
-import {Outlet, useNavigate, useNavigation} from 'react-router';
+import { useAppBridge } from "@shopify/app-bridge-react";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Outlet, useNavigate, useNavigation } from "react-router";
 
-import {APP_HANDLE} from '#app/const';
+import { APP_HANDLE } from "#app/const";
 
-import type {Route} from './+types/app';
+import type { Route } from "./+types/app";
 
 export default function App() {
 	const navigate = useNavigate();
 	useEffect(() => {
 		const handleNavigate = (event: any) => {
-			const href = event.target.getAttribute('href');
-			if (href) navigate(href);
+			const href = event.target.getAttribute("href");
+			if (href) void navigate(href);
 		};
 
-		document.addEventListener('shopify:navigate', handleNavigate);
+		document.addEventListener("shopify:navigate", handleNavigate);
 		return () => {
-			document.removeEventListener('shopify:navigate', handleNavigate);
+			document.removeEventListener("shopify:navigate", handleNavigate);
 		};
 	}, [navigate]);
 
 	const shopify = useAppBridge();
 	const navigation = useNavigation();
-	const isNavigating =
-		navigation.state !== 'idle' || Boolean(navigation.location);
+	const isNavigating = navigation.state !== "idle" || Boolean(navigation.location);
 	useEffect(() => {
 		shopify.loading(isNavigating);
 	}, [isNavigating, shopify]);
 
-	const {t} = useTranslation();
+	const { t } = useTranslation();
 
 	return (
 		<>
 			<ui-nav-menu>
 				<a href="/" rel="home">
-					{t('app')}
+					{t("app")}
 				</a>
-				<a
-					href={`shopify://admin/charges/${APP_HANDLE}/pricing_plans`}
-					target="_top"
-				>
-					{t('pricingPlans')}
+				<a href={`shopify://admin/charges/${APP_HANDLE}/pricing_plans`} target="_top">
+					{t("pricingPlans")}
 				</a>
 			</ui-nav-menu>
 
@@ -52,13 +48,13 @@ export default function App() {
 
 export function ErrorBoundary(error: Route.ErrorBoundaryProps) {
 	if (
-		error.constructor.name === 'ErrorResponse' ||
-		error.constructor.name === 'ErrorResponseImpl'
+		error.constructor.name === "ErrorResponse" ||
+		error.constructor.name === "ErrorResponseImpl"
 	) {
 		return (
 			<div
 				dangerouslySetInnerHTML={{
-					__html: (error as any).data || 'Handling response',
+					__html: (error as any).data || "Handling response",
 				}}
 			/>
 		);
@@ -66,7 +62,7 @@ export function ErrorBoundary(error: Route.ErrorBoundaryProps) {
 
 	throw error;
 }
-ErrorBoundary.displayName = 'AppErrorBoundary';
+ErrorBoundary.displayName = "AppErrorBoundary";
 
 export function headers({
 	parentHeaders,

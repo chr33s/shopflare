@@ -1,37 +1,14 @@
 {
-	"chat.agent.maxRequests": 100,
-	"chat.mcp.discovery.enabled": {
-		"claude-desktop": true,
-		"windsurf": true,
-		"cursor-global": true,
-		"cursor-workspace": true
-	},
-	"chat.tools.autoApprove": true,
 	"diffEditor.diffAlgorithm": "advanced",
 	"diffEditor.experimental.showMoves": true,
 	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": "explicit",
-		"source.fixAll.stylelint": "explicit"
+		"source.fixAll": "explicit"
 	},
-	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
-	"eslint.enable": true,
-	"eslint.format.enable": true,
-	"eslint.ignoreUntitled": true,
-	"eslint.useFlatConfig": true,
-	"explorer.fileNesting.patterns": {
-		".env": ".env.*, .*.vars",
-		"*.ts": "${capture}.css, ${capture}.module.css, ${capture}.test.ts, ${capture}.e2e.test.ts, ${capture}.server.test.ts",
-		"*.tsx": "${capture}.css, ${capture}.browser.test.tsx, ${capture}.client.test.tsx, ${capture}.e2e.test.ts, ${capture}.server.test.ts",
-		"package.json": ".editorconfig, .gitignore, .npmrc, .prettierignore, *.config.ts, *.d.ts, *.d.cts, cspell.json, package-lock.json, tsconfig*.json, vitest*.ts",
-		"README.md": "CHANGELOG.md, CONTRIBUTING.md, LICENSE.md, SECURITY.md",
-		"shopify.app.toml": "shopify.app*.toml, shopify.theme*.toml, shopify.web.toml",
-		"wrangler.json": "wrangler*.json, worker-configuration.d.ts"
-	},
+	"editor.defaultFormatter": "oxc.oxc-vscode",
 	"files.associations": {
 		".env*": "properties"
 	},
 	"files.insertFinalNewline": true,
-	"stylelint.enable": true,
 	"terminal.integrated.suggest.enabled": true,
 	"typescript.enablePromptUseWorkspaceTsdk": true,
 	"typescript.tsdk": "node_modules/typescript/lib"

@@ -1,8 +1,5 @@
 #graphql
-mutation MetaobjectUpsert(
-	$handle: MetaobjectHandleInput!
-	$metaobject: MetaobjectUpsertInput!
-) {
+mutation MetaobjectUpsert($handle: MetaobjectHandleInput!, $metaobject: MetaobjectUpsertInput!) {
 	metaobjectUpsert(handle: $handle, metaobject: $metaobject) {
 		metaobject {
 			displayName

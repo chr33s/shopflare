@@ -1,11 +1,11 @@
-import i18next from 'i18next';
-import {isbot} from 'isbot';
-import {renderToReadableStream} from 'react-dom/server';
-import {I18nextProvider, initReactI18next} from 'react-i18next';
-import {type EntryContext, ServerRouter} from 'react-router';
+import i18next from "i18next";
+import { isbot } from "isbot";
+import { renderToReadableStream } from "react-dom/server";
+import { I18nextProvider, initReactI18next } from "react-i18next";
+import { type EntryContext, ServerRouter } from "react-router";
 
-import i18n, {LanguageDetector} from './i18n';
-import * as shopify from './shopify.server';
+import i18n, { LanguageDetector } from "./i18n";
+import * as shopify from "./shopify.server";
 
 export default async function handleRequest(
 	request: Request,
@@ -26,7 +26,7 @@ export default async function handleRequest(
 			},
 		});
 
-	const userAgent = request.headers.get('User-Agent');
+	const userAgent = request.headers.get("User-Agent");
 	const body = await renderToReadableStream(
 		<I18nextProvider defaultNS={i18n.defaultNS} i18n={i18next}>
 			<ServerRouter context={routerContext} url={request.url} />
@@ -36,7 +36,7 @@ export default async function handleRequest(
 				// eslint-disable-next-line no-param-reassign
 				responseStatus = 500;
 				if (!request.signal.aborted) {
-					shopify.log.error('entry.server.onError', error);
+					shopify.log.error("entry.server.onError", error);
 				}
 			},
 			signal: request.signal,
@@ -48,10 +48,10 @@ export default async function handleRequest(
 	if ((userAgent && isbot(userAgent)) || routerContext.isSpaMode) {
 		await body.allReady;
 	} else {
-		responseHeaders.set('Transfer-Encoding', 'chunked');
+		responseHeaders.set("Transfer-Encoding", "chunked");
 	}
 
-	responseHeaders.set('Content-Type', 'text/html');
+	responseHeaders.set("Content-Type", "text/html");
 	return new Response(body, {
 		headers: responseHeaders,
 		status: responseStatus,

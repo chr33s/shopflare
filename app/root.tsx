@@ -1,5 +1,5 @@
-import type {PropsWithChildren} from 'react';
-import {useTranslation} from 'react-i18next';
+import type { PropsWithChildren } from "react";
+import { useTranslation } from "react-i18next";
 import {
 	isRouteErrorResponse,
 	Links,
@@ -7,25 +7,19 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
-} from 'react-router';
+} from "react-router";
 
-import {
-	API_KEY,
-	APP_BRIDGE_URL,
-	APP_LOG_LEVEL,
-	APP_POLARIS_URL,
-	SHOPIFY_CDN,
-} from '#app/const';
-import rootCss from '#app/root.css?url';
-import type {Route} from './+types/root';
+import { API_KEY, APP_BRIDGE_URL, APP_LOG_LEVEL, APP_POLARIS_URL, SHOPIFY_CDN } from "#app/const";
+import rootCss from "#app/root.css?url";
+import type { Route } from "./+types/root";
 
 export default function Component() {
 	return <Outlet />;
 }
 
-export function ErrorBoundary({error}: Route.ErrorBoundaryProps) {
-	let title = '500 Error';
-	let message = 'An unexpected error occurred.';
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+	let title = "500 Error";
+	let message = "An unexpected error occurred.";
 	if (isRouteErrorResponse(error)) {
 		title = `${error.status} Error`;
 		message = error.data?.message ?? error.statusText ?? message;
@@ -50,10 +44,10 @@ export function ErrorBoundary({error}: Route.ErrorBoundaryProps) {
 		</s-page>
 	);
 }
-ErrorBoundary.displayName = 'RootErrorBoundary';
+ErrorBoundary.displayName = "RootErrorBoundary";
 
-export function Layout({children}: PropsWithChildren) {
-	const {i18n} = useTranslation();
+export function Layout({ children }: PropsWithChildren) {
+	const { i18n } = useTranslation();
 
 	return (
 		<html dir={i18n.dir()} lang={i18n.language} suppressHydrationWarning>
@@ -62,9 +56,7 @@ export function Layout({children}: PropsWithChildren) {
 				<meta content="initial-scale=1, width=device-width" name="viewport" />
 				<meta name="shopify-api-key" content={API_KEY} />
 				<meta name="description" content="..." />
-				{APP_LOG_LEVEL === 'debug' && (
-					<meta name="shopify-debug" content="web-vitals" />
-				)}
+				{APP_LOG_LEVEL === "debug" && <meta name="shopify-debug" content="web-vitals" />}
 				<meta name="shopify-experimental-features" content="keepAlive" />
 				<link href={SHOPIFY_CDN} rel="preconnect" />
 				<script src={APP_BRIDGE_URL} rel="preload" />

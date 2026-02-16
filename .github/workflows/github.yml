@@ -9,7 +9,7 @@ on:
     tags: [releases/*]
 
   schedule:
-    - cron: '0 0 * * 0'
+    - cron: "0 0 * * 0"
 
 jobs:
   codeql:
@@ -27,8 +27,8 @@ jobs:
           languages: actions, javascript-typescript
       - uses: actions/setup-node@v4
         with:
-          node-version-file: 'package.json'
-          cache: 'npm'
+          node-version-file: "package.json"
+          cache: "npm"
       - run: npm ci --legacy-peer-deps
       - uses: github/codeql-action/analyze@v3
 

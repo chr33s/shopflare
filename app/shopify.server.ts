@@ -1,37 +1,37 @@
-import {createGraphQLClient, type GraphQLClient} from '@shopify/graphql-client';
-import {env, waitUntil} from 'cloudflare:workers';
-import {type JWTPayload, jwtVerify} from 'jose';
-import {data, redirect as routerRedirect} from 'react-router';
-import * as z from 'zod/mini';
+import { createGraphQLClient, type GraphQLClient } from "@shopify/graphql-client";
+import { env, waitUntil } from "cloudflare:workers";
+import { type JWTPayload, jwtVerify } from "jose";
+import { data, redirect as routerRedirect } from "react-router";
+import * as z from "zod/mini";
 
-import {API_VERSION, APP_BRIDGE_URL, APP_HANDLE} from './const';
-import MetafieldNodeFragment from './graphql/fragment.metafield-node.gql?raw';
-import MetafieldNodesFragment from './graphql/fragment.metafield-nodes.gql?raw';
-import BulkOperationCancel from './graphql/mutation.bulk-operation-cancel.gql?raw';
-import BulkOperationRunMutation from './graphql/mutation.bulk-operation-run-mutation.gql?raw';
-import BulkOperationRunQuery from './graphql/mutation.bulk-operation-run-query.gql?raw';
-import FileCreate from './graphql/mutation.file-create.gql?raw';
-import MetafieldDefinitionCreate from './graphql/mutation.metafield-definition-create.gql?raw';
-import MetafieldDefinitionDelete from './graphql/mutation.metafield-definition-delete.gql?raw';
-import MetafieldDefinitionUpdate from './graphql/mutation.metafield-definition-update.gql?raw';
-import MetafieldDelete from './graphql/mutation.metafield-delete.gql?raw';
-import MetafieldsSet from './graphql/mutation.metafields-set.gql?raw';
-import MetaobjectDefinitionCreate from './graphql/mutation.metaobject-definition-create.gql?raw';
-import MetaobjectDefinitionDelete from './graphql/mutation.metaobject-definition-delete.gql?raw';
-import MetaobjectDefinitionUpdate from './graphql/mutation.metaobject-definition-update.gql?raw';
-import MetaobjectDelete from './graphql/mutation.metaobject-delete.gql?raw';
-import MetaobjectUpsert from './graphql/mutation.metaobject-upsert.gql?raw';
-import StagedUploadsCreate from './graphql/mutation.staged-uploads-create.gql?raw';
-import BillingCheck from './graphql/query.billing-check.gql?raw';
-import CurrentBulkOperation from './graphql/query.current-bulk-operation.gql?raw';
-import FileNode from './graphql/query.file.gql?raw';
-import MetafieldDefinition from './graphql/query.metafield-definition.gql?raw';
-import Metafield from './graphql/query.metafield.gql?raw';
-import Metafields from './graphql/query.metafields.gql?raw';
-import MetaobjectDefinition from './graphql/query.metaobject-definition.gql?raw';
-import Metaobject from './graphql/query.metaobject.gql?raw';
-import Metaobjects from './graphql/query.metaobjects.gql?raw';
-import {log} from './shopify.shared';
+import { API_VERSION, APP_BRIDGE_URL, APP_HANDLE } from "./const";
+import MetafieldNodeFragment from "./graphql/fragment.metafield-node.gql?raw";
+import MetafieldNodesFragment from "./graphql/fragment.metafield-nodes.gql?raw";
+import BulkOperationCancel from "./graphql/mutation.bulk-operation-cancel.gql?raw";
+import BulkOperationRunMutation from "./graphql/mutation.bulk-operation-run-mutation.gql?raw";
+import BulkOperationRunQuery from "./graphql/mutation.bulk-operation-run-query.gql?raw";
+import FileCreate from "./graphql/mutation.file-create.gql?raw";
+import MetafieldDefinitionCreate from "./graphql/mutation.metafield-definition-create.gql?raw";
+import MetafieldDefinitionDelete from "./graphql/mutation.metafield-definition-delete.gql?raw";
+import MetafieldDefinitionUpdate from "./graphql/mutation.metafield-definition-update.gql?raw";
+import MetafieldDelete from "./graphql/mutation.metafield-delete.gql?raw";
+import MetafieldsSet from "./graphql/mutation.metafields-set.gql?raw";
+import MetaobjectDefinitionCreate from "./graphql/mutation.metaobject-definition-create.gql?raw";
+import MetaobjectDefinitionDelete from "./graphql/mutation.metaobject-definition-delete.gql?raw";
+import MetaobjectDefinitionUpdate from "./graphql/mutation.metaobject-definition-update.gql?raw";
+import MetaobjectDelete from "./graphql/mutation.metaobject-delete.gql?raw";
+import MetaobjectUpsert from "./graphql/mutation.metaobject-upsert.gql?raw";
+import StagedUploadsCreate from "./graphql/mutation.staged-uploads-create.gql?raw";
+import BillingCheck from "./graphql/query.billing-check.gql?raw";
+import CurrentBulkOperation from "./graphql/query.current-bulk-operation.gql?raw";
+import FileNode from "./graphql/query.file.gql?raw";
+import MetafieldDefinition from "./graphql/query.metafield-definition.gql?raw";
+import Metafield from "./graphql/query.metafield.gql?raw";
+import Metafields from "./graphql/query.metafields.gql?raw";
+import MetaobjectDefinition from "./graphql/query.metaobject-definition.gql?raw";
+import Metaobject from "./graphql/query.metaobject.gql?raw";
+import Metaobjects from "./graphql/query.metaobjects.gql?raw";
+import { log } from "./shopify.shared";
 import type {
 	BillingCheckQuery,
 	BulkOperationCancelMutation,
@@ -57,7 +57,7 @@ import type {
 	MetaobjectsQuery,
 	MetaobjectUpsertMutation,
 	StagedUploadsCreateMutation,
-} from './types/admin.generated';
+} from "./types/admin.generated";
 import type {
 	MetafieldDefinitionIdentifierInput,
 	MetafieldDefinitionInput,
@@ -69,13 +69,13 @@ import type {
 	MutationBulkOperationRunMutationArgs,
 	MutationBulkOperationRunQueryArgs,
 	StagedMediaUploadTarget,
-} from './types/admin.types';
+} from "./types/admin.types";
 
 export async function admin(request: Request) {
 	async function authenticate() {
 		utils.handleOptions(request);
 
-		const {SHOPIFY_API_KEY, SHOPIFY_API_SECRET_KEY, SHOPIFY_APP_URL} = config();
+		const { SHOPIFY_API_KEY, SHOPIFY_API_SECRET_KEY, SHOPIFY_APP_URL } = config();
 
 		const url = new URL(request.url);
 		let encodedSessionToken = null;
@@ -87,33 +87,31 @@ export async function admin(request: Request) {
 				secretKey: SHOPIFY_API_SECRET_KEY,
 			});
 			if (!decodedSessionToken) {
-				throw new Exception('Invalid session token', {
+				throw new Exception("Invalid session token", {
 					status: 401,
-					type: 'REQUEST',
+					type: "REQUEST",
 				});
 			}
 		} catch {
-			const isDocumentRequest = !request.headers.has('Authorization');
+			const isDocumentRequest = !request.headers.has("Authorization");
 			if (isDocumentRequest) {
 				// Remove `id_token` from the query string to prevent an invalid session token sent to the redirect path.
-				url.searchParams.delete('id_token');
+				url.searchParams.delete("id_token");
 
 				// Using shopify-reload path to redirect the bounce automatically.
 				url.searchParams.append(
-					'shopify-reload',
+					"shopify-reload",
 					`${SHOPIFY_APP_URL}${url.pathname}?${url.searchParams.toString()}`,
 				);
-				throw routerRedirect(
-					`/shopify/session-token-bounce?${url.searchParams.toString()}`,
-				);
+				throw routerRedirect(`/shopify/session-token-bounce?${url.searchParams.toString()}`);
 			}
 
 			const response = new Response(undefined, {
 				headers: new Headers({
-					'X-Shopify-Retry-Invalid-Session-Request': '1',
+					"X-Shopify-Retry-Invalid-Session-Request": "1",
 				}),
 				status: 401,
-				statusText: 'Unauthorized',
+				statusText: "Unauthorized",
 			});
 			utils.addCorsHeaders(request, response.headers);
 			throw response;
@@ -121,91 +119,77 @@ export async function admin(request: Request) {
 
 		const shop = utils.sanitizeShop(new URL(decodedSessionToken.dest).hostname);
 		if (!shop) {
-			throw new Exception('Received invalid shop argument', {
+			throw new Exception("Received invalid shop argument", {
 				status: 400,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 
 		const body = {
 			client_id: SHOPIFY_API_KEY,
 			client_secret: SHOPIFY_API_SECRET_KEY,
-			grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
-			requested_token_type:
-				'urn:shopify:params:oauth:token-type:offline-access-token',
+			grant_type: "urn:ietf:params:oauth:grant-type:token-exchange",
+			requested_token_type: "urn:shopify:params:oauth:token-type:offline-access-token",
 			subject_token: encodedSessionToken,
-			subject_token_type: 'urn:ietf:params:oauth:token-type:id_token',
+			subject_token_type: "urn:ietf:params:oauth:token-type:id_token",
 		};
 
 		const response = await fetch(`https://${shop}/admin/oauth/access_token`, {
 			body: JSON.stringify(body),
 			headers: new Headers({
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
+				Accept: "application/json",
+				"Content-Type": "application/json",
 			}),
-			method: 'POST',
+			method: "POST",
 			signal: AbortSignal.timeout(1_000),
 		});
 		if (!response.ok) {
 			const body: any = await response.json();
-			if (typeof response === 'undefined') {
-				const message = body?.errors?.message ?? '';
-				throw new Exception(
-					`Http request error, no response available: ${message}`,
-					{
-						status: 400,
-						type: 'REQUEST',
-					},
-				);
+			if (typeof response === "undefined") {
+				const message = body?.errors?.message ?? "";
+				throw new Exception(`Http request error, no response available: ${message}`, {
+					status: 400,
+					type: "REQUEST",
+				});
 			}
 
 			if (response.status === 200 && body.errors.graphQLErrors) {
-				throw new Exception(
-					body.errors.graphQLErrors?.[0].message ?? 'GraphQL operation failed',
-					{
-						status: 400,
-						type: 'RESPONSE',
-					},
-				);
+				throw new Exception(body.errors.graphQLErrors?.[0].message ?? "GraphQL operation failed", {
+					status: 400,
+					type: "RESPONSE",
+				});
 			}
 
 			const errorMessages: string[] = [];
 			if (body.errors) {
 				errorMessages.push(JSON.stringify(body.errors, null, 2));
 			}
-			const xRequestId = response.headers.get('x-request-id');
+			const xRequestId = response.headers.get("x-request-id");
 			if (xRequestId) {
-				errorMessages.push(
-					`If you report this error, please include this id: ${xRequestId}`,
-				);
+				errorMessages.push(`If you report this error, please include this id: ${xRequestId}`);
 			}
 
-			const errorMessage = errorMessages.length
-				? `:\n${errorMessages.join('\n')}`
-				: '';
+			const errorMessage = errorMessages.length ? `:\n${errorMessages.join("\n")}` : "";
 
 			switch (true) {
 				case response.status === 429: {
-					throw new Exception(
-						`Shopify is throttling requests ${errorMessage}`,
-						{
-							status: response.status,
-							type: 'RESPONSE',
-							// retryAfter: response.headers.has("Retry-After") ? parseFloat(response.headers.get("Retry-After")) : undefined,
-						},
-					);
+					throw new Exception(`Shopify is throttling requests ${errorMessage}`, {
+						status: response.status,
+						type: "RESPONSE",
+						// retryAfter: response.headers.has("Retry-After") ? parseFloat(response.headers.get("Retry-After")) : undefined,
+					});
 				}
 				case response.status >= 500:
 					throw new Exception(`Shopify internal error${errorMessage}`, {
 						status: response.status,
-						type: 'SERVER',
+						type: "SERVER",
 					});
 				default:
 					throw new Exception(
 						`Received an error response (${response.status} ${response.statusText}) from Shopify${errorMessage}`,
 						{
 							status: response.status,
-							type: 'RESPONSE',
+							type: "RESPONSE",
 						},
 					);
 			}
@@ -228,9 +212,9 @@ export async function admin(request: Request) {
 
 		const current = await session().get(shop);
 		if (!current) {
-			throw new Exception('No session found', {
+			throw new Exception("No session found", {
 				status: 401,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 
@@ -245,15 +229,12 @@ export async function admin(request: Request) {
 					const webhook = {
 						apiVersion: API_VERSION,
 						domain: shop,
-						hmac: 'n/a',
-						payload: {timestamp: installTimestamp},
-						topic: 'APP_INSTALLED',
+						hmac: "n/a",
+						payload: { timestamp: installTimestamp },
+						topic: "APP_INSTALLED",
 						webhookId: crypto.randomUUID(),
 					};
-					env.WEBHOOK_QUEUE.send(
-						{session: current, webhook},
-						{contentType: 'json'},
-					);
+					await env.WEBHOOK_QUEUE.send({ session: current, webhook }, { contentType: "json" });
 					await env.SESSION_KV.put(installKey, installTimestamp);
 				})(),
 			);
@@ -271,13 +252,11 @@ export async function admin(request: Request) {
 
 export function billing(request: Request) {
 	async function check(plans: string[]) {
-		const shop = utils.sanitizeShop(
-			new URL(request.url).searchParams.get('shop'),
-		);
+		const shop = utils.sanitizeShop(new URL(request.url).searchParams.get("shop"));
 		if (!shop) {
 			throw new Exception(`Shop ${shop} not found`, {
 				status: 400,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 
@@ -289,16 +268,16 @@ export function billing(request: Request) {
 		});
 	}
 
-	return {check};
+	return { check };
 
 	async function active(shop: string, plans: string[]) {
-		const isTest = config().SHOPIFY_APP_TEST === '1';
+		const isTest = config().SHOPIFY_APP_TEST === "1";
 
-		const current = await session('admin').get(shop);
+		const current = await session("admin").get(shop);
 		if (!current?.accessToken) {
 			throw new Exception(`Access token for ${shop} not found`, {
 				status: 400,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 		const admin = client({
@@ -307,33 +286,27 @@ export function billing(request: Request) {
 		}).admin();
 
 		let cursor: string | undefined;
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		while (true) {
-			const {data, errors} = await admin.request<BillingCheckQuery>(
-				BillingCheck,
-				{variables: {cursor}},
-			);
+			const { data, errors } = await admin.request<BillingCheckQuery>(BillingCheck, {
+				variables: { cursor },
+			});
 			if (errors || !data) {
-				throw new Exception(errors?.message ?? 'Unknown server error', {
+				throw new Exception(errors?.message ?? "Unknown server error", {
 					status: errors?.networkStatusCode ?? 500,
-					type: errors?.networkStatusCode ? 'RESPONSE' : 'SERVER',
+					type: errors?.networkStatusCode ? "RESPONSE" : "SERVER",
 				});
 			}
 
-			const {activeSubscriptions, oneTimePurchases} =
-				data.currentAppInstallation;
+			const { activeSubscriptions, oneTimePurchases } = data.currentAppInstallation;
 			if (
 				[...activeSubscriptions, ...oneTimePurchases.nodes].some(
-					(plan) =>
-						plans.includes(plan.name) &&
-						plan.status === 'ACTIVE' &&
-						plan.test === isTest,
+					(plan) => plans.includes(plan.name) && plan.status === "ACTIVE" && plan.test === isTest,
 				)
 			) {
 				return true;
 			}
 
-			const {pageInfo} = oneTimePurchases;
+			const { pageInfo } = oneTimePurchases;
 			if (pageInfo.hasNextPage && pageInfo.endCursor) {
 				cursor = pageInfo.endCursor;
 				continue;
@@ -345,29 +318,27 @@ export function billing(request: Request) {
 
 export function bulkOperation(client: Client) {
 	async function query(query: string) {
-		await runQuery({query});
-		await process('QUERY');
-		return download('QUERY');
+		await runQuery({ query });
+		await process("QUERY");
+		return download("QUERY");
 	}
 
 	async function mutation(mutation: string, variables: object[]) {
 		const buffer = utils.JSONL.stringify(variables);
 		const digest = await crypto.subtle.digest(
-			{name: 'SHA-1'},
+			{ name: "SHA-1" },
 			new TextEncoder().encode(JSON.stringify(variables)),
 		);
-		const key = utils.encode(digest, 'hex');
+		const key = utils.encode(digest, "hex");
 		const filename = `shopflare.variables.${key}.jsonl`;
-		const file = new File([buffer], filename, {type: 'text/jsonl'});
+		const file = new File([buffer], filename, { type: "text/jsonl" });
 
 		const target = await upload(client).target(file);
-		const stagedUploadPath = target.parameters.find(
-			(v) => v.name === 'key',
-		)!.value;
+		const stagedUploadPath = target.parameters.find((v) => v.name === "key")!.value;
 
-		await runMutation({mutation, stagedUploadPath});
-		await process('MUTATION');
-		return download('MUTATION');
+		await runMutation({ mutation, stagedUploadPath });
+		await process("MUTATION");
+		return download("MUTATION");
 	}
 
 	return {
@@ -375,12 +346,11 @@ export function bulkOperation(client: Client) {
 		query,
 	};
 
-	// @ts-expect-error needed spec compliance
-	// eslint-disable-next-line no-unused-vars
+	// oxlint-disable-next-line no-unused-vars
 	async function cancel(id: string) {
 		return client
 			.request<BulkOperationCancelMutation>(BulkOperationCancel, {
-				variables: {id},
+				variables: { id },
 			})
 			.then((res) => res.data?.bulkOperationCancel);
 	}
@@ -388,7 +358,7 @@ export function bulkOperation(client: Client) {
 	async function current(type: BulkOperationType) {
 		return client
 			.request<CurrentBulkOperationQuery>(CurrentBulkOperation, {
-				variables: {type},
+				variables: { type },
 			})
 			.then((res) => res.data?.currentBulkOperation);
 	}
@@ -397,7 +367,7 @@ export function bulkOperation(client: Client) {
 		return client
 			.request<BulkOperationRunMutationMutation>(BulkOperationRunMutation, {
 				variables: {
-					clientIdentifier: 'shopflare',
+					clientIdentifier: "shopflare",
 					...args,
 				},
 			})
@@ -407,7 +377,7 @@ export function bulkOperation(client: Client) {
 	async function runQuery(args: MutationBulkOperationRunQueryArgs) {
 		return client
 			.request<BulkOperationRunQueryMutation>(BulkOperationRunQuery, {
-				variables: {...args},
+				variables: { ...args },
 			})
 			.then((res) => res.data?.bulkOperationRunQuery);
 	}
@@ -425,21 +395,19 @@ export function bulkOperation(client: Client) {
 
 		const json = utils.JSONL.parse(text);
 		for (const obj of json) {
-			if (Object.prototype.toString.call(obj) !== '[object Object]') continue;
+			if (Object.prototype.toString.call(obj) !== "[object Object]") continue;
 			if (obj.__parentId) continue;
 
 			const parent = json.find((v) => v.id === obj.__parentId)!;
-			const parentKey = parent.id.split('/').at(3);
+			const parentKey = parent.id.split("/").at(3);
 
-			const child = Object.fromEntries(
-				Object.entries(obj).filter(([key]) => key !== '__parentId'),
-			);
+			const child = Object.fromEntries(Object.entries(obj).filter(([key]) => key !== "__parentId"));
 			const childKey = obj.id
-				.split('/')
+				.split("/")
 				.at(3)
-				?.replace(parentKey!, '')
+				?.replace(parentKey!, "")
 				.toLocaleLowerCase()
-				.concat('s')!;
+				.concat("s")!;
 
 			parent[childKey] ??= [];
 			if (!Array.isArray(parent[childKey])) continue;
@@ -449,11 +417,10 @@ export function bulkOperation(client: Client) {
 	}
 
 	async function process(type: BulkOperationType) {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		while (true) {
 			const data = await current(type);
-			const status = data?.status ?? '';
-			if (['CANCELING', 'CREATED', 'RUNNING'].includes(status)) {
+			const status = data?.status ?? "";
+			if (["CANCELING", "CREATED", "RUNNING"].includes(status)) {
 				await new Promise((resolve) => setTimeout(resolve, 500));
 				continue;
 			}
@@ -462,20 +429,19 @@ export function bulkOperation(client: Client) {
 	}
 }
 
-export type BulkOperationType = 'QUERY' | 'MUTATION';
+export type BulkOperationType = "QUERY" | "MUTATION";
 
 export function client({
 	accessToken,
 	apiVersion = API_VERSION,
 	shop,
-}: Record<'accessToken' | 'shop', string> &
-	Partial<Record<'apiVersion', string>>) {
+}: Record<"accessToken" | "shop", string> & Partial<Record<"apiVersion", string>>) {
 	type Headers = Record<string, string | string[]>;
 
 	function admin(headers?: Headers) {
 		return client({
 			headers: {
-				'X-Shopify-Access-Token': accessToken,
+				"X-Shopify-Access-Token": accessToken,
 				...headers,
 			},
 			url: `https://${shop}/admin/api/${apiVersion}/graphql.json`,
@@ -495,7 +461,7 @@ export function client({
 	function storefront(headers?: Headers) {
 		return client({
 			headers: {
-				'X-Shopify-Storefront-Access-Token': accessToken,
+				"X-Shopify-Storefront-Access-Token": accessToken,
 				...headers,
 			},
 			url: `https://${shop}/api/${apiVersion}/graphql.json`,
@@ -508,11 +474,11 @@ export function client({
 		storefront,
 	};
 
-	function client({url, headers}: {url: string; headers: Headers}) {
+	function client({ url, headers }: { url: string; headers: Headers }) {
 		return createGraphQLClient({
 			customFetchApi: fetch,
 			headers: {
-				'Content-Type': 'application/json',
+				"Content-Type": "application/json",
 				...headers,
 			},
 			logger: (...args: unknown[]) => log.debug(...args),
@@ -527,7 +493,7 @@ export function customer(request: Request) {
 	async function authenticate() {
 		utils.handleOptions(request);
 
-		const {SHOPIFY_API_KEY, SHOPIFY_API_SECRET_KEY} = config();
+		const { SHOPIFY_API_KEY, SHOPIFY_API_SECRET_KEY } = config();
 
 		let encodedSessionToken = null;
 		let decodedSessionToken = null;
@@ -538,18 +504,18 @@ export function customer(request: Request) {
 				secretKey: SHOPIFY_API_SECRET_KEY,
 			});
 			if (!decodedSessionToken) {
-				throw new Exception('Invalid session token', {
+				throw new Exception("Invalid session token", {
 					status: 401,
-					type: 'REQUEST',
+					type: "REQUEST",
 				});
 			}
 		} catch {
 			const response = new Response(undefined, {
 				headers: new Headers({
-					'X-Shopify-Retry-Invalid-Session-Request': '1',
+					"X-Shopify-Retry-Invalid-Session-Request": "1",
 				}),
 				status: 401,
-				statusText: 'Unauthorized',
+				statusText: "Unauthorized",
 			});
 			utils.addCorsHeaders(request, response.headers);
 			throw response;
@@ -557,28 +523,28 @@ export function customer(request: Request) {
 
 		const shop = utils.sanitizeShop(decodedSessionToken.dest);
 		if (!shop) {
-			throw new Exception('Received invalid shop argument', {
+			throw new Exception("Received invalid shop argument", {
 				status: 400,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 
-		const current = await session('customer').get(shop);
+		const current = await session("customer").get(shop);
 		if (!current) {
-			throw new Exception('No session found', {
+			throw new Exception("No session found", {
 				status: 401,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 
 		return {
 			client: client(current).customer(),
-			customer: {id: decodedSessionToken.sub},
+			customer: { id: decodedSessionToken.sub },
 			session: current,
 		};
 	}
 
-	return {authenticate};
+	return { authenticate };
 }
 
 export function config() {
@@ -586,7 +552,7 @@ export function config() {
 		SHOPIFY_API_KEY: z.string().check(z.minLength(32)),
 		SHOPIFY_API_SECRET_KEY: z.string().check(z.minLength(32)),
 		SHOPIFY_APP_HANDLE: z.string().check(z.minLength(1)),
-		SHOPIFY_APP_TEST: z._default(z.enum(['0', '1']), '0'),
+		SHOPIFY_APP_TEST: z._default(z.enum(["0", "1"]), "0"),
 		SHOPIFY_APP_URL: z.string().check(z.url()),
 	});
 
@@ -599,9 +565,9 @@ export type Config = ReturnType<typeof config>;
 // NOTE: @deprecated
 export function createShopify() {
 	return {
-		admin: (request: Request) => admin(request).then(({client}) => client),
+		admin: (request: Request) => admin(request).then(({ client }) => client),
 		config: config(),
-		proxy: (request: Request) => proxy(request).then(({client}) => client),
+		proxy: (request: Request) => proxy(request).then(({ client }) => client),
 		redirect: (request: Request, init: Redirect) => redirect(request, init),
 		session: session(),
 		utils: {
@@ -610,10 +576,9 @@ export function createShopify() {
 				utils.addCorsHeaders(request, responseHeaders),
 			log,
 			validateHmac: (data: string, hmac: string, encoding: UtilEncoding) =>
-				utils.validateHmac({data, encoding, hmac}),
+				utils.validateHmac({ data, encoding, hmac }),
 		},
-		webhook: (request: Request) =>
-			webhook(request).then(({webhook}) => webhook),
+		webhook: (request: Request) => webhook(request).then(({ webhook }) => webhook),
 	};
 }
 
@@ -627,12 +592,12 @@ export function createShopifyClient({
 	headers: Record<string, string | string[]>;
 	shop: string;
 }) {
-	const admin = 'X-Shopify-Access-Token';
-	const storefront = 'X-Shopify-Storefront-Access-Token';
+	const admin = "X-Shopify-Access-Token";
+	const storefront = "X-Shopify-Storefront-Access-Token";
 	if (!headers[admin] && !headers[storefront]) {
 		throw new Exception(`Missing auth header [${admin}, ${storefront}]`, {
 			status: 401,
-			type: 'REQUEST',
+			type: "REQUEST",
 		});
 	}
 
@@ -641,13 +606,13 @@ export function createShopifyClient({
 		accessToken,
 		apiVersion,
 		shop,
-	})[headers[storefront] ? 'storefront' : 'admin'](headers);
+	})[headers[storefront] ? "storefront" : "admin"](headers);
 }
 
 export class Exception extends Error {
 	errors?: unknown[];
 	status = 500;
-	type: 'REQUEST' | 'RESPONSE' | 'SERVER' = 'SERVER';
+	type: "REQUEST" | "RESPONSE" | "SERVER" = "SERVER";
 
 	constructor(
 		message: string,
@@ -675,8 +640,8 @@ export async function handler<T>(fn: () => Promise<T>) {
 		if (error instanceof Response) return error;
 		if (error instanceof Exception) {
 			switch (error.type) {
-				case 'RESPONSE':
-				case 'REQUEST': {
+				case "RESPONSE":
+				case "REQUEST": {
 					return data(
 						{
 							data: undefined,
@@ -685,7 +650,7 @@ export async function handler<T>(fn: () => Promise<T>) {
 						},
 						{
 							status: error.status,
-							statusText: 'TEST',
+							statusText: "TEST",
 						},
 					);
 				}
@@ -700,39 +665,36 @@ export async function handler<T>(fn: () => Promise<T>) {
 		throw data(
 			{
 				data: undefined,
-				errors: [{message: 'Unknown Error'}],
+				errors: [{ message: "Unknown Error" }],
 			},
 			500,
 		);
 	}
 }
 
-export {log};
+export { log };
 
 export function metafield(client: Client) {
 	function definition() {
 		async function get(identifier: MetafieldDefinitionIdentifierInput) {
 			return client
 				.request<MetafieldDefinitionQuery>(MetafieldDefinition, {
-					variables: {identifier},
+					variables: { identifier },
 				})
 				.then((res) => res.data?.metafieldDefinition);
 		}
 
 		async function set(
 			identifier: MetafieldDefinitionIdentifierInput,
-			definition: Omit<
-				MetafieldDefinitionInput,
-				'key' | 'namespace' | 'ownerType'
-			> | null,
+			definition: Omit<MetafieldDefinitionInput, "key" | "namespace" | "ownerType"> | null,
 		) {
 			if (definition === null) {
 				return destroy(identifier);
 			}
 			const existing = await get(identifier);
 			return existing
-				? update({...identifier, ...definition})
-				: create({...identifier, ...definition});
+				? update({ ...identifier, ...definition })
+				: create({ ...identifier, ...definition });
 		}
 
 		return {
@@ -743,7 +705,7 @@ export function metafield(client: Client) {
 		async function create(definition: MetafieldDefinitionInput) {
 			return client
 				.request<MetafieldDefinitionCreateMutation>(MetafieldDefinitionCreate, {
-					variables: {definition},
+					variables: { definition },
 				})
 				.then((res) => res.data?.metafieldDefinitionCreate);
 		}
@@ -751,15 +713,12 @@ export function metafield(client: Client) {
 		async function update(definition: MetafieldDefinitionInput) {
 			return client
 				.request<MetafieldDefinitionUpdateMutation>(MetafieldDefinitionUpdate, {
-					variables: {definition},
+					variables: { definition },
 				})
 				.then((res) => res.data?.metafieldDefinitionUpdate);
 		}
 
-		async function destroy(
-			identifier: MetafieldDefinitionIdentifierInput,
-			cascade = false,
-		) {
+		async function destroy(identifier: MetafieldDefinitionIdentifierInput, cascade = false) {
 			return client
 				.request<MetafieldDefinitionDeleteMutation>(MetafieldDefinitionDelete, {
 					variables: {
@@ -774,14 +733,14 @@ export function metafield(client: Client) {
 	async function get(identifier: MetafieldGetOne): ReturnType<typeof getOne>;
 	async function get(identifier: MetafieldGetAll): ReturnType<typeof getAll>;
 	async function get(identifier: MetafieldGetOne | MetafieldGetAll) {
-		return 'key' in identifier ? getOne(identifier) : getAll(identifier);
+		return "key" in identifier ? getOne(identifier) : getAll(identifier);
 	}
 
 	async function set(
 		identifier: MetafieldInput,
 		metafield:
-			| (Omit<MetafieldsSetInput, 'key' | 'namespace' | 'ownerId' | 'value'> & {
-					value: MetafieldsSetInput['value'] | null;
+			| (Omit<MetafieldsSetInput, "key" | "namespace" | "ownerId" | "value"> & {
+					value: MetafieldsSetInput["value"] | null;
 			  })
 			| null,
 	) {
@@ -789,7 +748,7 @@ export function metafield(client: Client) {
 
 		return client
 			.request<MetafieldsSetMutation>(MetafieldsSet, {
-				variables: {metafields: [{...identifier, ...metafield}]},
+				variables: { metafields: [{ ...identifier, ...metafield }] },
 			})
 			.then((res) => res.data?.metafieldsSet);
 	}
@@ -803,7 +762,7 @@ export function metafield(client: Client) {
 	async function destroy(identifier: MetafieldInput) {
 		return client
 			.request<MetafieldDeleteMutation>(MetafieldDelete, {
-				variables: {metafields: [identifier]},
+				variables: { metafields: [identifier] },
 			})
 			.then((res) => res.data?.metafieldsDelete);
 	}
@@ -815,7 +774,7 @@ export function metafield(client: Client) {
 					${MetafieldNodesFragment}
 					${Metafields}
 				`,
-				{variables: identifier},
+				{ variables: identifier },
 			)
 			.then((res) => res.data?.node?.metafields.nodes);
 	}
@@ -827,7 +786,7 @@ export function metafield(client: Client) {
 					${MetafieldNodeFragment}
 					${Metafield}
 				`,
-				{variables: identifier},
+				{ variables: identifier },
 			)
 			.then((res) => res.data?.node?.metafield);
 	}
@@ -852,20 +811,17 @@ export function metaobject(client: Client) {
 		async function get(id: string) {
 			return client
 				.request<MetaobjectDefinitionQuery>(MetaobjectDefinition, {
-					variables: {id},
+					variables: { id },
 				})
 				.then((res) => res.data?.metaobjectDefinition);
 		}
 
-		async function set(
-			id: string,
-			definition: Omit<MetaobjectDefinitionArgs, 'id'> | null,
-		) {
+		async function set(id: string, definition: Omit<MetaobjectDefinitionArgs, "id"> | null) {
 			if (definition === null) {
 				return destroy(id);
 			}
 			const existing = await get(id);
-			return existing ? update({id, ...definition}) : create(definition);
+			return existing ? update({ id, ...definition }) : create(definition);
 		}
 
 		return {
@@ -873,30 +829,27 @@ export function metaobject(client: Client) {
 			set,
 		};
 
-		async function create(definition: Omit<MetaobjectDefinitionArgs, 'id'>) {
+		async function create(definition: Omit<MetaobjectDefinitionArgs, "id">) {
 			return client
-				.request<MetaobjectDefinitionCreateMutation>(
-					MetaobjectDefinitionCreate,
-					{variables: {definition}},
-				)
+				.request<MetaobjectDefinitionCreateMutation>(MetaobjectDefinitionCreate, {
+					variables: { definition },
+				})
 				.then((res) => res.data?.metaobjectDefinitionCreate);
 		}
 
 		async function update(definition: MetaobjectDefinitionArgs) {
 			return client
-				.request<MetaobjectDefinitionUpdateMutation>(
-					MetaobjectDefinitionUpdate,
-					{variables: {definition}},
-				)
+				.request<MetaobjectDefinitionUpdateMutation>(MetaobjectDefinitionUpdate, {
+					variables: { definition },
+				})
 				.then((res) => res.data?.metaobjectDefinitionUpdate);
 		}
 
 		async function destroy(id: string) {
 			return client
-				.request<MetaobjectDefinitionDeleteMutation>(
-					MetaobjectDefinitionDelete,
-					{variables: {id}},
-				)
+				.request<MetaobjectDefinitionDeleteMutation>(MetaobjectDefinitionDelete, {
+					variables: { id },
+				})
 				.then((res) => res.data?.metaobjectDefinitionDelete);
 		}
 	}
@@ -904,18 +857,18 @@ export function metaobject(client: Client) {
 	async function get(identifier: MetaobjectGetOne): ReturnType<typeof getOne>;
 	async function get(identifier: MetaobjectGetAll): ReturnType<typeof getAll>;
 	async function get(identifier: MetaobjectGetAll | MetaobjectGetOne) {
-		return 'handle' in identifier ? getOne(identifier) : getAll(identifier);
+		return "handle" in identifier ? getOne(identifier) : getAll(identifier);
 	}
 
 	async function set(
 		handle: MetaobjectHandleInput,
-		metaobject: Omit<MetaobjectUpsertInput, 'handle'> | null,
+		metaobject: Omit<MetaobjectUpsertInput, "handle"> | null,
 	) {
 		if (metaobject === null) return destroy(handle);
 
 		return client
 			.request<MetaobjectUpsertMutation>(MetaobjectUpsert, {
-				variables: {handle, metaobject},
+				variables: { handle, metaobject },
 			})
 			.then((res) => res.data?.metaobjectUpsert);
 	}
@@ -927,25 +880,25 @@ export function metaobject(client: Client) {
 	};
 
 	async function destroy(handle: MetaobjectHandleInput) {
-		const metaobject = await get({handle});
+		const metaobject = await get({ handle });
 		if (!metaobject) return;
 
 		return client
 			.request<MetaobjectDeleteMutation>(MetaobjectDelete, {
-				variables: {id: metaobject.id},
+				variables: { id: metaobject.id },
 			})
 			.then((res) => res.data?.metaobjectDelete);
 	}
 
-	async function getOne({handle}: MetaobjectGetOne) {
+	async function getOne({ handle }: MetaobjectGetOne) {
 		return client
-			.request<MetaobjectQuery>(Metaobject, {variables: {handle}})
+			.request<MetaobjectQuery>(Metaobject, { variables: { handle } })
 			.then((res) => res.data?.metaobjectByHandle);
 	}
 
 	async function getAll(identifier: MetaobjectGetAll) {
 		return client
-			.request<MetaobjectsQuery>(Metaobjects, {variables: identifier})
+			.request<MetaobjectsQuery>(Metaobjects, { variables: identifier })
 			.then((res) => res.data?.metaobjects.nodes);
 	}
 }
@@ -963,29 +916,26 @@ export interface MetaobjectGetOne {
 
 export function upload(client: Client) {
 	async function stage(file: File) {
-		const res = await client.request<StagedUploadsCreateMutation>(
-			StagedUploadsCreate,
-			{
-				variables: {
-					input: [
-						{
-							filename: file.name,
-							httpMethod: 'POST',
-							mimeType: file.type,
-							resource: resource(file.type),
-						},
-					],
-				},
+		const res = await client.request<StagedUploadsCreateMutation>(StagedUploadsCreate, {
+			variables: {
+				input: [
+					{
+						filename: file.name,
+						httpMethod: "POST",
+						mimeType: file.type,
+						resource: resource(file.type),
+					},
+				],
 			},
-		);
+		});
 
 		switch (true) {
 			case res.errors === undefined && res.data === undefined:
 			case res.errors !== undefined:
-				throw new Exception(res.errors?.message ?? 'Failed to stage upload', {
+				throw new Exception(res.errors?.message ?? "Failed to stage upload", {
 					errors: res.errors?.graphQLErrors,
 					status: res.errors?.networkStatusCode ?? 500,
-					type: res.errors?.networkStatusCode ? 'RESPONSE' : 'SERVER',
+					type: res.errors?.networkStatusCode ? "RESPONSE" : "SERVER",
 				});
 
 			case Boolean(res.data?.stagedUploadsCreate?.userErrors[0]):
@@ -993,7 +943,7 @@ export function upload(client: Client) {
 				throw new Exception(`Failed to stage upload`, {
 					errors: res.data?.stagedUploadsCreate?.userErrors,
 					status: 400,
-					type: 'RESPONSE',
+					type: "RESPONSE",
 				});
 		}
 
@@ -1005,17 +955,17 @@ export function upload(client: Client) {
 		const target = await stage(file);
 
 		const body = new FormData();
-		target.parameters.forEach(({name, value}) => body.set(name, value));
-		body.set('file', file, file.name);
+		target.parameters.forEach(({ name, value }) => body.set(name, value));
+		body.set("file", file, file.name);
 
 		const res = await fetch(target.url, {
 			body,
-			method: 'POST',
+			method: "POST",
 		});
 		if (!res.ok) {
 			throw new Exception(`Failed to upload data`, {
 				status: 500,
-				type: 'RESPONSE',
+				type: "RESPONSE",
 			});
 		}
 
@@ -1041,7 +991,7 @@ export function upload(client: Client) {
 				files: [
 					{
 						contentType: resource(file.type),
-						duplicateResolutionMode: 'REPLACE',
+						duplicateResolutionMode: "REPLACE",
 						filename: file.name,
 						originalSource: target.resourceUrl,
 					},
@@ -1052,21 +1002,19 @@ export function upload(client: Client) {
 		switch (true) {
 			case res.errors === undefined && res.data === undefined:
 			case res.errors !== undefined:
-				throw new Exception(res.errors?.message ?? 'Failed to create upload', {
+				throw new Exception(res.errors?.message ?? "Failed to create upload", {
 					errors: res.errors?.graphQLErrors,
 					status: res.errors?.networkStatusCode ?? 500,
-					type: res.errors?.networkStatusCode ? 'RESPONSE' : 'SERVER',
+					type: res.errors?.networkStatusCode ? "RESPONSE" : "SERVER",
 				});
 
 			case Boolean(res.data?.fileCreate?.userErrors[0]):
 			case Boolean(res.data?.fileCreate?.files?.[0].fileErrors[0]):
 			case !res.data?.fileCreate?.files?.[0]:
 				throw new Exception(`Failed to create upload`, {
-					errors:
-						res.data?.fileCreate?.userErrors ??
-						res.data?.fileCreate?.files?.[0].fileErrors,
+					errors: res.data?.fileCreate?.userErrors ?? res.data?.fileCreate?.files?.[0].fileErrors,
 					status: 400,
-					type: 'RESPONSE',
+					type: "RESPONSE",
 				});
 		}
 
@@ -1074,27 +1022,26 @@ export function upload(client: Client) {
 	}
 
 	async function wait(id: string) {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		while (true) {
 			const node = await client
-				.request<FileQuery>(FileNode, {variables: {id}})
+				.request<FileQuery>(FileNode, { variables: { id } })
 				.then((res) => res.data?.node);
 			if (!node) return;
 
 			switch (node.fileStatus) {
-				case 'FAILED':
+				case "FAILED":
 					return;
-				case 'READY': {
+				case "READY": {
 					let url: string | undefined;
 					switch (node.__typename) {
-						case 'GenericFile':
+						case "GenericFile":
 							url = node.url;
 							break;
-						case 'MediaImage':
+						case "MediaImage":
 							url = node.image?.url;
 							break;
-						case 'Model3d':
-						case 'Video':
+						case "Model3d":
+						case "Video":
 							url = node.originalSource?.url;
 							break;
 					}
@@ -1110,17 +1057,17 @@ export function upload(client: Client) {
 		}
 	}
 
-	function resource(type: File['type']) {
+	function resource(type: File["type"]) {
 		switch (true) {
-			case type.startsWith('image/'):
-			case type.startsWith('application/x-photoshop'):
-				return 'IMAGE';
-			case type.startsWith('model/'):
-				return 'MODEL_3D';
-			case type.startsWith('video/'):
-				return 'VIDEO';
+			case type.startsWith("image/"):
+			case type.startsWith("application/x-photoshop"):
+				return "IMAGE";
+			case type.startsWith("model/"):
+				return "MODEL_3D";
+			case type.startsWith("video/"):
+				return "VIDEO";
 			default:
-				return 'FILE';
+				return "FILE";
 		}
 	}
 }
@@ -1129,61 +1076,58 @@ export async function proxy(request: Request) {
 	async function authenticate() {
 		const url = new URL(request.url);
 
-		const hmac = url.searchParams.get('signature');
+		const hmac = url.searchParams.get("signature");
 		if (!hmac) {
-			throw new Exception('Proxy signature param is missing', {
+			throw new Exception("Proxy signature param is missing", {
 				status: 400,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 
-		const timestamp = Number(url.searchParams.get('timestamp'));
+		const timestamp = Number(url.searchParams.get("timestamp"));
 		if (
 			// HMAC_TIMESTAMP_PERMITTED_CLOCK_TOLERANCE_SEC
 			Math.abs(Math.trunc(Date.now() / 1000) - timestamp) > 90
 		) {
-			throw new Exception('Proxy timestamp param is expired', {
+			throw new Exception("Proxy timestamp param is expired", {
 				status: 400,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 
 		// NOTE: https://shopify.dev/docs/apps/build/online-store/display-dynamic-data#calculate-a-digital-signature
 		const data = Object.entries(Object.fromEntries(url.searchParams))
-			.filter(([key]) => key !== 'signature')
-			.map(
-				([key, value]) =>
-					`${key}=${Array.isArray(value) ? value.join(',') : value}`,
-			)
+			.filter(([key]) => key !== "signature")
+			.map(([key, value]) => `${key}=${Array.isArray(value) ? value.join(",") : value}`)
 			.sort((a, b) => a.localeCompare(b))
-			.join('');
+			.join("");
 
 		const valid = await utils.validateHmac({
 			data,
-			encoding: 'hex',
+			encoding: "hex",
 			hmac,
 		});
 		if (!valid) {
-			throw new Exception('Invalid hmac', {
+			throw new Exception("Invalid hmac", {
 				status: 401,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 
 		// shop is value due to hmac validation
-		const shop = utils.sanitizeShop(url.searchParams.get('shop'));
+		const shop = utils.sanitizeShop(url.searchParams.get("shop"));
 		if (!shop) {
-			throw new Exception('No shop param', {
+			throw new Exception("No shop param", {
 				status: 400,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 
 		const current = await session().get(shop);
 		if (!current) {
-			throw new Exception('No session found', {
+			throw new Exception("No session found", {
 				status: 401,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 		return {
@@ -1199,25 +1143,20 @@ export async function proxy(request: Request) {
 interface Redirect extends ResponseInit {
 	url: string;
 	shop?: string;
-	target?: '_self' | '_parent' | '_blank' | '_top';
+	target?: "_self" | "_parent" | "_blank" | "_top";
 }
 
-export function redirect(
-	request: Request,
-	{shop, url, target, ...init}: Redirect,
-) {
-	const headers = new Headers({
-		'content-type': 'text/html;charset=utf-8',
-		...init.headers,
-	});
+export function redirect(request: Request, { shop, url, target, ...init }: Redirect) {
+	const headers = new Headers(init.headers);
+	headers.set("content-type", "text/html;charset=utf-8");
 
-	const {SHOPIFY_API_KEY, SHOPIFY_APP_URL} = config();
+	const { SHOPIFY_API_KEY, SHOPIFY_APP_URL } = config();
 
-	let windowTarget = target ?? '_self';
+	let windowTarget = target ?? "_self";
 	let windowUrl = new URL(url, SHOPIFY_APP_URL);
 
 	const isSameOrigin = SHOPIFY_APP_URL === windowUrl.origin;
-	const isRelativePath = url.startsWith('/');
+	const isRelativePath = url.startsWith("/");
 	if (isSameOrigin || isRelativePath) {
 		for (const [key, value] of new URL(request.url).searchParams.entries()) {
 			if (!windowUrl.searchParams.has(key)) {
@@ -1229,28 +1168,23 @@ export function redirect(
 	const adminLinkRegExp = /^shopify:\/*admin\//i;
 	const isAdminLink = adminLinkRegExp.test(url);
 	if (isAdminLink) {
-		const shopUrl =
-			utils.sanitizeShop(
-				shop ?? new URL(request.url).searchParams.get('shop'),
-			) ?? '';
-		const shopHandle = shopUrl.replace('.myshopify.com', '');
-		const adminUri = url.replace(adminLinkRegExp, '/');
-		windowUrl = new URL(
-			`https://admin.shopify.com/store/${shopHandle}${adminUri}`,
-		);
+		const shopUrl = utils.sanitizeShop(shop ?? new URL(request.url).searchParams.get("shop")) ?? "";
+		const shopHandle = shopUrl.replace(".myshopify.com", "");
+		const adminUri = url.replace(adminLinkRegExp, "/");
+		windowUrl = new URL(`https://admin.shopify.com/store/${shopHandle}${adminUri}`);
 
 		const remove = [
 			// sent when clicking rel="home" nav item
-			'appLoadId',
-			'hmac',
-			'host',
-			'embedded',
-			'id_token',
-			'locale',
-			'protocol',
-			'session',
-			'shop',
-			'timestamp',
+			"appLoadId",
+			"hmac",
+			"host",
+			"embedded",
+			"id_token",
+			"locale",
+			"protocol",
+			"session",
+			"shop",
+			"timestamp",
 		];
 		for (const param of remove) {
 			if (windowUrl.searchParams.has(param)) {
@@ -1259,13 +1193,13 @@ export function redirect(
 		}
 
 		if (!target) {
-			windowTarget = '_parent';
+			windowTarget = "_parent";
 		}
 	}
 
 	switch (true) {
-		case target === '_self' && isBounce(request):
-		case target !== '_self' && isEmbedded(request): {
+		case target === "_self" && isBounce(request):
+		case target !== "_self" && isEmbedded(request): {
 			const response = new Response(
 				/* html */ `<head>
 					<script data-api-key="${SHOPIFY_API_KEY}" src="${APP_BRIDGE_URL}"></script>
@@ -1288,10 +1222,10 @@ export function redirect(
 		case isData(request): {
 			const response = new Response(undefined, {
 				headers: new Headers({
-					'X-Shopify-API-Request-Failure-Reauthorize-Url': windowUrl.toString(),
+					"X-Shopify-API-Request-Failure-Reauthorize-Url": windowUrl.toString(),
 				}),
 				status: 401,
-				statusText: 'Unauthorized',
+				statusText: "Unauthorized",
 			});
 			utils.addCorsHeaders(request, response.headers);
 			throw response;
@@ -1303,35 +1237,32 @@ export function redirect(
 	}
 
 	function authorizationHeader(request: Request) {
-		return request.headers.get('authorization')?.replace(/Bearer\s?/, '');
+		return request.headers.get("authorization")?.replace(/Bearer\s?/, "");
 	}
 
 	function isBounce(request: Request) {
-		return (
-			Boolean(authorizationHeader(request)) &&
-			request.headers.has('X-Shopify-Bounce')
-		);
+		return Boolean(authorizationHeader(request)) && request.headers.has("X-Shopify-Bounce");
 	}
 
 	function isData(request: Request) {
 		return (
 			Boolean(authorizationHeader(request)) &&
 			!isBounce(request) &&
-			(!isEmbedded(request) || request.method !== 'GET')
+			(!isEmbedded(request) || request.method !== "GET")
 		);
 	}
 
 	function isEmbedded(request: Request) {
-		return new URL(request.url).searchParams.get('embedded') === '1';
+		return new URL(request.url).searchParams.get("embedded") === "1";
 	}
 }
 
-export function session(type: Sessiontype = 'admin') {
+export function session(type: Sessiontype = "admin") {
 	const kv = env.SESSION_KV;
 
 	async function get(id: string) {
 		if (!id) return;
-		return kv.get<Session>(key(id), 'json');
+		return kv.get<Session>(key(id), "json");
 	}
 
 	async function set(id: string, data: Session | null) {
@@ -1357,27 +1288,27 @@ export interface Session {
 	accessToken: string;
 }
 
-export type Sessiontype = 'admin' | 'customer' | 'storefront';
+export type Sessiontype = "admin" | "customer" | "storefront";
 
-type UtilEncoding = 'base64' | 'hex';
+type UtilEncoding = "base64" | "hex";
 
 export const utils = {
 	addCorsHeaders(request: Request, responseHeaders: Headers) {
-		const origin = request.headers.get('Origin');
+		const origin = request.headers.get("Origin");
 		if (origin && origin !== config().SHOPIFY_APP_URL) {
-			if (!responseHeaders.has('Access-Control-Allow-Headers')) {
-				responseHeaders.set('Access-Control-Allow-Headers', 'Authorization');
+			if (!responseHeaders.has("Access-Control-Allow-Headers")) {
+				responseHeaders.set("Access-Control-Allow-Headers", "Authorization");
 			}
-			if (!responseHeaders.has('Access-Control-Allow-Origin')) {
-				responseHeaders.set('Access-Control-Allow-Origin', origin);
+			if (!responseHeaders.has("Access-Control-Allow-Origin")) {
+				responseHeaders.set("Access-Control-Allow-Origin", origin);
 			}
-			if (responseHeaders.get('Access-Control-Allow-Origin') !== '*') {
-				responseHeaders.set('Vary', 'Origin');
+			if (responseHeaders.get("Access-Control-Allow-Origin") !== "*") {
+				responseHeaders.set("Vary", "Origin");
 			}
-			if (!responseHeaders.has('Access-Control-Expose-Headers')) {
+			if (!responseHeaders.has("Access-Control-Expose-Headers")) {
 				responseHeaders.set(
-					'Access-Control-Expose-Headers',
-					'X-Shopify-API-Request-Failure-Reauthorize-Url',
+					"Access-Control-Expose-Headers",
+					"X-Shopify-API-Request-Failure-Reauthorize-Url",
 				);
 			}
 		}
@@ -1385,43 +1316,37 @@ export const utils = {
 
 	addHeaders(request: Request, responseHeaders: Headers) {
 		const url = new URL(request.url);
-		const shop = utils.sanitizeShop(url.searchParams.get('shop'));
-		if (shop && !url.pathname.startsWith('/apps')) {
-			responseHeaders.set(
-				'Link',
-				`<${APP_BRIDGE_URL}>; rel="preload"; as="script";`,
-			);
+		const shop = utils.sanitizeShop(url.searchParams.get("shop"));
+		if (shop && !url.pathname.startsWith("/apps")) {
+			responseHeaders.set("Link", `<${APP_BRIDGE_URL}>; rel="preload"; as="script";`);
 		}
 	},
 
-	allowedDomains: ['myshopify.com', 'myshopify.io', 'shop.dev', 'shopify.com']
+	allowedDomains: ["myshopify.com", "myshopify.io", "shop.dev", "shopify.com"]
 		// escape
-		.map((v) => v.replace(/\./g, '\\.'))
-		.join('|'),
+		.map((v) => v.replace(/\./g, "\\."))
+		.join("|"),
 
 	encode(value: ArrayBuffer, encoding: UtilEncoding) {
 		switch (encoding) {
-			case 'base64':
+			case "base64":
 				return btoa(String.fromCharCode(...new Uint8Array(value)));
 
-			case 'hex':
-				return [...new Uint8Array(value)].reduce(
-					(a, b) => a + b.toString(16).padStart(2, '0'),
-					'',
-				);
+			case "hex":
+				return [...new Uint8Array(value)].reduce((a, b) => a + b.toString(16).padStart(2, "0"), "");
 		}
 	},
 
 	getToken(request: Request) {
 		return (
-			request.headers.get('Authorization')?.replace('Bearer ', '') ||
-			new URL(request.url).searchParams.get('id_token') ||
-			''
+			request.headers.get("Authorization")?.replace("Bearer ", "") ||
+			new URL(request.url).searchParams.get("id_token") ||
+			""
 		);
 	},
 
 	gid(gid: string) {
-		const parts = gid.split('/');
+		const parts = gid.split("/");
 		return {
 			id: parts.at(-1),
 			ownerType: parts.at(-2),
@@ -1433,11 +1358,11 @@ export const utils = {
 	},
 
 	handleOptions(request: Request) {
-		if (request.method !== 'OPTIONS') return;
+		if (request.method !== "OPTIONS") return;
 
 		const response = new Response(null, {
 			headers: new Headers({
-				'Access-Control-Max-Age': '7200',
+				"Access-Control-Max-Age": "7200",
 			}),
 			status: 204,
 		});
@@ -1448,18 +1373,18 @@ export const utils = {
 	JSONL: {
 		parse(jsonl: string) {
 			return jsonl
-				.split('\n')
-				.filter((string) => string !== '')
+				.split("\n")
+				.filter((string) => string !== "")
 				.map<JSONL>((string) => JSON.parse(string));
 		},
 
 		stringify(array: object[]): string {
-			return array.map((object) => JSON.stringify(object)).join('\n');
+			return array.map((object) => JSON.stringify(object)).join("\n");
 		},
 	},
 
 	legacyUrlToShopAdminUrl(shop: string) {
-		const shopUrl = shop.replace(/^https?:\/\//, '').replace(/\/$/, '');
+		const shopUrl = shop.replace(/^https?:\/\//, "").replace(/\/$/, "");
 		const regExp = /(.+)\.myshopify\.com$/;
 
 		const matches = regExp.exec(shopUrl);
@@ -1476,7 +1401,7 @@ export const utils = {
 		const base64RegExp = /^[0-9a-z+/]+={0,2}$/i;
 		let sanitizedHost = base64RegExp.test(host) ? host : null;
 		if (sanitizedHost) {
-			const {hostname} = new URL(`https://${atob(sanitizedHost)}`);
+			const { hostname } = new URL(`https://${atob(sanitizedHost)}`);
 
 			const hostRegExp = new RegExp(`\\.(${utils.allowedDomains})$`);
 			if (!hostRegExp.test(hostname)) {
@@ -1495,8 +1420,8 @@ export const utils = {
 			`^admin\\.(${utils.allowedDomains})/store/([a-zA-Z0-9][a-zA-Z0-9-_]*)$`,
 		);
 		if (shopAdminRegExp.test(shop)) {
-			sanitizedShop = shop.replace(/^https?:\/\//, '').replace(/\/$/, '');
-			if (sanitizedShop.split('.').at(0) !== 'admin') {
+			sanitizedShop = shop.replace(/^https?:\/\//, "").replace(/\/$/, "");
+			if (sanitizedShop.split(".").at(0) !== "admin") {
 				return null;
 			}
 
@@ -1509,35 +1434,25 @@ export const utils = {
 			}
 		}
 
-		const shopRegExp = new RegExp(
-			`^[a-zA-Z0-9][a-zA-Z0-9-_]*\\.(${utils.allowedDomains})[/]*$`,
-		);
+		const shopRegExp = new RegExp(`^[a-zA-Z0-9][a-zA-Z0-9-_]*\\.(${utils.allowedDomains})[/]*$`);
 		if (!shopRegExp.test(sanitizedShop)) return null;
 
 		return sanitizedShop;
 	},
 
-	async validateHmac(request: {
-		data: string;
-		hmac: string;
-		encoding: UtilEncoding;
-	}) {
+	async validateHmac(request: { data: string; hmac: string; encoding: UtilEncoding }) {
 		const encoder = new TextEncoder();
 		const key = await crypto.subtle.importKey(
-			'raw',
+			"raw",
 			encoder.encode(config().SHOPIFY_API_SECRET_KEY),
 			{
-				hash: 'SHA-256',
-				name: 'HMAC',
+				hash: "SHA-256",
+				name: "HMAC",
 			},
 			false,
-			['sign'],
+			["sign"],
 		);
-		const signature = await crypto.subtle.sign(
-			'HMAC',
-			key,
-			encoder.encode(request.data),
-		);
+		const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(request.data));
 
 		const computed = utils.encode(signature, request.encoding);
 		const bufA = encoder.encode(computed);
@@ -1548,15 +1463,12 @@ export const utils = {
 		return valid;
 	},
 
-	async verifyToken(
-		encoded: string,
-		config: Record<'key' | 'secretKey', string>,
-	) {
-		const {payload: decoded} = await jwtVerify<JWTPayload & {dest: string}>(
+	async verifyToken(encoded: string, config: Record<"key" | "secretKey", string>) {
+		const { payload: decoded } = await jwtVerify<JWTPayload & { dest: string }>(
 			encoded,
 			new TextEncoder().encode(config.secretKey),
 			{
-				algorithms: ['HS256'],
+				algorithms: ["HS256"],
 				clockTolerance: 10,
 			},
 		);
@@ -1568,66 +1480,55 @@ export const utils = {
 	},
 };
 
-export type JSON =
-	| string
-	| number
-	| boolean
-	| null
-	| {[key: string]: JSON}
-	| JSON[];
+export type JSON = string | number | boolean | null | { [key: string]: JSON } | JSON[];
 
-export type JSONL = Record<'__parentId' | 'id', string> &
-	Record<string, JSON | JSON[]>;
+export type JSONL = Record<"__parentId" | "id", string> & Record<string, JSON | JSON[]>;
 
 export async function webhook(request: Request) {
 	async function authenticate() {
-		const hmac = request.headers.get('X-Shopify-Hmac-Sha256');
+		const hmac = request.headers.get("X-Shopify-Hmac-Sha256");
 		if (!hmac) {
-			throw new Exception('Webhook header is missing', {
+			throw new Exception("Webhook header is missing", {
 				status: 400,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 
 		const data = await request.clone().text();
 		if (!data) {
-			throw new Exception('Webhook body is missing', {
+			throw new Exception("Webhook body is missing", {
 				status: 400,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 
 		const valid = await utils.validateHmac({
 			data,
-			encoding: 'base64',
+			encoding: "base64",
 			hmac,
 		});
 		if (!valid) {
-			throw new Exception('Invalid hmac', {
+			throw new Exception("Invalid hmac", {
 				status: 401,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
 
 		const requiredHeaders = {
-			apiVersion: 'X-Shopify-API-Version',
-			domain: 'X-Shopify-Shop-Domain',
-			hmac: 'X-Shopify-Hmac-Sha256',
-			topic: 'X-Shopify-Topic',
-			webhookId: 'X-Shopify-Webhook-Id',
+			apiVersion: "X-Shopify-API-Version",
+			domain: "X-Shopify-Shop-Domain",
+			hmac: "X-Shopify-Hmac-Sha256",
+			topic: "X-Shopify-Topic",
+			webhookId: "X-Shopify-Webhook-Id",
 		};
-		if (
-			!Object.values(requiredHeaders).every((header) =>
-				request.headers.get(header),
-			)
-		) {
-			throw new Exception('Webhook required header is missing', {
+		if (!Object.values(requiredHeaders).every((header) => request.headers.get(header))) {
+			throw new Exception("Webhook required header is missing", {
 				status: 400,
-				type: 'REQUEST',
+				type: "REQUEST",
 			});
 		}
-		const optionalHeaders = {subTopic: 'X-Shopify-Sub-Topic'};
-		const headers = {...requiredHeaders, ...optionalHeaders};
+		const optionalHeaders = { subTopic: "X-Shopify-Sub-Topic" };
+		const headers = { ...requiredHeaders, ...optionalHeaders };
 		const webhook = Object.entries(headers).reduce(
 			(headers, [key, value]) => ({
 				...headers,
@@ -1638,7 +1539,7 @@ export async function webhook(request: Request) {
 
 		const current = await session().get(webhook.domain);
 		if (!current) {
-			throw new Exception('No session found', {status: 401, type: 'SESSION'});
+			throw new Exception("No session found", { status: 401, type: "SESSION" });
 		}
 
 		return {
