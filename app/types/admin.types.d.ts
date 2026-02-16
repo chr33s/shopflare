@@ -243,13 +243,6 @@ export type AbandonedCheckoutLineItemParentRelationship = {
 	parent: AbandonedCheckoutLineItem;
 };
 
-/** The line relationship between two line items in an abandoned checkout. */
-export type AbandonedCheckoutLineItemParentRelationship = {
-  __typename?: 'AbandonedCheckoutLineItemParentRelationship';
-  /** The parent line item of the current line item. */
-  parent: AbandonedCheckoutLineItem;
-};
-
 /** The set of valid sort keys for the AbandonedCheckout query. */
 export enum AbandonedCheckoutSortKeys {
 	/** Sort by the `checkout_id` value. */
@@ -930,7 +923,7 @@ export type AppInstallation = HasMetafields &
 		app: App;
 		/**
 		 * Channel associated with the installed application.
-		 * @deprecated Use `publication` instead.
+		 * @deprecated Use the root-level `channels` query instead.
 		 */
 		channel?: Maybe<Channel>;
 		/** Credits that can be used towards future app purchases. */
@@ -952,7 +945,10 @@ export type AppInstallation = HasMetafields &
 		metafields: MetafieldConnection;
 		/** One-time purchases to a shop. */
 		oneTimePurchases: AppPurchaseOneTimeConnection;
-		/** The publication associated with the installed application. */
+		/**
+		 * The publication associated with the installed application.
+		 * @deprecated Use the root-level `publications` query instead.
+		 */
 		publication?: Maybe<Publication>;
 		/** The records that track the externally-captured revenue for the app. The records are used for revenue attribution purposes. */
 		revenueAttributionRecords: AppRevenueAttributionRecordConnection;
@@ -2460,37 +2456,6 @@ export enum BankAccountType {
 	Savings = "SAVINGS",
 }
 
-/** Represents a bank account payment instrument. */
-export type BankAccount = {
-  __typename?: 'BankAccount';
-  /** The type of account holder. */
-  accountHolderType: BankAccountHolderType;
-  /** The type of bank account. */
-  accountType: BankAccountType;
-  /** The name of the bank. */
-  bankName: Scalars['String']['output'];
-  /** The billing address associated with the bank account. */
-  billingAddress?: Maybe<CustomerPaymentInstrumentBillingAddress>;
-  /** The last four digits of the account number. */
-  lastDigits: Scalars['String']['output'];
-};
-
-/** The type of bank account holder. */
-export enum BankAccountHolderType {
-  /** A company account holder. */
-  Company = 'COMPANY',
-  /** An individual account holder. */
-  Individual = 'INDIVIDUAL'
-}
-
-/** The type of bank account. */
-export enum BankAccountType {
-  /** A checking account. */
-  Checking = 'CHECKING',
-  /** A savings account. */
-  Savings = 'SAVINGS'
-}
-
 /** The valid types of actions a user should be able to perform in an financial app. */
 export enum BankingFinanceAppAccess {
 	/** Indication that the user has blocked money movement due to MFA disabled. */
@@ -2632,7 +2597,7 @@ export enum BillingAttemptUserErrorCode {
 	ContractPaused = "CONTRACT_PAUSED",
 	/** Subscription contract cannot be billed once terminated. */
 	ContractTerminated = "CONTRACT_TERMINATED",
-	/** Subscription contract is under review. */
+	/** Subscription contract is under review, origin order is high risk and unfulfilled. */
 	ContractUnderReview = "CONTRACT_UNDER_REVIEW",
 	/** Billing cycle selector cannot select billing cycle outside of index range. */
 	CycleIndexOutOfRange = "CYCLE_INDEX_OUT_OF_RANGE",
@@ -2732,16 +2697,6 @@ export type BlogArticlesArgs = {
 export type BlogArticlesCountArgs = {
 	limit?: InputMaybe<Scalars["Int"]["input"]>;
 };
-
-/**
- * A blog for publishing articles in the online store. Stores can have multiple blogs to organize content by topic or purpose.
- *
- * Each blog contains articles with their associated comments, tags, and metadata. The comment policy controls whether readers can post comments and whether moderation is required. Blogs use customizable URL handles and can apply alternate templates for specialized layouts.
- */
-export type BlogArticlesCountArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
 
 /**
  * A blog for publishing articles in the online store. Stores can have multiple blogs to organize content by topic or purpose.
@@ -3111,26 +3066,6 @@ export type BulkOperationEdge = {
 	node: BulkOperation;
 };
 
-/** An auto-generated type for paginating through multiple BulkOperations. */
-export type BulkOperationConnection = {
-  __typename?: 'BulkOperationConnection';
-  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
-  edges: Array<BulkOperationEdge>;
-  /** A list of nodes that are contained in BulkOperationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
-  nodes: Array<BulkOperation>;
-  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
-  pageInfo: PageInfo;
-};
-
-/** An auto-generated type which holds one BulkOperation and a cursor during pagination. */
-export type BulkOperationEdge = {
-  __typename?: 'BulkOperationEdge';
-  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of BulkOperationEdge. */
-  node: BulkOperation;
-};
-
 /** Error codes for failed bulk operations. */
 export enum BulkOperationErrorCode {
 	/**
@@ -3228,14 +3163,6 @@ export enum BulkOperationsSortKeys {
 	CompletedAt = "COMPLETED_AT",
 	/** Sort by the `created_at` value. */
 	CreatedAt = "CREATED_AT",
-}
-
-/** The set of valid sort keys for the BulkOperations query. */
-export enum BulkOperationsSortKeys {
-  /** Sort by the `completed_at` value. */
-  CompletedAt = 'COMPLETED_AT',
-  /** Sort by the `created_at` value. */
-  CreatedAt = 'CREATED_AT'
 }
 
 /** Return type for `bulkProductResourceFeedbackCreate` mutation. */
@@ -3420,12 +3347,6 @@ export type BuyerExperienceConfigurationInput = {
 export type BuyerSignalInput = {
 	/** The country code of the buyer. */
 	countryCode: CountryCode;
-};
-
-/** The input fields for a buyer signal. */
-export type BuyerSignalInput = {
-  /** The country code of the buyer. */
-  countryCode: CountryCode;
 };
 
 /** The input fields for exchange line items on a calculated return. */
@@ -6798,6 +6719,7 @@ export type Collection = HasEvents &
 		 * Whether the resource is published to the app's
 		 * [publication](https://shopify.dev/docs/api/admin-graphql/latest/objects/Publication).
 		 * For example, the resource might be published to the app's online store channel.
+		 * @deprecated Use `publishedOnPublication` instead.
 		 */
 		publishedOnCurrentPublication: Scalars["Boolean"]["output"];
 		/**
@@ -9540,20 +9462,6 @@ export type CompanyLocationStoreCreditAccountsArgs = {
 	query?: InputMaybe<Scalars["String"]["input"]>;
 };
 
-
-/**
- * A location or branch of a [`Company`](https://shopify.dev/docs/api/admin-graphql/latest/objects/Company) that's a customer of the shop. Company locations enable B2B customers to manage multiple branches with distinct billing and shipping addresses, tax settings, and checkout configurations.
- *
- * Each location can have its own [`Catalog`](https://shopify.dev/docs/api/admin-graphql/latest/interfaces/Catalog) objects that determine which products are published and their pricing. The [`BuyerExperienceConfiguration`](https://shopify.dev/docs/api/admin-graphql/latest/objects/BuyerExperienceConfiguration) determines checkout behavior including [`PaymentTerms`](https://shopify.dev/docs/api/admin-graphql/latest/objects/PaymentTerms), and whether orders require merchant review. B2B customers select which location they're purchasing for, which determines the applicable catalogs, pricing, [`TaxExemption`](https://shopify.dev/docs/api/admin-graphql/latest/enums/TaxExemption) values, and checkout settings for their [`Order`](https://shopify.dev/docs/api/admin-graphql/latest/objects/Order) objects.
- */
-export type CompanyLocationStoreCreditAccountsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  query?: InputMaybe<Scalars['String']['input']>;
-};
-
 /** Return type for `companyLocationAssignAddress` mutation. */
 export type CompanyLocationAssignAddressPayload = {
 	__typename?: "CompanyLocationAssignAddressPayload";
@@ -9937,33 +9845,6 @@ export type ComponentizedProductsBundleConsolidatedOptionSelectionComponent = {
 	optionId: Scalars["ID"]["output"];
 	/** The value of the component's option value that's included in this consolidated option selection. */
 	value: Scalars["String"]["output"];
-};
-
-/** An option on the bundle parent product that is consolidated from multiple different components. */
-export type ComponentizedProductsBundleConsolidatedOption = {
-  __typename?: 'ComponentizedProductsBundleConsolidatedOption';
-  /** The name of the consolidated option. */
-  name: Scalars['String']['output'];
-  /** The selections of the consolidated option. */
-  selections: Array<ComponentizedProductsBundleConsolidatedOptionSelection>;
-};
-
-/** An option selection for a bundle consolidated option. */
-export type ComponentizedProductsBundleConsolidatedOptionSelection = {
-  __typename?: 'ComponentizedProductsBundleConsolidatedOptionSelection';
-  /** The component values that are included in the consolidated option selection. */
-  components: Array<ComponentizedProductsBundleConsolidatedOptionSelectionComponent>;
-  /** The value of the consolidated option on the bundle parent. */
-  value: Scalars['String']['output'];
-};
-
-/** A component that's included in a bundle consolidated option selection. */
-export type ComponentizedProductsBundleConsolidatedOptionSelectionComponent = {
-  __typename?: 'ComponentizedProductsBundleConsolidatedOptionSelectionComponent';
-  /** The ID of the component's option that's included in this consolidated option selection. */
-  optionId: Scalars['ID']['output'];
-  /** The value of the component's option value that's included in this consolidated option selection. */
-  value: Scalars['String']['output'];
 };
 
 /**
@@ -11881,8 +11762,6 @@ export type CustomerIdentifierInput = {
 
 /** The input fields and values to use when creating or updating a customer. */
 export type CustomerInput = {
-	/** The addresses for a customer. */
-	addresses?: InputMaybe<Array<MailingAddressInput>>;
 	/** The unique email address of the customer. */
 	email?: InputMaybe<Scalars["String"]["input"]>;
 	/**
@@ -16222,25 +16101,6 @@ export type DiscountBuyerSelectionAll = {
 	all: DiscountBuyerSelection;
 };
 
-/** All buyers are eligible for the discount. */
-export enum DiscountBuyerSelection {
-  /** All buyers are eligible for the discount. */
-  All = 'ALL'
-}
-
-/**
- * Indicates that a discount applies to all buyers without restrictions, enabling universal promotions that reach every customer. This selection removes buyer-specific limitations from discount eligibility.
- *
- * For example, a flash sale or grand opening promotion would target all buyers to maximize participation and store visibility.
- *
- * Learn more about [discount targeting](https://shopify.dev/docs/api/admin-graphql/latest/objects/DiscountApplication).
- */
-export type DiscountBuyerSelectionAll = {
-  __typename?: 'DiscountBuyerSelectionAll';
-  /** All buyers are eligible for the discount. */
-  all: DiscountBuyerSelection;
-};
-
 /**
  * The [discount class](https://help.shopify.com/manual/discounts/combining-discounts/discount-combinations)
  * that's used to control how discounts can be combined.
@@ -16400,8 +16260,8 @@ export type DiscountCodeApp = {
 	/** The date and time when the discount was updated. */
 	updatedAt: Scalars["DateTime"]["output"];
 	/**
-	 * The maximum number of times that a customer can use the discount.
-	 * For discounts with unlimited usage, specify `null`.
+	 * The maximum number of times the discount can be redeemed.
+	 * For unlimited usage, specify `null`.
 	 */
 	usageLimit?: Maybe<Scalars["Int"]["output"]>;
 };
@@ -16486,8 +16346,8 @@ export type DiscountCodeAppInput = {
 	/** The discount's name that displays to merchants in the Shopify admin and to customers. */
 	title?: InputMaybe<Scalars["String"]["input"]>;
 	/**
-	 * The maximum number of times that a customer can use the discount.
-	 * For discounts with unlimited usage, specify `null`.
+	 * The maximum number of times the discount can be redeemed.
+	 * For unlimited usage, specify `null`.
 	 */
 	usageLimit?: InputMaybe<Scalars["Int"]["input"]>;
 };
@@ -16637,8 +16497,8 @@ export type DiscountCodeBasic = {
 	/** The date and time when the discount was updated. */
 	updatedAt: Scalars["DateTime"]["output"];
 	/**
-	 * The maximum number of times that a customer can use the discount.
-	 * For discounts with unlimited usage, specify `null`.
+	 * The maximum number of times the discount can be redeemed.
+	 * For unlimited usage, specify `null`.
 	 */
 	usageLimit?: Maybe<Scalars["Int"]["output"]>;
 };
@@ -16725,8 +16585,8 @@ export type DiscountCodeBasicInput = {
 	/** The discount's name that displays to merchants in the Shopify admin and to customers. */
 	title?: InputMaybe<Scalars["String"]["input"]>;
 	/**
-	 * The maximum number of times that a customer can use the discount.
-	 * For discounts with unlimited usage, specify `null`.
+	 * The maximum number of times the discount can be redeemed.
+	 * For unlimited usage, specify `null`.
 	 */
 	usageLimit?: InputMaybe<Scalars["Int"]["input"]>;
 };
@@ -16866,8 +16726,8 @@ export type DiscountCodeBxgy = {
 	/** The date and time when the discount was updated. */
 	updatedAt: Scalars["DateTime"]["output"];
 	/**
-	 * The maximum number of times that a customer can use the discount.
-	 * For discounts with unlimited usage, specify `null`.
+	 * The maximum number of times the discount can be redeemed.
+	 * For unlimited usage, specify `null`.
 	 */
 	usageLimit?: Maybe<Scalars["Int"]["output"]>;
 	/** The maximum number of times that the discount can be applied to an order. */
@@ -16958,8 +16818,8 @@ export type DiscountCodeBxgyInput = {
 	/** The discount's name that displays to merchants in the Shopify admin and to customers. */
 	title?: InputMaybe<Scalars["String"]["input"]>;
 	/**
-	 * The maximum number of times that a customer can use the discount.
-	 * For discounts with unlimited usage, specify `null`.
+	 * The maximum number of times the discount can be redeemed.
+	 * For unlimited usage, specify `null`.
 	 */
 	usageLimit?: InputMaybe<Scalars["Int"]["input"]>;
 	/** The maximum number of times that the discount can be applied to an order. */
@@ -17127,8 +16987,8 @@ export type DiscountCodeFreeShipping = {
 	/** The date and time when the discount was updated. */
 	updatedAt: Scalars["DateTime"]["output"];
 	/**
-	 * The maximum number of times that a customer can use the discount.
-	 * For discounts with unlimited usage, specify `null`.
+	 * The maximum number of times the discount can be redeemed.
+	 * For unlimited usage, specify `null`.
 	 */
 	usageLimit?: Maybe<Scalars["Int"]["output"]>;
 };
@@ -17228,8 +17088,8 @@ export type DiscountCodeFreeShippingInput = {
 	/** The discount's name that displays to merchants in the Shopify admin and to customers. */
 	title?: InputMaybe<Scalars["String"]["input"]>;
 	/**
-	 * The maximum number of times that a customer can use the discount.
-	 * For discounts with unlimited usage, specify `null`.
+	 * The maximum number of times the discount can be redeemed.
+	 * For unlimited usage, specify `null`.
 	 */
 	usageLimit?: InputMaybe<Scalars["Int"]["input"]>;
 };
@@ -18358,23 +18218,6 @@ export enum DistanceUnit {
 	Miles = "MILES",
 }
 
-/** A distance, which includes a numeric value and a unit of measurement. */
-export type Distance = {
-  __typename?: 'Distance';
-  /** The unit of measurement for `value`. */
-  unit: DistanceUnit;
-  /** The distance value using the unit system specified with `unit`. */
-  value: Scalars['Float']['output'];
-};
-
-/** Units of measurement for distance. */
-export enum DistanceUnit {
-  /** Metric system unit of distance. */
-  Kilometers = 'KILOMETERS',
-  /** Imperial system unit of distance. */
-  Miles = 'MILES'
-}
-
 /** A unique string that represents the address of a Shopify store on the Internet. */
 export type Domain = Node & {
 	__typename?: "Domain";
@@ -19326,17 +19169,6 @@ export type DraftOrderMarketRegionCountryCodeNotSupportedWarning = DraftOrderWar
 	message: Scalars["String"]["output"];
 };
 
-/** A warning indicating that the market region country code is not supported with Markets. */
-export type DraftOrderMarketRegionCountryCodeNotSupportedWarning = DraftOrderWarning & {
-  __typename?: 'DraftOrderMarketRegionCountryCodeNotSupportedWarning';
-  /** The error code. */
-  errorCode: Scalars['String']['output'];
-  /** The input field that the warning applies to. */
-  field: Scalars['String']['output'];
-  /** The warning message. */
-  message: Scalars['String']['output'];
-};
-
 /** The platform discounts applied to the draft order. */
 export type DraftOrderPlatformDiscount = {
 	__typename?: "DraftOrderPlatformDiscount";
@@ -19407,21 +19239,6 @@ export type DraftOrderShippingRate = {
 	source: Scalars["String"]["output"];
 	/** The name of the shipping rate. */
 	title: Scalars["String"]["output"];
-};
-
-/** A shipping rate is an additional cost added to the cost of the products that were ordered. */
-export type DraftOrderShippingRate = {
-  __typename?: 'DraftOrderShippingRate';
-  /** The code of the shipping rate. */
-  code: Scalars['String']['output'];
-  /** Unique identifier for this shipping rate. */
-  handle: Scalars['String']['output'];
-  /** The cost associated with the shipping rate. */
-  price: MoneyV2;
-  /** The source of the shipping rate. */
-  source: Scalars['String']['output'];
-  /** The name of the shipping rate. */
-  title: Scalars['String']['output'];
 };
 
 /** The set of valid sort keys for the DraftOrder query. */
@@ -19838,14 +19655,6 @@ export type ExchangeLineItemRemoveFromReturnInput = {
 	exchangeLineItemId: Scalars["ID"]["input"];
 	/** The quantity of the associated exchange line item to be removed. */
 	quantity: Scalars["Int"]["input"];
-};
-
-/** The input fields for removing an exchange line item from a return. */
-export type ExchangeLineItemRemoveFromReturnInput = {
-  /** The ID of the exchange line item to remove. */
-  exchangeLineItemId: Scalars['ID']['input'];
-  /** The quantity of the associated exchange line item to be removed. */
-  quantity: Scalars['Int']['input'];
 };
 
 /** An exchange where existing items on an order are returned and new items are added to the order. */
@@ -24547,13 +24356,6 @@ export type ImageTranslationsArgs = {
 };
 
 /** Represents an image resource. */
-export type ImageTranslationsArgs = {
-  locale: Scalars['String']['input'];
-  marketId?: InputMaybe<Scalars['ID']['input']>;
-};
-
-
-/** Represents an image resource. */
 export type ImageUrlArgs = {
 	transform?: InputMaybe<ImageTransformInput>;
 };
@@ -24824,16 +24626,6 @@ export type InventoryAdjustmentInput = {
 	locationId: Scalars["ID"]["input"];
 };
 
-/** The input fields required to adjust the available quantity of a product variant at a location. */
-export type InventoryAdjustmentInput = {
-  /** The adjustment of the available quantity at the location. If the value is `null`, then the product variant is no longer stocked at the location. */
-  adjustment?: InputMaybe<Scalars['Int']['input']>;
-  /** The quantity to compare against before applying the delta. */
-  changeFromQuantity?: InputMaybe<Scalars['Int']['input']>;
-  /** The ID of the location where the available quantity should be adjusted. */
-  locationId: Scalars['ID']['input'];
-};
-
 /** The input fields to specify whether the inventory item should be activated or not at the specified location. */
 export type InventoryBulkToggleActivationInput = {
 	/** Whether the inventory item can be stocked at the specified location. To deactivate, set the value to false which removes an inventory item's quantities from that location, and turns off inventory at that location. */
@@ -25057,19 +24849,6 @@ export type InventoryItemVariantsArgs = {
 	before?: InputMaybe<Scalars["String"]["input"]>;
 	first?: InputMaybe<Scalars["Int"]["input"]>;
 	last?: InputMaybe<Scalars["Int"]["input"]>;
-};
-
-
-/**
- * A [product variant's](https://shopify.dev/docs/api/admin-graphql/latest/objects/ProductVariant) inventory information across all locations. The inventory item connects the product variant to its [inventory levels](https://shopify.dev/docs/api/admin-graphql/latest/objects/InventoryLevel) at different locations, tracking stock keeping unit (SKU), whether quantities are tracked, shipping requirements, and customs information for the product.
- *
- * Learn more about [inventory object relationships](https://shopify.dev/docs/apps/build/orders-fulfillment/inventory-management-apps/manage-quantities-states#inventory-object-relationships).
- */
-export type InventoryItemVariantsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** An auto-generated type for paginating through multiple InventoryItems. */
@@ -27658,36 +27437,6 @@ export type LineItemSuggestedReturnReasonDefinitionsArgs = {
  * about each item in an order. Learn more about
  * [managing orders and fulfillment](https://shopify.dev/docs/apps/build/orders-fulfillment).
  */
-export type LineItemSuggestedReturnReasonDefinitionsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  reverse?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-/**
- * The `LineItem` object represents a single product or service that a customer purchased in an
- * [order](https://shopify.dev/docs/api/admin-graphql/latest/objects/Order).
- * Each line item is associated with a
- * [product variant](https://shopify.dev/docs/api/admin-graphql/latest/objects/ProductVariant)
- * and can have multiple [discount allocations](https://shopify.dev/docs/api/admin-graphql/latest/objects/DiscountAllocation).
- * Line items contain details about what was purchased, including the product variant, quantity, pricing,
- * and fulfillment status.
- *
- * Use the `LineItem` object to manage the following processes:
- *
- * - [Track the quantity of items](https://shopify.dev/docs/apps/build/orders-fulfillment/order-management-apps/build-fulfillment-solutions) ordered, fulfilled, and unfulfilled.
- * - [Calculate prices](https://shopify.dev/docs/apps/build/orders-fulfillment/order-management-apps/edit-orders), including discounts and taxes.
- * - Manage fulfillment through [fulfillment services](https://shopify.dev/docs/apps/build/orders-fulfillment/fulfillment-service-apps).
- * - Manage [returns](https://shopify.dev/docs/apps/build/orders-fulfillment/returns-apps/build-return-management) and [exchanges](https://shopify.dev/docs/apps/build/orders-fulfillment/returns-apps/manage-exchanges).
- * - Handle [subscriptions](https://shopify.dev/docs/apps/build/purchase-options/subscriptions) and recurring orders.
- *
- * Line items can also include custom attributes and properties, allowing merchants to add specific details
- * about each item in an order. Learn more about
- * [managing orders and fulfillment](https://shopify.dev/docs/apps/build/orders-fulfillment).
- */
 export type LineItemTaxLinesArgs = {
 	first?: InputMaybe<Scalars["Int"]["input"]>;
 };
@@ -28691,19 +28440,6 @@ export type LocationSnapshot = {
 	snapshottedAt: Scalars["DateTime"]["output"];
 };
 
-/** A snapshot of location details including name and address captured at a specific point in time. Refer to the parent model to know the lifecycle. */
-export type LocationSnapshot = {
-  __typename?: 'LocationSnapshot';
-  /** The address details of the location as they were when the snapshot was recorded. */
-  address: LocationAddress;
-  /** A reference to the live Location object, if it still exists and is accessible. This provides current details of the location, which may differ from the snapshotted name and address. */
-  location?: Maybe<Location>;
-  /** The name of the location as it was when the snapshot was recorded. */
-  name: Scalars['String']['output'];
-  /** The date and time when these snapshot details (name and address) were recorded. */
-  snapshottedAt: Scalars['DateTime']['output'];
-};
-
 /** The set of valid sort keys for the Location query. */
 export enum LocationSortKeys {
 	/** Sort by the `id` value. */
@@ -28910,20 +28646,6 @@ export enum MandateResourceType {
 	Order = "ORDER",
 	/** A credential stored for subscription billing attempts. */
 	Subscriptions = "SUBSCRIPTIONS",
-}
-
-/** The type of resource a payment mandate can be used for. */
-export enum MandateResourceType {
-  /** A credential stored on file for checkout. */
-  Checkout = 'CHECKOUT',
-  /** A credential stored on file for merchant and customer initiated transactions. */
-  CredentialOnFile = 'CREDENTIAL_ON_FILE',
-  /** A credential stored on file for a Draft Order. */
-  DraftOrder = 'DRAFT_ORDER',
-  /** A credential stored on file for an Order. */
-  Order = 'ORDER',
-  /** A credential stored for subscription billing attempts. */
-  Subscriptions = 'SUBSCRIPTIONS'
 }
 
 /**
@@ -29820,6 +29542,8 @@ export enum MarketUserErrorCode {
 	MarketNotFound = "MARKET_NOT_FOUND",
 	/** Can't add another web presence to the market. */
 	MarketReachedWebPresenceLimit = "MARKET_REACHED_WEB_PRESENCE_LIMIT",
+	/** The country code is missing. */
+	MissingCountryCode = "MISSING_COUNTRY_CODE",
 	/** The province code is missing. */
 	MissingProvinceCode = "MISSING_PROVINCE_CODE",
 	/** All retail locations in a market must be in the same country. */
@@ -30889,39 +30613,6 @@ export type MarketsResolvedValuesWebPresencesArgs = {
 	reverse?: InputMaybe<Scalars["Boolean"]["input"]>;
 };
 
-/** The resolved values based on the markets configuration for a buyer signal. Resolved values include the resolved catalogs, web presences, currency, and price inclusivity. */
-export type MarketsResolvedValues = {
-  __typename?: 'MarketsResolvedValues';
-  /** The resolved catalogs. */
-  catalogs: MarketCatalogConnection;
-  /** The resolved currency code. */
-  currencyCode: CurrencyCode;
-  /** The resolved price inclusivity attributes. */
-  priceInclusivity: ResolvedPriceInclusivity;
-  /** The resolved web presences ordered by priority. */
-  webPresences: MarketWebPresenceConnection;
-};
-
-
-/** The resolved values based on the markets configuration for a buyer signal. Resolved values include the resolved catalogs, web presences, currency, and price inclusivity. */
-export type MarketsResolvedValuesCatalogsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  reverse?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-/** The resolved values based on the markets configuration for a buyer signal. Resolved values include the resolved catalogs, web presences, currency, and price inclusivity. */
-export type MarketsResolvedValuesWebPresencesArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  reverse?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
 /** The entitlements for retail markets. */
 export type MarketsRetailEntitlement = {
 	__typename?: "MarketsRetailEntitlement";
@@ -31284,38 +30975,6 @@ export type MediaImageMetafieldsArgs = {
 export type MediaImageTranslationsArgs = {
 	locale: Scalars["String"]["input"];
 	marketId?: InputMaybe<Scalars["ID"]["input"]>;
-};
-
-
-/**
- * The `MediaImage` object represents an image hosted on Shopify's
- * [content delivery network (CDN)](https://shopify.dev/docs/storefronts/themes/best-practices/performance/platform#shopify-cdn).
- * Shopify CDN is a content system that serves as the primary way to store,
- * manage, and deliver visual content for products, variants, and other resources across the Shopify platform.
- *
- * The `MediaImage` object provides information to:
- *
- * - Store and display product and variant images across online stores, admin interfaces, and mobile apps.
- * - Retrieve visual branding elements, including logos, banners, favicons, and background images in checkout flows.
- * - Retrieve signed URLs for secure, time-limited access to original image files.
- *
- * Each `MediaImage` object provides both the processed image data (with automatic optimization and CDN delivery)
- * and access to the original source file. The image processing is handled asynchronously, so images
- * might not be immediately available after upload. The
- * [`status`](https://shopify.dev/docs/api/admin-graphql/latest/objects/mediaimage#field-MediaImage.fields.status)
- * field indicates when processing is complete and the image is ready for use.
- *
- * The `MediaImage` object implements the [`Media`](https://shopify.dev/docs/api/admin-graphql/latest/interfaces/Media)
- * interface alongside other media types, like videos and 3D models.
- *
- * Learn about
- * managing media for [products](https://shopify.dev/docs/apps/build/online-store/product-media),
- * [product variants](https://shopify.dev/docs/apps/build/online-store/product-variant-media), and
- * [asynchronous media management](https://shopify.dev/docs/apps/build/graphql/migrate/new-product-model/product-model-components#asynchronous-media-management).
- */
-export type MediaImageTranslationsArgs = {
-  locale: Scalars['String']['input'];
-  marketId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 /** The original source for an image. */
@@ -33608,21 +33267,6 @@ export type MetaobjectFieldCapabilityAdminFilterableInput = {
 	enabled: Scalars["Boolean"]["input"];
 };
 
-/** Information about the admin filterable capability. */
-export type MetaobjectFieldCapabilityAdminFilterable = {
-  __typename?: 'MetaobjectFieldCapabilityAdminFilterable';
-  /** Indicates if the definition is eligible to have the capability. */
-  eligible: Scalars['Boolean']['output'];
-  /** Indicates if the capability is enabled. */
-  enabled: Scalars['Boolean']['output'];
-};
-
-/** The input fields for enabling and disabling the admin filterable capability. */
-export type MetaobjectFieldCapabilityAdminFilterableInput = {
-  /** Indicates whether the capability should be enabled or disabled. */
-  enabled: Scalars['Boolean']['input'];
-};
-
 /**
  * Defines a field for a MetaobjectDefinition with properties
  * such as the field's data type and validations.
@@ -33659,19 +33303,6 @@ export type MetaobjectFieldDefinitionCapabilities = {
 export type MetaobjectFieldDefinitionCapabilityCreateInput = {
 	/** The input for configuring the admin filterable capability. */
 	adminFilterable?: InputMaybe<MetaobjectFieldCapabilityAdminFilterableInput>;
-};
-
-/** Capabilities available for a metaobject field definition. */
-export type MetaobjectFieldDefinitionCapabilities = {
-  __typename?: 'MetaobjectFieldDefinitionCapabilities';
-  /** Indicate whether a metaobject field definition is configured for filtering. */
-  adminFilterable: MetaobjectFieldCapabilityAdminFilterable;
-};
-
-/** The input fields for creating capabilities on a metaobject field definition. */
-export type MetaobjectFieldDefinitionCapabilityCreateInput = {
-  /** The input for configuring the admin filterable capability. */
-  adminFilterable?: InputMaybe<MetaobjectFieldCapabilityAdminFilterableInput>;
 };
 
 /** The input fields for creating a metaobject field definition. */
@@ -35837,6 +35468,7 @@ export type Mutation = {
 	 * > As of 2026-01, this mutation supports an optional idempotency key using the `@idempotent` directive.
 	 * > As of 2026-04, the idempotency key is required and must be provided using the `@idempotent` directive.
 	 * > For more information, see the [idempotency documentation](https://shopify.dev/docs/api/usage/idempotent-requests).
+	 * @deprecated Scheduled changes will be phased out in a future version.
 	 */
 	inventorySetScheduledChanges?: Maybe<InventorySetScheduledChangesPayload>;
 	/**
@@ -37122,6 +36754,7 @@ export type Mutation = {
 	 * Publishes a resource to the current [`Channel`](https://shopify.dev/docs/api/admin-graphql/latest/objects/Channel) associated with the requesting app. The system determines the current channel by the app's API client ID. Resources include [`Product`](https://shopify.dev/docs/api/admin-graphql/latest/objects/Product) and [`Collection`](https://shopify.dev/docs/api/admin-graphql/latest/objects/Collection) objects that implement the [`Publishable`](https://shopify.dev/docs/api/admin-graphql/latest/interfaces/Publishable) interface.
 	 *
 	 * For products to be visible in the channel, they must have an active [`ProductStatus`](https://shopify.dev/docs/api/admin-graphql/latest/enums/ProductStatus). Products sold exclusively on subscription ([`requiresSellingPlan`](https://shopify.dev/docs/api/admin-graphql/latest/objects/Product#field-Product.fields.requiresSellingPlan): `true`) can only be published to online stores.
+	 * @deprecated Use `publishablePublish` instead.
 	 */
 	publishablePublishToCurrentChannel?: Maybe<PublishablePublishToCurrentChannelPayload>;
 	/**
@@ -37130,7 +36763,10 @@ export type Mutation = {
 	 * For products to be visible in a channel, they must have an active [`ProductStatus`](https://shopify.dev/docs/api/admin-graphql/latest/enums/ProductStatus).
 	 */
 	publishableUnpublish?: Maybe<PublishableUnpublishPayload>;
-	/** Unpublishes a resource from the current channel. If the resource is a product, then it's visible in the channel only if the product status is `active`. */
+	/**
+	 * Unpublishes a resource from the current channel. If the resource is a product, then it's visible in the channel only if the product status is `active`.
+	 * @deprecated Use `publishableUnpublish` instead.
+	 */
 	publishableUnpublishToCurrentChannel?: Maybe<PublishableUnpublishToCurrentChannelPayload>;
 	/**
 	 * Updates quantity pricing on a [`PriceList`](https://shopify.dev/docs/api/admin-graphql/latest/objects/PriceList) for specific [`ProductVariant`](https://shopify.dev/docs/api/admin-graphql/latest/objects/ProductVariant) objects. You can set fixed prices (see [`PriceListPrice`](https://shopify.dev/docs/api/admin-graphql/latest/objects/PriceListPrice)), quantity rules, and quantity price breaks in a single operation.
@@ -37931,12 +37567,6 @@ export type MutationCollectionDeleteArgs = {
 export type MutationCollectionDuplicateArgs = {
 	input: CollectionDuplicateInput;
 };
-
-/** The schema's entry point for all mutation operations. */
-export type MutationCollectionDuplicateArgs = {
-  input: CollectionDuplicateInput;
-};
-
 
 /** The schema's entry point for all mutation operations. */
 export type MutationCollectionPublishArgs = {
@@ -38871,14 +38501,6 @@ export type MutationFulfillmentOrdersRerouteArgs = {
 };
 
 /** The schema's entry point for all mutation operations. */
-export type MutationFulfillmentOrdersRerouteArgs = {
-  excludedLocationIds?: InputMaybe<Array<Scalars['ID']['input']>>;
-  fulfillmentOrderIds: Array<Scalars['ID']['input']>;
-  includedLocationIds?: InputMaybe<Array<Scalars['ID']['input']>>;
-};
-
-
-/** The schema's entry point for all mutation operations. */
 export type MutationFulfillmentOrdersSetFulfillmentDeadlineArgs = {
 	fulfillmentDeadline: Scalars["DateTime"]["input"];
 	fulfillmentOrderIds: Array<Scalars["ID"]["input"]>;
@@ -39111,123 +38733,6 @@ export type MutationInventoryTransferRemoveItemsArgs = {
 export type MutationInventoryTransferSetItemsArgs = {
 	input: InventoryTransferSetItemsInput;
 };
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryShipmentAddItemsArgs = {
-  id: Scalars['ID']['input'];
-  lineItems: Array<InventoryShipmentLineItemInput>;
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryShipmentCreateArgs = {
-  input: InventoryShipmentCreateInput;
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryShipmentCreateInTransitArgs = {
-  input: InventoryShipmentCreateInput;
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryShipmentDeleteArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryShipmentMarkInTransitArgs = {
-  dateShipped?: InputMaybe<Scalars['DateTime']['input']>;
-  id: Scalars['ID']['input'];
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryShipmentReceiveArgs = {
-  bulkReceiveAction?: InputMaybe<InventoryShipmentReceiveLineItemReason>;
-  dateReceived?: InputMaybe<Scalars['DateTime']['input']>;
-  id: Scalars['ID']['input'];
-  lineItems?: InputMaybe<Array<InventoryShipmentReceiveItemInput>>;
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryShipmentRemoveItemsArgs = {
-  id: Scalars['ID']['input'];
-  lineItems: Array<Scalars['ID']['input']>;
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryShipmentSetTrackingArgs = {
-  id: Scalars['ID']['input'];
-  tracking: InventoryShipmentTrackingInput;
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryShipmentUpdateItemQuantitiesArgs = {
-  id: Scalars['ID']['input'];
-  items?: InputMaybe<Array<InventoryShipmentUpdateItemQuantitiesInput>>;
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryTransferCancelArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryTransferCreateArgs = {
-  input: InventoryTransferCreateInput;
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryTransferCreateAsReadyToShipArgs = {
-  input: InventoryTransferCreateAsReadyToShipInput;
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryTransferDeleteArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryTransferDuplicateArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryTransferEditArgs = {
-  id: Scalars['ID']['input'];
-  input: InventoryTransferEditInput;
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryTransferMarkAsReadyToShipArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryTransferRemoveItemsArgs = {
-  input: InventoryTransferRemoveItemsInput;
-};
-
-
-/** The schema's entry point for all mutation operations. */
-export type MutationInventoryTransferSetItemsArgs = {
-  input: InventoryTransferSetItemsInput;
-};
-
 
 /** The schema's entry point for all mutation operations. */
 export type MutationLocationActivateArgs = {
@@ -40065,14 +39570,6 @@ export type MutationRemoveFromReturnArgs = {
 };
 
 /** The schema's entry point for all mutation operations. */
-export type MutationRemoveFromReturnArgs = {
-  exchangeLineItems?: InputMaybe<Array<ExchangeLineItemRemoveFromReturnInput>>;
-  returnId: Scalars['ID']['input'];
-  returnLineItems?: InputMaybe<Array<ReturnLineItemRemoveFromReturnInput>>;
-};
-
-
-/** The schema's entry point for all mutation operations. */
 export type MutationReturnApproveRequestArgs = {
 	input: ReturnApproveRequestInput;
 };
@@ -40107,12 +39604,6 @@ export type MutationReturnLineItemRemoveFromReturnArgs = {
 export type MutationReturnProcessArgs = {
 	input: ReturnProcessInput;
 };
-
-/** The schema's entry point for all mutation operations. */
-export type MutationReturnProcessArgs = {
-  input: ReturnProcessInput;
-};
-
 
 /** The schema's entry point for all mutation operations. */
 export type MutationReturnRefundArgs = {
@@ -40558,14 +40049,6 @@ export type MutationTaxSummaryCreateArgs = {
 };
 
 /** The schema's entry point for all mutation operations. */
-export type MutationTaxSummaryCreateArgs = {
-  endTime?: InputMaybe<Scalars['DateTime']['input']>;
-  orderId?: InputMaybe<Scalars['ID']['input']>;
-  startTime?: InputMaybe<Scalars['DateTime']['input']>;
-};
-
-
-/** The schema's entry point for all mutation operations. */
 export type MutationThemeCreateArgs = {
 	name?: InputMaybe<Scalars["String"]["input"]>;
 	role?: InputMaybe<ThemeRole>;
@@ -40582,13 +40065,6 @@ export type MutationThemeDuplicateArgs = {
 	id: Scalars["ID"]["input"];
 	name?: InputMaybe<Scalars["String"]["input"]>;
 };
-
-/** The schema's entry point for all mutation operations. */
-export type MutationThemeDuplicateArgs = {
-  id: Scalars['ID']['input'];
-  name?: InputMaybe<Scalars['String']['input']>;
-};
-
 
 /** The schema's entry point for all mutation operations. */
 export type MutationThemeFilesCopyArgs = {
@@ -43295,68 +42771,6 @@ export enum OrderCustomerSetUserErrorCode {
 	NotSaved = "NOT_SAVED",
 }
 
-/** Return type for `orderCustomerRemove` mutation. */
-export type OrderCustomerRemovePayload = {
-  __typename?: 'OrderCustomerRemovePayload';
-  /** The order that had its customer removed. */
-  order?: Maybe<Order>;
-  /** The list of errors that occurred from executing the mutation. */
-  userErrors: Array<OrderCustomerRemoveUserError>;
-};
-
-/** Errors related to order customer removal. */
-export type OrderCustomerRemoveUserError = DisplayableError & {
-  __typename?: 'OrderCustomerRemoveUserError';
-  /** The error code. */
-  code?: Maybe<OrderCustomerRemoveUserErrorCode>;
-  /** The path to the input field that caused the error. */
-  field?: Maybe<Array<Scalars['String']['output']>>;
-  /** The error message. */
-  message: Scalars['String']['output'];
-};
-
-/** Possible error codes that can be returned by `OrderCustomerRemoveUserError`. */
-export enum OrderCustomerRemoveUserErrorCode {
-  /** The input value is invalid. */
-  Invalid = 'INVALID',
-  /** The record with the ID used as the input value couldn't be found. */
-  NotFound = 'NOT_FOUND',
-  /** An error ocurred while saving the order. */
-  NotSaved = 'NOT_SAVED'
-}
-
-/** Return type for `orderCustomerSet` mutation. */
-export type OrderCustomerSetPayload = {
-  __typename?: 'OrderCustomerSetPayload';
-  /** The order that had a customer set. */
-  order?: Maybe<Order>;
-  /** The list of errors that occurred from executing the mutation. */
-  userErrors: Array<OrderCustomerSetUserError>;
-};
-
-/** Errors related to order customer set. */
-export type OrderCustomerSetUserError = DisplayableError & {
-  __typename?: 'OrderCustomerSetUserError';
-  /** The error code. */
-  code?: Maybe<OrderCustomerSetUserErrorCode>;
-  /** The path to the input field that caused the error. */
-  field?: Maybe<Array<Scalars['String']['output']>>;
-  /** The error message. */
-  message: Scalars['String']['output'];
-};
-
-/** Possible error codes that can be returned by `OrderCustomerSetUserError`. */
-export enum OrderCustomerSetUserErrorCode {
-  /** The input value is invalid. */
-  Invalid = 'INVALID',
-  /** The record with the ID used as the input value couldn't be found. */
-  NotFound = 'NOT_FOUND',
-  /** The customer does not have the permissions to place this order. */
-  NotPermitted = 'NOT_PERMITTED',
-  /** An error ocurred while saving the order. */
-  NotSaved = 'NOT_SAVED'
-}
-
 /** Return type for `orderDelete` mutation. */
 export type OrderDeletePayload = {
 	__typename?: "OrderDeletePayload";
@@ -44189,13 +43603,6 @@ export type OrderStagedChangeRemoveDiscount = {
 	__typename?: "OrderStagedChangeRemoveDiscount";
 	/** The removed discount application. */
 	discountApplication: DiscountApplication;
-};
-
-/** A discount application removed during an order edit. */
-export type OrderStagedChangeRemoveDiscount = {
-  __typename?: 'OrderStagedChangeRemoveDiscount';
-  /** The removed discount application. */
-  discountApplication: DiscountApplication;
 };
 
 /** A shipping line removed during an order edit. */
@@ -45055,39 +44462,6 @@ export type PaymentMandateResourceEdge = {
 	cursor: Scalars["String"]["output"];
 	/** The item at the end of PaymentMandateResourceEdge. */
 	node: PaymentMandateResource;
-};
-
-/**
- * A payment mandate with resource information, representing the permission
- * the owner of the payment instrument gives to the merchant to debit it
- * for specific resources (e.g., Order, Subscriptions).
- */
-export type PaymentMandateResource = {
-  __typename?: 'PaymentMandateResource';
-  /** The ID of the resource that this payment method was created for. */
-  resourceId?: Maybe<Scalars['ID']['output']>;
-  /** The resource type that this payment method was created for (e.g., Order, Subscriptions). */
-  resourceType?: Maybe<MandateResourceType>;
-};
-
-/** An auto-generated type for paginating through multiple PaymentMandateResources. */
-export type PaymentMandateResourceConnection = {
-  __typename?: 'PaymentMandateResourceConnection';
-  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
-  edges: Array<PaymentMandateResourceEdge>;
-  /** A list of nodes that are contained in PaymentMandateResourceEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
-  nodes: Array<PaymentMandateResource>;
-  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
-  pageInfo: PageInfo;
-};
-
-/** An auto-generated type which holds one PaymentMandateResource and a cursor during pagination. */
-export type PaymentMandateResourceEdge = {
-  __typename?: 'PaymentMandateResourceEdge';
-  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of PaymentMandateResourceEdge. */
-  node: PaymentMandateResource;
 };
 
 /** Some of the payment methods used in Shopify. */
@@ -47230,6 +46604,7 @@ export type Product = HasEvents &
 		 * Whether the resource is published to the app's
 		 * [publication](https://shopify.dev/docs/api/admin-graphql/latest/objects/Publication).
 		 * For example, the resource might be published to the app's online store channel.
+		 * @deprecated Use `publishedOnPublication` instead.
 		 */
 		publishedOnCurrentPublication: Scalars["Boolean"]["output"];
 		/**
@@ -47247,6 +46622,7 @@ export type Product = HasEvents &
 		/**
 		 * The resource that's either published or staged to be published to
 		 * the [publication](https://shopify.dev/docs/api/admin-graphql/latest/objects/Publication).
+		 * @deprecated Use `resourcePublications` instead.
 		 */
 		resourcePublicationOnCurrentPublication?: Maybe<ResourcePublicationV2>;
 		/**
@@ -47635,47 +47011,6 @@ export type ProductProductParentsArgs = {
 	query?: InputMaybe<Scalars["String"]["input"]>;
 	reverse?: InputMaybe<Scalars["Boolean"]["input"]>;
 };
-
-/**
- * The `Product` object lets you manage products in a merchant’s store.
- *
- * Products are the goods and services that merchants offer to customers. They can include various details such as title, description, price, images, and options such as size or color.
- * You can use [product variants](https://shopify.dev/docs/api/admin-graphql/latest/objects/productvariant) to create or update different versions of the same product.
- * You can also add or update product [media](https://shopify.dev/docs/api/admin-graphql/latest/interfaces/media).
- * Products can be organized by grouping them into a [collection](https://shopify.dev/docs/api/admin-graphql/latest/objects/collection).
- *
- * Learn more about working with [Shopify's product model](https://shopify.dev/docs/apps/build/graphql/migrate/new-product-model/product-model-components),
- * including limitations and considerations.
- */
-export type ProductProductComponentsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  reverse?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-/**
- * The `Product` object lets you manage products in a merchant’s store.
- *
- * Products are the goods and services that merchants offer to customers. They can include various details such as title, description, price, images, and options such as size or color.
- * You can use [product variants](https://shopify.dev/docs/api/admin-graphql/latest/objects/productvariant) to create or update different versions of the same product.
- * You can also add or update product [media](https://shopify.dev/docs/api/admin-graphql/latest/interfaces/media).
- * Products can be organized by grouping them into a [collection](https://shopify.dev/docs/api/admin-graphql/latest/objects/collection).
- *
- * Learn more about working with [Shopify's product model](https://shopify.dev/docs/apps/build/graphql/migrate/new-product-model/product-model-components),
- * including limitations and considerations.
- */
-export type ProductProductParentsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  query?: InputMaybe<Scalars['String']['input']>;
-  reverse?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
 
 /**
  * The `Product` object lets you manage products in a merchant’s store.
@@ -48112,33 +47447,6 @@ export type ProductBundleConsolidatedOptionSelectionInput = {
 	optionValue: Scalars["String"]["input"];
 };
 
-/** The input fields for mapping a consolidated option to a specific component option. */
-export type ProductBundleConsolidatedOptionComponentInput = {
-  /**
-   * The ID of the component option that this consolidated option maps to.
-   * If null, this selection targets the component's quantity option with the given name.
-   */
-  componentOptionId?: InputMaybe<Scalars['ID']['input']>;
-  /** The value to use for the component option (e.g., 'Small', 'Red'). */
-  componentOptionValue: Scalars['String']['input'];
-};
-
-/** The input fields for a consolidated option on a componentized product. */
-export type ProductBundleConsolidatedOptionInput = {
-  /** The name of the consolidated option (e.g., 'Size', 'Color'). */
-  optionName: Scalars['String']['input'];
-  /** The option selections that define how this consolidated option maps to component options. */
-  optionSelections: Array<ProductBundleConsolidatedOptionSelectionInput>;
-};
-
-/** The input fields for a consolidated option selection that maps to component options. */
-export type ProductBundleConsolidatedOptionSelectionInput = {
-  /** The component mappings that define how this option value maps to specific component options. */
-  components: Array<ProductBundleConsolidatedOptionComponentInput>;
-  /** The value for this consolidated option selection (e.g., 'Small', 'Medium', 'Large'). */
-  optionValue: Scalars['String']['input'];
-};
-
 /** The input fields for creating a componentized product. */
 export type ProductBundleCreateInput = {
 	/** The component products to bundle with the bundle product. */
@@ -48359,61 +47667,6 @@ export type ProductComponentTypeEdge = {
 	cursor: Scalars["String"]["output"];
 	/** The item at the end of ProductComponentTypeEdge. */
 	node: ProductComponentType;
-};
-
-/** The product component information. */
-export type ProductComponentType = {
-  __typename?: 'ProductComponentType';
-  /** The list of products' variants that are components. */
-  componentVariants: ProductVariantConnection;
-  /** The number of component variants for the product component. */
-  componentVariantsCount?: Maybe<Count>;
-  /** The list of products' variants that are not components. */
-  nonComponentVariants: ProductVariantConnection;
-  /** The number of non_components variants for the product component. */
-  nonComponentVariantsCount?: Maybe<Count>;
-  /** The product that's a component. */
-  product: Product;
-};
-
-
-/** The product component information. */
-export type ProductComponentTypeComponentVariantsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  reverse?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-/** The product component information. */
-export type ProductComponentTypeNonComponentVariantsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  reverse?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-/** An auto-generated type for paginating through multiple ProductComponentTypes. */
-export type ProductComponentTypeConnection = {
-  __typename?: 'ProductComponentTypeConnection';
-  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
-  edges: Array<ProductComponentTypeEdge>;
-  /** A list of nodes that are contained in ProductComponentTypeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
-  nodes: Array<ProductComponentType>;
-  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
-  pageInfo: PageInfo;
-};
-
-/** An auto-generated type which holds one ProductComponentType and a cursor during pagination. */
-export type ProductComponentTypeEdge = {
-  __typename?: 'ProductComponentTypeEdge';
-  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of ProductComponentTypeEdge. */
-  node: ProductComponentType;
 };
 
 /** An auto-generated type for paginating through multiple Products. */
@@ -51618,6 +50871,7 @@ export type Publishable = {
 	 * Whether the resource is published to the app's
 	 * [publication](https://shopify.dev/docs/api/admin-graphql/latest/objects/Publication).
 	 * For example, the resource might be published to the app's online store channel.
+	 * @deprecated Use `publishedOnPublication` instead.
 	 */
 	publishedOnCurrentPublication: Scalars["Boolean"]["output"];
 	/**
@@ -53592,24 +52846,6 @@ export type QueryRootBulkOperationsArgs = {
 };
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootBulkOperationArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootBulkOperationsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  query?: InputMaybe<Scalars['String']['input']>;
-  reverse?: InputMaybe<Scalars['Boolean']['input']>;
-  sortKey?: InputMaybe<BulkOperationsSortKeys>;
-};
-
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootBusinessEntityArgs = {
 	id?: InputMaybe<Scalars["ID"]["input"]>;
 };
@@ -53819,12 +53055,6 @@ export type QueryRootCompaniesArgs = {
 export type QueryRootCompaniesCountArgs = {
 	limit?: InputMaybe<Scalars["Int"]["input"]>;
 };
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootCompaniesCountArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootCompanyArgs = {
@@ -54110,16 +53340,6 @@ export type QueryRootDraftOrderAvailableDeliveryOptionsArgs = {
 };
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootDraftOrderAvailableDeliveryOptionsArgs = {
-  input: DraftOrderAvailableDeliveryOptionsInput;
-  localPickupCount?: InputMaybe<Scalars['Int']['input']>;
-  localPickupFrom?: InputMaybe<Scalars['Int']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  sessionToken?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootDraftOrderSavedSearchesArgs = {
 	after?: InputMaybe<Scalars["String"]["input"]>;
 	before?: InputMaybe<Scalars["String"]["input"]>;
@@ -54151,14 +53371,6 @@ export type QueryRootDraftOrdersCountArgs = {
 	query?: InputMaybe<Scalars["String"]["input"]>;
 	savedSearchId?: InputMaybe<Scalars["ID"]["input"]>;
 };
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootDraftOrdersCountArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  query?: InputMaybe<Scalars['String']['input']>;
-  savedSearchId?: InputMaybe<Scalars['ID']['input']>;
-};
-
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootEventArgs = {
@@ -54294,31 +53506,6 @@ export type QueryRootInventoryTransfersArgs = {
 	savedSearchId?: InputMaybe<Scalars["ID"]["input"]>;
 	sortKey?: InputMaybe<TransferSortKeys>;
 };
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootInventoryShipmentArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootInventoryTransferArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootInventoryTransfersArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  query?: InputMaybe<Scalars['String']['input']>;
-  reverse?: InputMaybe<Scalars['Boolean']['input']>;
-  savedSearchId?: InputMaybe<Scalars['ID']['input']>;
-  sortKey?: InputMaybe<TransferSortKeys>;
-};
-
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootJobArgs = {
@@ -54462,12 +53649,6 @@ export type QueryRootMarketsResolvedValuesArgs = {
 };
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootMarketsResolvedValuesArgs = {
-  buyerSignal: BuyerSignalInput;
-};
-
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootMenuArgs = {
 	id: Scalars["ID"]["input"];
 };
@@ -54586,12 +53767,6 @@ export type QueryRootOrderEditSessionArgs = {
 };
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootOrderEditSessionArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootOrderPaymentStatusArgs = {
 	orderId: Scalars["ID"]["input"];
 	paymentReferenceId: Scalars["String"]["input"];
@@ -54648,12 +53823,6 @@ export type QueryRootPagesCountArgs = {
 };
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootPagesCountArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootPaymentCustomizationArgs = {
 	id: Scalars["ID"]["input"];
 };
@@ -54677,12 +53846,6 @@ export type QueryRootPaymentTermsTemplatesArgs = {
 export type QueryRootPointOfSaleDeviceArgs = {
 	id: Scalars["ID"]["input"];
 };
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootPointOfSaleDeviceArgs = {
-  id: Scalars['ID']['input'];
-};
-
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootPriceListArgs = {
@@ -54882,20 +54045,6 @@ export type QueryRootReturnReasonDefinitionsArgs = {
 };
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootReturnReasonDefinitionsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  handles?: InputMaybe<Array<Scalars['String']['input']>>;
-  ids?: InputMaybe<Array<Scalars['ID']['input']>>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  query?: InputMaybe<Scalars['String']['input']>;
-  reverse?: InputMaybe<Scalars['Boolean']['input']>;
-  sortKey?: InputMaybe<ReturnReasonDefinitionSortKeys>;
-};
-
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootReturnableFulfillmentArgs = {
 	id: Scalars["ID"]["input"];
 };
@@ -54993,12 +54142,6 @@ export type QueryRootSegmentsCountArgs = {
 };
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootSegmentsCountArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootSellingPlanGroupArgs = {
 	id: Scalars["ID"]["input"];
 };
@@ -55036,24 +54179,6 @@ export type QueryRootShopPayPaymentRequestReceiptsArgs = {
 };
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootShopPayPaymentRequestReceiptArgs = {
-  token: Scalars['String']['input'];
-};
-
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootShopPayPaymentRequestReceiptsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  query?: InputMaybe<Scalars['String']['input']>;
-  reverse?: InputMaybe<Scalars['Boolean']['input']>;
-  sortKey?: InputMaybe<ShopPayPaymentRequestReceiptsSortKeys>;
-};
-
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootShopifyFunctionArgs = {
 	id: Scalars["String"]["input"];
 };
@@ -55073,12 +54198,6 @@ export type QueryRootShopifyFunctionsArgs = {
 export type QueryRootShopifyqlQueryArgs = {
 	query: Scalars["String"]["input"];
 };
-
-/** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
-export type QueryRootShopifyqlQueryArgs = {
-  query: Scalars['String']['input'];
-};
-
 
 /** The schema's entry-point for queries. This acts as the public, top-level API from which all queries must start. */
 export type QueryRootStaffMemberArgs = {
@@ -55915,24 +55034,6 @@ export type ResolvedPriceInclusivity = {
 	taxesIncluded: Scalars["Boolean"]["output"];
 };
 
-/** Return type for `removeFromReturn` mutation. */
-export type RemoveFromReturnPayload = {
-  __typename?: 'RemoveFromReturnPayload';
-  /** The modified return. */
-  return?: Maybe<Return>;
-  /** The list of errors that occurred from executing the mutation. */
-  userErrors: Array<ReturnUserError>;
-};
-
-/** The resolved price inclusivity attributes. */
-export type ResolvedPriceInclusivity = {
-  __typename?: 'ResolvedPriceInclusivity';
-  /** Whether duties are included in the price. */
-  dutiesIncluded: Scalars['Boolean']['output'];
-  /** Whether taxes are included in the price. */
-  taxesIncluded: Scalars['Boolean']['output'];
-};
-
 /**
  * An alert message that appears in the Shopify admin about a problem with a store resource, with 1 or more actions to take. For example, you could use an alert to indicate that you're not charging taxes on some product variants.
  * They can optionally have a specific icon and be dismissed by merchants.
@@ -56425,33 +55526,6 @@ export type ReturnTransactionsArgs = {
 	first?: InputMaybe<Scalars["Int"]["input"]>;
 	last?: InputMaybe<Scalars["Int"]["input"]>;
 	reverse?: InputMaybe<Scalars["Boolean"]["input"]>;
-};
-
-
-/**
- * The `Return` object represents the intent of a buyer to ship one or more items from an order back to a merchant
- * or a third-party fulfillment location. A return is associated with an [order](https://shopify.dev/docs/api/admin-graphql/latest/objects/Order)
- * and can include multiple return [line items](https://shopify.dev/docs/api/admin-graphql/latest/objects/LineItem).
- * Each return has a [status](https://shopify.dev/docs/apps/build/orders-fulfillment/returns-apps#return-statuses),
- * which indicates the state of the return.
- *
- * Use the `Return` object to capture the financial, logistical,
- * and business intent of a return. For example, you can identify eligible items for a return and issue customers
- * a refund for returned items on behalf of the merchant.
- *
- * Learn more about providing a
- * [return management workflow](https://shopify.dev/docs/apps/build/orders-fulfillment/returns-apps/build-return-management)
- * for merchants. You can also manage [exchanges](https://shopify.dev/docs/apps/build/orders-fulfillment/returns-apps/manage-exchanges),
- * [reverse fulfillment orders](https://shopify.dev/docs/apps/build/orders-fulfillment/returns-apps/manage-reverse-fulfillment-orders),
- * and [reverse deliveries](https://shopify.dev/docs/apps/build/orders-fulfillment/returns-apps/manage-reverse-deliveries)
- * on behalf of merchants.
- */
-export type ReturnTransactionsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  reverse?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 /** An agreement between the merchant and customer for a return. */
@@ -56961,72 +56035,6 @@ export enum ReturnReasonDefinitionSortKeys {
 	Id = "ID",
 	/** Sort by the `name` value. */
 	Name = "NAME",
-}
-
-/**
- * A standardized reason for returning an item.
- *
- * - Shopify offers an expanded library of return reasons available to all merchants
- * - For each product, Shopify suggests a curated subset of reasons based on the product's category
- * - Suggested reasons aren't the only valid options. When creating a return via the API, you can use any reason from the [full library](https://shopify.dev/docs/api/admin-graphql/latest/queries/returnReasonDefinitions).
- */
-export type ReturnReasonDefinition = Node & {
-  __typename?: 'ReturnReasonDefinition';
-  /**
-   * Whether the return reason has been removed from taxonomy.
-   *
-   * Deleted reasons should not be presented to customers when creating new returns, but may still
-   * appear on existing returns that were created before the reason was deleted. This field enables
-   * graceful deprecation of return reasons without breaking historical data.
-   */
-  deleted: Scalars['Boolean']['output'];
-  /**
-   * A unique, human-readable, stable identifier for the return reason.
-   *
-   * Example values include "arrived-late", "comfort", "too-tight", "color-too-bright", and "quality".
-   * The handle remains consistent across API versions and localizations, making it suitable for programmatic use.
-   */
-  handle: Scalars['String']['output'];
-  /** A globally-unique ID. */
-  id: Scalars['ID']['output'];
-  /**
-   * The localized, user-facing name of the return reason.
-   *
-   * This field returns the reason name in the requested locale, automatically falling back to
-   * English if no translation is available. Use this field when displaying return reasons to
-   * customers or merchants.
-   */
-  name: Scalars['String']['output'];
-};
-
-/** An auto-generated type for paginating through multiple ReturnReasonDefinitions. */
-export type ReturnReasonDefinitionConnection = {
-  __typename?: 'ReturnReasonDefinitionConnection';
-  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
-  edges: Array<ReturnReasonDefinitionEdge>;
-  /** A list of nodes that are contained in ReturnReasonDefinitionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
-  nodes: Array<ReturnReasonDefinition>;
-  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
-  pageInfo: PageInfo;
-};
-
-/** An auto-generated type which holds one ReturnReasonDefinition and a cursor during pagination. */
-export type ReturnReasonDefinitionEdge = {
-  __typename?: 'ReturnReasonDefinitionEdge';
-  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of ReturnReasonDefinitionEdge. */
-  node: ReturnReasonDefinition;
-};
-
-/** The set of valid sort keys for the ReturnReasonDefinition query. */
-export enum ReturnReasonDefinitionSortKeys {
-  /** Sort by the `handle` value. */
-  Handle = 'HANDLE',
-  /** Sort by the `id` value. */
-  Id = 'ID',
-  /** Sort by the `name` value. */
-  Name = 'NAME'
 }
 
 /** The input fields to refund a return. */
@@ -59664,12 +58672,6 @@ export enum ServerPixelStatus {
 export enum ShipmentLineItemSortKeys {
 	/** Sort by the `id` value. */
 	Id = "ID",
-}
-
-/** The set of valid sort keys for the ShipmentLineItem query. */
-export enum ShipmentLineItemSortKeys {
-  /** Sort by the `id` value. */
-  Id = 'ID'
 }
 
 /**
@@ -66212,37 +65214,6 @@ export type SuggestedReturnFinancialOutcome = {
 	totalTax: MoneyBag;
 };
 
-/** Generic attributes of a suggested refund method. */
-export type SuggestedRefundMethod = {
-  /** The suggested amount to refund in shop and presentment currencies. */
-  amount: MoneyBag;
-  /** The maximum available amount to refund in shop and presentment currencies. */
-  maximumRefundable: MoneyBag;
-};
-
-/** Represents a return financial outcome suggested by Shopify based on the items being reimbursed. You can then use the suggested outcome object to generate an actual refund or invoice for the return. */
-export type SuggestedReturnFinancialOutcome = {
-  __typename?: 'SuggestedReturnFinancialOutcome';
-  /** The sum of all the discounted prices of the line items being refunded. */
-  discountedSubtotal: MoneyBag;
-  /** The financial transfer details for the return outcome. */
-  financialTransfer?: Maybe<ReturnOutcomeFinancialTransfer>;
-  /** The total monetary value available to refund in shop and presentment currencies. */
-  maximumRefundable: MoneyBag;
-  /** A list of duties to be refunded from the order. */
-  refundDuties: Array<RefundDuty>;
-  /** The shipping costs to be refunded from the order. */
-  shipping: ShippingRefund;
-  /** The sum of all the additional fees being refunded in shop and presentment currencies. The value must be positive. */
-  totalAdditionalFees: MoneyBag;
-  /** The total cart discount amount that was applied to all line items in this refund. */
-  totalCartDiscountAmount: MoneyBag;
-  /** The sum of all the duties being refunded from the order in shop and presentment currencies. The value must be positive. */
-  totalDuties: MoneyBag;
-  /** The sum of the taxes being refunded in shop and presentment currencies. The value must be positive. */
-  totalTax: MoneyBag;
-};
-
 /** Represents a return refund suggested by Shopify based on the items being reimbursed. You can then use the suggested refund object to generate an actual refund for the return. */
 export type SuggestedReturnRefund = {
 	__typename?: "SuggestedReturnRefund";
@@ -66277,17 +65248,6 @@ export type SuggestedStoreCreditRefund = SuggestedRefundMethod & {
 	expiresAt?: Maybe<Scalars["DateTime"]["output"]>;
 	/** The maximum available amount to refund in shop and presentment currencies. */
 	maximumRefundable: MoneyBag;
-};
-
-/** The suggested values for a refund to store credit. */
-export type SuggestedStoreCreditRefund = SuggestedRefundMethod & {
-  __typename?: 'SuggestedStoreCreditRefund';
-  /** The suggested amount to refund in shop and presentment currencies. */
-  amount: MoneyBag;
-  /** The suggested expiration date for the store credit. */
-  expiresAt?: Maybe<Scalars['DateTime']['output']>;
-  /** The maximum available amount to refund in shop and presentment currencies. */
-  maximumRefundable: MoneyBag;
 };
 
 /** Return type for `tagsAdd` mutation. */
@@ -66894,32 +65854,6 @@ export enum ThemeDuplicateUserErrorCode {
 	NotFound = "NOT_FOUND",
 }
 
-/** Return type for `themeDuplicate` mutation. */
-export type ThemeDuplicatePayload = {
-  __typename?: 'ThemeDuplicatePayload';
-  /** The newly duplicated theme. */
-  newTheme?: Maybe<OnlineStoreTheme>;
-  /** The list of errors that occurred from executing the mutation. */
-  userErrors: Array<ThemeDuplicateUserError>;
-};
-
-/** An error that occurs during the execution of `ThemeDuplicate`. */
-export type ThemeDuplicateUserError = DisplayableError & {
-  __typename?: 'ThemeDuplicateUserError';
-  /** The error code. */
-  code?: Maybe<ThemeDuplicateUserErrorCode>;
-  /** The path to the input field that caused the error. */
-  field?: Maybe<Array<Scalars['String']['output']>>;
-  /** The error message. */
-  message: Scalars['String']['output'];
-};
-
-/** Possible error codes that can be returned by `ThemeDuplicateUserError`. */
-export enum ThemeDuplicateUserErrorCode {
-  /** The record with the ID used as the input value couldn't be found. */
-  NotFound = 'NOT_FOUND'
-}
-
 /** The input fields for the file copy. */
 export type ThemeFilesCopyFileInput = {
 	/** The new file where the content is copied to. */
@@ -67142,26 +66076,6 @@ export enum TransferSortKeys {
 	SourceName = "SOURCE_NAME",
 	/** Sort by the `status` value. */
 	Status = "STATUS",
-}
-
-/** The set of valid sort keys for the Transfer query. */
-export enum TransferSortKeys {
-  /** Sort by the `created_at` value. */
-  CreatedAt = 'CREATED_AT',
-  /** Sort by the `destination_name` value. */
-  DestinationName = 'DESTINATION_NAME',
-  /** Sort by the `expected_shipment_arrival` value. */
-  ExpectedShipmentArrival = 'EXPECTED_SHIPMENT_ARRIVAL',
-  /** Sort by the `id` value. */
-  Id = 'ID',
-  /** Sort by the `name` value. */
-  Name = 'NAME',
-  /** Sort by the `origin_name` value. */
-  OriginName = 'ORIGIN_NAME',
-  /** Sort by the `source_name` value. */
-  SourceName = 'SOURCE_NAME',
-  /** Sort by the `status` value. */
-  Status = 'STATUS'
 }
 
 /** Translatable content of a resource's field. */
@@ -67516,18 +66430,6 @@ export type UnitPriceMeasurementInput = {
 	referenceUnit?: InputMaybe<UnitPriceMeasurementMeasuredUnit>;
 	/** The reference value for the unit price measurement. */
 	referenceValue?: InputMaybe<Scalars["Int"]["input"]>;
-};
-
-/** The input fields for the measurement used to calculate a unit price for a product variant (e.g. $9.99 / 100ml). */
-export type UnitPriceMeasurementInput = {
-  /** The quantity unit for the unit price measurement. */
-  quantityUnit?: InputMaybe<UnitPriceMeasurementMeasuredUnit>;
-  /** The quantity value for the unit price measurement. */
-  quantityValue?: InputMaybe<Scalars['Float']['input']>;
-  /** The reference unit for the unit price measurement. */
-  referenceUnit?: InputMaybe<UnitPriceMeasurementMeasuredUnit>;
-  /** The reference value for the unit price measurement. */
-  referenceValue?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** The accepted types of unit of measurement. */
@@ -69114,7 +68016,7 @@ export enum WebhookSubscriptionTopic {
 	TaxServicesCreate = "TAX_SERVICES_CREATE",
 	/** The webhook topic for `tax_services/update` events. Occurs whenver a tax service is updated. Requires the `read_taxes` scope. */
 	TaxServicesUpdate = "TAX_SERVICES_UPDATE",
-	/** The webhook topic for `tax_summaries/create` events. Occurs when a tax summary is created. Consumed by tax partners. Requires at least one of the following scopes: read_fulfillments, read_marketplace_orders. */
+	/** The webhook topic for `tax_summaries/create` events. Occurs when a tax summary is created. Consumed by tax partners. Requires at least one of the following scopes: read_fulfillments, read_marketplace_orders, read_orders. */
 	TaxSummariesCreate = "TAX_SUMMARIES_CREATE",
 	/** The webhook topic for `tender_transactions/create` events. Occurs when a tender transaction is created. Requires the `read_orders` scope. */
 	TenderTransactionsCreate = "TENDER_TRANSACTIONS_CREATE",
