@@ -1,4 +1,3 @@
-import { useAppBridge } from "@shopify/app-bridge-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet, useNavigate, useNavigation } from "react-router";
@@ -21,25 +20,24 @@ export default function App() {
 		};
 	}, [navigate]);
 
-	const shopify = useAppBridge();
 	const navigation = useNavigation();
 	const isNavigating = navigation.state !== "idle" || Boolean(navigation.location);
 	useEffect(() => {
-		shopify.loading(isNavigating);
-	}, [isNavigating, shopify]);
+		window.shopify.loading(isNavigating);
+	}, [isNavigating]);
 
 	const { t } = useTranslation();
 
 	return (
 		<>
-			<ui-nav-menu>
-				<a href="/" rel="home">
+			<s-app-nav>
+				<s-link href="/" rel="home">
 					{t("app")}
-				</a>
-				<a href={`shopify://admin/charges/${APP_HANDLE}/pricing_plans`} target="_top">
+				</s-link>
+				<s-link href={`shopify://admin/charges/${APP_HANDLE}/pricing_plans`} target="_top">
 					{t("pricingPlans")}
-				</a>
-			</ui-nav-menu>
+				</s-link>
+			</s-app-nav>
 
 			<Outlet />
 		</>

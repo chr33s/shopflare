@@ -1,4 +1,5 @@
 import type * as AppBridge from "@shopify/app-bridge-types";
+import type * as AppBridgeUi from "@shopify/app-bridge-ui-types";
 import "react-router";
 
 declare module "cloudflare:workers" {
@@ -8,10 +9,9 @@ declare module "cloudflare:workers" {
 declare module "react" {
 	export namespace JSX {
 		export interface IntrinsicElements {
-			"ui-modal": AppBridge.UIModalAttributes;
-			"ui-title-bar": AppBridge.UITitleBarAttributes;
+			"s-app-nav": AppBridgeUi.elements["s-app-nav"];
+			"s-link": AppBridgeUi.elements["s-link"];
 			"ui-save-bar": AppBridge.UISaveBarAttributes;
-			"ui-nav-menu": AppBridge.UINavMenuAttributes;
 		}
 	}
 }
@@ -40,3 +40,5 @@ declare module "vite/client" {
 		readonly env: ImportMetaEnv;
 	}
 }
+
+export {};

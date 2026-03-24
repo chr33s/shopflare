@@ -1,4 +1,3 @@
-import { useAppBridge } from "@shopify/app-bridge-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useFetcher } from "react-router";
@@ -58,38 +57,28 @@ export default function AppIndex({ actionData, loaderData }: Route.ComponentProp
 
 	const fetcher = useFetcher();
 
-	const shopify = useAppBridge();
-
 	const debug = errors ? JSON.stringify(errors, null, 2) : data?.shop.name;
 
 	return (
-		<s-page inlineSize="small">
-			<ui-title-bar title={t("app")}>
-				<button
-					onClick={() => {
-						void shopify.modal.show("modal");
-					}}
-					type="button"
-					variant="primary"
-				>
-					{t("primary")}
-				</button>
-			</ui-title-bar>
-			<ui-modal id="modal">
+		<s-page inlineSize="small" heading={t("app")}>
+			<s-button
+				commandFor="modal"
+				command="--show"
+				slot="primary-action"
+				type="submit"
+				variant="primary"
+			>
+				{t("primary")}
+			</s-button>
+
+			<s-modal id="modal">
+				<s-button slot="secondary-actions" commandFor="modal" command="--hide">
+					{t("close")}
+				</s-button>
 				<s-box padding="base">
 					<s-paragraph>{t("message")}</s-paragraph>
 				</s-box>
-				<ui-title-bar title={t("title")}>
-					<button
-						onClick={() => {
-							void shopify.modal.hide("modal");
-						}}
-						type="button"
-					>
-						{t("close")}
-					</button>
-				</ui-title-bar>
-			</ui-modal>
+			</s-modal>
 
 			<s-section>
 				<s-paragraph>{debug}</s-paragraph>
@@ -99,7 +88,7 @@ export default function AppIndex({ actionData, loaderData }: Route.ComponentProp
 					onReset={(ev) => {
 						log.debug("routes/app.index#component.onReset", ev);
 						ev.currentTarget.reset();
-						void shopify.saveBar.hide("savebar");
+						void window.shopify.saveBar.hide("savebar");
 					}}
 					onSubmit={(ev) => {
 						const formData = new FormData(ev.currentTarget);
@@ -108,10 +97,10 @@ export default function AppIndex({ actionData, loaderData }: Route.ComponentProp
 					}}
 				>
 					<ui-save-bar id="savebar">
-						<button type="reset">{t("reset")}</button>
-						<button type="submit" variant="primary">
+						<s-button type="reset">{t("reset")}</s-button>
+						<s-button type="submit" variant="primary">
 							{t("submit")}
-						</button>
+						</s-button>
 					</ui-save-bar>
 					<s-text-field label="Input" name="input" placeholder="Input Value" />
 				</fetcher.Form>

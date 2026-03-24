@@ -26,9 +26,6 @@ export default defineConfig(({ mode }) => {
 		},
 		clearScreen: false,
 		define: define(env),
-		optimizeDeps: {
-			include: ["@shopify/app-bridge-react"],
-		},
 		plugins: [
 			i18nextLoader(i18nextLoaderOptions),
 			!isTest && cloudflare({ viteEnvironment: { name: "ssr" } }),

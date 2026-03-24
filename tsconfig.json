@@ -20,8 +20,9 @@
 		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
 		"types": [
 			"@cloudflare/vitest-pool-workers/types",
+			"@shopify/app-bridge-types",
 			"@shopify/app-bridge-ui-types",
-			"@shopify/app-bridge-react",
+			"@shopify/polaris-types",
 			"@vitest/browser/matchers",
 			"vite/client"
 		],
