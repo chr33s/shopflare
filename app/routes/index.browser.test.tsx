@@ -1,3 +1,4 @@
+import { page } from "vitest/browser";
 import { createRoutesStub } from "react-router";
 import { expect, test, vi } from "vitest";
 import { render } from "vitest-browser-react";
@@ -32,7 +33,6 @@ test("loads and displays h1", async () => {
 		},
 	]);
 
-	const screen = render(<Stub initialEntries={["/"]} />);
-	const label = screen.getByText("login");
-	await expect.element(label).toBeVisible();
+	await render(<Stub initialEntries={["/"]} />);
+	await expect.element(page.getByText("login")).toBeVisible();
 });

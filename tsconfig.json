@@ -19,10 +19,10 @@
 		"target": "ES2022",
 		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
 		"types": [
-			"@cloudflare/vitest-pool-workers",
+			"@cloudflare/vitest-pool-workers/types",
 			"@shopify/app-bridge-ui-types",
+			"@shopify/app-bridge-react",
 			"@vitest/browser/matchers",
-			"@vitest/browser/providers/playwright",
 			"vite/client"
 		],
 		"verbatimModuleSyntax": true
@@ -33,6 +33,7 @@
 		"**/*",
 		"**/.server/**/*",
 		"**/.client/**/*",
+		"./shopflare.d.ts",
 		"node_modules/vite-plugin-i18next-loader/typings/*"
 	]
 }

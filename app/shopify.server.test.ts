@@ -5,8 +5,8 @@ import * as shopify from "./shopify.server";
 
 const request = new Request("http://localhost");
 
-test("admin", () => {
-	expect(shopify.admin(request)).toBeDefined();
+test("admin", async () => {
+	await expect(shopify.admin(request)).rejects.toBeDefined();
 });
 
 describe("billing", () => {
@@ -71,8 +71,8 @@ describe("metaobject", () => {
 	test.todo("set");
 });
 
-test("proxy", () => {
-	expect(shopify.proxy(request)).toBeDefined();
+test("proxy", async () => {
+	await expect(shopify.proxy(request)).rejects.toBeDefined();
 });
 
 test("redirect", () => {
@@ -155,6 +155,6 @@ describe("utils", () => {
 	});
 });
 
-test("webhook", () => {
-	expect(shopify.webhook(request)).toBeDefined();
+test("webhook", async () => {
+	await expect(shopify.webhook(request)).rejects.toBeDefined();
 });

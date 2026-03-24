@@ -1,20 +1,28 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
+import { cloudflareTest } from "@cloudflare/vitest-pool-workers";
+import { playwright } from "@vitest/browser-playwright";
 import { reactRouter } from "@react-router/dev/vite";
-import { defineConfig, loadEnv } from "vite";
+import { fileURLToPath } from "node:url";
+import { loadEnv } from "vite";
 import babel from "vite-plugin-babel";
 import i18nextLoader from "vite-plugin-i18next-loader";
+import { defineConfig } from "vitest/config";
 
-import i18nextLoaderOptions from "./i18n.config";
+import i18nextLoaderOptions from "./i18n.config.ts";
 
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, import.meta.dirname, "");
 	const app = new URL(env.HOST || env.SHOPIFY_APP_URL);
+	const isTest = Boolean(env.VITEST);
 
 	return {
 		assetsInclude: ["**/*.gql"],
 		base: app.href,
 		build: {
 			assetsInlineLimit: 0,
+			rollupOptions: {
+				external: [/^cloudflare:/],
+			},
 		},
 		clearScreen: false,
 		define: define(env),
@@ -23,7 +31,7 @@ export default defineConfig(({ mode }) => {
 		},
 		plugins: [
 			i18nextLoader(i18nextLoaderOptions),
-			cloudflare({ viteEnvironment: { name: "ssr" } }),
+			!isTest && cloudflare({ viteEnvironment: { name: "ssr" } }),
 			reactRouter(),
 			babel({
 				babelConfig: {
@@ -32,7 +40,7 @@ export default defineConfig(({ mode }) => {
 				},
 				filter: /\.[jt]sx?$/,
 			}),
-		],
+		].filter(Boolean),
 		server: {
 			allowedHosts: [app.hostname],
 			// pass cors handling to react-router
@@ -44,6 +52,47 @@ export default defineConfig(({ mode }) => {
 			origin: app.origin,
 			port: Number(env.PORT || 8080),
 			preflightContinue: true,
+		},
+		test: {
+			css: true,
+			globalSetup: ["./vitest.global-setup.ts"],
+			projects: [
+				{
+					plugins: [cloudflareWorkersPlugin()],
+					test: {
+						browser: {
+							enabled: true,
+							headless: true,
+							instances: [{ browser: "webkit" }],
+							provider: playwright(),
+						},
+						include: ["app/**/*.browser.test.tsx"],
+						name: "browser",
+					},
+				},
+				{
+					test: {
+						environment: "happy-dom",
+						include: ["app/**/*.client.test.tsx"],
+						name: "client",
+					},
+				},
+				{
+					alias: [
+						{
+							find: "virtual:react-router/server-build",
+							replacement: fileURLToPath(new URL("./build/server/index.js", import.meta.url)),
+						},
+					],
+					extends: true,
+					plugins: [cloudflareTest({ wrangler: { configPath: "./wrangler.json" } })],
+					test: {
+						include: ["app/*server.test.ts", "app/**/*server.test.ts"],
+						name: "server",
+					},
+				},
+			],
+			watch: false,
 		},
 	};
 });
@@ -61,4 +110,27 @@ export function define(env: Record<string, string>) {
 		}),
 		{},
 	);
+}
+
+function cloudflareWorkersPlugin() {
+	const virtualModuleId = "cloudflare:workers";
+	const resolvedVirtualModuleId = `\0${virtualModuleId}`;
+
+	return {
+		load(id: string) {
+			if (id === resolvedVirtualModuleId) {
+				return `
+					export const env = import.meta.env;
+					export const waitUntil = Promise.resolve;
+					export class DurableObject {};
+				`;
+			}
+		},
+		name: virtualModuleId,
+		resolveId(id: string) {
+			if (id === virtualModuleId) {
+				return resolvedVirtualModuleId;
+			}
+		},
+	};
 }

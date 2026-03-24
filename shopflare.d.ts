@@ -1,7 +1,7 @@
 import type * as AppBridge from "@shopify/app-bridge-types";
 import "react-router";
 
-declare module "cloudflare:test" {
+declare module "cloudflare:workers" {
 	interface ProvidedEnv extends Env {}
 }
 
