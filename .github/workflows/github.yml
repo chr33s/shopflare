@@ -29,7 +29,7 @@ jobs:
         with:
           node-version-file: "package.json"
           cache: "npm"
-      - run: npm ci --legacy-peer-deps
+      - run: npm install
       - uses: github/codeql-action/analyze@v3
 
   release:

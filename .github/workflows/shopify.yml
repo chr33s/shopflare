@@ -25,8 +25,7 @@ jobs:
         with:
           node-version-file: "package.json"
           cache: "npm"
-      - run: npm ci
-      - run: npm install -g @shopify/cli@latest
+      - run: npm install && npm install -g @shopify/cli@latest
       - run: npx shopify app build
         env:
           SHOPIFY_API_KEY: ${{ vars.SHOPIFY_API_KEY }}
