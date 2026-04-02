@@ -1,14 +1,11 @@
 import { env } from "cloudflare:workers";
-
-import * as shopify from "#app/shopify.server";
-import { log } from "#app/shopify.shared";
-
+import { shopify } from "#app/shopify.server";
 import type { Route } from "./+types/shopify.webhooks";
 
 export async function action({ request }: Route.ActionArgs) {
 	try {
-		const { session, webhook } = await shopify.webhook(request);
-		log.debug("routes/shopify.webhooks#action", webhook.webhookId);
+		const { session, payload: webhook } = await shopify.authenticate.webhook(request);
+		console.debug("routes/shopify.webhooks#action", webhook.webhookId);
 
 		await env.WEBHOOK_QUEUE.send({ session, webhook }, { contentType: "json" });
 

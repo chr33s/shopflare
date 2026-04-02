@@ -3,9 +3,8 @@ import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 import { type EntryContext, ServerRouter } from "react-router";
-
 import i18n, { LanguageDetector } from "./i18n";
-import * as shopify from "./shopify.server";
+import { shopify } from "./shopify.server.ts";
 
 export default async function handleRequest(
 	request: Request,
@@ -13,7 +12,7 @@ export default async function handleRequest(
 	responseHeaders: Headers,
 	routerContext: EntryContext,
 ) {
-	shopify.utils.addHeaders(request, responseHeaders);
+	shopify.addDocumentResponseHeaders(request, responseHeaders);
 
 	await i18next
 		.use(initReactI18next)
@@ -36,7 +35,7 @@ export default async function handleRequest(
 				// eslint-disable-next-line no-param-reassign
 				responseStatus = 500;
 				if (!request.signal.aborted) {
-					shopify.log.error("entry.server.onError", error);
+					console.error(error);
 				}
 			},
 			signal: request.signal,

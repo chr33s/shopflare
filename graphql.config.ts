@@ -1,5 +1,4 @@
 import fs from "node:fs";
-
 import { ApiType, shopifyApiProject } from "@shopify/api-codegen-preset";
 import type { IGraphQLProject, IGraphQLProjects } from "graphql-config";
 import { API_KEY, API_VERSION } from "./app/const";

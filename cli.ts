@@ -179,7 +179,7 @@ async function trigger() {
 					npx shopify app webhook trigger \
 						--address=${env.SHOPIFY_APP_URL}/shopify/webhooks \
 						--api-version=${apiVersion} \
-						--client-secret=${env.SHOPIFY_API_SECRET_KEY} \
+						--client-secret=${env.SHOPIFY_API_SECRET} \
 						--delivery-method=http \
 						--topic=${topic}
 				`);

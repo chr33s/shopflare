@@ -8,10 +8,9 @@ import {
 	Scripts,
 	ScrollRestoration,
 } from "react-router";
-
-import { API_KEY, APP_BRIDGE_URL, APP_LOG_LEVEL, APP_POLARIS_URL, SHOPIFY_CDN } from "#app/const";
-import rootCss from "#app/root.css?url";
+import { API_KEY, APP_POLARIS_URL, SHOPIFY_CDN } from "#app/const";
 import type { Route } from "./+types/root";
+import rootCss from "#app/root.css?url";
 
 export default function Component() {
 	return <Outlet />;
@@ -56,10 +55,7 @@ export function Layout({ children }: PropsWithChildren) {
 				<meta content="initial-scale=1, width=device-width" name="viewport" />
 				<meta name="shopify-api-key" content={API_KEY} />
 				<meta name="description" content="..." />
-				{APP_LOG_LEVEL === "debug" && <meta name="shopify-debug" content="web-vitals" />}
-				<meta name="shopify-experimental-features" content="keepAlive" />
 				<link href={SHOPIFY_CDN} rel="preconnect" />
-				<script src={APP_BRIDGE_URL} rel="preload" />
 				<script src={APP_POLARIS_URL} rel="preload" />
 				<title>ShopFlare</title>
 				<Meta />
@@ -69,11 +65,6 @@ export function Layout({ children }: PropsWithChildren) {
 				{children}
 				<ScrollRestoration />
 				<Scripts />
-				<link
-					href={`${SHOPIFY_CDN}/static/fonts/inter/v4/styles.css`}
-					precedence="default"
-					rel="stylesheet"
-				/>
 				<link href={rootCss} precedence="default" rel="stylesheet" />
 			</body>
 		</html>

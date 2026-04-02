@@ -4,7 +4,6 @@ import {
 	createRequestHandler,
 	RouterContextProvider,
 } from "react-router";
-
 import { queueHandler, type QueueHandlerMessage } from "#app/queues";
 
 const fetchHandler = createRequestHandler(
@@ -26,5 +25,3 @@ export default {
 		return queueHandler(batch);
 	},
 } satisfies ExportedHandler<Env, QueueHandlerMessage>;
-
-export * from "#app/durable-objects";

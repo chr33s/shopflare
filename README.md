@@ -1,22 +1,6 @@
-> [!NOTE]  
-> [v2](https://github.com/chr33s/shopflare/tree/v2) branch tracks Polaris React changes
-
 # ShopFlare
 
 Minimalist Shopify app using React Router (v7) running on cloudflare (worker, kv, queues). Only essential features, no future changes other than core upgrades & platform alignment.
-
-## Rationale
-
-- Needed a simple starter, than focusses on the basics (optional extensions [shoputils](https://github.com/chr33s/shoputils))
-- @shopify/shopify-[api,app-remix/react-router] was to complex due to platform abstractions
-- Wanted small code surface, easier audit, that focussed on stability over features
-- Modular, extendable, tree shakable (remove factory functions) -> smaller bundle size
-- Minimally opinionated, by supporting only:
-  1.  Embedded app use-case
-  2.  New Embedded Auth Strategy
-  3.  Managed Pricing
-- Optimized for Cloudflare stack
-- Tested - (unit, browser, e2e)
 
 ## Assumptions
 
@@ -41,17 +25,20 @@ Familiarity with React, ReactRouter, Cloudflare, Shopify conventions.
 npm install
 cp .env.example .env                                    # update vars to match your env values from partners.shopify.com (Apps > All Apps > Create App)
 # vi [wrangler.json, shopify.app.toml]                  # update vars[SHOPIFY_API_KEY, SHOPIFY_APP_URL], SHOPIFY_APP_URL is the cloudflare tunnel url (e.g. https://shopflare.trycloudflare.com) in development and the cloudflare worker url (e.g. https://shopflare.workers.dev) in other environments.
-npx wrangler secret put SHOPIFY_API_SECRET_KEY
+npx wrangler secret put SHOPIFY_API_SECRET
 npx wrangler kv namespace create shopflare              # update wranglers.json#kv_namespaces[0].id
 gh secret set --app=actions CLOUDFLARE_API_TOKEN        # value from dash.cloudflare.com (Manage Account > Account API Tokens > Create Token)
 gh secret set --app=actions SHOPIFY_CLI_PARTNERS_TOKEN  # value from partners.shopify.com (Settings > CLI Token > Manage Tokens > Generate Token)
 gh variable set SHOPIFY_API_KEY
 ```
 
+### Cloudflare tunnel
+
+see: https://github.com/eastlondoner/vite-plugin-cloudflare-tunnel
+
 ## Development
 
 ```sh
-# vi .env               # update vars[SHOPIFY_APP_LOG_LEVEL] sets logging verbosity.
 npm run deploy:shopify  # only required on setup or config changes
 npm run gen
 npm run dev             # or npm run dev:shopify:tunnel
@@ -71,134 +58,15 @@ To split environments see [Cloudflare](https://developers.cloudflare.com/workers
 
 - [App Bridge](https://shopify.dev/docs/api/app-bridge-library/react-components)
 - [Cloudflare](https://developers.cloudflare.com)
-- [Next Gen Dev Platform](https://shopify.dev/docs/beta/next-gen-dev-platform)
-- [Polaris](https://storybook.polaris-admin.shopify.dev/)
+- [Polaris Web components](https://shopify.dev/docs/api/app-home/web-components)
+- [Polaris Storybook](https://storybook.polaris-admin.shopify.dev/)
 - [React](https://react.dev/reference/react)
 - [React Router](https://reactrouter.com/)
 - [Shopify](http://shopify.dev/)
 
 ### Usage
 
-```js
-import * as shopify from "~/shopify.server";
-
-export async function loader({ request }) {
-  return shopify.handler(async () => {
-    const { client } = await shopify.admin(request); // shopify[admin|proxy|webhook](request);
-    const { data, errors } = await client.request(/* GraphQL */ `
-      query {
-        shop {
-          name
-        }
-      }
-    `);
-
-    shopify.config();
-    await shopify.client({ accessToken, shop }).admin(); // [admin | storefront](headers?)
-    await shopify.redirect(request, { shop, url });
-    await shopify.session("admin").get(sessionId); // set(id, value | null);
-    shopify.utils.addCorsHeaders(request, responseHeaders);
-
-    await shopify.bulkOperation(client).query(); // .mutation(mutation, variables);
-    await shopify.metafield(client).get(identifier); // .set(identifier, metafield || null);
-    await shopify.metaobject(client).get({ handle }); // .set({handle}, metaobject || null);
-    await shopify.upload(client).process(file); // .[stage,target](file)
-
-    return { data, errors };
-  });
-}
-
-// Alternative (Backwards compatible)
-
-import { createShopify } from "~/shopify.server";
-
-export async function loader({ request }) {
-  const shopify = createShopify();
-  const client = await shopify.admin(request);
-  const { data, errors } = await client.request(/* GraphQL */ `
-    query {
-      shop {
-        name
-      }
-    }
-  `);
-
-  shopify.config;
-  await shopify.redirect(request, { shop, url });
-  await shopify.session.get(sessionId); // set(id, value | null);
-  shopify.utils.addCorsHeaders(request, responseHeaders);
-
-  const adminClient = createShopifyClient({
-    accessToken,
-    headers: { "X-Shopify-Access-Token": "?" },
-    shop,
-  });
-  const storefrontClient = createShopifyClient({
-    accessToken,
-    headers: { "X-Shopify-Storefront-Access-Token": "?" },
-    shop,
-  });
-}
-```
-
-#### Experimental > DurableObject
-
-```js
-/// Direct api access
-
-export default {
-  async fetch(request, env, ctx) {
-    const url = new URL(request.url);
-    if (/[/]shopify[/](admin|storefront)([/])?/.test(url.pathname)) {
-      const shop = url.searchParams.get('shop');
-      const stub = env.SHOPIFY_DURABLE_OBJECT.getByName(shop);
-      return stub.fetch(request);
-    }
-    // ... handler
-  },
-}
-
-function Component() {
-  useEffect(() => {
-    fetch('/shopify/admin', { // /shopify/storefront
-      body: JSON.stringify({
-        query: /* GraphQL */ `
-          #graphql
-          query Shop {
-            shop {
-              name
-            }
-          }
-        `,
-        variables: {},
-      }),
-      credentials: 'include'
-      method: 'POST',
-    })
-      .then<{data: ShopQuery}>((res) => res.json())
-      // ...
-  }, []);
-
-  // .... jsx
-}
-
-export async function action({request}) {
-  const shop = new URL(request.url).searchParams.get('shop');
-  const stub = env.SHOPIFY_DURABLE_OBJECT.getByName(shop);
-  const client = await stub.client('admin');
-  return client.fetch(
-    /* GraphQL */ `query Shop { shop { name } }`,
-    {
-      signal: request.signal,
-      variables: undefined,
-    },
-  );
-}
-```
-
-#### [proxy.tsx](./app/components/proxy.tsx)
-
-Follow [Shopify App Proxy](https://shopify.dev/docs/api/shopify-app-remix/v3/app-proxy-components) docs but import from `~/components/proxy` instead of `@shopify/shopify-app-remix/react`
+see: https://github.com/Shopify/shopify-app-js/tree/main/packages/apps/shopify-app-react-router
 
 ### Branching convention
 

@@ -1,14 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { Form, redirect } from "react-router";
-
 import { API_KEY, APP_POLARIS_URL } from "#app/const";
-import * as shopify from "#app/shopify.server";
-import { log } from "#app/shopify.shared";
-
+import { utils } from "#app/shopify.server";
 import type { Route } from "./+types/index";
 
 export async function loader({ request }: Route.LoaderArgs) {
-	log.debug("routes/index#loader");
+	console.debug("routes/index#loader");
 
 	const url = new URL(request.url);
 	if (url.searchParams.has("shop")) {
@@ -49,7 +46,7 @@ export default function Index({ actionData, loaderData }: Route.ComponentProps) 
 }
 
 export async function action({ request }: Route.ActionArgs) {
-	log.debug("routes/app.index#action");
+	console.debug("routes/app.index#action");
 
 	const url = new URL(request.url);
 	let shop = url.searchParams.get("shop");
@@ -68,12 +65,12 @@ export async function action({ request }: Route.ActionArgs) {
 	const shopWithDomain = shop.includes(".")
 		? shopWithoutProtocol
 		: `${shopWithoutProtocol}.myshopify.com`;
-	const sanitizedShop = shopify.utils.sanitizeShop(shopWithDomain);
+	const sanitizedShop = utils.sanitizeShop(shopWithDomain);
 	if (!sanitizedShop) {
 		return { errors: { shop: "INVALID_SHOP" } };
 	}
 
-	const adminPath = shopify.utils.legacyUrlToShopAdminUrl(sanitizedShop);
+	const adminPath = utils.legacyUrlToShopAdminUrl(sanitizedShop);
 	const redirectUrl = `https://${adminPath}/oauth/install?client_id=${API_KEY}`;
 	throw redirect(redirectUrl);
 }

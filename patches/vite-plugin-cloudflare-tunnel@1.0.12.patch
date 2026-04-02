@@ -1,0 +1,65 @@
+--- a/node_modules/vite-plugin-cloudflare-tunnel/dist/index.mjs	1985-10-26 15:15:00
++++ b/node_modules/vite-plugin-cloudflare-tunnel/dist/index.mjs	2026-04-02 18:26:01
+@@ -579,37 +579,36 @@
+       const generateSslTagHostname = () => {
+         return `cf-tunnel-plugin-${tunnelName}--${parentDomain}`;
+       };
++      const expectedCnameContent = `${tunnelId}.cfargotunnel.com`;
++      const ensureDnsRecord = async (recordName, content) => {
++        const existingRecords = await cf(apiToken, "GET", `/zones/${zoneId}/dns_records?type=CNAME&name=${encodeURIComponent(recordName)}`, void 0, z.array(DNSRecordSchema));
++        if (existingRecords.length === 0) {
++          console.log(`[cloudflare-tunnel] Creating CNAME record for ${recordName}...`);
++          await cf(apiToken, "POST", `/zones/${zoneId}/dns_records`, {
++            type: "CNAME",
++            name: recordName,
++            content,
++            proxied: true,
++            comment: generateDnsComment()
++          }, DNSRecordSchema);
++        } else if (existingRecords[0].content !== content) {
++          console.log(`[cloudflare-tunnel] Updating DNS record for ${recordName} (tunnel ID changed)...`);
++          debugLog(`\u2190 Old: ${existingRecords[0].content}, New: ${content}`);
++          await cf(apiToken, "PATCH", `/zones/${zoneId}/dns_records/${existingRecords[0].id}`, {
++            content
++          }, DNSRecordSchema);
++          console.log(`[cloudflare-tunnel] \u2705 DNS record updated: ${recordName} \u2192 ${content}`);
++        } else {
++          debugLog(`\u2190 DNS record already correct: ${recordName} \u2192 ${content}`);
++        }
++      };
+       if (dnsOption) {
+-        const ensureDnsRecord = async (type, content) => {
+-          const existingWildcard = await cf(apiToken, "GET", `/zones/${zoneId}/dns_records?type=${type}&name=${encodeURIComponent(dnsOption)}`, void 0, z.array(DNSRecordSchema));
+-          if (existingWildcard.length === 0) {
+-            console.log(`[cloudflare-tunnel] Creating ${type} record for ${dnsOption}...`);
+-            await cf(apiToken, "POST", `/zones/${zoneId}/dns_records`, {
+-              type,
+-              name: dnsOption,
+-              content,
+-              proxied: true,
+-              comment: generateDnsComment()
+-            }, DNSRecordSchema);
+-          }
+-        };
+-        await ensureDnsRecord("CNAME", `${tunnelId}.cfargotunnel.com`);
++        await ensureDnsRecord(dnsOption, expectedCnameContent);
+       } else {
+         const wildcardDns = `*.${parentDomain}`;
+         const existingWildcard = await cf(apiToken, "GET", `/zones/${zoneId}/dns_records?type=CNAME&name=${wildcardDns}`, void 0, z.array(DNSRecordSchema));
+         if (existingWildcard.length === 0) {
+-          const existingDnsRecords = await cf(apiToken, "GET", `/zones/${zoneId}/dns_records?type=CNAME&name=${hostname}`, void 0, z.array(DNSRecordSchema));
+-          const existing = existingDnsRecords.length > 0;
+-          if (!existing) {
+-            console.log(`[cloudflare-tunnel] Creating DNS record for ${hostname}...`);
+-            await cf(apiToken, "POST", `/zones/${zoneId}/dns_records`, {
+-              type: "CNAME",
+-              name: hostname,
+-              content: `${tunnelId}.cfargotunnel.com`,
+-              proxied: true,
+-              comment: generateDnsComment()
+-            }, DNSRecordSchema);
+-          }
++          await ensureDnsRecord(hostname, expectedCnameContent);
+         }
+       }
+       const token = await cf(apiToken, "GET", `/accounts/${accountId}/cfd_tunnel/${tunnelId}/token`, void 0, z.string());

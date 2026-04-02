@@ -1,9 +1,9 @@
-import * as shopify from "#app/shopify.server";
+import { shopify, Session } from "#app/shopify.server";
 
 export async function queue(batch: MessageBatch<QueueMessage>) {
 	for (const message of batch.messages) {
 		const { session, webhook } = message.body;
-		shopify.log.debug("queues/webhook", webhook.webhookId);
+		console.debug("queues/webhook", webhook.webhookId);
 
 		switch (webhook.topic) {
 			case "APP_INSTALLED":
@@ -11,16 +11,18 @@ export async function queue(batch: MessageBatch<QueueMessage>) {
 
 			case "APP_SCOPES_UPDATE":
 				if (session) {
-					await shopify.session().set(session.id, {
-						...session,
-						scope: (webhook.payload as { current: string[] }).current.toString(),
-					});
+					await shopify.sessionStorage.storeSession(
+						new Session({
+							...session,
+							scope: (webhook.payload as { current: string[] }).current.toString(),
+						}),
+					);
 				}
 				break;
 
 			case "APP_UNINSTALLED":
 				if (session) {
-					await shopify.session().set(session.id, null);
+					await shopify.sessionStorage.deleteSession(session.id);
 				}
 				break;
 
@@ -35,7 +37,7 @@ export async function queue(batch: MessageBatch<QueueMessage>) {
 }
 
 export interface QueueMessage {
-	session?: shopify.Session;
+	session?: ConstructorParameters<typeof Session>[0];
 	webhook: {
 		subTopic?: string;
 		apiVersion: string;

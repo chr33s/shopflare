@@ -1,23 +1,10 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "shopflare",
-	"compatibility_date": "2025-12-10",
-	"main": "./app/server.ts",
-	"assets": {
-		"binding": "ASSETS",
-		"directory": "./build/client"
-	},
+	"compatibility_date": "2026-01-16",
+	"main": "./app/entry.worker.ts",
 	"dev": {
-		"ip": "0.0.0.0",
 		"port": 8080
-	},
-	"durable_objects": {
-		"bindings": [
-			{
-				"class_name": "ShopifyDurableObject",
-				"name": "SHOPIFY_DURABLE_OBJECT"
-			}
-		]
 	},
 	"kv_namespaces": [
 		{
@@ -26,12 +13,6 @@
 		}
 	],
 	"logpush": true,
-	"migrations": [
-		{
-			"tag": "v1",
-			"new_sqlite_classes": ["ShopifyDurableObject"]
-		}
-	],
 	"observability": {
 		"enabled": true,
 		"head_sampling_rate": 1
@@ -58,6 +39,9 @@
 			"pattern": "?"
 		}
 	],
+	"secrets": {
+		"required": ["SHOPIFY_API_SECRET"]
+	},
 	"send_metrics": false,
 	"upload_source_maps": true,
 	"vars": {

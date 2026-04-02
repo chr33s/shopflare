@@ -3,7 +3,6 @@ import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 import { HydratedRouter } from "react-router/dom";
-
 import i18n, { LanguageDetector } from "./i18n";
 
 async function hydrate() {
@@ -22,7 +21,13 @@ async function hydrate() {
 			document,
 			<I18nextProvider i18n={i18next}>
 				<StrictMode>
-					<HydratedRouter />
+					<HydratedRouter
+						onError={(error: any, info) => {
+							if (error.name !== "AbortError") {
+								console.error(error, info);
+							}
+						}}
+					/>
 				</StrictMode>
 			</I18nextProvider>,
 		);

@@ -1,8 +1,0 @@
-#graphql
-query Metaobjects($cursor: String, $first: Int = 10, $query: String, $type: String!) {
-	metaobjects(after: $cursor, first: $first, query: $query, type: $type) {
-		nodes {
-			id
-		}
-	}
-}

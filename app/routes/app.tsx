@@ -1,9 +1,9 @@
+import { AppProvider } from "@shopify/shopify-app-react-router/react";
+import { boundary } from "@shopify/shopify-app-react-router/server";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Outlet, useNavigate, useNavigation } from "react-router";
-
-import { APP_HANDLE } from "#app/const";
-
+import { Outlet, useNavigate, useNavigation, type HeadersFunction } from "react-router";
+import { API_KEY, APP_HANDLE } from "#app/const";
 import type { Route } from "./+types/app";
 
 export default function App() {
@@ -29,7 +29,7 @@ export default function App() {
 	const { t } = useTranslation();
 
 	return (
-		<>
+		<AppProvider embedded apiKey={API_KEY}>
 			<s-app-nav>
 				<s-link href="/" rel="home">
 					{t("app")}
@@ -40,7 +40,7 @@ export default function App() {
 			</s-app-nav>
 
 			<Outlet />
-		</>
+		</AppProvider>
 	);
 }
 
@@ -62,19 +62,4 @@ export function ErrorBoundary(error: Route.ErrorBoundaryProps) {
 }
 ErrorBoundary.displayName = "AppErrorBoundary";
 
-export function headers({
-	parentHeaders,
-	loaderHeaders,
-	actionHeaders,
-	errorHeaders,
-}: Partial<Route.HeadersArgs>) {
-	if (errorHeaders && Array.from(errorHeaders.entries()).length > 0) {
-		return errorHeaders;
-	}
-
-	return new Headers([
-		...(parentHeaders ? Array.from(parentHeaders.entries()) : []),
-		...(loaderHeaders ? Array.from(loaderHeaders.entries()) : []),
-		...(actionHeaders ? Array.from(actionHeaders.entries()) : []),
-	]);
-}
+export const headers: HeadersFunction = (headersArgs) => boundary.headers(headersArgs);

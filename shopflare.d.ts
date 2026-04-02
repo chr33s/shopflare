@@ -1,5 +1,4 @@
 import type * as AppBridge from "@shopify/app-bridge-types";
-import type * as AppBridgeUi from "@shopify/app-bridge-ui-types";
 import "react-router";
 
 declare module "cloudflare:workers" {
@@ -9,8 +8,11 @@ declare module "cloudflare:workers" {
 declare module "react" {
 	export namespace JSX {
 		export interface IntrinsicElements {
-			"s-app-nav": AppBridgeUi.elements["s-app-nav"];
-			"s-link": AppBridgeUi.elements["s-link"];
+			"s-app-nav": AppBridge.SAppNavAttributes;
+			"s-link": globalThis.JSX.IntrinsicElements["s-link"] & { rel?: string };
+			"s-button": globalThis.JSX.IntrinsicElements["s-button"] & {
+				suppressHydrationWarning?: boolean;
+			};
 			"ui-save-bar": AppBridge.UISaveBarAttributes;
 		}
 	}
@@ -32,7 +34,6 @@ declare module "vite/client" {
 	interface ImportMetaEnv {
 		readonly SHOPIFY_API_KEY: string;
 		readonly SHOPIFY_APP_HANDLE: string;
-		readonly SHOPIFY_APP_LOG_LEVEL: "error" | "warn" | "info" | "debug";
 		readonly SHOPIFY_APP_URL: string;
 	}
 

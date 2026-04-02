@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/disable-enable-pair */
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import type * as StorefrontTypes from "./storefront.types.d.ts";
+import type * as StorefrontTypes from "./storefront.types.js";
 
 export type ShopQueryVariables = StorefrontTypes.Exact<{ [key: string]: never }>;
 

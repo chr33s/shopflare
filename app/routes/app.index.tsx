@@ -1,39 +1,32 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useFetcher } from "react-router";
-
 import { API_VERSION } from "#app/const";
 import Shop from "#app/graphql/query.shop.gql?raw";
-import * as shopify from "#app/shopify.server";
-import { log } from "#app/shopify.shared";
+import { shopify } from "#app/shopify.server";
 import type { ShopQuery } from "#app/types/admin.generated";
-
 import type { Route } from "./+types/app.index";
 
 export async function loader({ request }: Route.LoaderArgs) {
-	return shopify.handler(async () => {
-		const { client } = await shopify.admin(request);
+	const { admin } = await shopify.authenticate.admin(request);
 
-		const { data, errors } = await client.request<ShopQuery>(Shop);
+	const response = await admin.graphql(Shop);
+	const { data } = await response.json();
 
-		log.debug("routes/app.index#loader", { data, errors });
+	console.debug("routes/app.index#loader", { data });
 
-		return {
-			data,
-			errors,
-		};
-	});
+	return { data };
 }
 
 export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
 	const data = await serverLoader();
-	log.debug("routes/app.index#clientLoader", { data });
+	console.debug("routes/app.index#clientLoader", { data });
 	return data;
 }
 
 export default function AppIndex({ actionData, loaderData }: Route.ComponentProps) {
-	const { data, errors } = actionData || loaderData;
-	log.debug("routes/app.index#component", data);
+	const { data } = (actionData ?? loaderData)!;
+	console.debug("routes/app.index#component", data);
 
 	const { t } = useTranslation();
 
@@ -49,15 +42,15 @@ export default function AppIndex({ actionData, loaderData }: Route.ComponentProp
 			signal: controller.signal,
 		})
 			.then<{ data: ShopQuery }>((res) => res.json())
-			.then((res) => log.debug("routes/app.index#component.useEffect", res))
-			.catch((err) => log.error("routes/app.index#component.useEffect", err));
+			.then((res) => console.debug("routes/app.index#component.useEffect", res))
+			.catch((err) => console.error("routes/app.index#component.useEffect", err));
 
 		return () => controller.abort();
 	}, []);
 
 	const fetcher = useFetcher();
 
-	const debug = errors ? JSON.stringify(errors, null, 2) : data?.shop.name;
+	const debug = data?.shop.name;
 
 	return (
 		<s-page inlineSize="small" heading={t("app")}>
@@ -65,14 +58,20 @@ export default function AppIndex({ actionData, loaderData }: Route.ComponentProp
 				commandFor="modal"
 				command="--show"
 				slot="primary-action"
+				suppressHydrationWarning
 				type="submit"
 				variant="primary"
 			>
 				{t("primary")}
 			</s-button>
 
-			<s-modal id="modal">
-				<s-button slot="secondary-actions" commandFor="modal" command="--hide">
+			<s-modal accessibilityLabel={t("message")} heading={t("message")} id="modal">
+				<s-button
+					commandFor="modal"
+					command="--hide"
+					slot="secondary-actions"
+					suppressHydrationWarning
+				>
 					{t("close")}
 				</s-button>
 				<s-box padding="base">
@@ -86,21 +85,21 @@ export default function AppIndex({ actionData, loaderData }: Route.ComponentProp
 					data-save-bar
 					method="POST"
 					onReset={(ev) => {
-						log.debug("routes/app.index#component.onReset", ev);
+						console.debug("routes/app.index#component.onReset", ev);
 						ev.currentTarget.reset();
 						void window.shopify.saveBar.hide("savebar");
 					}}
 					onSubmit={(ev) => {
 						const formData = new FormData(ev.currentTarget);
-						log.debug("routes/app.index#component.onSubmit", Object.fromEntries(formData));
+						console.debug("routes/app.index#component.onSubmit", Object.fromEntries(formData));
 						void fetcher.submit(formData, { method: "POST" });
 					}}
 				>
 					<ui-save-bar id="savebar">
-						<s-button type="reset">{t("reset")}</s-button>
-						<s-button type="submit" variant="primary">
+						<button type="reset">{t("reset")}</button>
+						<button type="submit" variant="primary">
 							{t("submit")}
-						</s-button>
+						</button>
 					</ui-save-bar>
 					<s-text-field label="Input" name="input" placeholder="Input Value" />
 				</fetcher.Form>
@@ -111,15 +110,15 @@ export default function AppIndex({ actionData, loaderData }: Route.ComponentProp
 
 export async function clientAction({ serverAction }: Route.ClientActionArgs) {
 	const data = await serverAction();
-	log.debug("routes/app.index#clientAction", data);
+	console.debug("routes/app.index#clientAction", data);
 	return data;
 }
 
 export async function action({ request }: Route.ActionArgs) {
-	await shopify.admin(request);
+	await shopify.authenticate.admin(request);
 
 	const data = Object.fromEntries(await request.formData());
-	log.debug("routes/app.index#action", { data });
+	console.debug("routes/app.index#action", { data });
 	return {
 		// SILENCE types through case
 		data: data as unknown as ShopQuery,

@@ -4,7 +4,7 @@
 	"ignoreWords": [
 		"accesstoken",
 		"autoupdate",
-		"biomejs",
+		"cfargotunnel",
 		"cloudflared",
 		"codegen",
 		"evenodd",
@@ -34,6 +34,7 @@
 		"tsgolint",
 		"typegen",
 		"upsteam",
+		"vite",
 		"workerd",
 		"zod",
 		"xlink"

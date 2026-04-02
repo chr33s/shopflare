@@ -1,0 +1,9 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"ignorePatterns": ["worker-configuration.d.ts", "extensions/**/shopify.d.ts"],
+	"experimentalSortImports": {
+		"internalPattern": ["#"],
+		"newlinesBetween": false
+	},
+	"experimentalSortPackageJson": true
+}
