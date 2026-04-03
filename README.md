@@ -1,5 +1,7 @@
-> [!NOTE]  
-> [v2](https://github.com/chr33s/shopflare/tree/v2) branch tracks Polaris React changes
+> [!NOTE]
+>
+> - [v2](https://github.com/chr33s/shopflare/tree/v2) branch tracks Polaris React changes
+> - [shopify-app-js](https://github.com/chr33s/shopflare/tree/shopify-app-js) branch tracks Shopify changes
 
 # ShopFlare
 
