@@ -6,10 +6,10 @@ export async function queue(batch: MessageBatch<QueueMessage>) {
 		shopify.log.debug("queues/webhook", webhook.webhookId);
 
 		switch (webhook.topic) {
-			case "APP_INSTALLED":
+			case "app/installed":
 				break;
 
-			case "APP_SCOPES_UPDATE":
+			case "app/scopes_update":
 				if (session) {
 					await shopify.session().set(session.id, {
 						...session,
@@ -18,15 +18,15 @@ export async function queue(batch: MessageBatch<QueueMessage>) {
 				}
 				break;
 
-			case "APP_UNINSTALLED":
+			case "app/uninstalled":
 				if (session) {
 					await shopify.session().set(session.id, null);
 				}
 				break;
 
-			case "CUSTOMER_DATA_REQUEST":
-			case "CUSTOMER_REDACT":
-			case "SHOP_REDACT":
+			case "customer/data_request":
+			case "customer/redact":
+			case "shop/redact":
 				break;
 		}
 
