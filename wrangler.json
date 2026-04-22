@@ -58,6 +58,9 @@
 			"pattern": "?"
 		}
 	],
+	"secrets": {
+		"required": ["SHOPIFY_API_SECRET_KEY"]
+	},
 	"send_metrics": false,
 	"upload_source_maps": true,
 	"vars": {
