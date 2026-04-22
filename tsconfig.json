@@ -7,7 +7,7 @@
 		"composite": true,
 		"jsx": "react-jsx",
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],
-		"module": "ES2022",
+		"module": "preserve",
 		"moduleResolution": "bundler",
 		"noEmit": true,
 		"paths": {

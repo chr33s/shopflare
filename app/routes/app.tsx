@@ -76,5 +76,5 @@ export function headers({
 		...(parentHeaders ? Array.from(parentHeaders.entries()) : []),
 		...(loaderHeaders ? Array.from(loaderHeaders.entries()) : []),
 		...(actionHeaders ? Array.from(actionHeaders.entries()) : []),
-	]);
+	] as HeadersInit);
 }

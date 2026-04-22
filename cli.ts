@@ -216,7 +216,6 @@ async function update() {
 
 		const file = "./package.json";
 
-		// @ts-expect-error: workaround for ESM import
 		const pkg = await import(file, { with: { type: "json" } });
 
 		const dependencies = ["dependencies", "devDependencies", "optionalDependencies"] as const;
@@ -283,7 +282,6 @@ async function use() {
 }
 
 async function version() {
-	// @ts-expect-error: workaround
 	const pkg = await import("./package.json", { with: { type: "json" } });
 	console.log("version:", pkg.default.version);
 }

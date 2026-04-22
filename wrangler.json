@@ -3,10 +3,6 @@
 	"name": "shopflare",
 	"compatibility_date": "2025-12-10",
 	"main": "./app/server.ts",
-	"assets": {
-		"binding": "ASSETS",
-		"directory": "./build/client"
-	},
 	"dev": {
 		"ip": "0.0.0.0",
 		"port": 8080

@@ -20,12 +20,21 @@ export default defineConfig(({ mode }) => {
 		base: app.href,
 		build: {
 			assetsInlineLimit: 0,
-			rollupOptions: {
-				external: [/^cloudflare:/],
-			},
+			rolldownOptions: { external: [/^cloudflare:/] },
 		},
 		clearScreen: false,
-		define: define(env),
+		define: [
+			"SHOPIFY_API_KEY",
+			"SHOPIFY_APP_HANDLE",
+			"SHOPIFY_APP_LOG_LEVEL",
+			"SHOPIFY_APP_URL",
+		].reduce(
+			(a, k) => ({
+				...a,
+				[`import.meta.env.${k}`]: JSON.stringify(env[k]),
+			}),
+			{},
+		),
 		plugins: [
 			i18nextLoader(i18nextLoaderOptions),
 			!isTest && cloudflare({ viteEnvironment: { name: "ssr" } }),
@@ -35,6 +44,7 @@ export default defineConfig(({ mode }) => {
 					plugins: [["babel-plugin-react-compiler"]],
 					presets: ["@babel/preset-typescript"],
 				},
+				optimizeOnSSR: true,
 				filter: /\.[jt]sx?$/,
 			}),
 		].filter(Boolean),
@@ -75,16 +85,21 @@ export default defineConfig(({ mode }) => {
 					},
 				},
 				{
-					alias: [
-						{
-							find: "virtual:react-router/server-build",
-							replacement: fileURLToPath(new URL("./build/server/index.js", import.meta.url)),
-						},
-					],
-					extends: true,
+					resolve: {
+						alias: [
+							{
+								find: "virtual:i18next-loader",
+								replacement: fileURLToPath(new URL("./app/i18n/resources.ts", import.meta.url)),
+							},
+							{
+								find: "virtual:react-router/server-build",
+								replacement: fileURLToPath(new URL("./build/server/index.js", import.meta.url)),
+							},
+						],
+					},
 					plugins: [cloudflareTest({ wrangler: { configPath: "./wrangler.json" } })],
 					test: {
-						include: ["app/*server.test.ts", "app/**/*server.test.ts"],
+						include: ["app/**/*server.test.ts"],
 						name: "server",
 					},
 				},
@@ -94,40 +109,23 @@ export default defineConfig(({ mode }) => {
 	};
 });
 
-export function define(env: Record<string, string>) {
-	return [
-		"SHOPIFY_API_KEY",
-		"SHOPIFY_APP_HANDLE",
-		"SHOPIFY_APP_LOG_LEVEL",
-		"SHOPIFY_APP_URL",
-	].reduce(
-		(a, k) => ({
-			...a,
-			[`import.meta.env.${k}`]: JSON.stringify(env[k]),
-		}),
-		{},
-	);
-}
-
 function cloudflareWorkersPlugin() {
 	const virtualModuleId = "cloudflare:workers";
 	const resolvedVirtualModuleId = `\0${virtualModuleId}`;
 
 	return {
 		load(id: string) {
-			if (id === resolvedVirtualModuleId) {
-				return `
-					export const env = import.meta.env;
-					export const waitUntil = Promise.resolve;
-					export class DurableObject {};
-				`;
-			}
+			if (id !== resolvedVirtualModuleId) return;
+			return `
+				export const env = import.meta.env;
+				export const waitUntil = Promise.resolve;
+				export class DurableObject {};
+			`;
 		},
 		name: virtualModuleId,
 		resolveId(id: string) {
-			if (id === virtualModuleId) {
-				return resolvedVirtualModuleId;
-			}
+			if (id !== virtualModuleId) return;
+			return resolvedVirtualModuleId;
 		},
 	};
 }

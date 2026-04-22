@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/disable-enable-pair */
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import type * as CustomerTypes from "./customer.types.d.ts";
+import type * as CustomerTypes from "./customer.types.js";
 
 export type ShopQueryVariables = CustomerTypes.Exact<{ [key: string]: never }>;
 

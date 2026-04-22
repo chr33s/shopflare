@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/disable-enable-pair */
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import type * as AdminTypes from "./admin.types.d.ts";
+import type * as AdminTypes from "./admin.types.js";
 
 type MetafieldNodeFragment_P0QbxsDvoI0bGQdfOyaK9cAg67CJcsmqfjzzTcAjA_Fragment = {
 	metafield?: AdminTypes.Maybe<Pick<AdminTypes.Metafield, "id" | "key" | "namespace" | "value">>;

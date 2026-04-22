@@ -12,7 +12,7 @@ vi.mock("react-i18next", () => ({
 	},
 	useTranslation: () => ({
 		i18n: {
-			changeLanguage: () => new Promise(() => {}),
+			changeLanguage: () => Promise.resolve(),
 		},
 		t: (i18nKey: string) => i18nKey,
 	}),

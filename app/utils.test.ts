@@ -1,4 +1,4 @@
-import { env } from "cloudflare:test";
+import { env } from "cloudflare:workers";
 import { test } from "vitest";
 
 export async function getHmacFromSearchParams(searchParams: object) {
