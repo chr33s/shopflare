@@ -45,7 +45,7 @@ export default defineConfig(({ mode }) => {
 					presets: ["@babel/preset-typescript"],
 				},
 				optimizeOnSSR: true,
-				filter: /\.[jt]sx?$/,
+				include: /\.[jt]sx?$/,
 			}),
 		].filter(Boolean),
 		server: {

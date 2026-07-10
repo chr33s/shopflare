@@ -958,6 +958,13 @@ export function upload(client: Client) {
 		target.parameters.forEach(({ name, value }) => body.set(name, value));
 		body.set("file", file, file.name);
 
+		if (!target.url) {
+			throw new Exception(`Failed to upload data`, {
+				status: 500,
+				type: "RESPONSE",
+			});
+		}
+
 		const res = await fetch(target.url, {
 			body,
 			method: "POST",
@@ -1035,7 +1042,7 @@ export function upload(client: Client) {
 					let url: string | undefined;
 					switch (node.__typename) {
 						case "GenericFile":
-							url = node.url;
+							url = node.url ?? undefined;
 							break;
 						case "MediaImage":
 							url = node.image?.url;

@@ -1,4 +1,4 @@
-import { UNSAFE_DataWithResponseInit as DataWithResponseInit } from "react-router";
+import type { UNSAFE_DataWithResponseInit as DataWithResponseInit } from "react-router";
 import { describe, expect, test } from "vitest";
 
 import { getHmacFromSearchParams as getHmac } from "#app/utils.test";

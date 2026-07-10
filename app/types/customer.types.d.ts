@@ -16,12 +16,12 @@ export type Scalars = {
 	Boolean: { input: boolean; output: boolean };
 	Int: { input: number; output: number };
 	Float: { input: number; output: number };
-	DateTime: { input: any; output: any };
-	Decimal: { input: any; output: any };
-	HTML: { input: any; output: any };
-	JSON: { input: any; output: any };
-	URL: { input: any; output: any };
-	UnsignedInt64: { input: any; output: any };
+	DateTime: { input: string; output: string };
+	Decimal: { input: string; output: string };
+	HTML: { input: string; output: string };
+	JSON: { input: unknown; output: unknown };
+	URL: { input: string; output: string };
+	UnsignedInt64: { input: string; output: string };
 };
 
 /** A sale that includes an additional fee charge. */
