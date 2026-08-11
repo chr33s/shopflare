@@ -28,6 +28,49 @@ describe("loader", () => {
 		expect(response.data.message).toBe("Proxy timestamp param is expired");
 	});
 
+	test("error on proxy timestamp is missing", async () => {
+		const url = new URL("http://localhost");
+		url.searchParams.set("signature", "123");
+
+		const request = new Request(url, { method: "POST" });
+
+		const response = await runLoader({ request });
+		expect(response.type).toBe("DataWithResponseInit");
+		expect(response.init?.status).toBe(400);
+		expect(response.data.message).toBe("Proxy timestamp param is expired");
+	});
+
+	test("error on proxy timestamp is not numeric", async () => {
+		const url = new URL("http://localhost");
+		url.searchParams.set("signature", "123");
+		url.searchParams.set("timestamp", "not-a-number");
+
+		const request = new Request(url, { method: "POST" });
+
+		const response = await runLoader({ request });
+		expect(response.type).toBe("DataWithResponseInit");
+		expect(response.init?.status).toBe(400);
+		expect(response.data.message).toBe("Proxy timestamp param is expired");
+	});
+
+	test("error on duplicate single value param", async () => {
+		const timestamp = Math.trunc(Date.now() / 1_000).toString();
+		const shop = "test.myshopify.com";
+
+		const url = new URL("http://localhost");
+		url.searchParams.set("signature", await getHmac({ shop, timestamp }));
+		url.searchParams.set("timestamp", timestamp);
+		url.searchParams.append("shop", "attacker.myshopify.com");
+		url.searchParams.append("shop", shop);
+
+		const request = new Request(url, { method: "POST" });
+
+		const response = await runLoader({ request });
+		expect(response.type).toBe("DataWithResponseInit");
+		expect(response.init?.status).toBe(400);
+		expect(response.data.message).toBe("Proxy shop param must not appear more than once");
+	});
+
 	test("error on encoded byte length mismatch", async () => {
 		const url = new URL("http://localhost");
 		url.searchParams.set("signature", "123");
@@ -87,6 +130,31 @@ describe("loader", () => {
 		url.searchParams.set("signature", await getHmac({ shop, timestamp }));
 		url.searchParams.set("timestamp", timestamp);
 		url.searchParams.set("shop", shop);
+
+		const request = new Request(url, { body: "{}", method: "POST" });
+
+		const response = await runLoader({ request });
+		expect(response).toStrictEqual({ data: {} });
+
+		await shopify.session().set(shop, null);
+	});
+
+	test("success with repeated multi value param", async () => {
+		const shop = "test.myshopify.com";
+		await shopify.session().set(shop, {
+			accessToken: "123",
+			id: shop,
+			scope: "read_products",
+			shop,
+		});
+
+		const timestamp = Math.trunc(Date.now() / 1_000).toString();
+		const url = new URL("http://localhost");
+		url.searchParams.set("signature", await getHmac({ ids: ["1", "2"], shop, timestamp }));
+		url.searchParams.set("timestamp", timestamp);
+		url.searchParams.set("shop", shop);
+		url.searchParams.append("ids", "1");
+		url.searchParams.append("ids", "2");
 
 		const request = new Request(url, { body: "{}", method: "POST" });
 

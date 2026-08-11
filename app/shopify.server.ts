@@ -71,6 +71,8 @@ import type {
 	StagedMediaUploadTarget,
 } from "./types/admin.types";
 
+const TOKEN_EXCHANGE_TIMEOUT_MS = 10_000;
+
 export async function admin(request: Request) {
 	async function authenticate() {
 		utils.handleOptions(request);
@@ -117,12 +119,21 @@ export async function admin(request: Request) {
 			throw response;
 		}
 
-		const shop = utils.sanitizeShop(new URL(decodedSessionToken.dest).hostname);
+		const shop = utils.sanitizeShopFromDest(decodedSessionToken.dest);
 		if (!shop) {
 			throw new Exception("Received invalid shop argument", {
 				status: 400,
 				type: "REQUEST",
 			});
+		}
+
+		// NOTE: offline tokens do not expire, the app/uninstalled webhook clears the session
+		const existing = await session().get(shop);
+		if (existing?.accessToken) {
+			return {
+				client: client(existing).admin(),
+				session: existing,
+			};
 		}
 
 		const body = {
@@ -134,34 +145,30 @@ export async function admin(request: Request) {
 			subject_token_type: "urn:ietf:params:oauth:token-type:id_token",
 		};
 
-		const response = await fetch(`https://${shop}/admin/oauth/access_token`, {
-			body: JSON.stringify(body),
-			headers: new Headers({
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			}),
-			method: "POST",
-			signal: AbortSignal.timeout(1_000),
-		});
+		let response: Response;
+		try {
+			response = await fetch(`https://${shop}/admin/oauth/access_token`, {
+				body: JSON.stringify(body),
+				headers: new Headers({
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				}),
+				method: "POST",
+				signal: AbortSignal.timeout(TOKEN_EXCHANGE_TIMEOUT_MS),
+			});
+		} catch (error) {
+			throw new Exception(`Token exchange request failed: ${(error as Error).message}`, {
+				cause: error,
+				status: 503,
+				type: "SERVER",
+			});
+		}
 		if (!response.ok) {
-			const body: any = await response.json();
-			if (typeof response === "undefined") {
-				const message = body?.errors?.message ?? "";
-				throw new Exception(`Http request error, no response available: ${message}`, {
-					status: 400,
-					type: "REQUEST",
-				});
-			}
-
-			if (response.status === 200 && body.errors.graphQLErrors) {
-				throw new Exception(body.errors.graphQLErrors?.[0].message ?? "GraphQL operation failed", {
-					status: 400,
-					type: "RESPONSE",
-				});
-			}
+			// NOTE: error responses are not guaranteed to be json
+			const body = await response.json<{ errors?: unknown }>().catch(() => null);
 
 			const errorMessages: string[] = [];
-			if (body.errors) {
+			if (body?.errors) {
 				errorMessages.push(JSON.stringify(body.errors, null, 2));
 			}
 			const xRequestId = response.headers.get("x-request-id");
@@ -200,31 +207,28 @@ export async function admin(request: Request) {
 			expires_in?: number;
 			scope: string;
 		}>();
-		await session().set(shop, {
+		// NOTE: kv is eventually consistent, use the session we just wrote rather than reading it back
+		const current: Session = {
 			accessToken: accessTokenResponse.access_token,
 			expires: accessTokenResponse.expires_in
-				? new Date(Date.now() + accessTokenResponse.expires_in * 1000)
+				? new Date(Date.now() + accessTokenResponse.expires_in * 1000).toJSON()
 				: undefined,
 			id: shop,
 			scope: accessTokenResponse.scope,
 			shop,
-		});
-
-		const current = await session().get(shop);
-		if (!current) {
-			throw new Exception("No session found", {
-				status: 401,
-				type: "REQUEST",
-			});
-		}
+		};
+		await session().set(shop, current);
 
 		const installKey = `install:${shop}`;
 		const installed = await env.SESSION_KV.get(installKey);
 		if (!installed) {
+			const installTimestamp = new Date().toJSON();
+
+			// NOTE: kv has no compare-and-set, claiming the key up front narrows the
+			// window where concurrent first requests both enqueue the synthetic webhook
+			await env.SESSION_KV.put(installKey, installTimestamp);
 			waitUntil(
 				(async () => {
-					const installTimestamp = new Date().toJSON();
-
 					// synthetic webhook
 					const webhook = {
 						apiVersion: API_VERSION,
@@ -234,8 +238,12 @@ export async function admin(request: Request) {
 						topic: "APP_INSTALLED",
 						webhookId: crypto.randomUUID(),
 					};
-					await env.WEBHOOK_QUEUE.send({ session: current, webhook }, { contentType: "json" });
-					await env.SESSION_KV.put(installKey, installTimestamp);
+					try {
+						await env.WEBHOOK_QUEUE.send({ session: current, webhook }, { contentType: "json" });
+					} catch (error) {
+						await env.SESSION_KV.delete(installKey);
+						throw error;
+					}
 				})(),
 			);
 		}
@@ -250,11 +258,12 @@ export async function admin(request: Request) {
 	return authenticated;
 }
 
-export function billing(request: Request) {
+// NOTE: takes the authenticated session, the shop must never come from the request
+export function billing(request: Request, session: Session) {
 	async function check(plans: string[]) {
-		const shop = utils.sanitizeShop(new URL(request.url).searchParams.get("shop"));
+		const shop = utils.sanitizeShop(session.shop);
 		if (!shop) {
-			throw new Exception(`Shop ${shop} not found`, {
+			throw new Exception(`Shop ${session.shop} not found`, {
 				status: 400,
 				type: "REQUEST",
 			});
@@ -273,15 +282,14 @@ export function billing(request: Request) {
 	async function active(shop: string, plans: string[]) {
 		const isTest = config().SHOPIFY_APP_TEST === "1";
 
-		const current = await session("admin").get(shop);
-		if (!current?.accessToken) {
+		if (!session.accessToken) {
 			throw new Exception(`Access token for ${shop} not found`, {
 				status: 400,
 				type: "REQUEST",
 			});
 		}
 		const admin = client({
-			accessToken: current.accessToken,
+			accessToken: session.accessToken,
 			shop,
 		}).admin();
 
@@ -393,41 +401,29 @@ export function bulkOperation(client: Client) {
 
 		const text = await file.text();
 
-		const json = utils.JSONL.parse(text);
-		for (const obj of json) {
-			if (Object.prototype.toString.call(obj) !== "[object Object]") continue;
-			if (obj.__parentId) continue;
-
-			const parent = json.find((v) => v.id === obj.__parentId)!;
-			const parentKey = parent.id.split("/").at(3);
-
-			const child = Object.fromEntries(Object.entries(obj).filter(([key]) => key !== "__parentId"));
-			const childKey = obj.id
-				.split("/")
-				.at(3)
-				?.replace(parentKey!, "")
-				.toLocaleLowerCase()
-				.concat("s")!;
-
-			parent[childKey] ??= [];
-			if (!Array.isArray(parent[childKey])) continue;
-			parent[childKey].push(child);
-		}
-		return json.filter((v) => !v.__parentId);
+		return utils.JSONL.nest(utils.JSONL.parse(text));
 	}
 
 	async function process(type: BulkOperationType) {
+		const deadline = Date.now() + BULK_OPERATION_TIMEOUT_MS;
 		while (true) {
 			const data = await current(type);
 			const status = data?.status ?? "";
-			if (["CANCELING", "CREATED", "RUNNING"].includes(status)) {
-				await new Promise((resolve) => setTimeout(resolve, 500));
-				continue;
+			if (!["CANCELING", "CREATED", "RUNNING"].includes(status)) return;
+
+			if (Date.now() >= deadline) {
+				throw new Exception(`Bulk operation ${type} did not finish, last status ${status}`, {
+					status: 504,
+					type: "RESPONSE",
+				});
 			}
-			break;
+			await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
 		}
 	}
 }
+
+const BULK_OPERATION_TIMEOUT_MS = 5 * 60_000;
+const POLL_INTERVAL_MS = 500;
 
 export type BulkOperationType = "QUERY" | "MUTATION";
 
@@ -521,7 +517,7 @@ export function customer(request: Request) {
 			throw response;
 		}
 
-		const shop = utils.sanitizeShop(decodedSessionToken.dest);
+		const shop = utils.sanitizeShopFromDest(decodedSessionToken.dest);
 		if (!shop) {
 			throw new Exception("Received invalid shop argument", {
 				status: 400,
@@ -648,10 +644,7 @@ export async function handler<T>(fn: () => Promise<T>) {
 							errors: error.errors,
 							message: error.message,
 						},
-						{
-							status: error.status,
-							statusText: "TEST",
-						},
+						{ status: error.status },
 					);
 				}
 
@@ -662,6 +655,9 @@ export async function handler<T>(fn: () => Promise<T>) {
 				}
 			}
 		}
+
+		// NOTE: the only record of an unexpected error, the response body cannot carry it
+		log.error(error);
 		throw data(
 			{
 				data: undefined,
@@ -1029,6 +1025,7 @@ export function upload(client: Client) {
 	}
 
 	async function wait(id: string) {
+		const deadline = Date.now() + UPLOAD_TIMEOUT_MS;
 		while (true) {
 			const node = await client
 				.request<FileQuery>(FileNode, { variables: { id } })
@@ -1060,7 +1057,13 @@ export function upload(client: Client) {
 				}
 			}
 
-			await new Promise((resolve) => setTimeout(resolve, 500));
+			if (Date.now() >= deadline) {
+				throw new Exception(`Upload ${id} did not finish, last status ${node.fileStatus}`, {
+					status: 504,
+					type: "RESPONSE",
+				});
+			}
+			await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
 		}
 	}
 
@@ -1079,20 +1082,42 @@ export function upload(client: Client) {
 	}
 }
 
+const UPLOAD_TIMEOUT_MS = 2 * 60_000;
+
+const PROXY_SINGLE_VALUE_PARAMS = new Set(["hmac", "shop", "signature", "timestamp"]);
+
 export async function proxy(request: Request) {
 	async function authenticate() {
 		const url = new URL(request.url);
 
-		const hmac = url.searchParams.get("signature");
-		if (!hmac) {
+		// NOTE: params Shopify only ever sends once, a repeat is an injection attempt
+		const params = new Map<string, string | string[]>();
+		for (const [key, value] of url.searchParams) {
+			const current = params.get(key);
+			if (current === undefined) {
+				params.set(key, value);
+				continue;
+			}
+			if (PROXY_SINGLE_VALUE_PARAMS.has(key)) {
+				throw new Exception(`Proxy ${key} param must not appear more than once`, {
+					status: 400,
+					type: "REQUEST",
+				});
+			}
+			params.set(key, Array.isArray(current) ? [...current, value] : [current, value]);
+		}
+
+		const hmac = params.get("signature");
+		if (!hmac || typeof hmac !== "string") {
 			throw new Exception("Proxy signature param is missing", {
 				status: 400,
 				type: "REQUEST",
 			});
 		}
 
-		const timestamp = Number(url.searchParams.get("timestamp"));
+		const timestamp = Number(params.get("timestamp"));
 		if (
+			!Number.isInteger(timestamp) ||
 			// HMAC_TIMESTAMP_PERMITTED_CLOCK_TOLERANCE_SEC
 			Math.abs(Math.trunc(Date.now() / 1000) - timestamp) > 90
 		) {
@@ -1103,7 +1128,7 @@ export async function proxy(request: Request) {
 		}
 
 		// NOTE: https://shopify.dev/docs/apps/build/online-store/display-dynamic-data#calculate-a-digital-signature
-		const data = Object.entries(Object.fromEntries(url.searchParams))
+		const data = [...params.entries()]
 			.filter(([key]) => key !== "signature")
 			.map(([key, value]) => `${key}=${Array.isArray(value) ? value.join(",") : value}`)
 			.sort((a, b) => a.localeCompare(b))
@@ -1122,7 +1147,7 @@ export async function proxy(request: Request) {
 		}
 
 		// shop is value due to hmac validation
-		const shop = utils.sanitizeShop(url.searchParams.get("shop"));
+		const shop = utils.sanitizeShop((params.get("shop") as string | undefined) ?? null);
 		if (!shop) {
 			throw new Exception("No shop param", {
 				status: 400,
@@ -1269,7 +1294,12 @@ export function session(type: Sessiontype = "admin") {
 
 	async function get(id: string) {
 		if (!id) return;
-		return kv.get<Session>(key(id), "json");
+
+		const session = await kv.get<Session>(key(id), "json");
+		// NOTE: an expired session is no session, callers re-authenticate
+		if (!session || utils.expired(session)) return null;
+
+		return session;
 	}
 
 	async function set(id: string, data: Session | null) {
@@ -1291,7 +1321,8 @@ export interface Session {
 	id: string;
 	shop: string;
 	scope: string;
-	expires?: Date;
+	// NOTE: an iso string, sessions round trip through kv as json
+	expires?: string;
 	accessToken: string;
 }
 
@@ -1344,6 +1375,13 @@ export const utils = {
 		}
 	},
 
+	expired(session: Session) {
+		if (!session.expires) return false;
+
+		const expires = Date.parse(session.expires);
+		return !Number.isNaN(expires) && expires <= Date.now();
+	},
+
 	getToken(request: Request) {
 		return (
 			request.headers.get("Authorization")?.replace("Bearer ", "") ||
@@ -1378,6 +1416,37 @@ export const utils = {
 	},
 
 	JSONL: {
+		// NOTE: bulk operation results are flat, every child points at its parent by id
+		nest(json: JSONL[]) {
+			const nodes = new Map(json.map((node) => [node.id, node]));
+			for (const obj of json) {
+				if (Object.prototype.toString.call(obj) !== "[object Object]") continue;
+				if (!obj.__parentId) continue;
+
+				const parent = nodes.get(obj.__parentId);
+				if (!parent) continue;
+
+				const parentKey = parent.id.split("/").at(3);
+				if (!parentKey) continue;
+
+				const child = Object.fromEntries(
+					Object.entries(obj).filter(([key]) => key !== "__parentId"),
+				);
+				const childKey = obj.id
+					.split("/")
+					.at(3)
+					?.replace(parentKey, "")
+					.toLocaleLowerCase()
+					.concat("s");
+				if (!childKey) continue;
+
+				parent[childKey] ??= [];
+				if (!Array.isArray(parent[childKey])) continue;
+				parent[childKey].push(child);
+			}
+			return json.filter((node) => !node.__parentId);
+		},
+
 		parse(jsonl: string) {
 			return jsonl
 				.split("\n")
@@ -1406,16 +1475,20 @@ export const utils = {
 		if (!host) return null;
 
 		const base64RegExp = /^[0-9a-z+/]+={0,2}$/i;
-		let sanitizedHost = base64RegExp.test(host) ? host : null;
-		if (sanitizedHost) {
-			const { hostname } = new URL(`https://${atob(sanitizedHost)}`);
+		if (!base64RegExp.test(host)) return null;
 
-			const hostRegExp = new RegExp(`\\.(${utils.allowedDomains})$`);
-			if (!hostRegExp.test(hostname)) {
-				sanitizedHost = null;
-			}
+		let hostname: string;
+		try {
+			// NOTE: the regexp is looser than atob, and the decoded value need not be a url
+			({ hostname } = new URL(`https://${atob(host)}`));
+		} catch {
+			return null;
 		}
-		return sanitizedHost;
+
+		const hostRegExp = new RegExp(`\\.(${utils.allowedDomains})$`);
+		if (!hostRegExp.test(hostname)) return null;
+
+		return host;
 	},
 
 	sanitizeShop(shop: string | null) {
@@ -1444,7 +1517,17 @@ export const utils = {
 		const shopRegExp = new RegExp(`^[a-zA-Z0-9][a-zA-Z0-9-_]*\\.(${utils.allowedDomains})[/]*$`);
 		if (!shopRegExp.test(sanitizedShop)) return null;
 
-		return sanitizedShop;
+		// NOTE: normalized, a trailing slash keys a second session for the same shop
+		return sanitizedShop.replace(/\/+$/, "");
+	},
+
+	sanitizeShopFromDest(dest: string) {
+		// NOTE: `dest` is a url on admin session tokens, a bare hostname elsewhere
+		try {
+			return utils.sanitizeShop(new URL(dest).hostname);
+		} catch {
+			return utils.sanitizeShop(dest);
+		}
 	},
 
 	async validateHmac(request: { data: string; hmac: string; encoding: UtilEncoding }) {
